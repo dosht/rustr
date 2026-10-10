@@ -1,0 +1,80 @@
+:root {
+  --bg: #fbfbf8;
+  --fg: #1f2328;
+  --muted: #6b7089;
+  --border: #e3e3dc;
+  --accent: #4f8a3c;
+  --cursor-bg: #eef5ea;
+  --notice-bg: #eef5ea;
+  --error: #b42318;
+  --error-bg: #fdecea;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1a1b26;
+    --fg: #d6d8e0;
+    --muted: #8a8fa8;
+    --border: #2e3040;
+    --accent: #8ec07c;
+    --cursor-bg: #24283b;
+    --notice-bg: #1f2b1f;
+    --error: #f2878e;
+    --error-bg: #3a1d22;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #1a1b26;
+  --fg: #d6d8e0;
+  --muted: #8a8fa8;
+  --border: #2e3040;
+  --accent: #8ec07c;
+  --cursor-bg: #24283b;
+  --notice-bg: #1f2b1f;
+  --error: #f2878e;
+  --error-bg: #3a1d22;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.5 system-ui, sans-serif;
+}
+
+input,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+input {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+
+button {
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  background: var(--accent);
+  color: var(--bg);
+  border: 1px solid var(--accent);
+}
+
+kbd {
+  font-family: ui-monospace, monospace;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 4px;
+}

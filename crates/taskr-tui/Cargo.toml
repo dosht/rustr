@@ -1,0 +1,18 @@
+[package]
+name = "taskr-tui"
+description = "Keyboard driven terminal shell (vim keys, k9s style hints)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "taskr-tui"
+path = "src/main.rs"
+
+[dependencies]
+taskr-core.workspace = true
+taskr-infra = { workspace = true, features = ["native"] }
+ratatui.workspace = true
+
+[dev-dependencies]
+taskr-core = { workspace = true, features = ["testing"] }

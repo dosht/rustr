@@ -1,0 +1,19 @@
+[package]
+name = "taskr-infra"
+description = "Adapters that implement core ports on native platforms: JSON file storage, system clock, JSON-lines telemetry."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+default = ["native"]
+native = ["dep:dirs"]
+
+[dependencies]
+taskr-core.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+dirs = { workspace = true, optional = true }
+
+[dev-dependencies]
+taskr-core = { workspace = true, features = ["testing"] }

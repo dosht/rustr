@@ -1,0 +1,17 @@
+[package]
+name = "taskr-cli"
+description = "Scriptable command line shell."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "taskr"
+path = "src/main.rs"
+
+[dependencies]
+taskr-core.workspace = true
+taskr-infra = { workspace = true, features = ["native"] }
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true

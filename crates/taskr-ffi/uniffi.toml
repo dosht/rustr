@@ -1,0 +1,8 @@
+[bindings.kotlin]
+package_name = "dev.taskr.core"
+cdylib_name = "taskr_ffi"
+
+[bindings.swift]
+module_name = "TaskrCore"
+ffi_module_name = "TaskrCoreFFI"
+ffi_module_filename = "TaskrCoreFFI"

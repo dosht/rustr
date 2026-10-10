@@ -1,0 +1,19 @@
+[package]
+name = "taskr-wasm"
+description = "wasm-bindgen facade: the same core and presentation logic, running in the browser."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+taskr-core.workspace = true
+taskr-infra.workspace = true
+wasm-bindgen.workspace = true
+js-sys.workspace = true
+web-sys = { version = "0.3", features = ["Storage", "console"] }
+serde.workspace = true
+serde-wasm-bindgen.workspace = true
+ts-rs.workspace = true
