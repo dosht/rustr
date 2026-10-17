@@ -32,6 +32,16 @@ The core never changes as the product grows. Each rung adds adapters and shells.
 5. Events, realtime
 6. Analytics and ETL
 
+## Milestones to reach Transgate's feature set
+
+1. Multi-user with an outbox: async ports, Postgres adapter, Axum server shell, `Identity` port (Supabase Auth), RBAC `can()`, domain events through an outbox so analytics is only an adapter later.
+2. Static site with SEO, design system and i18n: i18n comes here because SEO pages need locales from the start (hreflang, translated slugs).
+3. Billing, emails and feature flags: freemium, entitlements, receipts.
+4. Analytics and funnels: an adapter on the domain events from milestone 1.
+5. Blog as a second app: first cross-app integration, multi-tenant, white label.
+6. Background jobs and uploads: long-running work, webhooks, provider fallback. Transgate's hardest ADRs came from here.
+7. Realtime and offline: hardest and least needed for an MVP, so last.
+
 ## Q&A
 
 **Which Lambda alternative did we discuss?** Kappa: one event log you can replay, instead of Lambda's separate batch and stream paths. Not sure it is the one mentioned earlier.
@@ -63,6 +73,17 @@ The core never changes as the product grows. Each rung adds adapters and shells.
 **Conflicts?** Rules per aggregate in the domain. Last-writer-wins per field for simple data, a business rule for cases like duplicate titles, CRDTs only for collaborative text.
 
 **Where does the code live?** Rust. Sync logic is a state machine in the core, only the transport is a port. The server is Rust too.
+
+**Supabase and Postgres, why both?** Supabase is a hosted Postgres with extras. Our adapter is plain `sqlx` against that Postgres, so the core only sees standard Postgres. Supabase Auth issues a JWT, the server verifies it, and the `Identity` adapter maps it to an actor with roles. That is the only Supabase-specific code. Authorization stays in the core's `can()`, the server connects as a trusted service, every repository query takes the tenant id, and RLS can come later as a safety net. Tests use plain Postgres in Docker with a fake `Identity`.
+
+**Is there a Postgres extension for auth like Supabase?** No. Full auth (signup, OAuth, email flows, MFA) runs as a separate service that stores users in Postgres. Supabase Auth is GoTrue, a small Go service that can be self-hosted next to any Postgres. Similar services: Ory Kratos, Zitadel, Logto, SuperTokens, Keycloak. Inside Postgres there are only building blocks (`pgcrypto`, `pgjwt`). Rust has pieces (`axum-login`, `oauth2`), no full solution. Pick: Supabase Auth behind the `Identity` port.
+
+**Postgres extensions from "I replaced my entire tech stack with Postgres"?** Rule: an extension is fine when it is an implementation detail inside an adapter, not when it exposes the database to clients and bypasses the core.
+
+- Keep: JSONB for flexible fields; `pg_cron` for database housekeeping like retention cleanup (business schedules stay in Rust); `tsvector` full-text search as the first `Search` adapter; `pgvector` if a product needs AI or RAG.
+- Evaluate for sync: ElectricSQL streams Postgres data to clients (the "pull since cursor" half), writes still go through our API.
+- Maybe later: unlogged tables as a cache; `pg_mooncake` as a sink for the Kappa event log (does not replace PostHog funnels).
+- Skip: `pgcrypto` plus `pgjwt` auth (no flows, ruled out); RLS as the main rules; PostgREST and `pg_graphql` (bypass the core); `pgai`; HTML or React in the database.
 
 ## Open
 
