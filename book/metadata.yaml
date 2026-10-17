@@ -1,0 +1,9 @@
+title: "Core and Shells"
+subtitle: "Building one product for CLI, TUI, web, Android and iOS with Rust"
+author: "Mustafa Abdelhamid"
+lang: en-US
+rights: "Personal study notes"
+description: >
+  A hands-on guide to clean architecture for multiplatform apps: domain-driven
+  design, hexagonal ports and adapters, and a shared Rust ViewModel, with
+  primers on Rust, Svelte, Kotlin and Swift, all built around the taskr sample.

@@ -2,6 +2,8 @@
 
 A small task list that runs as a CLI, a TUI, a web app, an Android app and an iOS app, all driven by one Rust core. It is the reference implementation of the **Core and Shells** pattern described in [docs/architecture.md](docs/architecture.md).
 
+![The taskr TUI: vim motions, live filter, and rules enforced by the shared Rust core](docs/media/taskr-tui.gif)
+
 - Domain: `tasks` (the `TaskList` aggregate: unique open titles, an open-task limit, complete and reopen rules)
 - Cross-cutting infrastructure: `telemetry` (one port, five destinations: stderr, a log file, the browser console, logcat, os_log)
 
@@ -21,6 +23,7 @@ apps/
   ios/            Swift + SwiftUI, XcodeGen spec
 scripts/          build and smoke-test scripts for each platform
 docs/             architecture.md
+book/             the study guide (EPUB and PDF), built from Markdown
 ```
 
 ## Run it
@@ -73,6 +76,17 @@ On a Mac:
 ./scripts/build-ios.sh                      # static libs, xcframework, xcodegen
 open apps/ios/Taskr.xcodeproj
 ```
+
+## The book
+
+`book/` is a study guide built around this repository: the pattern, clean architecture, and primers on Rust, Svelte, Kotlin and Swift. Code listings are checked against the source on every build.
+
+```sh
+./scripts/build-book.sh          # book/build/core-and-shells.epub (Kindle) and .pdf (iPad)
+./scripts/build-book.sh --check  # only check that listings still match the code
+```
+
+Needs node, pandoc 3.8+ and a Chromium (Playwright's is found automatically, or set `CHROME_PATH`).
 
 ## What was verified where
 

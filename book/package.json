@@ -1,0 +1,15 @@
+{
+  "name": "taskr-book",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Builds the Core and Shells book (EPUB for Kindle, PDF for iPad) from Markdown.",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "check": "node tools/build.mjs --check"
+  },
+  "devDependencies": {
+    "mermaid": "^12.1.0",
+    "playwright-core": "^1.64.0"
+  }
+}
