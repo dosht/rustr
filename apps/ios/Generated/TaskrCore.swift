@@ -557,6 +557,165 @@ fileprivate struct FfiConverterString: FfiConverter {
 
 
 
+public protocol AppPresenterProtocol: AnyObject, Sendable {
+    
+    func current()  -> AppView
+    
+    func dispatch(intent: AppIntent)  -> AppView
+    
+    /**
+     * `dispatch`, also handing `listener` each view shown while requests run.
+     */
+    func dispatchWith(intent: AppIntent, listener: AppViewListener)  -> AppView
+    
+}
+open class AppPresenter: AppPresenterProtocol, @unchecked Sendable {
+    fileprivate let handle: UInt64
+
+    /// Used to instantiate a [FFIObject] without an actual handle, for fakes in tests, mostly.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public struct NoHandle {
+        public init() {}
+    }
+
+    // TODO: We'd like this to be `private` but for Swifty reasons,
+    // we can't implement `FfiConverter` without making this `required` and we can't
+    // make it `required` without making it `public`.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    required public init(unsafeFromHandle handle: UInt64) {
+        self.handle = handle
+    }
+
+    // This constructor can be used to instantiate a fake object.
+    // - Parameter noHandle: Placeholder value so we can have a constructor separate from the default empty one that may be implemented for classes extending [FFIObject].
+    //
+    // - Warning:
+    //     Any object instantiated with this constructor cannot be passed to an actual Rust-backed object. Since there isn't a backing handle the FFI lower functions will crash.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public init(noHandle: NoHandle) {
+        self.handle = 0
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public func uniffiCloneHandle() -> UInt64 {
+        return try! rustCall { uniffi_taskr_ffi_fn_clone_apppresenter(self.handle, $0) }
+    }
+public convenience init(config: AppConfig, vault: SessionVault, sink: LogSink) {
+    let handle =
+        try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_constructor_apppresenter_new(
+        FfiConverterTypeAppConfig_lower(config),
+        FfiConverterCallbackInterfaceSessionVault_lower(vault),
+        FfiConverterCallbackInterfaceLogSink_lower(sink),uniffiCallStatus
+    )
+}
+    self.init(unsafeFromHandle: handle)
+}
+
+    deinit {
+        if handle == 0 {
+            // Mock objects have handle=0 don't try to free them
+            return
+        }
+
+        try! rustCall { uniffi_taskr_ffi_fn_free_apppresenter(handle, $0) }
+    }
+
+    
+
+    
+open func current() -> AppView  {
+    return try!  FfiConverterTypeAppView_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_method_apppresenter_current(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+})
+}
+    
+open func dispatch(intent: AppIntent) -> AppView  {
+    return try!  FfiConverterTypeAppView_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_method_apppresenter_dispatch(
+            self.uniffiCloneHandle(),
+        FfiConverterTypeAppIntent_lower(intent),uniffiCallStatus
+    )
+})
+}
+    
+    /**
+     * `dispatch`, also handing `listener` each view shown while requests run.
+     */
+open func dispatchWith(intent: AppIntent, listener: AppViewListener) -> AppView  {
+    return try!  FfiConverterTypeAppView_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_method_apppresenter_dispatch_with(
+            self.uniffiCloneHandle(),
+        FfiConverterTypeAppIntent_lower(intent),
+        FfiConverterCallbackInterfaceAppViewListener_lower(listener),uniffiCallStatus
+    )
+})
+}
+    
+
+    
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeAppPresenter: FfiConverter {
+    typealias FfiType = UInt64
+    typealias SwiftType = AppPresenter
+
+    public static func lift(_ handle: UInt64) throws -> AppPresenter {
+        return AppPresenter(unsafeFromHandle: handle)
+    }
+
+    public static func lower(_ value: AppPresenter) -> UInt64 {
+        return value.uniffiCloneHandle()
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> AppPresenter {
+        let handle: UInt64 = try readInt(&buf)
+        return try lift(handle)
+    }
+
+    public static func write(_ value: AppPresenter, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(value))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppPresenter_lift(_ handle: UInt64) throws -> AppPresenter {
+    return try FfiConverterTypeAppPresenter.lift(handle)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppPresenter_lower(_ value: AppPresenter) -> UInt64 {
+    return FfiConverterTypeAppPresenter.lower(value)
+}
+
+
+
+
+
+
 public protocol TaskListPresenterProtocol: AnyObject, Sendable {
     
     func current()  -> TaskListView
@@ -698,6 +857,130 @@ public func FfiConverterTypeTaskListPresenter_lower(_ value: TaskListPresenter) 
 
 
 
+public struct AppConfig: Equatable, Hashable {
+    /**
+     * API root, e.g. `http://192.168.240.1:8787/api` from Waydroid.
+     */
+    public var apiUrl: String
+    /**
+     * Supabase Auth root. Without it the app uses dev sign-in.
+     */
+    public var authUrl: String?
+    public var authKey: String?
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(
+        /**
+         * API root, e.g. `http://192.168.240.1:8787/api` from Waydroid.
+         */apiUrl: String, 
+        /**
+         * Supabase Auth root. Without it the app uses dev sign-in.
+         */authUrl: String?, authKey: String?) {
+        self.apiUrl = apiUrl
+        self.authUrl = authUrl
+        self.authKey = authKey
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension AppConfig: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeAppConfig: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> AppConfig {
+        return
+            try AppConfig(
+                apiUrl: FfiConverterString.read(from: &buf), 
+                authUrl: FfiConverterOptionString.read(from: &buf), 
+                authKey: FfiConverterOptionString.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: AppConfig, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.apiUrl, into: &buf)
+        FfiConverterOptionString.write(value.authUrl, into: &buf)
+        FfiConverterOptionString.write(value.authKey, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppConfig_lift(_ buf: RustBuffer) throws -> AppConfig {
+    return try FfiConverterTypeAppConfig.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppConfig_lower(_ value: AppConfig) -> RustBuffer {
+    return FfiConverterTypeAppConfig.lower(value)
+}
+
+
+public struct AppPreviewScreen: Equatable, Hashable {
+    public var name: String
+    public var view: AppView
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(name: String, view: AppView) {
+        self.name = name
+        self.view = view
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension AppPreviewScreen: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeAppPreviewScreen: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> AppPreviewScreen {
+        return
+            try AppPreviewScreen(
+                name: FfiConverterString.read(from: &buf), 
+                view: FfiConverterTypeAppView.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: AppPreviewScreen, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.name, into: &buf)
+        FfiConverterTypeAppView.write(value.view, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppPreviewScreen_lift(_ buf: RustBuffer) throws -> AppPreviewScreen {
+    return try FfiConverterTypeAppPreviewScreen.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppPreviewScreen_lower(_ value: AppPreviewScreen) -> RustBuffer {
+    return FfiConverterTypeAppPreviewScreen.lower(value)
+}
+
+
 public struct ColumnView: Equatable, Hashable {
     public var title: String
     public var align: ColumnAlign
@@ -810,6 +1093,138 @@ public func FfiConverterTypeLogField_lower(_ value: LogField) -> RustBuffer {
 }
 
 
+public struct MemberRowView: Equatable, Hashable {
+    public var email: String
+    public var role: MemberRole
+    public var roleLabel: String
+    public var isYou: Bool
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(email: String, role: MemberRole, roleLabel: String, isYou: Bool) {
+        self.email = email
+        self.role = role
+        self.roleLabel = roleLabel
+        self.isYou = isYou
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension MemberRowView: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeMemberRowView: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> MemberRowView {
+        return
+            try MemberRowView(
+                email: FfiConverterString.read(from: &buf), 
+                role: FfiConverterTypeMemberRole.read(from: &buf), 
+                roleLabel: FfiConverterString.read(from: &buf), 
+                isYou: FfiConverterBool.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: MemberRowView, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.email, into: &buf)
+        FfiConverterTypeMemberRole.write(value.role, into: &buf)
+        FfiConverterString.write(value.roleLabel, into: &buf)
+        FfiConverterBool.write(value.isYou, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeMemberRowView_lift(_ buf: RustBuffer) throws -> MemberRowView {
+    return try FfiConverterTypeMemberRowView.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeMemberRowView_lower(_ value: MemberRowView) -> RustBuffer {
+    return FfiConverterTypeMemberRowView.lower(value)
+}
+
+
+public struct MembersView: Equatable, Hashable {
+    public var rows: [MemberRowView]
+    public var canManage: Bool
+    public var roleOptions: [RoleOptionView]
+    public var isLoading: Bool
+    public var error: String?
+    public var notice: String?
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(rows: [MemberRowView], canManage: Bool, roleOptions: [RoleOptionView], isLoading: Bool, error: String?, notice: String?) {
+        self.rows = rows
+        self.canManage = canManage
+        self.roleOptions = roleOptions
+        self.isLoading = isLoading
+        self.error = error
+        self.notice = notice
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension MembersView: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeMembersView: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> MembersView {
+        return
+            try MembersView(
+                rows: FfiConverterSequenceTypeMemberRowView.read(from: &buf), 
+                canManage: FfiConverterBool.read(from: &buf), 
+                roleOptions: FfiConverterSequenceTypeRoleOptionView.read(from: &buf), 
+                isLoading: FfiConverterBool.read(from: &buf), 
+                error: FfiConverterOptionString.read(from: &buf), 
+                notice: FfiConverterOptionString.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: MembersView, into buf: inout [UInt8]) {
+        FfiConverterSequenceTypeMemberRowView.write(value.rows, into: &buf)
+        FfiConverterBool.write(value.canManage, into: &buf)
+        FfiConverterSequenceTypeRoleOptionView.write(value.roleOptions, into: &buf)
+        FfiConverterBool.write(value.isLoading, into: &buf)
+        FfiConverterOptionString.write(value.error, into: &buf)
+        FfiConverterOptionString.write(value.notice, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeMembersView_lift(_ buf: RustBuffer) throws -> MembersView {
+    return try FfiConverterTypeMembersView.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeMembersView_lower(_ value: MembersView) -> RustBuffer {
+    return FfiConverterTypeMembersView.lower(value)
+}
+
+
 public struct PreviewScreen: Equatable, Hashable {
     public var name: String
     public var view: TaskListView
@@ -861,6 +1276,60 @@ public func FfiConverterTypePreviewScreen_lift(_ buf: RustBuffer) throws -> Prev
 #endif
 public func FfiConverterTypePreviewScreen_lower(_ value: PreviewScreen) -> RustBuffer {
     return FfiConverterTypePreviewScreen.lower(value)
+}
+
+
+public struct RoleOptionView: Equatable, Hashable {
+    public var role: MemberRole
+    public var label: String
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(role: MemberRole, label: String) {
+        self.role = role
+        self.label = label
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension RoleOptionView: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeRoleOptionView: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> RoleOptionView {
+        return
+            try RoleOptionView(
+                role: FfiConverterTypeMemberRole.read(from: &buf), 
+                label: FfiConverterString.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: RoleOptionView, into buf: inout [UInt8]) {
+        FfiConverterTypeMemberRole.write(value.role, into: &buf)
+        FfiConverterString.write(value.label, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeRoleOptionView_lift(_ buf: RustBuffer) throws -> RoleOptionView {
+    return try FfiConverterTypeRoleOptionView.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeRoleOptionView_lower(_ value: RoleOptionView) -> RustBuffer {
+    return FfiConverterTypeRoleOptionView.lower(value)
 }
 
 
@@ -922,6 +1391,202 @@ public func FfiConverterTypeScopeTabView_lower(_ value: ScopeTabView) -> RustBuf
 }
 
 
+public struct ScreenNavView: Equatable, Hashable {
+    public var screen: AppScreen
+    public var label: String
+    public var selected: Bool
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(screen: AppScreen, label: String, selected: Bool) {
+        self.screen = screen
+        self.label = label
+        self.selected = selected
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension ScreenNavView: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeScreenNavView: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> ScreenNavView {
+        return
+            try ScreenNavView(
+                screen: FfiConverterTypeAppScreen.read(from: &buf), 
+                label: FfiConverterString.read(from: &buf), 
+                selected: FfiConverterBool.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: ScreenNavView, into buf: inout [UInt8]) {
+        FfiConverterTypeAppScreen.write(value.screen, into: &buf)
+        FfiConverterString.write(value.label, into: &buf)
+        FfiConverterBool.write(value.selected, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeScreenNavView_lift(_ buf: RustBuffer) throws -> ScreenNavView {
+    return try FfiConverterTypeScreenNavView.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeScreenNavView_lower(_ value: ScreenNavView) -> RustBuffer {
+    return FfiConverterTypeScreenNavView.lower(value)
+}
+
+
+public struct SignInView: Equatable, Hashable {
+    public var busy: Bool
+    public var error: String?
+    public var notice: String?
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(busy: Bool, error: String?, notice: String?) {
+        self.busy = busy
+        self.error = error
+        self.notice = notice
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension SignInView: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeSignInView: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SignInView {
+        return
+            try SignInView(
+                busy: FfiConverterBool.read(from: &buf), 
+                error: FfiConverterOptionString.read(from: &buf), 
+                notice: FfiConverterOptionString.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: SignInView, into buf: inout [UInt8]) {
+        FfiConverterBool.write(value.busy, into: &buf)
+        FfiConverterOptionString.write(value.error, into: &buf)
+        FfiConverterOptionString.write(value.notice, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeSignInView_lift(_ buf: RustBuffer) throws -> SignInView {
+    return try FfiConverterTypeSignInView.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeSignInView_lower(_ value: SignInView) -> RustBuffer {
+    return FfiConverterTypeSignInView.lower(value)
+}
+
+
+public struct SignedInView: Equatable, Hashable {
+    public var email: String
+    public var workspaces: [WorkspaceNavView]
+    /**
+     * The open workspace; sent back with `AppIntent::Tasks` and `AppIntent::Members`.
+     */
+    public var workspace: String?
+    public var screens: [ScreenNavView]
+    public var title: String
+    public var error: String?
+    public var screen: ScreenView
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(email: String, workspaces: [WorkspaceNavView], 
+        /**
+         * The open workspace; sent back with `AppIntent::Tasks` and `AppIntent::Members`.
+         */workspace: String?, screens: [ScreenNavView], title: String, error: String?, screen: ScreenView) {
+        self.email = email
+        self.workspaces = workspaces
+        self.workspace = workspace
+        self.screens = screens
+        self.title = title
+        self.error = error
+        self.screen = screen
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension SignedInView: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeSignedInView: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SignedInView {
+        return
+            try SignedInView(
+                email: FfiConverterString.read(from: &buf), 
+                workspaces: FfiConverterSequenceTypeWorkspaceNavView.read(from: &buf), 
+                workspace: FfiConverterOptionString.read(from: &buf), 
+                screens: FfiConverterSequenceTypeScreenNavView.read(from: &buf), 
+                title: FfiConverterString.read(from: &buf), 
+                error: FfiConverterOptionString.read(from: &buf), 
+                screen: FfiConverterTypeScreenView.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: SignedInView, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.email, into: &buf)
+        FfiConverterSequenceTypeWorkspaceNavView.write(value.workspaces, into: &buf)
+        FfiConverterOptionString.write(value.workspace, into: &buf)
+        FfiConverterSequenceTypeScreenNavView.write(value.screens, into: &buf)
+        FfiConverterString.write(value.title, into: &buf)
+        FfiConverterOptionString.write(value.error, into: &buf)
+        FfiConverterTypeScreenView.write(value.screen, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeSignedInView_lift(_ buf: RustBuffer) throws -> SignedInView {
+    return try FfiConverterTypeSignedInView.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeSignedInView_lower(_ value: SignedInView) -> RustBuffer {
+    return FfiConverterTypeSignedInView.lower(value)
+}
+
+
 public struct TaskListView: Equatable, Hashable {
     public var tabs: [ScopeTabView]
     public var filter: String
@@ -931,10 +1596,11 @@ public struct TaskListView: Equatable, Hashable {
     public var isLoading: Bool
     public var error: String?
     public var notice: String?
+    public var canChange: Bool
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
-    public init(tabs: [ScopeTabView], filter: String, columns: [ColumnView], rows: [TaskRowView], emptyMessage: String?, isLoading: Bool, error: String?, notice: String?) {
+    public init(tabs: [ScopeTabView], filter: String, columns: [ColumnView], rows: [TaskRowView], emptyMessage: String?, isLoading: Bool, error: String?, notice: String?, canChange: Bool) {
         self.tabs = tabs
         self.filter = filter
         self.columns = columns
@@ -943,6 +1609,7 @@ public struct TaskListView: Equatable, Hashable {
         self.isLoading = isLoading
         self.error = error
         self.notice = notice
+        self.canChange = canChange
     }
 
     
@@ -968,7 +1635,8 @@ public struct FfiConverterTypeTaskListView: FfiConverterRustBuffer {
                 emptyMessage: FfiConverterOptionString.read(from: &buf), 
                 isLoading: FfiConverterBool.read(from: &buf), 
                 error: FfiConverterOptionString.read(from: &buf), 
-                notice: FfiConverterOptionString.read(from: &buf)
+                notice: FfiConverterOptionString.read(from: &buf), 
+                canChange: FfiConverterBool.read(from: &buf)
         )
     }
 
@@ -981,6 +1649,7 @@ public struct FfiConverterTypeTaskListView: FfiConverterRustBuffer {
         FfiConverterBool.write(value.isLoading, into: &buf)
         FfiConverterOptionString.write(value.error, into: &buf)
         FfiConverterOptionString.write(value.notice, into: &buf)
+        FfiConverterBool.write(value.canChange, into: &buf)
     }
 }
 
@@ -1060,6 +1729,354 @@ public func FfiConverterTypeTaskRowView_lift(_ buf: RustBuffer) throws -> TaskRo
 public func FfiConverterTypeTaskRowView_lower(_ value: TaskRowView) -> RustBuffer {
     return FfiConverterTypeTaskRowView.lower(value)
 }
+
+
+public struct WorkspaceNavView: Equatable, Hashable {
+    public var id: String
+    public var name: String
+    public var roleLabel: String
+    public var selected: Bool
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(id: String, name: String, roleLabel: String, selected: Bool) {
+        self.id = id
+        self.name = name
+        self.roleLabel = roleLabel
+        self.selected = selected
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension WorkspaceNavView: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeWorkspaceNavView: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> WorkspaceNavView {
+        return
+            try WorkspaceNavView(
+                id: FfiConverterString.read(from: &buf), 
+                name: FfiConverterString.read(from: &buf), 
+                roleLabel: FfiConverterString.read(from: &buf), 
+                selected: FfiConverterBool.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: WorkspaceNavView, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.id, into: &buf)
+        FfiConverterString.write(value.name, into: &buf)
+        FfiConverterString.write(value.roleLabel, into: &buf)
+        FfiConverterBool.write(value.selected, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeWorkspaceNavView_lift(_ buf: RustBuffer) throws -> WorkspaceNavView {
+    return try FfiConverterTypeWorkspaceNavView.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeWorkspaceNavView_lower(_ value: WorkspaceNavView) -> RustBuffer {
+    return FfiConverterTypeWorkspaceNavView.lower(value)
+}
+
+
+/**
+ * Screen intents (`Tasks`, `Members`) carry `SignedInView::workspace` of the
+ * view that showed the screen.
+ */
+
+public enum AppIntent: Equatable, Hashable {
+    
+    case started
+    case signInSubmitted(email: String, password: String
+    )
+    case signUpSubmitted(email: String, password: String
+    )
+    case signOutRequested
+    case workspaceSelected(id: String
+    )
+    case screenSelected(screen: AppScreen
+    )
+    case messageDismissed
+    case tasks(workspace: String, intent: TaskIntent
+    )
+    case members(workspace: String, intent: MembersIntent
+    )
+
+
+
+
+
+}
+
+#if compiler(>=6)
+extension AppIntent: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeAppIntent: FfiConverterRustBuffer {
+    typealias SwiftType = AppIntent
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> AppIntent {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .started
+        
+        case 2: return .signInSubmitted(email: try FfiConverterString.read(from: &buf), password: try FfiConverterString.read(from: &buf)
+        )
+        
+        case 3: return .signUpSubmitted(email: try FfiConverterString.read(from: &buf), password: try FfiConverterString.read(from: &buf)
+        )
+        
+        case 4: return .signOutRequested
+        
+        case 5: return .workspaceSelected(id: try FfiConverterString.read(from: &buf)
+        )
+        
+        case 6: return .screenSelected(screen: try FfiConverterTypeAppScreen.read(from: &buf)
+        )
+        
+        case 7: return .messageDismissed
+        
+        case 8: return .tasks(workspace: try FfiConverterString.read(from: &buf), intent: try FfiConverterTypeTaskIntent.read(from: &buf)
+        )
+        
+        case 9: return .members(workspace: try FfiConverterString.read(from: &buf), intent: try FfiConverterTypeMembersIntent.read(from: &buf)
+        )
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: AppIntent, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case .started:
+            writeInt(&buf, Int32(1))
+        
+        
+        case let .signInSubmitted(email,password):
+            writeInt(&buf, Int32(2))
+            FfiConverterString.write(email, into: &buf)
+            FfiConverterString.write(password, into: &buf)
+            
+        
+        case let .signUpSubmitted(email,password):
+            writeInt(&buf, Int32(3))
+            FfiConverterString.write(email, into: &buf)
+            FfiConverterString.write(password, into: &buf)
+            
+        
+        case .signOutRequested:
+            writeInt(&buf, Int32(4))
+        
+        
+        case let .workspaceSelected(id):
+            writeInt(&buf, Int32(5))
+            FfiConverterString.write(id, into: &buf)
+            
+        
+        case let .screenSelected(screen):
+            writeInt(&buf, Int32(6))
+            FfiConverterTypeAppScreen.write(screen, into: &buf)
+            
+        
+        case .messageDismissed:
+            writeInt(&buf, Int32(7))
+        
+        
+        case let .tasks(workspace,intent):
+            writeInt(&buf, Int32(8))
+            FfiConverterString.write(workspace, into: &buf)
+            FfiConverterTypeTaskIntent.write(intent, into: &buf)
+            
+        
+        case let .members(workspace,intent):
+            writeInt(&buf, Int32(9))
+            FfiConverterString.write(workspace, into: &buf)
+            FfiConverterTypeMembersIntent.write(intent, into: &buf)
+            
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppIntent_lift(_ buf: RustBuffer) throws -> AppIntent {
+    return try FfiConverterTypeAppIntent.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppIntent_lower(_ value: AppIntent) -> RustBuffer {
+    return FfiConverterTypeAppIntent.lower(value)
+}
+
+
+
+
+public enum AppScreen: Equatable, Hashable {
+    
+    case tasks
+    case members
+
+
+
+
+
+}
+
+#if compiler(>=6)
+extension AppScreen: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeAppScreen: FfiConverterRustBuffer {
+    typealias SwiftType = AppScreen
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> AppScreen {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .tasks
+        
+        case 2: return .members
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: AppScreen, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case .tasks:
+            writeInt(&buf, Int32(1))
+        
+        
+        case .members:
+            writeInt(&buf, Int32(2))
+        
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppScreen_lift(_ buf: RustBuffer) throws -> AppScreen {
+    return try FfiConverterTypeAppScreen.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppScreen_lower(_ value: AppScreen) -> RustBuffer {
+    return FfiConverterTypeAppScreen.lower(value)
+}
+
+
+
+
+public enum AppView: Equatable, Hashable {
+    
+    case starting
+    case signedOut(view: SignInView
+    )
+    case signedIn(view: SignedInView
+    )
+
+
+
+
+
+}
+
+#if compiler(>=6)
+extension AppView: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeAppView: FfiConverterRustBuffer {
+    typealias SwiftType = AppView
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> AppView {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .starting
+        
+        case 2: return .signedOut(view: try FfiConverterTypeSignInView.read(from: &buf)
+        )
+        
+        case 3: return .signedIn(view: try FfiConverterTypeSignedInView.read(from: &buf)
+        )
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: AppView, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case .starting:
+            writeInt(&buf, Int32(1))
+        
+        
+        case let .signedOut(view):
+            writeInt(&buf, Int32(2))
+            FfiConverterTypeSignInView.write(view, into: &buf)
+            
+        
+        case let .signedIn(view):
+            writeInt(&buf, Int32(3))
+            FfiConverterTypeSignedInView.write(view, into: &buf)
+            
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppView_lift(_ buf: RustBuffer) throws -> AppView {
+    return try FfiConverterTypeAppView.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAppView_lower(_ value: AppView) -> RustBuffer {
+    return FfiConverterTypeAppView.lower(value)
+}
+
 
 
 
@@ -1204,6 +2221,256 @@ public func FfiConverterTypeLogLevel_lift(_ buf: RustBuffer) throws -> LogLevel 
 #endif
 public func FfiConverterTypeLogLevel_lower(_ value: LogLevel) -> RustBuffer {
     return FfiConverterTypeLogLevel.lower(value)
+}
+
+
+
+
+public enum MemberRole: Equatable, Hashable {
+    
+    case owner
+    case editor
+    case viewer
+
+
+
+
+
+}
+
+#if compiler(>=6)
+extension MemberRole: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeMemberRole: FfiConverterRustBuffer {
+    typealias SwiftType = MemberRole
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> MemberRole {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .owner
+        
+        case 2: return .editor
+        
+        case 3: return .viewer
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: MemberRole, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case .owner:
+            writeInt(&buf, Int32(1))
+        
+        
+        case .editor:
+            writeInt(&buf, Int32(2))
+        
+        
+        case .viewer:
+            writeInt(&buf, Int32(3))
+        
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeMemberRole_lift(_ buf: RustBuffer) throws -> MemberRole {
+    return try FfiConverterTypeMemberRole.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeMemberRole_lower(_ value: MemberRole) -> RustBuffer {
+    return FfiConverterTypeMemberRole.lower(value)
+}
+
+
+
+
+public enum MembersIntent: Equatable, Hashable {
+    
+    case opened
+    case addSubmitted(email: String, role: MemberRole
+    )
+    case roleChanged(email: String, role: MemberRole
+    )
+    case removeRequested(email: String
+    )
+    case messageDismissed
+
+
+
+
+
+}
+
+#if compiler(>=6)
+extension MembersIntent: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeMembersIntent: FfiConverterRustBuffer {
+    typealias SwiftType = MembersIntent
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> MembersIntent {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .opened
+        
+        case 2: return .addSubmitted(email: try FfiConverterString.read(from: &buf), role: try FfiConverterTypeMemberRole.read(from: &buf)
+        )
+        
+        case 3: return .roleChanged(email: try FfiConverterString.read(from: &buf), role: try FfiConverterTypeMemberRole.read(from: &buf)
+        )
+        
+        case 4: return .removeRequested(email: try FfiConverterString.read(from: &buf)
+        )
+        
+        case 5: return .messageDismissed
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: MembersIntent, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case .opened:
+            writeInt(&buf, Int32(1))
+        
+        
+        case let .addSubmitted(email,role):
+            writeInt(&buf, Int32(2))
+            FfiConverterString.write(email, into: &buf)
+            FfiConverterTypeMemberRole.write(role, into: &buf)
+            
+        
+        case let .roleChanged(email,role):
+            writeInt(&buf, Int32(3))
+            FfiConverterString.write(email, into: &buf)
+            FfiConverterTypeMemberRole.write(role, into: &buf)
+            
+        
+        case let .removeRequested(email):
+            writeInt(&buf, Int32(4))
+            FfiConverterString.write(email, into: &buf)
+            
+        
+        case .messageDismissed:
+            writeInt(&buf, Int32(5))
+        
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeMembersIntent_lift(_ buf: RustBuffer) throws -> MembersIntent {
+    return try FfiConverterTypeMembersIntent.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeMembersIntent_lower(_ value: MembersIntent) -> RustBuffer {
+    return FfiConverterTypeMembersIntent.lower(value)
+}
+
+
+
+
+public enum ScreenView: Equatable, Hashable {
+    
+    case loading
+    case tasks(view: TaskListView
+    )
+    case members(view: MembersView
+    )
+
+
+
+
+
+}
+
+#if compiler(>=6)
+extension ScreenView: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeScreenView: FfiConverterRustBuffer {
+    typealias SwiftType = ScreenView
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> ScreenView {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .loading
+        
+        case 2: return .tasks(view: try FfiConverterTypeTaskListView.read(from: &buf)
+        )
+        
+        case 3: return .members(view: try FfiConverterTypeMembersView.read(from: &buf)
+        )
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: ScreenView, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case .loading:
+            writeInt(&buf, Int32(1))
+        
+        
+        case let .tasks(view):
+            writeInt(&buf, Int32(2))
+            FfiConverterTypeTaskListView.write(view, into: &buf)
+            
+        
+        case let .members(view):
+            writeInt(&buf, Int32(3))
+            FfiConverterTypeMembersView.write(view, into: &buf)
+            
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeScreenView_lift(_ buf: RustBuffer) throws -> ScreenView {
+    return try FfiConverterTypeScreenView.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeScreenView_lower(_ value: ScreenView) -> RustBuffer {
+    return FfiConverterTypeScreenView.lower(value)
 }
 
 
@@ -1397,6 +2664,147 @@ public func FfiConverterTypeTaskScope_lower(_ value: TaskScope) -> RustBuffer {
 
 
 /**
+ * Implemented in Kotlin and Swift: receives the views `dispatch_with` shows
+ * while requests run (e.g. the new workspace loading right after it was
+ * selected), so the previous screen does not stay interactive meanwhile.
+ * Called on the thread that called `dispatch_with`.
+ */
+public protocol AppViewListener: AnyObject, Sendable {
+    
+    func onView(view: AppView) 
+    
+}
+
+
+// Put the implementation in a struct so we don't pollute the top-level namespace
+fileprivate struct UniffiCallbackInterfaceAppViewListener {
+
+    // Create the VTable using a series of closures.
+    // Swift automatically converts these into C callback functions.
+    //
+    // Store the vtable directly.
+    static let vtable: UniffiVTableCallbackInterfaceAppViewListener = UniffiVTableCallbackInterfaceAppViewListener(
+        uniffiFree: { (uniffiHandle: UInt64) -> () in
+            do {
+                try FfiConverterCallbackInterfaceAppViewListener.handleMap.remove(handle: uniffiHandle)
+            } catch {
+                print("Uniffi callback interface AppViewListener: handle missing in uniffiFree")
+            }
+        },
+        uniffiClone: { (uniffiHandle: UInt64) -> UInt64 in
+            do {
+                return try FfiConverterCallbackInterfaceAppViewListener.handleMap.clone(handle: uniffiHandle)
+            } catch {
+                fatalError("Uniffi callback interface AppViewListener: handle missing in uniffiClone")
+            }
+        },
+        onView: { (
+            uniffiHandle: UInt64,
+            view: RustBuffer,
+            uniffiOutReturn: UnsafeMutableRawPointer,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> () in
+                guard let uniffiObj = try? FfiConverterCallbackInterfaceAppViewListener.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return uniffiObj.onView(
+                     view: try FfiConverterTypeAppView_lift(view)
+                )
+            }
+
+            
+            let writeReturn = { () }
+            uniffiTraitInterfaceCall(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn
+            )
+        }
+    )
+
+    // Rust stores this pointer for future callback invocations, so it must live
+    // for the process lifetime (not just for the init function call).
+    //
+    // `nonisolated(unsafe)` is needed under Swift 6 strict concurrency.
+    // This is safe because the pointee is initialized once during static init
+    // and never mutated by either side of the FFI.  Its fields are C function pointers.
+    nonisolated(unsafe) static let vtablePtr: UnsafePointer<UniffiVTableCallbackInterfaceAppViewListener> = {
+        let ptr = UnsafeMutablePointer<UniffiVTableCallbackInterfaceAppViewListener>.allocate(capacity: 1)
+        ptr.initialize(to: vtable)
+        return UnsafePointer(ptr)
+    }()
+}
+
+private func uniffiCallbackInitAppViewListener() {
+    uniffi_taskr_ffi_fn_init_callback_vtable_appviewlistener(UniffiCallbackInterfaceAppViewListener.vtablePtr)
+}
+
+// FfiConverter protocol for callback interfaces
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterCallbackInterfaceAppViewListener {
+    fileprivate static let handleMap = UniffiHandleMap<AppViewListener>()
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+extension FfiConverterCallbackInterfaceAppViewListener : FfiConverter {
+    typealias SwiftType = AppViewListener
+    typealias FfiType = UInt64
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lift(_ handle: UInt64) throws -> SwiftType {
+        try handleMap.get(handle: handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        let handle: UInt64 = try readInt(&buf)
+        return try lift(handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lower(_ v: SwiftType) -> UInt64 {
+        return handleMap.insert(obj: v)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func write(_ v: SwiftType, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(v))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfaceAppViewListener_lift(_ handle: UInt64) throws -> AppViewListener {
+    return try FfiConverterCallbackInterfaceAppViewListener.lift(handle)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfaceAppViewListener_lower(_ v: AppViewListener) -> UInt64 {
+    return FfiConverterCallbackInterfaceAppViewListener.lower(v)
+}
+
+
+
+
+/**
  * Implemented in Kotlin (logcat) and Swift (os_log): the telemetry port,
  * fulfilled by the platform.
  */
@@ -1536,6 +2944,193 @@ public func FfiConverterCallbackInterfaceLogSink_lower(_ v: LogSink) -> UInt64 {
     return FfiConverterCallbackInterfaceLogSink.lower(v)
 }
 
+
+
+
+/**
+ * Implemented in Kotlin and Swift: where the session lives between launches.
+ * Values are opaque strings; the platform only stores them securely.
+ */
+public protocol SessionVault: AnyObject, Sendable {
+    
+    func load()  -> String?
+    
+    func save(value: String) 
+    
+    func clear() 
+    
+}
+
+
+// Put the implementation in a struct so we don't pollute the top-level namespace
+fileprivate struct UniffiCallbackInterfaceSessionVault {
+
+    // Create the VTable using a series of closures.
+    // Swift automatically converts these into C callback functions.
+    //
+    // Store the vtable directly.
+    static let vtable: UniffiVTableCallbackInterfaceSessionVault = UniffiVTableCallbackInterfaceSessionVault(
+        uniffiFree: { (uniffiHandle: UInt64) -> () in
+            do {
+                try FfiConverterCallbackInterfaceSessionVault.handleMap.remove(handle: uniffiHandle)
+            } catch {
+                print("Uniffi callback interface SessionVault: handle missing in uniffiFree")
+            }
+        },
+        uniffiClone: { (uniffiHandle: UInt64) -> UInt64 in
+            do {
+                return try FfiConverterCallbackInterfaceSessionVault.handleMap.clone(handle: uniffiHandle)
+            } catch {
+                fatalError("Uniffi callback interface SessionVault: handle missing in uniffiClone")
+            }
+        },
+        load: { (
+            uniffiHandle: UInt64,
+            uniffiOutReturn: UnsafeMutablePointer<RustBuffer>,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> String? in
+                guard let uniffiObj = try? FfiConverterCallbackInterfaceSessionVault.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return uniffiObj.load(
+                )
+            }
+
+            
+            let writeReturn = { uniffiOutReturn.pointee = FfiConverterOptionString.lower($0) }
+            uniffiTraitInterfaceCall(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn
+            )
+        },
+        save: { (
+            uniffiHandle: UInt64,
+            value: RustBuffer,
+            uniffiOutReturn: UnsafeMutableRawPointer,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> () in
+                guard let uniffiObj = try? FfiConverterCallbackInterfaceSessionVault.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return uniffiObj.save(
+                     value: try FfiConverterString.lift(value)
+                )
+            }
+
+            
+            let writeReturn = { () }
+            uniffiTraitInterfaceCall(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn
+            )
+        },
+        clear: { (
+            uniffiHandle: UInt64,
+            uniffiOutReturn: UnsafeMutableRawPointer,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> () in
+                guard let uniffiObj = try? FfiConverterCallbackInterfaceSessionVault.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return uniffiObj.clear(
+                )
+            }
+
+            
+            let writeReturn = { () }
+            uniffiTraitInterfaceCall(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn
+            )
+        }
+    )
+
+    // Rust stores this pointer for future callback invocations, so it must live
+    // for the process lifetime (not just for the init function call).
+    //
+    // `nonisolated(unsafe)` is needed under Swift 6 strict concurrency.
+    // This is safe because the pointee is initialized once during static init
+    // and never mutated by either side of the FFI.  Its fields are C function pointers.
+    nonisolated(unsafe) static let vtablePtr: UnsafePointer<UniffiVTableCallbackInterfaceSessionVault> = {
+        let ptr = UnsafeMutablePointer<UniffiVTableCallbackInterfaceSessionVault>.allocate(capacity: 1)
+        ptr.initialize(to: vtable)
+        return UnsafePointer(ptr)
+    }()
+}
+
+private func uniffiCallbackInitSessionVault() {
+    uniffi_taskr_ffi_fn_init_callback_vtable_sessionvault(UniffiCallbackInterfaceSessionVault.vtablePtr)
+}
+
+// FfiConverter protocol for callback interfaces
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterCallbackInterfaceSessionVault {
+    fileprivate static let handleMap = UniffiHandleMap<SessionVault>()
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+extension FfiConverterCallbackInterfaceSessionVault : FfiConverter {
+    typealias SwiftType = SessionVault
+    typealias FfiType = UInt64
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lift(_ handle: UInt64) throws -> SwiftType {
+        try handleMap.get(handle: handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        let handle: UInt64 = try readInt(&buf)
+        return try lift(handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lower(_ v: SwiftType) -> UInt64 {
+        return handleMap.insert(obj: v)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func write(_ v: SwiftType, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(v))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfaceSessionVault_lift(_ handle: UInt64) throws -> SessionVault {
+    return try FfiConverterCallbackInterfaceSessionVault.lift(handle)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfaceSessionVault_lower(_ v: SessionVault) -> UInt64 {
+    return FfiConverterCallbackInterfaceSessionVault.lower(v)
+}
+
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
@@ -1580,6 +3175,31 @@ fileprivate struct FfiConverterSequenceString: FfiConverterRustBuffer {
         seq.reserveCapacity(Int(len))
         for _ in 0 ..< len {
             seq.append(try FfiConverterString.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterSequenceTypeAppPreviewScreen: FfiConverterRustBuffer {
+    typealias SwiftType = [AppPreviewScreen]
+
+    public static func write(_ value: [AppPreviewScreen], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeAppPreviewScreen.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [AppPreviewScreen] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [AppPreviewScreen]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTypeAppPreviewScreen.read(from: &buf))
         }
         return seq
     }
@@ -1638,6 +3258,31 @@ fileprivate struct FfiConverterSequenceTypeLogField: FfiConverterRustBuffer {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterSequenceTypeMemberRowView: FfiConverterRustBuffer {
+    typealias SwiftType = [MemberRowView]
+
+    public static func write(_ value: [MemberRowView], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeMemberRowView.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [MemberRowView] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [MemberRowView]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTypeMemberRowView.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterSequenceTypePreviewScreen: FfiConverterRustBuffer {
     typealias SwiftType = [PreviewScreen]
 
@@ -1655,6 +3300,31 @@ fileprivate struct FfiConverterSequenceTypePreviewScreen: FfiConverterRustBuffer
         seq.reserveCapacity(Int(len))
         for _ in 0 ..< len {
             seq.append(try FfiConverterTypePreviewScreen.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterSequenceTypeRoleOptionView: FfiConverterRustBuffer {
+    typealias SwiftType = [RoleOptionView]
+
+    public static func write(_ value: [RoleOptionView], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeRoleOptionView.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [RoleOptionView] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [RoleOptionView]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTypeRoleOptionView.read(from: &buf))
         }
         return seq
     }
@@ -1688,6 +3358,31 @@ fileprivate struct FfiConverterSequenceTypeScopeTabView: FfiConverterRustBuffer 
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterSequenceTypeScreenNavView: FfiConverterRustBuffer {
+    typealias SwiftType = [ScreenNavView]
+
+    public static func write(_ value: [ScreenNavView], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeScreenNavView.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [ScreenNavView] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [ScreenNavView]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTypeScreenNavView.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterSequenceTypeTaskRowView: FfiConverterRustBuffer {
     typealias SwiftType = [TaskRowView]
 
@@ -1709,6 +3404,31 @@ fileprivate struct FfiConverterSequenceTypeTaskRowView: FfiConverterRustBuffer {
         return seq
     }
 }
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterSequenceTypeWorkspaceNavView: FfiConverterRustBuffer {
+    typealias SwiftType = [WorkspaceNavView]
+
+    public static func write(_ value: [WorkspaceNavView], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeWorkspaceNavView.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [WorkspaceNavView] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [WorkspaceNavView]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTypeWorkspaceNavView.read(from: &buf))
+        }
+        return seq
+    }
+}
 /**
  * Fixture screens for SwiftUI and Compose previews and snapshot tests.
  */
@@ -1716,6 +3436,16 @@ public func previewScreens() -> [PreviewScreen]  {
     return try!  FfiConverterSequenceTypePreviewScreen.lift(try! rustCall() {
         uniffiCallStatus in
     uniffi_taskr_ffi_fn_func_preview_screens(uniffiCallStatus
+    )
+})
+}
+/**
+ * Signed-in fixtures, by name, for SwiftUI and Compose previews.
+ */
+public func appPreviewScreens() -> [AppPreviewScreen]  {
+    return try!  FfiConverterSequenceTypeAppPreviewScreen.lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_func_app_preview_screens(uniffiCallStatus
     )
 })
 }
@@ -1738,20 +3468,49 @@ private let initializationResult: InitializationResult = {
     if (uniffi_taskr_ffi_checksum_func_preview_screens() != 20880) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_taskr_ffi_checksum_func_app_preview_screens() != 30327) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_taskr_ffi_checksum_method_tasklistpresenter_current() != 15539) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_taskr_ffi_checksum_method_tasklistpresenter_dispatch() != 26573) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_taskr_ffi_checksum_method_apppresenter_current() != 44205) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_apppresenter_dispatch() != 31567) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_apppresenter_dispatch_with() != 2182) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_taskr_ffi_checksum_constructor_tasklistpresenter_new() != 5340) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_constructor_apppresenter_new() != 28040) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_taskr_ffi_checksum_method_logsink_log() != 58403) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_taskr_ffi_checksum_method_appviewlistener_on_view() != 13445) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_sessionvault_load() != 4415) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_sessionvault_save() != 58063) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_sessionvault_clear() != 46996) {
+        return InitializationResult.apiChecksumMismatch
+    }
 
+    uniffiCallbackInitAppViewListener()
     uniffiCallbackInitLogSink()
+    uniffiCallbackInitSessionVault()
     return InitializationResult.ok
 }()
 

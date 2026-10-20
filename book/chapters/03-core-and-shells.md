@@ -136,10 +136,10 @@ If you think in MVVM, here is the translation:
 | Model | domain + use cases |
 | ViewModel (logic) | `TaskListState` + `TaskListController`, in Rust, shared |
 | ViewModel (platform part) | a thin container: `TasksViewModel.kt`, `TasksModel.swift`, `taskListModel.svelte.ts` |
-| View | `TaskListScreen` in Compose, SwiftUI, Svelte; `view.rs` in the TUI |
+| View | `TaskListScreen` in Compose and SwiftUI, `TaskListDesktop` and `TaskListMobile` in Svelte; `view.rs` in the TUI |
 | Page / composition root | `main.rs`, the activity, the app struct, `App.svelte` |
 | Repository interface | port trait |
-| Storybook stories | `presentation::fixtures`, exported to every platform |
+| Storybook stories | `presentation::fixtures`, exported to every platform; the web renders them in Storybook |
 
 ## Checking the goal
 

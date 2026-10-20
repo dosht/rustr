@@ -98,6 +98,7 @@ Note `chars().count()` rather than `len()`. `len()` counts bytes, and "é" is tw
 ```{.rust file="crates/taskr-core/src/tasks/app.rs"}
 pub enum TasksError {
     Rejected(TaskError),
+    Access(AccessError),
     Storage(StorageError),
 }
 
@@ -108,7 +109,7 @@ impl From<TaskError> for TasksError {
 }
 ```
 
-So inside a function that returns `Result<_, TasksError>`, `list.add(title, now)?` turns a `TaskError` into `TasksError::Rejected` automatically.
+So inside a function that returns `Result<_, TasksError>`, `list.add(title, now)?` turns a `TaskError` into `TasksError::Rejected` automatically. `Access` is for the signed-in mode: who you are and what your role allows (chapter 13).
 
 ## Ownership and borrowing
 

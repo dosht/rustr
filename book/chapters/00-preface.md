@@ -13,7 +13,7 @@ You know how to build software and have shipped at least one app. You may know M
 - **Part one** (chapters 1 to 3) is the idea: why one core, what clean architecture actually asks of you, and the Core and Shells pattern itself.
 - **Part two** (chapters 4 to 7) is the core in Rust: the language essentials you need, the domain and use cases, the shared ViewModel, and how to test all of it first.
 - **Part three** (chapters 8 to 10) is the shells: CLI and TUI, web through WebAssembly and Svelte, and mobile through UniFFI with Kotlin and Swift.
-- **Part four** (chapters 11 and 12) grows the system: databases, identity and RBAC, desktop apps, servers on Kubernetes, realtime, messaging, analytics, websites and a family of apps that share one platform.
+- **Part four** (chapters 11 to 13) grows the system: databases, identity and RBAC, desktop apps, servers on Kubernetes, realtime, messaging, analytics, websites and a family of apps that share one platform. Chapter 13 is the first of these built for real: taskr signed in, with workspaces, roles, a server, Postgres and Supabase Auth.
 - The **reference** at the end has a glossary, the decision log, checklists and every command.
 
 Every code listing marked with a source path under it is copied from the repository, and the build fails if the code moves on and the book doesn't. Listings without a path are sketches of things the sample doesn't do yet.

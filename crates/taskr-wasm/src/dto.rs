@@ -73,6 +73,7 @@ pub struct TaskListView {
     pub is_loading: bool,
     pub error: Option<String>,
     pub notice: Option<String>,
+    pub can_change: bool,
 }
 
 #[derive(Serialize, TS, Clone, Debug, PartialEq, Eq)]
@@ -150,6 +151,7 @@ impl From<TaskListVm> for TaskListView {
             is_loading: vm.is_loading,
             error: vm.error,
             notice: vm.notice,
+            can_change: vm.can_change,
         }
     }
 }

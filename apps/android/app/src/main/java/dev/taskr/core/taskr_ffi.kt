@@ -653,6 +653,18 @@ internal interface UniffiForeignFutureCompleteVoid : com.sun.jna.Callback {
 internal interface UniffiCallbackInterfaceLogSinkMethod0 : com.sun.jna.Callback {
     fun callback(`uniffiHandle`: Long,`level`: RustBuffer.ByValue,`event`: RustBuffer.ByValue,`fields`: RustBuffer.ByValue,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,)
 }
+internal interface UniffiCallbackInterfaceAppViewListenerMethod0 : com.sun.jna.Callback {
+    fun callback(`uniffiHandle`: Long,`view`: RustBuffer.ByValue,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,)
+}
+internal interface UniffiCallbackInterfaceSessionVaultMethod0 : com.sun.jna.Callback {
+    fun callback(`uniffiHandle`: Long,`uniffiOutReturn`: RustBuffer,uniffiCallStatus: UniffiRustCallStatus,)
+}
+internal interface UniffiCallbackInterfaceSessionVaultMethod1 : com.sun.jna.Callback {
+    fun callback(`uniffiHandle`: Long,`value`: RustBuffer.ByValue,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,)
+}
+internal interface UniffiCallbackInterfaceSessionVaultMethod2 : com.sun.jna.Callback {
+    fun callback(`uniffiHandle`: Long,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,)
+}
 @Structure.FieldOrder("uniffiFree", "uniffiClone", "log")
 internal open class UniffiVTableCallbackInterfaceLogSink(
     @JvmField internal var `uniffiFree`: UniffiCallbackInterfaceFree? = null,
@@ -669,6 +681,50 @@ internal open class UniffiVTableCallbackInterfaceLogSink(
         `uniffiFree` = other.`uniffiFree`
         `uniffiClone` = other.`uniffiClone`
         `log` = other.`log`
+    }
+
+}
+@Structure.FieldOrder("uniffiFree", "uniffiClone", "onView")
+internal open class UniffiVTableCallbackInterfaceAppViewListener(
+    @JvmField internal var `uniffiFree`: UniffiCallbackInterfaceFree? = null,
+    @JvmField internal var `uniffiClone`: UniffiCallbackInterfaceClone? = null,
+    @JvmField internal var `onView`: UniffiCallbackInterfaceAppViewListenerMethod0? = null,
+) : Structure() {
+    class UniffiByValue(
+        `uniffiFree`: UniffiCallbackInterfaceFree? = null,
+        `uniffiClone`: UniffiCallbackInterfaceClone? = null,
+        `onView`: UniffiCallbackInterfaceAppViewListenerMethod0? = null,
+    ): UniffiVTableCallbackInterfaceAppViewListener(`uniffiFree`,`uniffiClone`,`onView`,), Structure.ByValue
+
+   internal fun uniffiSetValue(other: UniffiVTableCallbackInterfaceAppViewListener) {
+        `uniffiFree` = other.`uniffiFree`
+        `uniffiClone` = other.`uniffiClone`
+        `onView` = other.`onView`
+    }
+
+}
+@Structure.FieldOrder("uniffiFree", "uniffiClone", "load", "save", "clear")
+internal open class UniffiVTableCallbackInterfaceSessionVault(
+    @JvmField internal var `uniffiFree`: UniffiCallbackInterfaceFree? = null,
+    @JvmField internal var `uniffiClone`: UniffiCallbackInterfaceClone? = null,
+    @JvmField internal var `load`: UniffiCallbackInterfaceSessionVaultMethod0? = null,
+    @JvmField internal var `save`: UniffiCallbackInterfaceSessionVaultMethod1? = null,
+    @JvmField internal var `clear`: UniffiCallbackInterfaceSessionVaultMethod2? = null,
+) : Structure() {
+    class UniffiByValue(
+        `uniffiFree`: UniffiCallbackInterfaceFree? = null,
+        `uniffiClone`: UniffiCallbackInterfaceClone? = null,
+        `load`: UniffiCallbackInterfaceSessionVaultMethod0? = null,
+        `save`: UniffiCallbackInterfaceSessionVaultMethod1? = null,
+        `clear`: UniffiCallbackInterfaceSessionVaultMethod2? = null,
+    ): UniffiVTableCallbackInterfaceSessionVault(`uniffiFree`,`uniffiClone`,`load`,`save`,`clear`,), Structure.ByValue
+
+   internal fun uniffiSetValue(other: UniffiVTableCallbackInterfaceSessionVault) {
+        `uniffiFree` = other.`uniffiFree`
+        `uniffiClone` = other.`uniffiClone`
+        `load` = other.`load`
+        `save` = other.`save`
+        `clear` = other.`clear`
     }
 
 }
@@ -699,13 +755,31 @@ internal object IntegrityCheckingUniffiLib {
     internal fun ensureInitialized() = Unit
     external fun uniffi_taskr_ffi_checksum_func_preview_screens(
     ): Int
+    external fun uniffi_taskr_ffi_checksum_func_app_preview_screens(
+    ): Int
     external fun uniffi_taskr_ffi_checksum_method_tasklistpresenter_current(
     ): Int
     external fun uniffi_taskr_ffi_checksum_method_tasklistpresenter_dispatch(
     ): Int
+    external fun uniffi_taskr_ffi_checksum_method_apppresenter_current(
+    ): Int
+    external fun uniffi_taskr_ffi_checksum_method_apppresenter_dispatch(
+    ): Int
+    external fun uniffi_taskr_ffi_checksum_method_apppresenter_dispatch_with(
+    ): Int
     external fun uniffi_taskr_ffi_checksum_constructor_tasklistpresenter_new(
     ): Int
+    external fun uniffi_taskr_ffi_checksum_constructor_apppresenter_new(
+    ): Int
     external fun uniffi_taskr_ffi_checksum_method_logsink_log(
+    ): Int
+    external fun uniffi_taskr_ffi_checksum_method_appviewlistener_on_view(
+    ): Int
+    external fun uniffi_taskr_ffi_checksum_method_sessionvault_load(
+    ): Int
+    external fun uniffi_taskr_ffi_checksum_method_sessionvault_save(
+    ): Int
+    external fun uniffi_taskr_ffi_checksum_method_sessionvault_clear(
     ): Int
     external fun ffi_taskr_ffi_uniffi_contract_version(
     ): Int
@@ -723,7 +797,9 @@ internal object UniffiLib {
 
     init {
         Native.register(UniffiLib::class.java, findLibraryName(componentName = "taskr_ffi"))
+        uniffiCallbackInterfaceAppViewListener.register(this)
         uniffiCallbackInterfaceLogSink.register(this)
+        uniffiCallbackInterfaceSessionVault.register(this)
         
     }
 
@@ -738,9 +814,27 @@ internal object UniffiLib {
     ): RustBuffer.ByValue
     external fun uniffi_taskr_ffi_fn_method_tasklistpresenter_dispatch(`ptr`: Long,`intent`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
+    external fun uniffi_taskr_ffi_fn_clone_apppresenter(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_taskr_ffi_fn_free_apppresenter(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_taskr_ffi_fn_constructor_apppresenter_new(`config`: RustBuffer.ByValue,`vault`: Long,`sink`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_taskr_ffi_fn_method_apppresenter_current(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_taskr_ffi_fn_method_apppresenter_dispatch(`ptr`: Long,`intent`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_taskr_ffi_fn_method_apppresenter_dispatch_with(`ptr`: Long,`intent`: RustBuffer.ByValue,`listener`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
     external fun uniffi_taskr_ffi_fn_init_callback_vtable_logsink(`vtable`: UniffiVTableCallbackInterfaceLogSink,
     ): Unit
+    external fun uniffi_taskr_ffi_fn_init_callback_vtable_appviewlistener(`vtable`: UniffiVTableCallbackInterfaceAppViewListener,
+    ): Unit
+    external fun uniffi_taskr_ffi_fn_init_callback_vtable_sessionvault(`vtable`: UniffiVTableCallbackInterfaceSessionVault,
+    ): Unit
     external fun uniffi_taskr_ffi_fn_func_preview_screens(uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_taskr_ffi_fn_func_app_preview_screens(uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
     external fun ffi_taskr_ffi_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
@@ -864,16 +958,43 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if ((lib.uniffi_taskr_ffi_checksum_func_preview_screens() and 0xFFFF) != 20880) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if ((lib.uniffi_taskr_ffi_checksum_func_app_preview_screens() and 0xFFFF) != 30327) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if ((lib.uniffi_taskr_ffi_checksum_method_tasklistpresenter_current() and 0xFFFF) != 15539) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if ((lib.uniffi_taskr_ffi_checksum_method_tasklistpresenter_dispatch() and 0xFFFF) != 26573) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if ((lib.uniffi_taskr_ffi_checksum_method_apppresenter_current() and 0xFFFF) != 44205) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_taskr_ffi_checksum_method_apppresenter_dispatch() and 0xFFFF) != 31567) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_taskr_ffi_checksum_method_apppresenter_dispatch_with() and 0xFFFF) != 2182) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if ((lib.uniffi_taskr_ffi_checksum_constructor_tasklistpresenter_new() and 0xFFFF) != 5340) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if ((lib.uniffi_taskr_ffi_checksum_constructor_apppresenter_new() and 0xFFFF) != 28040) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if ((lib.uniffi_taskr_ffi_checksum_method_logsink_log() and 0xFFFF) != 58403) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_taskr_ffi_checksum_method_appviewlistener_on_view() and 0xFFFF) != 13445) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_taskr_ffi_checksum_method_sessionvault_load() and 0xFFFF) != 4415) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_taskr_ffi_checksum_method_sessionvault_save() and 0xFFFF) != 58063) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_taskr_ffi_checksum_method_sessionvault_clear() and 0xFFFF) != 46996) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -1263,6 +1384,311 @@ public object FfiConverterString: FfiConverter<String, RustBuffer.ByValue> {
 //
 
 
+public interface AppPresenterInterface {
+    
+    fun `current`(): AppView
+    
+    fun `dispatch`(`intent`: AppIntent): AppView
+    
+    /**
+     * `dispatch`, also handing `listener` each view shown while requests run.
+     */
+    fun `dispatchWith`(`intent`: AppIntent, `listener`: AppViewListener): AppView
+    
+    companion object
+}
+
+open class AppPresenter: Disposable, AutoCloseable, AppPresenterInterface
+{
+
+    @Suppress("UNUSED_PARAMETER")
+    /**
+     * @suppress
+     */
+    constructor(withHandle: UniffiWithHandle, handle: Long) {
+        this.handle = handle
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(handle))
+    }
+
+    /**
+     * @suppress
+     *
+     * This constructor can be used to instantiate a fake object. Only used for tests. Any
+     * attempt to actually use an object constructed this way will fail as there is no
+     * connected Rust object.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    constructor(noHandle: NoHandle) {
+        this.handle = 0
+        this.cleanable = null
+    }
+    constructor(`config`: AppConfig, `vault`: SessionVault, `sink`: LogSink) :
+        this(UniffiWithHandle, 
+    uniffiRustCall() { _status ->
+    UniffiLib.uniffi_taskr_ffi_fn_constructor_apppresenter_new(
+    
+        
+        FfiConverterTypeAppConfig.lower(`config`),
+        FfiConverterTypeSessionVault.lower(`vault`),
+        FfiConverterTypeLogSink.lower(`sink`),_status)
+}
+    )
+
+    protected val handle: Long
+    protected val cleanable: UniffiCleaner.Cleanable?
+
+    private val wasDestroyed = AtomicBoolean(false)
+    private val callCounter = AtomicLong(1)
+
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
+    override fun destroy() {
+        // Only allow a single call to this method.
+        // TODO: maybe we should log a warning if called more than once?
+        if (this.wasDestroyed.compareAndSet(false, true)) {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable?.clean()
+            }
+        }
+    }
+
+    @Synchronized
+    override fun close() {
+        this.destroy()
+    }
+
+    internal inline fun <R> callWithHandle(block: (handle: Long) -> R): R {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        do {
+            val c = this.callCounter.get()
+            if (c == 0L) {
+                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
+            }
+            if (c == Long.MAX_VALUE) {
+                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
+            }
+        } while (! this.callCounter.compareAndSet(c, c + 1L))
+        // Now we can safely do the method call without the handle being freed concurrently.
+        try {
+            return block(this.uniffiCloneHandle())
+        } finally {
+            // This decrement always matches the increment we performed above.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable?.clean()
+            }
+        }
+    }
+
+    // Use a static inner class instead of a closure so as not to accidentally
+    // capture `this` as part of the cleanable's action.
+    private class UniffiCleanAction(private val handle: Long) : Runnable {
+        override fun run() {
+            if (handle == 0.toLong()) {
+                // Fake object created with `NoHandle`, don't try to free.
+                return;
+            }
+            uniffiRustCall { status ->
+                UniffiLib.uniffi_taskr_ffi_fn_free_apppresenter(handle, status)
+            }
+        }
+    }
+
+    /**
+     * @suppress
+     */
+    fun uniffiCloneHandle(): Long {
+        if (handle == 0.toLong()) {
+            throw InternalException("uniffiCloneHandle() called on NoHandle object");
+        }
+        return uniffiRustCall() { status ->
+            UniffiLib.uniffi_taskr_ffi_fn_clone_apppresenter(handle, status)
+        }
+    }
+
+    override fun `current`(): AppView {
+            return FfiConverterTypeAppView.lift(
+    callWithHandle {
+    uniffiRustCall() { _status ->
+    UniffiLib.uniffi_taskr_ffi_fn_method_apppresenter_current(
+        it,
+        _status)
+}
+    }
+    )
+    }
+    
+
+    override fun `dispatch`(`intent`: AppIntent): AppView {
+            return FfiConverterTypeAppView.lift(
+    callWithHandle {
+    uniffiRustCall() { _status ->
+    UniffiLib.uniffi_taskr_ffi_fn_method_apppresenter_dispatch(
+        it,
+        
+        FfiConverterTypeAppIntent.lower(`intent`),_status)
+}
+    }
+    )
+    }
+    
+
+    
+    /**
+     * `dispatch`, also handing `listener` each view shown while requests run.
+     */override fun `dispatchWith`(`intent`: AppIntent, `listener`: AppViewListener): AppView {
+            return FfiConverterTypeAppView.lift(
+    callWithHandle {
+    uniffiRustCall() { _status ->
+    UniffiLib.uniffi_taskr_ffi_fn_method_apppresenter_dispatch_with(
+        it,
+        
+        FfiConverterTypeAppIntent.lower(`intent`),
+        FfiConverterTypeAppViewListener.lower(`listener`),_status)
+}
+    }
+    )
+    }
+    
+
+    
+
+    
+
+
+    
+    
+    /**
+     * @suppress
+     */
+    companion object
+    
+}
+
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeAppPresenter: FfiConverter<AppPresenter, Long> {
+    override fun lower(value: AppPresenter): Long {
+        return value.uniffiCloneHandle()
+    }
+
+    override fun lift(value: Long): AppPresenter {
+        return AppPresenter(UniffiWithHandle, value)
+    }
+
+    override fun read(buf: ByteBuffer): AppPresenter {
+        return lift(buf.getLong())
+    }
+
+    override fun allocationSize(value: AppPresenter) = 8UL
+
+    override fun write(value: AppPresenter, buf: ByteBuffer) {
+        buf.putLong(lower(value))
+    }
+}
+
+
+// This template implements a class for working with a Rust struct via a handle
+// to the live Rust struct on the other side of the FFI.
+//
+// There's some subtlety here, because we have to be careful not to operate on a Rust
+// struct after it has been dropped, and because we must expose a public API for freeing
+// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
+//
+//   * Each instance holds an opaque handle to the underlying Rust struct.
+//     Method calls need to read this handle from the object's state and pass it in to
+//     the Rust FFI.
+//
+//   * When an instance is no longer needed, its handle should be passed to a
+//     special destructor function provided by the Rust FFI, which will drop the
+//     underlying Rust struct.
+//
+//   * Given an instance, calling code is expected to call the special
+//     `destroy` method in order to free it after use, either by calling it explicitly
+//     or by using a higher-level helper like the `use` method. Failing to do so risks
+//     leaking the underlying Rust struct.
+//
+//   * We can't assume that calling code will do the right thing, and must be prepared
+//     to handle Kotlin method calls executing concurrently with or even after a call to
+//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
+//
+//   * We must never allow Rust code to operate on the underlying Rust struct after
+//     the destructor has been called, and must never call the destructor more than once.
+//     Doing so may trigger memory unsafety.
+//
+//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
+//     is implemented to call the destructor when the Kotlin object becomes unreachable.
+//     This is done in a background thread. This is not a panacea, and client code should be aware that
+//      1. the thread may starve if some there are objects that have poorly performing
+//     `drop` methods or do significant work in their `drop` methods.
+//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
+//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
+//
+// If we try to implement this with mutual exclusion on access to the handle, there is the
+// possibility of a race between a method call and a concurrent call to `destroy`:
+//
+//    * Thread A starts a method call, reads the value of the handle, but is interrupted
+//      before it can pass the handle over the FFI to Rust.
+//    * Thread B calls `destroy` and frees the underlying Rust struct.
+//    * Thread A resumes, passing the already-read handle value to Rust and triggering
+//      a use-after-free.
+//
+// One possible solution would be to use a `ReadWriteLock`, with each method call taking
+// a read lock (and thus allowed to run concurrently) and the special `destroy` method
+// taking a write lock (and thus blocking on live method calls). However, we aim not to
+// generate methods with any hidden blocking semantics, and a `destroy` method that might
+// block if called incorrectly seems to meet that bar.
+//
+// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
+// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
+// has been called. These are updated according to the following rules:
+//
+//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
+//      The initial value for the flag is false.
+//
+//    * At the start of each method call, we atomically check the counter.
+//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
+//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
+//
+//    * At the end of each method call, we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+//    * When `destroy` is called, we atomically flip the flag from false to true.
+//      If the flag was already true we silently fail.
+//      Otherwise we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
+// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
+//
+// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
+// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
+// of the underlying Rust code.
+//
+// This makes a cleaner a better alternative to _not_ calling `destroy()` as
+// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
+// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
+// thread may be starved, and the app will leak memory.
+//
+// In this case, `destroy`ing manually may be a better solution.
+//
+// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
+// with Rust peers are reclaimed:
+//
+// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
+// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
+// 3. The memory is reclaimed when the process terminates.
+//
+// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
+//
+
+
 public interface TaskListPresenterInterface {
     
     fun `current`(): TaskListView
@@ -1454,6 +1880,93 @@ public object FfiConverterTypeTaskListPresenter: FfiConverter<TaskListPresenter,
 
 
 
+data class AppConfig (
+    /**
+     * API root, e.g. `http://192.168.240.1:8787/api` from Waydroid.
+     */
+    var `apiUrl`: kotlin.String
+    , 
+    /**
+     * Supabase Auth root. Without it the app uses dev sign-in.
+     */
+    var `authUrl`: kotlin.String?
+    , 
+    var `authKey`: kotlin.String?
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeAppConfig: FfiConverterRustBuffer<AppConfig> {
+    override fun read(buf: ByteBuffer): AppConfig {
+        return AppConfig(
+            FfiConverterString.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalString.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: AppConfig) = (
+            FfiConverterString.allocationSize(value.`apiUrl`) +
+            FfiConverterOptionalString.allocationSize(value.`authUrl`) +
+            FfiConverterOptionalString.allocationSize(value.`authKey`)
+    )
+
+    override fun write(value: AppConfig, buf: ByteBuffer) {
+            FfiConverterString.write(value.`apiUrl`, buf)
+            FfiConverterOptionalString.write(value.`authUrl`, buf)
+            FfiConverterOptionalString.write(value.`authKey`, buf)
+    }
+}
+
+
+
+data class AppPreviewScreen (
+    var `name`: kotlin.String
+    , 
+    var `view`: AppView
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeAppPreviewScreen: FfiConverterRustBuffer<AppPreviewScreen> {
+    override fun read(buf: ByteBuffer): AppPreviewScreen {
+        return AppPreviewScreen(
+            FfiConverterString.read(buf),
+            FfiConverterTypeAppView.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: AppPreviewScreen) = (
+            FfiConverterString.allocationSize(value.`name`) +
+            FfiConverterTypeAppView.allocationSize(value.`view`)
+    )
+
+    override fun write(value: AppPreviewScreen, buf: ByteBuffer) {
+            FfiConverterString.write(value.`name`, buf)
+            FfiConverterTypeAppView.write(value.`view`, buf)
+    }
+}
+
+
+
 data class ColumnView (
     var `title`: kotlin.String
     , 
@@ -1535,6 +2048,112 @@ public object FfiConverterTypeLogField: FfiConverterRustBuffer<LogField> {
 
 
 
+data class MemberRowView (
+    var `email`: kotlin.String
+    , 
+    var `role`: MemberRole
+    , 
+    var `roleLabel`: kotlin.String
+    , 
+    var `isYou`: kotlin.Boolean
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeMemberRowView: FfiConverterRustBuffer<MemberRowView> {
+    override fun read(buf: ByteBuffer): MemberRowView {
+        return MemberRowView(
+            FfiConverterString.read(buf),
+            FfiConverterTypeMemberRole.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterBoolean.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: MemberRowView) = (
+            FfiConverterString.allocationSize(value.`email`) +
+            FfiConverterTypeMemberRole.allocationSize(value.`role`) +
+            FfiConverterString.allocationSize(value.`roleLabel`) +
+            FfiConverterBoolean.allocationSize(value.`isYou`)
+    )
+
+    override fun write(value: MemberRowView, buf: ByteBuffer) {
+            FfiConverterString.write(value.`email`, buf)
+            FfiConverterTypeMemberRole.write(value.`role`, buf)
+            FfiConverterString.write(value.`roleLabel`, buf)
+            FfiConverterBoolean.write(value.`isYou`, buf)
+    }
+}
+
+
+
+data class MembersView (
+    var `rows`: List<MemberRowView>
+    , 
+    var `canManage`: kotlin.Boolean
+    , 
+    var `roleOptions`: List<RoleOptionView>
+    , 
+    var `isLoading`: kotlin.Boolean
+    , 
+    var `error`: kotlin.String?
+    , 
+    var `notice`: kotlin.String?
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeMembersView: FfiConverterRustBuffer<MembersView> {
+    override fun read(buf: ByteBuffer): MembersView {
+        return MembersView(
+            FfiConverterSequenceTypeMemberRowView.read(buf),
+            FfiConverterBoolean.read(buf),
+            FfiConverterSequenceTypeRoleOptionView.read(buf),
+            FfiConverterBoolean.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalString.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: MembersView) = (
+            FfiConverterSequenceTypeMemberRowView.allocationSize(value.`rows`) +
+            FfiConverterBoolean.allocationSize(value.`canManage`) +
+            FfiConverterSequenceTypeRoleOptionView.allocationSize(value.`roleOptions`) +
+            FfiConverterBoolean.allocationSize(value.`isLoading`) +
+            FfiConverterOptionalString.allocationSize(value.`error`) +
+            FfiConverterOptionalString.allocationSize(value.`notice`)
+    )
+
+    override fun write(value: MembersView, buf: ByteBuffer) {
+            FfiConverterSequenceTypeMemberRowView.write(value.`rows`, buf)
+            FfiConverterBoolean.write(value.`canManage`, buf)
+            FfiConverterSequenceTypeRoleOptionView.write(value.`roleOptions`, buf)
+            FfiConverterBoolean.write(value.`isLoading`, buf)
+            FfiConverterOptionalString.write(value.`error`, buf)
+            FfiConverterOptionalString.write(value.`notice`, buf)
+    }
+}
+
+
+
 data class PreviewScreen (
     var `name`: kotlin.String
     , 
@@ -1568,6 +2187,44 @@ public object FfiConverterTypePreviewScreen: FfiConverterRustBuffer<PreviewScree
     override fun write(value: PreviewScreen, buf: ByteBuffer) {
             FfiConverterString.write(value.`name`, buf)
             FfiConverterTypeTaskListView.write(value.`view`, buf)
+    }
+}
+
+
+
+data class RoleOptionView (
+    var `role`: MemberRole
+    , 
+    var `label`: kotlin.String
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeRoleOptionView: FfiConverterRustBuffer<RoleOptionView> {
+    override fun read(buf: ByteBuffer): RoleOptionView {
+        return RoleOptionView(
+            FfiConverterTypeMemberRole.read(buf),
+            FfiConverterString.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: RoleOptionView) = (
+            FfiConverterTypeMemberRole.allocationSize(value.`role`) +
+            FfiConverterString.allocationSize(value.`label`)
+    )
+
+    override fun write(value: RoleOptionView, buf: ByteBuffer) {
+            FfiConverterTypeMemberRole.write(value.`role`, buf)
+            FfiConverterString.write(value.`label`, buf)
     }
 }
 
@@ -1616,6 +2273,158 @@ public object FfiConverterTypeScopeTabView: FfiConverterRustBuffer<ScopeTabView>
 
 
 
+data class ScreenNavView (
+    var `screen`: AppScreen
+    , 
+    var `label`: kotlin.String
+    , 
+    var `selected`: kotlin.Boolean
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeScreenNavView: FfiConverterRustBuffer<ScreenNavView> {
+    override fun read(buf: ByteBuffer): ScreenNavView {
+        return ScreenNavView(
+            FfiConverterTypeAppScreen.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterBoolean.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: ScreenNavView) = (
+            FfiConverterTypeAppScreen.allocationSize(value.`screen`) +
+            FfiConverterString.allocationSize(value.`label`) +
+            FfiConverterBoolean.allocationSize(value.`selected`)
+    )
+
+    override fun write(value: ScreenNavView, buf: ByteBuffer) {
+            FfiConverterTypeAppScreen.write(value.`screen`, buf)
+            FfiConverterString.write(value.`label`, buf)
+            FfiConverterBoolean.write(value.`selected`, buf)
+    }
+}
+
+
+
+data class SignInView (
+    var `busy`: kotlin.Boolean
+    , 
+    var `error`: kotlin.String?
+    , 
+    var `notice`: kotlin.String?
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeSignInView: FfiConverterRustBuffer<SignInView> {
+    override fun read(buf: ByteBuffer): SignInView {
+        return SignInView(
+            FfiConverterBoolean.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalString.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: SignInView) = (
+            FfiConverterBoolean.allocationSize(value.`busy`) +
+            FfiConverterOptionalString.allocationSize(value.`error`) +
+            FfiConverterOptionalString.allocationSize(value.`notice`)
+    )
+
+    override fun write(value: SignInView, buf: ByteBuffer) {
+            FfiConverterBoolean.write(value.`busy`, buf)
+            FfiConverterOptionalString.write(value.`error`, buf)
+            FfiConverterOptionalString.write(value.`notice`, buf)
+    }
+}
+
+
+
+data class SignedInView (
+    var `email`: kotlin.String
+    , 
+    var `workspaces`: List<WorkspaceNavView>
+    , 
+    /**
+     * The open workspace; sent back with `AppIntent::Tasks` and `AppIntent::Members`.
+     */
+    var `workspace`: kotlin.String?
+    , 
+    var `screens`: List<ScreenNavView>
+    , 
+    var `title`: kotlin.String
+    , 
+    var `error`: kotlin.String?
+    , 
+    var `screen`: ScreenView
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeSignedInView: FfiConverterRustBuffer<SignedInView> {
+    override fun read(buf: ByteBuffer): SignedInView {
+        return SignedInView(
+            FfiConverterString.read(buf),
+            FfiConverterSequenceTypeWorkspaceNavView.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterSequenceTypeScreenNavView.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterTypeScreenView.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: SignedInView) = (
+            FfiConverterString.allocationSize(value.`email`) +
+            FfiConverterSequenceTypeWorkspaceNavView.allocationSize(value.`workspaces`) +
+            FfiConverterOptionalString.allocationSize(value.`workspace`) +
+            FfiConverterSequenceTypeScreenNavView.allocationSize(value.`screens`) +
+            FfiConverterString.allocationSize(value.`title`) +
+            FfiConverterOptionalString.allocationSize(value.`error`) +
+            FfiConverterTypeScreenView.allocationSize(value.`screen`)
+    )
+
+    override fun write(value: SignedInView, buf: ByteBuffer) {
+            FfiConverterString.write(value.`email`, buf)
+            FfiConverterSequenceTypeWorkspaceNavView.write(value.`workspaces`, buf)
+            FfiConverterOptionalString.write(value.`workspace`, buf)
+            FfiConverterSequenceTypeScreenNavView.write(value.`screens`, buf)
+            FfiConverterString.write(value.`title`, buf)
+            FfiConverterOptionalString.write(value.`error`, buf)
+            FfiConverterTypeScreenView.write(value.`screen`, buf)
+    }
+}
+
+
+
 data class TaskListView (
     var `tabs`: List<ScopeTabView>
     , 
@@ -1632,6 +2441,8 @@ data class TaskListView (
     var `error`: kotlin.String?
     , 
     var `notice`: kotlin.String?
+    , 
+    var `canChange`: kotlin.Boolean
     
 ){
     
@@ -1656,6 +2467,7 @@ public object FfiConverterTypeTaskListView: FfiConverterRustBuffer<TaskListView>
             FfiConverterBoolean.read(buf),
             FfiConverterOptionalString.read(buf),
             FfiConverterOptionalString.read(buf),
+            FfiConverterBoolean.read(buf),
         )
     }
 
@@ -1667,7 +2479,8 @@ public object FfiConverterTypeTaskListView: FfiConverterRustBuffer<TaskListView>
             FfiConverterOptionalString.allocationSize(value.`emptyMessage`) +
             FfiConverterBoolean.allocationSize(value.`isLoading`) +
             FfiConverterOptionalString.allocationSize(value.`error`) +
-            FfiConverterOptionalString.allocationSize(value.`notice`)
+            FfiConverterOptionalString.allocationSize(value.`notice`) +
+            FfiConverterBoolean.allocationSize(value.`canChange`)
     )
 
     override fun write(value: TaskListView, buf: ByteBuffer) {
@@ -1679,6 +2492,7 @@ public object FfiConverterTypeTaskListView: FfiConverterRustBuffer<TaskListView>
             FfiConverterBoolean.write(value.`isLoading`, buf)
             FfiConverterOptionalString.write(value.`error`, buf)
             FfiConverterOptionalString.write(value.`notice`, buf)
+            FfiConverterBoolean.write(value.`canChange`, buf)
     }
 }
 
@@ -1729,6 +2543,426 @@ public object FfiConverterTypeTaskRowView: FfiConverterRustBuffer<TaskRowView> {
             FfiConverterSequenceString.write(value.`cells`, buf)
     }
 }
+
+
+
+data class WorkspaceNavView (
+    var `id`: kotlin.String
+    , 
+    var `name`: kotlin.String
+    , 
+    var `roleLabel`: kotlin.String
+    , 
+    var `selected`: kotlin.Boolean
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeWorkspaceNavView: FfiConverterRustBuffer<WorkspaceNavView> {
+    override fun read(buf: ByteBuffer): WorkspaceNavView {
+        return WorkspaceNavView(
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterBoolean.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: WorkspaceNavView) = (
+            FfiConverterString.allocationSize(value.`id`) +
+            FfiConverterString.allocationSize(value.`name`) +
+            FfiConverterString.allocationSize(value.`roleLabel`) +
+            FfiConverterBoolean.allocationSize(value.`selected`)
+    )
+
+    override fun write(value: WorkspaceNavView, buf: ByteBuffer) {
+            FfiConverterString.write(value.`id`, buf)
+            FfiConverterString.write(value.`name`, buf)
+            FfiConverterString.write(value.`roleLabel`, buf)
+            FfiConverterBoolean.write(value.`selected`, buf)
+    }
+}
+
+
+
+/**
+ * Screen intents (`Tasks`, `Members`) carry `SignedInView::workspace` of the
+ * view that showed the screen.
+ */
+sealed class AppIntent {
+    
+    object Started : AppIntent()
+    
+    
+    data class SignInSubmitted(
+        val `email`: kotlin.String, 
+        val `password`: kotlin.String) : AppIntent()
+        
+    {
+        
+
+        companion object
+    }
+    
+    data class SignUpSubmitted(
+        val `email`: kotlin.String, 
+        val `password`: kotlin.String) : AppIntent()
+        
+    {
+        
+
+        companion object
+    }
+    
+    object SignOutRequested : AppIntent()
+    
+    
+    data class WorkspaceSelected(
+        val `id`: kotlin.String) : AppIntent()
+        
+    {
+        
+
+        companion object
+    }
+    
+    data class ScreenSelected(
+        val `screen`: dev.taskr.core.AppScreen) : AppIntent()
+        
+    {
+        
+
+        companion object
+    }
+    
+    object MessageDismissed : AppIntent()
+    
+    
+    data class Tasks(
+        val `workspace`: kotlin.String, 
+        val `intent`: dev.taskr.core.TaskIntent) : AppIntent()
+        
+    {
+        
+
+        companion object
+    }
+    
+    data class Members(
+        val `workspace`: kotlin.String, 
+        val `intent`: dev.taskr.core.MembersIntent) : AppIntent()
+        
+    {
+        
+
+        companion object
+    }
+    
+
+    
+
+    
+    
+
+
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeAppIntent : FfiConverterRustBuffer<AppIntent>{
+    override fun read(buf: ByteBuffer): AppIntent {
+        return when(buf.getInt()) {
+            1 -> AppIntent.Started
+            2 -> AppIntent.SignInSubmitted(
+                FfiConverterString.read(buf),
+                FfiConverterString.read(buf),
+                )
+            3 -> AppIntent.SignUpSubmitted(
+                FfiConverterString.read(buf),
+                FfiConverterString.read(buf),
+                )
+            4 -> AppIntent.SignOutRequested
+            5 -> AppIntent.WorkspaceSelected(
+                FfiConverterString.read(buf),
+                )
+            6 -> AppIntent.ScreenSelected(
+                FfiConverterTypeAppScreen.read(buf),
+                )
+            7 -> AppIntent.MessageDismissed
+            8 -> AppIntent.Tasks(
+                FfiConverterString.read(buf),
+                FfiConverterTypeTaskIntent.read(buf),
+                )
+            9 -> AppIntent.Members(
+                FfiConverterString.read(buf),
+                FfiConverterTypeMembersIntent.read(buf),
+                )
+            else -> throw RuntimeException("invalid enum value, something is very wrong!!")
+        }
+    }
+
+    override fun allocationSize(value: AppIntent): ULong = when(value) {
+        is AppIntent.Started -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+            )
+        }
+        is AppIntent.SignInSubmitted -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterString.allocationSize(value.`email`)
+                + FfiConverterString.allocationSize(value.`password`)
+            )
+        }
+        is AppIntent.SignUpSubmitted -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterString.allocationSize(value.`email`)
+                + FfiConverterString.allocationSize(value.`password`)
+            )
+        }
+        is AppIntent.SignOutRequested -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+            )
+        }
+        is AppIntent.WorkspaceSelected -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterString.allocationSize(value.`id`)
+            )
+        }
+        is AppIntent.ScreenSelected -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterTypeAppScreen.allocationSize(value.`screen`)
+            )
+        }
+        is AppIntent.MessageDismissed -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+            )
+        }
+        is AppIntent.Tasks -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterString.allocationSize(value.`workspace`)
+                + FfiConverterTypeTaskIntent.allocationSize(value.`intent`)
+            )
+        }
+        is AppIntent.Members -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterString.allocationSize(value.`workspace`)
+                + FfiConverterTypeMembersIntent.allocationSize(value.`intent`)
+            )
+        }
+    }
+
+    override fun write(value: AppIntent, buf: ByteBuffer) {
+        when(value) {
+            is AppIntent.Started -> {
+                buf.putInt(1)
+                Unit
+            }
+            is AppIntent.SignInSubmitted -> {
+                buf.putInt(2)
+                FfiConverterString.write(value.`email`, buf)
+                FfiConverterString.write(value.`password`, buf)
+                Unit
+            }
+            is AppIntent.SignUpSubmitted -> {
+                buf.putInt(3)
+                FfiConverterString.write(value.`email`, buf)
+                FfiConverterString.write(value.`password`, buf)
+                Unit
+            }
+            is AppIntent.SignOutRequested -> {
+                buf.putInt(4)
+                Unit
+            }
+            is AppIntent.WorkspaceSelected -> {
+                buf.putInt(5)
+                FfiConverterString.write(value.`id`, buf)
+                Unit
+            }
+            is AppIntent.ScreenSelected -> {
+                buf.putInt(6)
+                FfiConverterTypeAppScreen.write(value.`screen`, buf)
+                Unit
+            }
+            is AppIntent.MessageDismissed -> {
+                buf.putInt(7)
+                Unit
+            }
+            is AppIntent.Tasks -> {
+                buf.putInt(8)
+                FfiConverterString.write(value.`workspace`, buf)
+                FfiConverterTypeTaskIntent.write(value.`intent`, buf)
+                Unit
+            }
+            is AppIntent.Members -> {
+                buf.putInt(9)
+                FfiConverterString.write(value.`workspace`, buf)
+                FfiConverterTypeMembersIntent.write(value.`intent`, buf)
+                Unit
+            }
+        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
+    }
+}
+
+
+
+
+
+
+enum class AppScreen {
+    
+    TASKS,
+    MEMBERS;
+
+    
+
+
+    companion object
+}
+
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeAppScreen: FfiConverterRustBuffer<AppScreen> {
+    override fun read(buf: ByteBuffer) = try {
+        AppScreen.values()[buf.getInt() - 1]
+    } catch (e: IndexOutOfBoundsException) {
+        throw RuntimeException("invalid enum value, something is very wrong!!", e)
+    }
+
+    override fun allocationSize(value: AppScreen) = 4UL
+
+    override fun write(value: AppScreen, buf: ByteBuffer) {
+        buf.putInt(value.ordinal + 1)
+    }
+}
+
+
+
+
+
+sealed class AppView {
+    
+    object Starting : AppView()
+    
+    
+    data class SignedOut(
+        val `view`: dev.taskr.core.SignInView) : AppView()
+        
+    {
+        
+
+        companion object
+    }
+    
+    data class SignedIn(
+        val `view`: dev.taskr.core.SignedInView) : AppView()
+        
+    {
+        
+
+        companion object
+    }
+    
+
+    
+
+    
+    
+
+
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeAppView : FfiConverterRustBuffer<AppView>{
+    override fun read(buf: ByteBuffer): AppView {
+        return when(buf.getInt()) {
+            1 -> AppView.Starting
+            2 -> AppView.SignedOut(
+                FfiConverterTypeSignInView.read(buf),
+                )
+            3 -> AppView.SignedIn(
+                FfiConverterTypeSignedInView.read(buf),
+                )
+            else -> throw RuntimeException("invalid enum value, something is very wrong!!")
+        }
+    }
+
+    override fun allocationSize(value: AppView): ULong = when(value) {
+        is AppView.Starting -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+            )
+        }
+        is AppView.SignedOut -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterTypeSignInView.allocationSize(value.`view`)
+            )
+        }
+        is AppView.SignedIn -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterTypeSignedInView.allocationSize(value.`view`)
+            )
+        }
+    }
+
+    override fun write(value: AppView, buf: ByteBuffer) {
+        when(value) {
+            is AppView.Starting -> {
+                buf.putInt(1)
+                Unit
+            }
+            is AppView.SignedOut -> {
+                buf.putInt(2)
+                FfiConverterTypeSignInView.write(value.`view`, buf)
+                Unit
+            }
+            is AppView.SignedIn -> {
+                buf.putInt(3)
+                FfiConverterTypeSignedInView.write(value.`view`, buf)
+                Unit
+            }
+        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
+    }
+}
+
+
 
 
 
@@ -1795,6 +3029,281 @@ public object FfiConverterTypeLogLevel: FfiConverterRustBuffer<LogLevel> {
 
     override fun write(value: LogLevel, buf: ByteBuffer) {
         buf.putInt(value.ordinal + 1)
+    }
+}
+
+
+
+
+
+
+enum class MemberRole {
+    
+    OWNER,
+    EDITOR,
+    VIEWER;
+
+    
+
+
+    companion object
+}
+
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeMemberRole: FfiConverterRustBuffer<MemberRole> {
+    override fun read(buf: ByteBuffer) = try {
+        MemberRole.values()[buf.getInt() - 1]
+    } catch (e: IndexOutOfBoundsException) {
+        throw RuntimeException("invalid enum value, something is very wrong!!", e)
+    }
+
+    override fun allocationSize(value: MemberRole) = 4UL
+
+    override fun write(value: MemberRole, buf: ByteBuffer) {
+        buf.putInt(value.ordinal + 1)
+    }
+}
+
+
+
+
+
+sealed class MembersIntent {
+    
+    object Opened : MembersIntent()
+    
+    
+    data class AddSubmitted(
+        val `email`: kotlin.String, 
+        val `role`: dev.taskr.core.MemberRole) : MembersIntent()
+        
+    {
+        
+
+        companion object
+    }
+    
+    data class RoleChanged(
+        val `email`: kotlin.String, 
+        val `role`: dev.taskr.core.MemberRole) : MembersIntent()
+        
+    {
+        
+
+        companion object
+    }
+    
+    data class RemoveRequested(
+        val `email`: kotlin.String) : MembersIntent()
+        
+    {
+        
+
+        companion object
+    }
+    
+    object MessageDismissed : MembersIntent()
+    
+    
+
+    
+
+    
+    
+
+
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeMembersIntent : FfiConverterRustBuffer<MembersIntent>{
+    override fun read(buf: ByteBuffer): MembersIntent {
+        return when(buf.getInt()) {
+            1 -> MembersIntent.Opened
+            2 -> MembersIntent.AddSubmitted(
+                FfiConverterString.read(buf),
+                FfiConverterTypeMemberRole.read(buf),
+                )
+            3 -> MembersIntent.RoleChanged(
+                FfiConverterString.read(buf),
+                FfiConverterTypeMemberRole.read(buf),
+                )
+            4 -> MembersIntent.RemoveRequested(
+                FfiConverterString.read(buf),
+                )
+            5 -> MembersIntent.MessageDismissed
+            else -> throw RuntimeException("invalid enum value, something is very wrong!!")
+        }
+    }
+
+    override fun allocationSize(value: MembersIntent): ULong = when(value) {
+        is MembersIntent.Opened -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+            )
+        }
+        is MembersIntent.AddSubmitted -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterString.allocationSize(value.`email`)
+                + FfiConverterTypeMemberRole.allocationSize(value.`role`)
+            )
+        }
+        is MembersIntent.RoleChanged -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterString.allocationSize(value.`email`)
+                + FfiConverterTypeMemberRole.allocationSize(value.`role`)
+            )
+        }
+        is MembersIntent.RemoveRequested -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterString.allocationSize(value.`email`)
+            )
+        }
+        is MembersIntent.MessageDismissed -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+            )
+        }
+    }
+
+    override fun write(value: MembersIntent, buf: ByteBuffer) {
+        when(value) {
+            is MembersIntent.Opened -> {
+                buf.putInt(1)
+                Unit
+            }
+            is MembersIntent.AddSubmitted -> {
+                buf.putInt(2)
+                FfiConverterString.write(value.`email`, buf)
+                FfiConverterTypeMemberRole.write(value.`role`, buf)
+                Unit
+            }
+            is MembersIntent.RoleChanged -> {
+                buf.putInt(3)
+                FfiConverterString.write(value.`email`, buf)
+                FfiConverterTypeMemberRole.write(value.`role`, buf)
+                Unit
+            }
+            is MembersIntent.RemoveRequested -> {
+                buf.putInt(4)
+                FfiConverterString.write(value.`email`, buf)
+                Unit
+            }
+            is MembersIntent.MessageDismissed -> {
+                buf.putInt(5)
+                Unit
+            }
+        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
+    }
+}
+
+
+
+
+
+sealed class ScreenView {
+    
+    object Loading : ScreenView()
+    
+    
+    data class Tasks(
+        val `view`: dev.taskr.core.TaskListView) : ScreenView()
+        
+    {
+        
+
+        companion object
+    }
+    
+    data class Members(
+        val `view`: dev.taskr.core.MembersView) : ScreenView()
+        
+    {
+        
+
+        companion object
+    }
+    
+
+    
+
+    
+    
+
+
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeScreenView : FfiConverterRustBuffer<ScreenView>{
+    override fun read(buf: ByteBuffer): ScreenView {
+        return when(buf.getInt()) {
+            1 -> ScreenView.Loading
+            2 -> ScreenView.Tasks(
+                FfiConverterTypeTaskListView.read(buf),
+                )
+            3 -> ScreenView.Members(
+                FfiConverterTypeMembersView.read(buf),
+                )
+            else -> throw RuntimeException("invalid enum value, something is very wrong!!")
+        }
+    }
+
+    override fun allocationSize(value: ScreenView): ULong = when(value) {
+        is ScreenView.Loading -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+            )
+        }
+        is ScreenView.Tasks -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterTypeTaskListView.allocationSize(value.`view`)
+            )
+        }
+        is ScreenView.Members -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+                + FfiConverterTypeMembersView.allocationSize(value.`view`)
+            )
+        }
+    }
+
+    override fun write(value: ScreenView, buf: ByteBuffer) {
+        when(value) {
+            is ScreenView.Loading -> {
+                buf.putInt(1)
+                Unit
+            }
+            is ScreenView.Tasks -> {
+                buf.putInt(2)
+                FfiConverterTypeTaskListView.write(value.`view`, buf)
+                Unit
+            }
+            is ScreenView.Members -> {
+                buf.putInt(3)
+                FfiConverterTypeMembersView.write(value.`view`, buf)
+                Unit
+            }
+        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
     }
 }
 
@@ -2013,6 +3522,72 @@ public object FfiConverterTypeTaskScope: FfiConverterRustBuffer<TaskScope> {
 
 
 /**
+ * Implemented in Kotlin and Swift: receives the views `dispatch_with` shows
+ * while requests run (e.g. the new workspace loading right after it was
+ * selected), so the previous screen does not stay interactive meanwhile.
+ * Called on the thread that called `dispatch_with`.
+ */
+public interface AppViewListener {
+    
+    fun `onView`(`view`: AppView)
+    
+    companion object
+}
+
+
+
+// Put the implementation in an object so we don't pollute the top-level namespace
+internal object uniffiCallbackInterfaceAppViewListener {
+    internal object `onView`: UniffiCallbackInterfaceAppViewListenerMethod0 {
+        override fun callback(`uniffiHandle`: Long,`view`: RustBuffer.ByValue,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,) {
+            val uniffiObj = FfiConverterTypeAppViewListener.handleMap.get(uniffiHandle)
+            val makeCall = { ->
+                uniffiObj.`onView`(
+                    FfiConverterTypeAppView.lift(`view`),
+                )
+            }
+            val writeReturn = { _: Unit -> Unit }
+            uniffiTraitInterfaceCall(uniffiCallStatus, makeCall, writeReturn)
+        }
+    }
+
+    internal object uniffiFree: UniffiCallbackInterfaceFree {
+        override fun callback(handle: Long) {
+            FfiConverterTypeAppViewListener.handleMap.remove(handle)
+        }
+    }
+
+    internal object uniffiClone: UniffiCallbackInterfaceClone {
+        override fun callback(handle: Long): Long {
+            return FfiConverterTypeAppViewListener.handleMap.clone(handle)
+        }
+    }
+
+    internal var vtable = UniffiVTableCallbackInterfaceAppViewListener.UniffiByValue(
+        uniffiFree,
+        uniffiClone,
+        `onView`,
+    )
+
+    // Registers the foreign callback with the Rust side.
+    // This method is generated for each callback interface.
+    internal fun register(lib: UniffiLib) {
+        lib.uniffi_taskr_ffi_fn_init_callback_vtable_appviewlistener(vtable)
+    }
+}
+
+/**
+ * The ffiConverter which transforms the Callbacks in to handles to pass to Rust.
+ *
+ * @suppress
+ */
+public object FfiConverterTypeAppViewListener: FfiConverterCallbackInterface<AppViewListener>()
+
+
+
+
+
+/**
  * Implemented in Kotlin (logcat) and Swift (os_log): the telemetry port,
  * fulfilled by the platform.
  */
@@ -2073,6 +3648,98 @@ internal object uniffiCallbackInterfaceLogSink {
  * @suppress
  */
 public object FfiConverterTypeLogSink: FfiConverterCallbackInterface<LogSink>()
+
+
+
+
+
+/**
+ * Implemented in Kotlin and Swift: where the session lives between launches.
+ * Values are opaque strings; the platform only stores them securely.
+ */
+public interface SessionVault {
+    
+    fun `load`(): kotlin.String?
+    
+    fun `save`(`value`: kotlin.String)
+    
+    fun `clear`()
+    
+    companion object
+}
+
+
+
+// Put the implementation in an object so we don't pollute the top-level namespace
+internal object uniffiCallbackInterfaceSessionVault {
+    internal object `load`: UniffiCallbackInterfaceSessionVaultMethod0 {
+        override fun callback(`uniffiHandle`: Long,`uniffiOutReturn`: RustBuffer,uniffiCallStatus: UniffiRustCallStatus,) {
+            val uniffiObj = FfiConverterTypeSessionVault.handleMap.get(uniffiHandle)
+            val makeCall = { ->
+                uniffiObj.`load`(
+                )
+            }
+            val writeReturn = { value: kotlin.String? -> uniffiOutReturn.setValue(FfiConverterOptionalString.lower(value)) }
+            uniffiTraitInterfaceCall(uniffiCallStatus, makeCall, writeReturn)
+        }
+    }
+    internal object `save`: UniffiCallbackInterfaceSessionVaultMethod1 {
+        override fun callback(`uniffiHandle`: Long,`value`: RustBuffer.ByValue,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,) {
+            val uniffiObj = FfiConverterTypeSessionVault.handleMap.get(uniffiHandle)
+            val makeCall = { ->
+                uniffiObj.`save`(
+                    FfiConverterString.lift(`value`),
+                )
+            }
+            val writeReturn = { _: Unit -> Unit }
+            uniffiTraitInterfaceCall(uniffiCallStatus, makeCall, writeReturn)
+        }
+    }
+    internal object `clear`: UniffiCallbackInterfaceSessionVaultMethod2 {
+        override fun callback(`uniffiHandle`: Long,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,) {
+            val uniffiObj = FfiConverterTypeSessionVault.handleMap.get(uniffiHandle)
+            val makeCall = { ->
+                uniffiObj.`clear`(
+                )
+            }
+            val writeReturn = { _: Unit -> Unit }
+            uniffiTraitInterfaceCall(uniffiCallStatus, makeCall, writeReturn)
+        }
+    }
+
+    internal object uniffiFree: UniffiCallbackInterfaceFree {
+        override fun callback(handle: Long) {
+            FfiConverterTypeSessionVault.handleMap.remove(handle)
+        }
+    }
+
+    internal object uniffiClone: UniffiCallbackInterfaceClone {
+        override fun callback(handle: Long): Long {
+            return FfiConverterTypeSessionVault.handleMap.clone(handle)
+        }
+    }
+
+    internal var vtable = UniffiVTableCallbackInterfaceSessionVault.UniffiByValue(
+        uniffiFree,
+        uniffiClone,
+        `load`,
+        `save`,
+        `clear`,
+    )
+
+    // Registers the foreign callback with the Rust side.
+    // This method is generated for each callback interface.
+    internal fun register(lib: UniffiLib) {
+        lib.uniffi_taskr_ffi_fn_init_callback_vtable_sessionvault(vtable)
+    }
+}
+
+/**
+ * The ffiConverter which transforms the Callbacks in to handles to pass to Rust.
+ *
+ * @suppress
+ */
+public object FfiConverterTypeSessionVault: FfiConverterCallbackInterface<SessionVault>()
 
 
 
@@ -2140,6 +3807,34 @@ public object FfiConverterSequenceString: FfiConverterRustBuffer<List<kotlin.Str
 /**
  * @suppress
  */
+public object FfiConverterSequenceTypeAppPreviewScreen: FfiConverterRustBuffer<List<AppPreviewScreen>> {
+    override fun read(buf: ByteBuffer): List<AppPreviewScreen> {
+        val len = buf.getInt()
+        return List<AppPreviewScreen>(len) {
+            FfiConverterTypeAppPreviewScreen.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<AppPreviewScreen>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypeAppPreviewScreen.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<AppPreviewScreen>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypeAppPreviewScreen.write(it, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
 public object FfiConverterSequenceTypeColumnView: FfiConverterRustBuffer<List<ColumnView>> {
     override fun read(buf: ByteBuffer): List<ColumnView> {
         val len = buf.getInt()
@@ -2196,6 +3891,34 @@ public object FfiConverterSequenceTypeLogField: FfiConverterRustBuffer<List<LogF
 /**
  * @suppress
  */
+public object FfiConverterSequenceTypeMemberRowView: FfiConverterRustBuffer<List<MemberRowView>> {
+    override fun read(buf: ByteBuffer): List<MemberRowView> {
+        val len = buf.getInt()
+        return List<MemberRowView>(len) {
+            FfiConverterTypeMemberRowView.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<MemberRowView>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypeMemberRowView.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<MemberRowView>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypeMemberRowView.write(it, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
 public object FfiConverterSequenceTypePreviewScreen: FfiConverterRustBuffer<List<PreviewScreen>> {
     override fun read(buf: ByteBuffer): List<PreviewScreen> {
         val len = buf.getInt()
@@ -2214,6 +3937,34 @@ public object FfiConverterSequenceTypePreviewScreen: FfiConverterRustBuffer<List
         buf.putInt(value.size)
         value.iterator().forEach {
             FfiConverterTypePreviewScreen.write(it, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
+public object FfiConverterSequenceTypeRoleOptionView: FfiConverterRustBuffer<List<RoleOptionView>> {
+    override fun read(buf: ByteBuffer): List<RoleOptionView> {
+        val len = buf.getInt()
+        return List<RoleOptionView>(len) {
+            FfiConverterTypeRoleOptionView.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<RoleOptionView>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypeRoleOptionView.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<RoleOptionView>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypeRoleOptionView.write(it, buf)
         }
     }
 }
@@ -2252,6 +4003,34 @@ public object FfiConverterSequenceTypeScopeTabView: FfiConverterRustBuffer<List<
 /**
  * @suppress
  */
+public object FfiConverterSequenceTypeScreenNavView: FfiConverterRustBuffer<List<ScreenNavView>> {
+    override fun read(buf: ByteBuffer): List<ScreenNavView> {
+        val len = buf.getInt()
+        return List<ScreenNavView>(len) {
+            FfiConverterTypeScreenNavView.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<ScreenNavView>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypeScreenNavView.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<ScreenNavView>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypeScreenNavView.write(it, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
 public object FfiConverterSequenceTypeTaskRowView: FfiConverterRustBuffer<List<TaskRowView>> {
     override fun read(buf: ByteBuffer): List<TaskRowView> {
         val len = buf.getInt()
@@ -2273,12 +4052,53 @@ public object FfiConverterSequenceTypeTaskRowView: FfiConverterRustBuffer<List<T
         }
     }
 }
+
+
+
+
+/**
+ * @suppress
+ */
+public object FfiConverterSequenceTypeWorkspaceNavView: FfiConverterRustBuffer<List<WorkspaceNavView>> {
+    override fun read(buf: ByteBuffer): List<WorkspaceNavView> {
+        val len = buf.getInt()
+        return List<WorkspaceNavView>(len) {
+            FfiConverterTypeWorkspaceNavView.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<WorkspaceNavView>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypeWorkspaceNavView.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<WorkspaceNavView>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypeWorkspaceNavView.write(it, buf)
+        }
+    }
+}
         /**
          * Fixture screens for SwiftUI and Compose previews and snapshot tests.
          */ fun `previewScreens`(): List<PreviewScreen> {
             return FfiConverterSequenceTypePreviewScreen.lift(
     uniffiRustCall() { _status ->
     UniffiLib.uniffi_taskr_ffi_fn_func_preview_screens(
+    
+        _status)
+}
+    )
+    }
+    
+
+        /**
+         * Signed-in fixtures, by name, for SwiftUI and Compose previews.
+         */ fun `appPreviewScreens`(): List<AppPreviewScreen> {
+            return FfiConverterSequenceTypeAppPreviewScreen.lift(
+    uniffiRustCall() { _status ->
+    UniffiLib.uniffi_taskr_ffi_fn_func_app_preview_screens(
     
         _status)
 }

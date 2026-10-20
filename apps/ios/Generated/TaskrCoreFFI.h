@@ -250,6 +250,34 @@ typedef void (*UniffiCallbackInterfaceLogSinkMethod0)(uint64_t, RustBuffer, Rust
     );
 
 #endif
+#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_APP_VIEW_LISTENER_METHOD0
+#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_APP_VIEW_LISTENER_METHOD0
+typedef void (*UniffiCallbackInterfaceAppViewListenerMethod0)(uint64_t, RustBuffer, void* _Nonnull, 
+        RustCallStatus *_Nonnull uniffiCallStatus
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_SESSION_VAULT_METHOD0
+#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_SESSION_VAULT_METHOD0
+typedef void (*UniffiCallbackInterfaceSessionVaultMethod0)(uint64_t, RustBuffer* _Nonnull, 
+        RustCallStatus *_Nonnull uniffiCallStatus
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_SESSION_VAULT_METHOD1
+#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_SESSION_VAULT_METHOD1
+typedef void (*UniffiCallbackInterfaceSessionVaultMethod1)(uint64_t, RustBuffer, void* _Nonnull, 
+        RustCallStatus *_Nonnull uniffiCallStatus
+    );
+
+#endif
+#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_SESSION_VAULT_METHOD2
+#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_SESSION_VAULT_METHOD2
+typedef void (*UniffiCallbackInterfaceSessionVaultMethod2)(uint64_t, void* _Nonnull, 
+        RustCallStatus *_Nonnull uniffiCallStatus
+    );
+
+#endif
 #ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_LOG_SINK
 #define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_LOG_SINK
 typedef struct UniffiVTableCallbackInterfaceLogSink {
@@ -257,6 +285,26 @@ typedef struct UniffiVTableCallbackInterfaceLogSink {
     UniffiCallbackInterfaceClone _Nonnull uniffiClone;
     UniffiCallbackInterfaceLogSinkMethod0 _Nonnull log;
 } UniffiVTableCallbackInterfaceLogSink;
+
+#endif
+#ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_APP_VIEW_LISTENER
+#define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_APP_VIEW_LISTENER
+typedef struct UniffiVTableCallbackInterfaceAppViewListener {
+    UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceAppViewListenerMethod0 _Nonnull onView;
+} UniffiVTableCallbackInterfaceAppViewListener;
+
+#endif
+#ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_SESSION_VAULT
+#define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_SESSION_VAULT
+typedef struct UniffiVTableCallbackInterfaceSessionVault {
+    UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceSessionVaultMethod0 _Nonnull load;
+    UniffiCallbackInterfaceSessionVaultMethod1 _Nonnull save;
+    UniffiCallbackInterfaceSessionVaultMethod2 _Nonnull clear;
+} UniffiVTableCallbackInterfaceSessionVault;
 
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_CLONE_TASKLISTPRESENTER
@@ -284,14 +332,60 @@ RustBuffer uniffi_taskr_ffi_fn_method_tasklistpresenter_current(uint64_t ptr, Ru
 RustBuffer uniffi_taskr_ffi_fn_method_tasklistpresenter_dispatch(uint64_t ptr, RustBuffer intent, RustCallStatus *_Nonnull out_status
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_CLONE_APPPRESENTER
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_CLONE_APPPRESENTER
+uint64_t uniffi_taskr_ffi_fn_clone_apppresenter(uint64_t handle, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_FREE_APPPRESENTER
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_FREE_APPPRESENTER
+void uniffi_taskr_ffi_fn_free_apppresenter(uint64_t handle, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_CONSTRUCTOR_APPPRESENTER_NEW
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_CONSTRUCTOR_APPPRESENTER_NEW
+uint64_t uniffi_taskr_ffi_fn_constructor_apppresenter_new(RustBuffer config, uint64_t vault, uint64_t sink, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_APPPRESENTER_CURRENT
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_APPPRESENTER_CURRENT
+RustBuffer uniffi_taskr_ffi_fn_method_apppresenter_current(uint64_t ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_APPPRESENTER_DISPATCH
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_APPPRESENTER_DISPATCH
+RustBuffer uniffi_taskr_ffi_fn_method_apppresenter_dispatch(uint64_t ptr, RustBuffer intent, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_APPPRESENTER_DISPATCH_WITH
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_APPPRESENTER_DISPATCH_WITH
+RustBuffer uniffi_taskr_ffi_fn_method_apppresenter_dispatch_with(uint64_t ptr, RustBuffer intent, uint64_t listener, RustCallStatus *_Nonnull out_status
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_LOGSINK
 #define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_LOGSINK
 void uniffi_taskr_ffi_fn_init_callback_vtable_logsink(const UniffiVTableCallbackInterfaceLogSink* _Nonnull vtable
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_APPVIEWLISTENER
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_APPVIEWLISTENER
+void uniffi_taskr_ffi_fn_init_callback_vtable_appviewlistener(const UniffiVTableCallbackInterfaceAppViewListener* _Nonnull vtable
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_SESSIONVAULT
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_SESSIONVAULT
+void uniffi_taskr_ffi_fn_init_callback_vtable_sessionvault(const UniffiVTableCallbackInterfaceSessionVault* _Nonnull vtable
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_FUNC_PREVIEW_SCREENS
 #define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_FUNC_PREVIEW_SCREENS
 RustBuffer uniffi_taskr_ffi_fn_func_preview_screens(RustCallStatus *_Nonnull out_status
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_FUNC_APP_PREVIEW_SCREENS
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_FUNC_APP_PREVIEW_SCREENS
+RustBuffer uniffi_taskr_ffi_fn_func_app_preview_screens(RustCallStatus *_Nonnull out_status
     
 );
 #endif
@@ -561,6 +655,12 @@ uint16_t uniffi_taskr_ffi_checksum_func_preview_screens(void
     
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_FUNC_APP_PREVIEW_SCREENS
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_FUNC_APP_PREVIEW_SCREENS
+uint16_t uniffi_taskr_ffi_checksum_func_app_preview_screens(void
+    
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_TASKLISTPRESENTER_CURRENT
 #define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_TASKLISTPRESENTER_CURRENT
 uint16_t uniffi_taskr_ffi_checksum_method_tasklistpresenter_current(void
@@ -573,15 +673,63 @@ uint16_t uniffi_taskr_ffi_checksum_method_tasklistpresenter_dispatch(void
     
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_APPPRESENTER_CURRENT
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_APPPRESENTER_CURRENT
+uint16_t uniffi_taskr_ffi_checksum_method_apppresenter_current(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_APPPRESENTER_DISPATCH
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_APPPRESENTER_DISPATCH
+uint16_t uniffi_taskr_ffi_checksum_method_apppresenter_dispatch(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_APPPRESENTER_DISPATCH_WITH
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_APPPRESENTER_DISPATCH_WITH
+uint16_t uniffi_taskr_ffi_checksum_method_apppresenter_dispatch_with(void
+    
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_CONSTRUCTOR_TASKLISTPRESENTER_NEW
 #define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_CONSTRUCTOR_TASKLISTPRESENTER_NEW
 uint16_t uniffi_taskr_ffi_checksum_constructor_tasklistpresenter_new(void
     
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_CONSTRUCTOR_APPPRESENTER_NEW
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_CONSTRUCTOR_APPPRESENTER_NEW
+uint16_t uniffi_taskr_ffi_checksum_constructor_apppresenter_new(void
+    
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_LOGSINK_LOG
 #define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_LOGSINK_LOG
 uint16_t uniffi_taskr_ffi_checksum_method_logsink_log(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_APPVIEWLISTENER_ON_VIEW
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_APPVIEWLISTENER_ON_VIEW
+uint16_t uniffi_taskr_ffi_checksum_method_appviewlistener_on_view(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_SESSIONVAULT_LOAD
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_SESSIONVAULT_LOAD
+uint16_t uniffi_taskr_ffi_checksum_method_sessionvault_load(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_SESSIONVAULT_SAVE
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_SESSIONVAULT_SAVE
+uint16_t uniffi_taskr_ffi_checksum_method_sessionvault_save(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_SESSIONVAULT_CLEAR
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_SESSIONVAULT_CLEAR
+uint16_t uniffi_taskr_ffi_checksum_method_sessionvault_clear(void
     
 );
 #endif

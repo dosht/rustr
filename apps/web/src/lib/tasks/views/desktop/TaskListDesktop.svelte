@@ -1,14 +1,17 @@
 <script lang="ts">
   // Pure view: renders a TaskListView and reports intents. Only UI mechanics
   // (focus, the add draft, the keyboard cursor) are local state.
-  import type { TaskIntent, TaskListView } from "../core";
+  // Desktop: a table with vim-style keys, like the TUI.
+  import type { TaskIntent, TaskListView } from "../../../core";
 
   interface Props {
     view: TaskListView;
-    onIntent: (intent: TaskIntent) => void;
+    onIntent: (intent: TaskIntent) => Promise<void> | void;
+    /** The page heading; the signed-in frame passes the workspace name. */
+    heading?: string;
   }
 
-  let { view, onIntent }: Props = $props();
+  let { view, onIntent, heading = "taskr" }: Props = $props();
 
   let draft = $state("");
   let cursor = $state(0);
@@ -19,9 +22,9 @@
     if (cursor > view.rows.length - 1) cursor = Math.max(0, view.rows.length - 1);
   });
 
-  function submit(event: SubmitEvent) {
+  async function submit(event: SubmitEvent) {
     event.preventDefault();
-    onIntent({ type: "AddSubmitted", title: draft });
+    await onIntent({ type: "AddSubmitted", title: draft });
     if (!view.error) draft = "";
   }
 
@@ -62,7 +65,7 @@
 
 <main>
   <header>
-    <h1>taskr</h1>
+    <h1>{heading}</h1>
     <div class="tabs" role="tablist" aria-label="Task scope">
       {#each view.tabs as tab (tab.scope)}
         <button
@@ -77,15 +80,19 @@
     </div>
   </header>
 
-  <form class="add" onsubmit={submit}>
-    <input
-      bind:this={addInput}
-      bind:value={draft}
-      placeholder="Add a task (a)"
-      aria-label="New task title"
-    />
-    <button type="submit">Add</button>
-  </form>
+  {#if view.canChange}
+    <form class="add" onsubmit={submit}>
+      <input
+        bind:this={addInput}
+        bind:value={draft}
+        placeholder="Add a task (a)"
+        aria-label="New task title"
+      />
+      <button type="submit">Add</button>
+    </form>
+  {:else}
+    <p class="read-only">You can view this list. Ask an owner for editor access to change it.</p>
+  {/if}
 
   <input
     bind:this={filterInput}
@@ -125,6 +132,7 @@
               <input
                 type="checkbox"
                 checked={row.done}
+                disabled={!view.canChange}
                 onchange={() => onIntent({ type: "ToggleRequested", id: row.id })}
                 aria-label={`Mark "${row.title}" ${row.done ? "open" : "done"}`}
               />
@@ -139,8 +147,9 @@
   {/if}
 
   <footer>
-    <kbd>j</kbd>/<kbd>k</kbd> move · <kbd>x</kbd> toggle · <kbd>a</kbd> add · <kbd>/</kbd> filter ·
-    <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> tabs · <kbd>esc</kbd> clear
+    <kbd>j</kbd>/<kbd>k</kbd> move ·
+    {#if view.canChange}<kbd>x</kbd> toggle · <kbd>a</kbd> add ·{/if}
+    <kbd>/</kbd> filter · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> tabs · <kbd>esc</kbd> clear
   </footer>
 </main>
 
@@ -184,6 +193,13 @@
   .add input {
     flex: 1;
     min-width: 0;
+  }
+  .read-only {
+    margin: 0;
+    padding: 8px 12px;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    color: var(--muted);
   }
   .message {
     display: flex;

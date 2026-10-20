@@ -60,8 +60,9 @@ fun TaskListScreen(view: TaskListView?, onIntent: (TaskIntent) -> Unit) {
     }
 }
 
+/** The list without its own app bar, so the signed-in frame can embed it. */
 @Composable
-private fun TaskListContent(view: TaskListView, onIntent: (TaskIntent) -> Unit) {
+fun TaskListContent(view: TaskListView, onIntent: (TaskIntent) -> Unit) {
     var draft by rememberSaveable { mutableStateOf("") }
     val submit = {
         onIntent(TaskIntent.AddSubmitted(draft))
@@ -80,21 +81,30 @@ private fun TaskListContent(view: TaskListView, onIntent: (TaskIntent) -> Unit) 
             }
         }
 
-        Row(
-            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            OutlinedTextField(
-                value = draft,
-                onValueChange = { draft = it },
-                label = { Text("New task") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { submit() }),
-                modifier = Modifier.weight(1f),
+        if (view.canChange) {
+            Row(
+                Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedTextField(
+                    value = draft,
+                    onValueChange = { draft = it },
+                    label = { Text("New task") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { submit() }),
+                    modifier = Modifier.weight(1f),
+                )
+                Button(onClick = submit) { Text("Add") }
+            }
+        } else {
+            Text(
+                "You can view this list. Ask an owner for editor access to change it.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(16.dp, 8.dp),
             )
-            Button(onClick = submit) { Text("Add") }
         }
 
         OutlinedTextField(
@@ -125,7 +135,12 @@ private fun TaskListContent(view: TaskListView, onIntent: (TaskIntent) -> Unit) 
         } else {
             LazyColumn(Modifier.fillMaxSize()) {
                 items(view.rows, key = { it.id.toLong() }) { row ->
-                    TaskRow(row, view.columns, onToggle = { onIntent(TaskIntent.ToggleRequested(row.id)) })
+                    TaskRow(
+                        row,
+                        view.columns,
+                        enabled = view.canChange,
+                        onToggle = { onIntent(TaskIntent.ToggleRequested(row.id)) },
+                    )
                     HorizontalDivider()
                 }
             }
@@ -134,13 +149,13 @@ private fun TaskListContent(view: TaskListView, onIntent: (TaskIntent) -> Unit) 
 }
 
 @Composable
-private fun TaskRow(row: TaskRowView, columns: List<ColumnView>, onToggle: () -> Unit) {
+private fun TaskRow(row: TaskRowView, columns: List<ColumnView>, enabled: Boolean, onToggle: () -> Unit) {
     val trailing = columns.indices.filter { columns[it].align == ColumnAlign.RIGHT && !columns[it].wide }
     Row(
-        Modifier.fillMaxWidth().clickable(onClick = onToggle).padding(horizontal = 8.dp, vertical = 4.dp),
+        Modifier.fillMaxWidth().clickable(enabled = enabled, onClick = onToggle).padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Checkbox(checked = row.done, onCheckedChange = { onToggle() })
+        Checkbox(checked = row.done, onCheckedChange = { onToggle() }, enabled = enabled)
         Text(
             row.title,
             style = MaterialTheme.typography.bodyLarge,
@@ -160,7 +175,7 @@ private fun TaskRow(row: TaskRowView, columns: List<ColumnView>, onToggle: () ->
 }
 
 @Composable
-private fun MessageBanner(text: String, isError: Boolean, onDismiss: () -> Unit) {
+internal fun MessageBanner(text: String, isError: Boolean, onDismiss: () -> Unit) {
     val colors = MaterialTheme.colorScheme
     Surface(
         color = if (isError) colors.errorContainer else colors.secondaryContainer,
@@ -194,6 +209,7 @@ private fun previewView(rows: List<TaskRowView>, error: String? = null) = TaskLi
     isLoading = false,
     error = error,
     notice = null,
+    canChange = true,
 )
 
 private val sampleRows = listOf(

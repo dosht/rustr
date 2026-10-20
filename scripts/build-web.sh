@@ -6,7 +6,9 @@
 #   rustup target add wasm32-unknown-unknown
 #   cargo install wasm-bindgen-cli --version 0.2.128
 # Without rustup, point TASKR_WASM_SYSROOT at a sysroot that contains the
-# wasm32 std, and WASM_BINDGEN at the CLI binary.
+# wasm32 std, and WASM_BINDGEN at the CLI binary. Or set TASKR_WASM_BUILD_STD=1
+# to compile std from rust-src (works with distro rustc builds, where the
+# official std does not match the compiler).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -19,8 +21,15 @@ if [[ -n "${TASKR_WASM_SYSROOT:-}" ]]; then
   export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-target/wasm-sysroot}"
 fi
 
+build_std=()
+if [[ "${TASKR_WASM_BUILD_STD:-}" == "1" ]]; then
+  export RUSTC_BOOTSTRAP=1
+  export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-target/wasm-buildstd}"
+  build_std=(-Zbuild-std=std,panic_abort)
+fi
+
 cargo test -q -p taskr-wasm >/dev/null
-cargo build -p taskr-wasm --target wasm32-unknown-unknown --profile "$profile"
+cargo build "${build_std[@]}" -p taskr-wasm --target wasm32-unknown-unknown --profile "$profile"
 
 target_dir="${CARGO_TARGET_DIR:-target}"
 profile_dir="$profile"

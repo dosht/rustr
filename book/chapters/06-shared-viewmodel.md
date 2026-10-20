@@ -108,10 +108,12 @@ pub struct TaskListVm {
     pub is_loading: bool,
     pub error: Option<String>,
     pub notice: Option<String>,
+    /// False for viewers: shells hide the add form and disable the toggles.
+    pub can_change: bool,
 }
 ```
 
-Everything is **already decided**: labels with counts, which tab is selected, rows already filtered, every cell already formatted, and the empty-state text. A renderer only maps fields to widgets.
+Everything is **already decided**: labels with counts, which tab is selected, rows already filtered, every cell already formatted, and the empty-state text. A renderer only maps fields to widgets. Even permissions arrive as data: `can_change` comes from the role policy (chapter 13), so no shell ever asks "is this person a viewer?".
 
 `now` is a parameter because ages ("5m") depend on the time, and the state machine must stay pure. The controller passes the clock's time in.
 
@@ -146,11 +148,21 @@ Because `TaskError` is an enum and `match` is exhaustive, adding a new domain er
 `TaskListState` is pure. Something has to actually run the effects. That's `TaskListController`, and it's short:
 
 ```{.rust file="crates/taskr-core/src/tasks/presentation.rs"}
-    pub fn dispatch(&mut self, intent: Intent) -> TaskListVm {
+pub struct TaskListController {
+    state: Mutex<TaskListState>,
+    api: Arc<dyn TasksApi>,
+    workspace: WorkspaceId,
+    clock: Arc<dyn Clock>,
+}
+```
+
+```{.rust file="crates/taskr-core/src/tasks/presentation.rs"}
+    pub async fn dispatch(&self, intent: Intent) -> TaskListVm {
         let mut queue = VecDeque::from([Event::User(intent)]);
         while let Some(event) = queue.pop_front() {
-            for effect in self.state.update(event) {
-                queue.push_back(self.run(effect));
+            let effects = self.state().update(event);
+            for effect in effects {
+                queue.push_back(run(self.api.as_ref(), &self.workspace, effect).await);
             }
         }
         self.view()
@@ -158,20 +170,24 @@ Because `TaskError` is an enum and `match` is exhaustive, adding a new domain er
 ```
 
 ```{.rust file="crates/taskr-core/src/tasks/presentation.rs"}
-    fn run(&self, effect: Effect) -> Event {
-        match effect {
-            Effect::LoadAll => Event::Loaded(self.tasks.list(Scope::All)),
-            Effect::Add(title) => Event::Changed(Change::Added, self.tasks.add(&title)),
-            Effect::Complete(id) => Event::Changed(Change::Completed, self.tasks.complete(id)),
-            Effect::Reopen(id) => Event::Changed(Change::Reopened, self.tasks.reopen(id)),
+pub async fn run(api: &dyn TasksApi, workspace: &WorkspaceId, effect: Effect) -> Event {
+    match effect {
+        Effect::LoadAll => Event::Loaded(api.list(workspace).await),
+        Effect::Add(title) => Event::Changed(Change::Added, api.add(workspace, title).await),
+        Effect::Complete(id) => {
+            Event::Changed(Change::Completed, api.complete(workspace, id).await)
         }
+        Effect::Reopen(id) => Event::Changed(Change::Reopened, api.reopen(workspace, id).await),
     }
+}
 ```
 
 A queue of events, an effect runner, and a final view. Every shell calls `dispatch(intent)` and renders what comes back.
 
+The controller doesn't call the use cases directly. It calls `TasksApi`, a port that says "list, add, complete, reopen in this workspace". Signed out, `LocalTasks` implements it by running the use cases in process (`TaskListController::local(tasks)` wires that up). Signed in, an HTTP client implements it. The controller can't tell the difference, which is exactly the point.
+
 ::: note
-Today every port is synchronous, so `dispatch` runs to completion and `is_loading` is never visible. When ports become async (a network, a sync engine), only the controller and the facades change. The state machine already models "loading" and "loaded" as separate events, so it doesn't need to change at all.
+`dispatch` is async because the ports are. The state lock is only held inside `update`, never across an `.await`, so two dispatches in flight interleave like messages instead of blocking each other. When this book was first written every port was synchronous; making them async (chapter 13) changed the controller and the facades, and the state machine not at all, because it already modeled "loading" and "loaded" as separate events.
 :::
 
 ## Fixtures: one set of screens for every platform
@@ -185,6 +201,7 @@ Today every port is synchronous, so `dispatch` runs to completion and `is_loadin
             ("loading", loading()),
             ("sample", sample()),
             ("error", with_error()),
+            ("read-only", read_only()),
         ]
     }
 ```

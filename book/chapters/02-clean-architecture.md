@@ -151,12 +151,25 @@ In taskr, every composition root is short enough to read in one go. Here is the 
             Ok(t) => Arc::new(t),
             Err(_) => Arc::new(NoTelemetry),
         };
-    telemetry.record(LogEvent::info("app.started").field("shell", "tui"));
-    let repo = Arc::new(JsonFileTaskListRepository::new(paths::tasks_file(&home)));
-    let shell = Shell::new(TaskListController::new(Tasks::new(repo, clock, telemetry)));
+    let remote = RemoteConfig::load(&home).and_then(|c| c.auth().map(|auth| (c, auth)));
+    // ...
+    let shell = match remote {
+        Some((config, auth)) => {
+            let auth: Arc<dyn AuthClient> = Arc::from(auth);
+            let sessions = Arc::new(FileSessionStore::new(paths::session_file(&home)));
+            let api = Arc::new(HttpApi::new(config.server.clone(), sessions.clone()));
+            let app = AppController::new(auth, sessions, api.clone(), api, clock);
+            let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build()?;
+            Shell::remote(app, runtime, config.server, config.dev)
+        }
+        None => {
+            let repo = Arc::new(JsonFileTaskListRepository::new(&home));
+            Shell::new(TaskListController::local(Tasks::new(repo, clock, telemetry)))
+        }
+    };
 ```
 
-Read it top to bottom: pick a clock, pick a telemetry destination, pick storage, build the use cases, build the screen. Swap any line and the rest doesn't change.
+Read it top to bottom: pick a clock, pick a telemetry destination, then pick where tasks live. Signed out, that is a JSON file and the use cases run in process. After `taskr login`, it is a server reached over HTTP, and the screen is driven by the app controller instead. Either way the rest of the TUI doesn't change, because both branches end in a `Shell` that only sees view models.
 
 ::: exercise
 Pick an app you've worked on. Find one business rule and count how many places it's implemented. Then find its composition root. If you can't point at one, that is your first refactoring.

@@ -4,11 +4,13 @@
 //!
 //! Threading: every call is synchronous and may touch the disk, so shells call
 //! `dispatch` off the main thread. The presenter is internally locked and safe
-//! to share.
+//! to share. The core's ports are async; this facade still runs the local file
+//! store, whose futures finish immediately, so it blocks on them.
 
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
+use taskr_core::shared::future::block_on;
 use taskr_core::shared::telemetry::{Level, LogEvent, Telemetry};
 use taskr_core::tasks::app::{Scope, Tasks};
 use taskr_core::tasks::presentation::{
@@ -16,7 +18,10 @@ use taskr_core::tasks::presentation::{
 };
 use taskr_infra::clock::SystemClock;
 use taskr_infra::json_file::JsonFileTaskListRepository;
-use taskr_infra::paths;
+
+mod app;
+
+pub use app::*;
 
 uniffi::setup_scaffolding!();
 
@@ -76,6 +81,7 @@ pub struct TaskListView {
     pub is_loading: bool,
     pub error: Option<String>,
     pub notice: Option<String>,
+    pub can_change: bool,
 }
 
 #[derive(uniffi::Record, Clone, Debug, PartialEq, Eq)]
@@ -105,7 +111,7 @@ pub trait LogSink: Send + Sync {
     fn log(&self, level: LogLevel, event: String, fields: Vec<LogField>);
 }
 
-struct ForeignTelemetry(Box<dyn LogSink>);
+pub(crate) struct ForeignTelemetry(pub(crate) Box<dyn LogSink>);
 
 impl Telemetry for ForeignTelemetry {
     fn record(&self, event: LogEvent) {
@@ -126,7 +132,7 @@ impl Telemetry for ForeignTelemetry {
 
 #[derive(uniffi::Object)]
 pub struct TaskListPresenter {
-    controller: Mutex<TaskListController>,
+    controller: TaskListController,
 }
 
 #[uniffi::export]
@@ -137,19 +143,17 @@ impl TaskListPresenter {
     pub fn new(data_dir: String, sink: Box<dyn LogSink>) -> Self {
         let telemetry: Arc<dyn Telemetry> = Arc::new(ForeignTelemetry(sink));
         telemetry.record(LogEvent::info("app.started").field("shell", "mobile"));
-        let repo = JsonFileTaskListRepository::new(paths::tasks_file(&PathBuf::from(data_dir)));
+        let repo = JsonFileTaskListRepository::new(PathBuf::from(data_dir));
         let tasks = Tasks::new(Arc::new(repo), Arc::new(SystemClock), telemetry);
-        Self { controller: Mutex::new(TaskListController::new(tasks)) }
+        Self { controller: TaskListController::local(tasks) }
     }
 
     pub fn dispatch(&self, intent: TaskIntent) -> TaskListView {
-        let mut controller = self.controller.lock().unwrap_or_else(|e| e.into_inner());
-        to_view(controller.dispatch(to_intent(intent)))
+        to_view(block_on(self.controller.dispatch(to_intent(intent))))
     }
 
     pub fn current(&self) -> TaskListView {
-        let controller = self.controller.lock().unwrap_or_else(|e| e.into_inner());
-        to_view(controller.view())
+        to_view(self.controller.view())
     }
 }
 
@@ -178,7 +182,7 @@ fn from_scope(s: Scope) -> TaskScope {
     }
 }
 
-fn to_intent(i: TaskIntent) -> Intent {
+pub(crate) fn to_intent(i: TaskIntent) -> Intent {
     match i {
         TaskIntent::Opened => Intent::Opened,
         TaskIntent::Refreshed => Intent::Refreshed,
@@ -190,7 +194,7 @@ fn to_intent(i: TaskIntent) -> Intent {
     }
 }
 
-fn to_view(vm: TaskListVm) -> TaskListView {
+pub(crate) fn to_view(vm: TaskListVm) -> TaskListView {
     TaskListView {
         tabs: vm
             .tabs
@@ -223,12 +227,14 @@ fn to_view(vm: TaskListVm) -> TaskListView {
         is_loading: vm.is_loading,
         error: vm.error,
         notice: vm.notice,
+        can_change: vm.can_change,
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::Mutex;
 
     #[derive(Clone, Default)]
     struct Sink(Arc<Mutex<Vec<String>>>);
@@ -260,6 +266,6 @@ mod tests {
     #[test]
     fn preview_screens_are_exported() {
         let names: Vec<_> = preview_screens().into_iter().map(|s| s.name).collect();
-        assert_eq!(names, ["empty", "loading", "sample", "error"]);
+        assert_eq!(names, ["empty", "loading", "sample", "error", "read-only"]);
     }
 }

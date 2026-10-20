@@ -30,8 +30,9 @@ Errors map to exit codes in one place, and the message comes from the shared `de
 ```{.rust file="crates/taskr-cli/src/main.rs"}
 impl From<TasksError> for Failure {
     fn from(e: TasksError) -> Self {
-        let code = match e {
+        let code = match &e {
             TasksError::Rejected(_) => EXIT_REJECTED,
+            TasksError::Access(a) => access_code(a),
             TasksError::Storage(_) => EXIT_STORAGE,
         };
         Failure { message: describe(&e), code }
@@ -39,20 +40,35 @@ impl From<TasksError> for Failure {
 }
 ```
 
-`1` means "the rules said no" and `3` means "storage is broken" (`2` is clap's usage error). A script can tell "you already have that task" from "the disk is full" without parsing text.
+`1` means "the rules said no" (including "your role doesn't allow it"), `3` means "storage is broken" and `4` means "you are not signed in" (`2` is clap's usage error). A script can tell "you already have that task" from "the disk is full" without parsing text.
 
 ### Reusing the screen logic in a CLI
 
 `taskr list` without `--json` reuses the full presentation layer. It sends three intents to the same controller the TUI uses and prints the `TaskListVm` as a plain table:
 
 ```{.rust file="crates/taskr-cli/src/main.rs"}
-            let mut screen = TaskListController::new(tasks);
-            screen.dispatch(Intent::ScopeChanged(scope.into()));
-            screen.dispatch(Intent::FilterChanged(filter.unwrap_or_default()));
-            let vm = screen.dispatch(Intent::Opened);
+            let screen = TaskListController::new(t.api, t.workspace, clock);
+            screen.dispatch(Intent::ScopeChanged(scope.into())).await;
+            screen.dispatch(Intent::FilterChanged(filter.unwrap_or_default())).await;
+            let vm = screen.dispatch(Intent::Opened).await;
 ```
 
 So the CLI's empty-state messages, tab counts, filtering and columns are exactly the TUI's and the web's.
+
+`t` is the command's target: the local files and `LocalTasks` when signed out, or a server workspace and the HTTP client after `taskr login`. The same three lines list either one.
+
+### Two modes, same commands
+
+```sh
+taskr add Buy milk                     # local file
+taskr login --server http://localhost:8787/api --auth-url http://localhost:9999 --email ada@example.com
+taskr add Buy milk                     # now on the server, in your first workspace
+taskr -w Team list                     # another workspace, by name or id
+taskr members set bob@example.com viewer
+taskr logout                           # back to the local file
+```
+
+`login` saves the server and the session next to the data, so the TUI opens signed in too.
 
 ### Testing the real binary
 
@@ -96,32 +112,42 @@ pub struct Binding {
     pub description: &'static str,
     pub action: Action,
     pub in_hint_bar: bool,
+    /// Only bound when signed in to a server (workspaces, members, sign out).
+    pub remote_only: bool,
 }
 ```
 
 ```{.rust file="crates/taskr-tui/src/keymap.rs"}
-pub fn action_for(key: Key) -> Option<Action> {
-    NORMAL_MODE.iter().find(|b| b.keys.contains(&key)).map(|b| b.action)
+pub fn active(
+    table: &'static [Binding],
+    signed_in: bool,
+) -> impl Iterator<Item = &'static Binding> {
+    table.iter().filter(move |b| signed_in || !b.remote_only)
 }
 
-pub fn hint_bar() -> impl Iterator<Item = &'static Binding> {
-    NORMAL_MODE.iter().filter(|b| b.in_hint_bar)
+pub fn action_for(table: &'static [Binding], signed_in: bool, key: Key) -> Option<Action> {
+    active(table, signed_in).find(|b| b.keys.contains(&key)).map(|b| b.action)
 }
 ```
 
-The bindings follow vim: `j`/`k` (and arrows) move, `g`/`G` jump to top and bottom, `ctrl-d`/`ctrl-u` move half a page, `/` filters, `esc` clears. Then the app's own: `space` toggles done, `a` adds, `1 2 3` and `tab` switch scope, `r` reloads, `?` shows every key, `q` quits.
+There is one table per screen (`TASKS_KEYS`, `MEMBERS_KEYS`). The hint bar and the help overlay are generated from the active table, so a key that only exists signed in never shows up in the local TUI.
+
+The bindings follow vim: `j`/`k` (and arrows) move, `g`/`G` jump to top and bottom, `ctrl-d`/`ctrl-u` move half a page, `/` filters, `esc` clears. Then the app's own: `space` toggles done, `a` adds, `1 2 3` and `tab` switch scope, `r` reloads, `?` shows every key, `q` quits. Signed in, `w` cycles workspaces, `m` and `t` switch between members and tasks, and on the members screen `o`/`e`/`v` change a role and `d` removes.
 
 A test makes sure no key is bound twice, so adding a binding can't silently shadow another.
 
 ### Modes
 
-`shell.rs` has three modes:
+`shell.rs` has a mode per kind of typing:
 
 ```{.rust file="crates/taskr-tui/src/shell.rs"}
 pub enum Mode {
     Normal,
     Adding(String),
     Filtering(String),
+    AddingMember(String),
+    SignInEmail(String),
+    SignInPassword { email: String, password: String },
 }
 ```
 
@@ -140,6 +166,10 @@ Cursor movement stays in the shell. Anything with product meaning becomes an int
 ```
 
 After every intent the shell clamps the cursor to the new row count. That's UI mechanics, and it's the only "logic" the TUI has.
+
+### Signed in
+
+The shell holds one of two backends: a local `TaskListController`, or the shared `AppController` from chapter 13 with a single-threaded tokio runtime to drive its HTTP calls. Task intents go to whichever it has; signed in, they are wrapped as `AppIntent::Tasks`. Members, workspaces and sign-in are new screens, but no new decisions: who may change a role, which workspace is open and what an expired session does are all answered by the app controller, exactly as in the browser. Network calls block the loop while they run, which is what k9s does too.
 
 ### Rendering
 

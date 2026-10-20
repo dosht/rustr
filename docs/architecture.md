@@ -143,12 +143,12 @@ The use cases emit `task.added`, `task.completed`, `task.reopened`, `task.reject
 | `services/I*Repository.ts` interface | port trait in `<context>/app.rs` |
 | `services/*Repository.ts` | adapter in `taskr-infra` or a facade crate |
 | ViewModel (business logic + state) | split: use case in `app.rs`, screen state in `presentation.rs` |
-| View (pure, props only) | `TaskListScreen` in Svelte, Compose, SwiftUI; `view.rs` in the TUI |
+| View (pure, props only) | `views/desktop` and `views/mobile` in Svelte, `TaskListScreen` in Compose and SwiftUI; `view.rs` in the TUI |
 | Container | `taskListModel.svelte.ts`, `TasksViewModel.kt`, `TasksModel.swift`, `shell.rs` |
 | Page (creates clients and repositories) | composition root: `main.rs`, `TaskListPresenter::new` in each facade |
 | Props-based DI | constructor injection of `Arc<dyn Port>`; the web view takes a `TaskCore` interface |
-| Storybook stories | `presentation::fixtures`, exported as `previewScreens()` |
-| Jest ViewModel tests with mocks | pure `TaskListState` tests, no mocks needed |
+| Storybook stories | `presentation::fixtures`, exported as `previewScreens()` and as `fixtures.json` for the web's Storybook |
+| Jest ViewModel tests with mocks | pure `TaskListState` tests, no mocks needed; Vitest (Jest's API) for the web views and models |
 | Infrastructure vs domain rule | same rule, see "Rule for deciding" |
 
 The one deliberate change: the guide's ViewModel holds business logic. With five UIs that would mean five copies, so business logic moves down into the domain and use cases, and the remaining screen logic moves into shared Rust.
@@ -194,9 +194,53 @@ Work outside in. Each step has a fast, deterministic test:
 5. Facades: map the new types in `taskr-ffi` and `taskr-wasm/src/dto.rs`, then run `scripts/gen-bindings.sh` and `cargo test -p taskr-wasm` to regenerate Kotlin, Swift and TypeScript.
 6. Shells: render the new field, send the new intent. If a shell needs an `if` about business meaning, go back to step 4.
 
+## Signed-in mode (M1)
+
+The same core also runs multi-user. Details and decisions are in [milestones/m1-multi-user.md](milestones/m1-multi-user.md); the short version:
+
+- Ports are async (`BoxFuture`), so a port can be a file, a database or a network call.
+- Two client-facing ports, `TasksApi` and `WorkspacesApi`, sit between the presentation layer and the use cases. `LocalTasks` runs them in process (signed-out shells), `InProcessApi` runs them on the server for one principal, and `taskr-client`'s `HttpApi` runs them over HTTP. The presentation layer cannot tell which one it has.
+- `taskr-server` is a thin Axum mapping of `InProcessApi`; `taskr-api` holds the HTTP contract both sides compile against.
+- RBAC is a pure `can(role, action)` in the shared kernel. Use cases enforce it; the state machines read it to hide what a role cannot do.
+- `AppState` (in `session`) is the parent state machine: sign-in, which workspace, which screen, session expiry. It composes the task list and members screens.
+- Every save is revision-checked and writes its domain events to an outbox in the same transaction (Postgres).
+
+```mermaid
+flowchart LR
+    subgraph Client["Client shells"]
+        WebApp["Web (wasm)"]
+        CliR["CLI (remote mode)"]
+    end
+    subgraph Core1["taskr-core (client side)"]
+        AppSt["AppState / TaskListController"]
+        Ports1["TasksApi, WorkspacesApi,<br/>AuthClient, SessionStore"]
+    end
+    subgraph Net["taskr-client"]
+        Http["HttpApi"]
+        Auth["SupabaseAuth / DevAuth"]
+    end
+    subgraph Server["taskr-server"]
+        Axum["Axum routes"]
+        InProc["InProcessApi<br/>(per request)"]
+        UseCases["Tasks, Workspaces<br/>use cases"]
+    end
+    Pg[("Postgres<br/>+ outbox")]
+    GoTrue["Supabase Auth"]
+
+    WebApp --> AppSt
+    CliR --> AppSt
+    AppSt --> Ports1
+    Http -.implements.-> Ports1
+    Auth -.implements.-> Ports1
+    Http -->|JSON, taskr-api| Axum
+    Auth --> GoTrue
+    Axum --> InProc --> UseCases --> Pg
+```
+
 ## Known limits and next steps
 
-- **Ports are synchronous.** Fine for local files and `localStorage`. Network and sync will need async ports; the effect/event loop already separates "what to do" from "doing it", so only `TaskListController::run` and the facades change.
-- **No sync engine yet.** IDs are sequential per device. Sync will need client-generated IDs (UUIDv7), an outbox, and conflict rules that live in the domain, not in infrastructure.
-- **Concurrent writers.** CLI and TUI share one file. Each write reloads first and writes atomically, but two simultaneous writers are last-writer-wins.
-- **Mobile UI code is not compiled here.** The generated Kotlin bindings run on the JVM, and the generated Swift bindings plus `TasksModel.swift` compile and run with the Linux Swift toolchain. The Compose and SwiftUI views, the Gradle plugin versions and the XcodeGen spec are written but unbuilt until an Android SDK and a Mac are available.
+- **No sync engine yet.** Task ids are sequential per workspace. Offline sync will need client-generated ids (UUIDv7), the outbox as the change feed, and conflict rules that live in the domain, not in infrastructure.
+- **Concurrent local writers.** CLI and TUI share one file. Saves are revision-checked and atomic, which narrows the race, but there is no file lock, so two writes in the same instant can still collide.
+- **No token refresh.** Supabase access tokens expire after an hour and the app then asks the person to sign in again.
+- **Nothing reads the outbox yet.** Analytics (M4) and realtime (M7) will.
+- **Mobile UI code is not compiled here.** The generated Kotlin bindings run on the JVM, and the generated Swift bindings plus `TasksModel.swift` compile and run with the Linux Swift toolchain. The Compose and SwiftUI views, the Gradle plugin versions and the XcodeGen spec are written but unbuilt until an Android SDK and a Mac are available. Mobile is signed out only.

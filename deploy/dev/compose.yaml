@@ -1,0 +1,49 @@
+# Local stack for the signed-in mode: Postgres for taskr, and Supabase Auth
+# (GoTrue) on the same database in its own `auth` schema. Same JWT secret as
+# `supabase start`, so local tokens verify the same way hosted ones do.
+#
+#   docker compose -f deploy/dev/compose.yaml up -d
+#   DATABASE_URL=postgres://postgres:postgres@localhost:54322/taskr \
+#   SUPABASE_JWT_SECRET=super-secret-jwt-token-with-at-least-32-characters-long \
+#   cargo run -p taskr-server
+name: taskr-dev
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: taskr
+    ports: ["54322:5432"]
+    volumes:
+      - ./init-auth.sql:/docker-entrypoint-initdb.d/init-auth.sql:ro
+      - db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "taskr"]
+      interval: 2s
+      retries: 30
+
+  auth:
+    image: public.ecr.aws/supabase/gotrue:v2.170.0
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      PORT: "9999"
+      API_EXTERNAL_URL: http://localhost:9999
+      GOTRUE_SITE_URL: http://localhost:5173
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:auth@db:5432/taskr?search_path=auth
+      GOTRUE_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_EXP: "3600"
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+    ports: ["9999:9999"]
+
+volumes:
+  db:

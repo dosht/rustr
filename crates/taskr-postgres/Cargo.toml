@@ -1,0 +1,16 @@
+[package]
+name = "taskr-postgres"
+description = "PostgreSQL adapters for the core's repository ports, with a transactional outbox. Plain sqlx, so any Postgres works (Supabase, Neon, RDS, Docker)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+taskr-core.workspace = true
+serde_json.workspace = true
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "migrate", "macros", "json", "uuid"] }
+uuid = { version = "1", features = ["v5", "v7"] }
+
+[dev-dependencies]
+taskr-core = { workspace = true, features = ["testing"] }
+tokio = { version = "1", features = ["rt-multi-thread"] }

@@ -1,0 +1,791 @@
+{
+  "app": {
+    "loading": {
+      "state": "signedIn",
+      "view": {
+        "email": "ada@example.com",
+        "error": null,
+        "screen": {
+          "kind": "tasks",
+          "view": {
+            "canChange": true,
+            "columns": [
+              {
+                "align": "right",
+                "title": "ID",
+                "wide": true
+              },
+              {
+                "align": "left",
+                "title": "TITLE",
+                "wide": false
+              },
+              {
+                "align": "right",
+                "title": "AGE",
+                "wide": false
+              }
+            ],
+            "emptyMessage": "Nothing here yet. Add your first task.",
+            "error": null,
+            "filter": "",
+            "isLoading": true,
+            "notice": null,
+            "rows": [],
+            "tabs": [
+              {
+                "label": "Open (0)",
+                "scope": "open",
+                "selected": true
+              },
+              {
+                "label": "Done (0)",
+                "scope": "done",
+                "selected": false
+              },
+              {
+                "label": "All (0)",
+                "scope": "all",
+                "selected": false
+              }
+            ]
+          }
+        },
+        "screens": [
+          {
+            "label": "Tasks",
+            "screen": "tasks",
+            "selected": true
+          },
+          {
+            "label": "Members",
+            "screen": "members",
+            "selected": false
+          }
+        ],
+        "title": "ada's workspace · Tasks",
+        "workspace": "ws-1",
+        "workspaces": [
+          {
+            "id": "ws-1",
+            "name": "ada's workspace",
+            "roleLabel": "Owner",
+            "selected": true
+          },
+          {
+            "id": "ws-2",
+            "name": "Team",
+            "roleLabel": "Editor",
+            "selected": false
+          }
+        ]
+      }
+    },
+    "owner-members": {
+      "state": "signedIn",
+      "view": {
+        "email": "ada@example.com",
+        "error": null,
+        "screen": {
+          "kind": "members",
+          "view": {
+            "canManage": true,
+            "error": null,
+            "isLoading": false,
+            "notice": null,
+            "roleOptions": [
+              {
+                "label": "Owner",
+                "role": "owner"
+              },
+              {
+                "label": "Editor",
+                "role": "editor"
+              },
+              {
+                "label": "Viewer",
+                "role": "viewer"
+              }
+            ],
+            "rows": [
+              {
+                "email": "ada@example.com",
+                "isYou": true,
+                "role": "owner",
+                "roleLabel": "Owner"
+              },
+              {
+                "email": "bob@example.com",
+                "isYou": false,
+                "role": "editor",
+                "roleLabel": "Editor"
+              },
+              {
+                "email": "eve@example.com",
+                "isYou": false,
+                "role": "viewer",
+                "roleLabel": "Viewer"
+              }
+            ]
+          }
+        },
+        "screens": [
+          {
+            "label": "Tasks",
+            "screen": "tasks",
+            "selected": false
+          },
+          {
+            "label": "Members",
+            "screen": "members",
+            "selected": true
+          }
+        ],
+        "title": "ada's workspace · Members",
+        "workspace": "ws-1",
+        "workspaces": [
+          {
+            "id": "ws-1",
+            "name": "ada's workspace",
+            "roleLabel": "Owner",
+            "selected": true
+          },
+          {
+            "id": "ws-2",
+            "name": "Team",
+            "roleLabel": "Editor",
+            "selected": false
+          }
+        ]
+      }
+    },
+    "owner-tasks": {
+      "state": "signedIn",
+      "view": {
+        "email": "ada@example.com",
+        "error": null,
+        "screen": {
+          "kind": "tasks",
+          "view": {
+            "canChange": true,
+            "columns": [
+              {
+                "align": "right",
+                "title": "ID",
+                "wide": true
+              },
+              {
+                "align": "left",
+                "title": "TITLE",
+                "wide": false
+              },
+              {
+                "align": "right",
+                "title": "AGE",
+                "wide": false
+              }
+            ],
+            "emptyMessage": null,
+            "error": null,
+            "filter": "",
+            "isLoading": false,
+            "notice": null,
+            "rows": [
+              {
+                "cells": [
+                  "1",
+                  "Write the architecture doc",
+                  "3d"
+                ],
+                "done": false,
+                "id": 1,
+                "title": "Write the architecture doc"
+              },
+              {
+                "cells": [
+                  "2",
+                  "Try the TUI with vim keys",
+                  "1h"
+                ],
+                "done": false,
+                "id": 2,
+                "title": "Try the TUI with vim keys"
+              },
+              {
+                "cells": [
+                  "4",
+                  "Generate Swift bindings",
+                  "5m"
+                ],
+                "done": false,
+                "id": 4,
+                "title": "Generate Swift bindings"
+              }
+            ],
+            "tabs": [
+              {
+                "label": "Open (3)",
+                "scope": "open",
+                "selected": true
+              },
+              {
+                "label": "Done (1)",
+                "scope": "done",
+                "selected": false
+              },
+              {
+                "label": "All (4)",
+                "scope": "all",
+                "selected": false
+              }
+            ]
+          }
+        },
+        "screens": [
+          {
+            "label": "Tasks",
+            "screen": "tasks",
+            "selected": true
+          },
+          {
+            "label": "Members",
+            "screen": "members",
+            "selected": false
+          }
+        ],
+        "title": "ada's workspace · Tasks",
+        "workspace": "ws-1",
+        "workspaces": [
+          {
+            "id": "ws-1",
+            "name": "ada's workspace",
+            "roleLabel": "Owner",
+            "selected": true
+          },
+          {
+            "id": "ws-2",
+            "name": "Team",
+            "roleLabel": "Editor",
+            "selected": false
+          }
+        ]
+      }
+    },
+    "sign-in": {
+      "state": "signedOut",
+      "view": {
+        "busy": false,
+        "error": null,
+        "notice": null
+      }
+    },
+    "sign-in-error": {
+      "state": "signedOut",
+      "view": {
+        "busy": false,
+        "error": "Wrong email or password.",
+        "notice": null
+      }
+    },
+    "viewer-members": {
+      "state": "signedIn",
+      "view": {
+        "email": "ada@example.com",
+        "error": null,
+        "screen": {
+          "kind": "members",
+          "view": {
+            "canManage": false,
+            "error": null,
+            "isLoading": false,
+            "notice": null,
+            "roleOptions": [
+              {
+                "label": "Owner",
+                "role": "owner"
+              },
+              {
+                "label": "Editor",
+                "role": "editor"
+              },
+              {
+                "label": "Viewer",
+                "role": "viewer"
+              }
+            ],
+            "rows": [
+              {
+                "email": "ada@example.com",
+                "isYou": true,
+                "role": "viewer",
+                "roleLabel": "Viewer"
+              },
+              {
+                "email": "bob@example.com",
+                "isYou": false,
+                "role": "editor",
+                "roleLabel": "Editor"
+              },
+              {
+                "email": "eve@example.com",
+                "isYou": false,
+                "role": "viewer",
+                "roleLabel": "Viewer"
+              }
+            ]
+          }
+        },
+        "screens": [
+          {
+            "label": "Tasks",
+            "screen": "tasks",
+            "selected": false
+          },
+          {
+            "label": "Members",
+            "screen": "members",
+            "selected": true
+          }
+        ],
+        "title": "ada's workspace · Members",
+        "workspace": "ws-1",
+        "workspaces": [
+          {
+            "id": "ws-1",
+            "name": "ada's workspace",
+            "roleLabel": "Viewer",
+            "selected": true
+          },
+          {
+            "id": "ws-2",
+            "name": "Team",
+            "roleLabel": "Editor",
+            "selected": false
+          }
+        ]
+      }
+    },
+    "viewer-tasks": {
+      "state": "signedIn",
+      "view": {
+        "email": "ada@example.com",
+        "error": null,
+        "screen": {
+          "kind": "tasks",
+          "view": {
+            "canChange": false,
+            "columns": [
+              {
+                "align": "right",
+                "title": "ID",
+                "wide": true
+              },
+              {
+                "align": "left",
+                "title": "TITLE",
+                "wide": false
+              },
+              {
+                "align": "right",
+                "title": "AGE",
+                "wide": false
+              }
+            ],
+            "emptyMessage": null,
+            "error": null,
+            "filter": "",
+            "isLoading": false,
+            "notice": null,
+            "rows": [
+              {
+                "cells": [
+                  "1",
+                  "Write the architecture doc",
+                  "3d"
+                ],
+                "done": false,
+                "id": 1,
+                "title": "Write the architecture doc"
+              },
+              {
+                "cells": [
+                  "2",
+                  "Try the TUI with vim keys",
+                  "1h"
+                ],
+                "done": false,
+                "id": 2,
+                "title": "Try the TUI with vim keys"
+              },
+              {
+                "cells": [
+                  "4",
+                  "Generate Swift bindings",
+                  "5m"
+                ],
+                "done": false,
+                "id": 4,
+                "title": "Generate Swift bindings"
+              }
+            ],
+            "tabs": [
+              {
+                "label": "Open (3)",
+                "scope": "open",
+                "selected": true
+              },
+              {
+                "label": "Done (1)",
+                "scope": "done",
+                "selected": false
+              },
+              {
+                "label": "All (4)",
+                "scope": "all",
+                "selected": false
+              }
+            ]
+          }
+        },
+        "screens": [
+          {
+            "label": "Tasks",
+            "screen": "tasks",
+            "selected": true
+          },
+          {
+            "label": "Members",
+            "screen": "members",
+            "selected": false
+          }
+        ],
+        "title": "ada's workspace · Tasks",
+        "workspace": "ws-1",
+        "workspaces": [
+          {
+            "id": "ws-1",
+            "name": "ada's workspace",
+            "roleLabel": "Viewer",
+            "selected": true
+          },
+          {
+            "id": "ws-2",
+            "name": "Team",
+            "roleLabel": "Editor",
+            "selected": false
+          }
+        ]
+      }
+    }
+  },
+  "tasks": {
+    "empty": {
+      "canChange": true,
+      "columns": [
+        {
+          "align": "right",
+          "title": "ID",
+          "wide": true
+        },
+        {
+          "align": "left",
+          "title": "TITLE",
+          "wide": false
+        },
+        {
+          "align": "right",
+          "title": "AGE",
+          "wide": false
+        }
+      ],
+      "emptyMessage": "Nothing here yet. Add your first task.",
+      "error": null,
+      "filter": "",
+      "isLoading": false,
+      "notice": null,
+      "rows": [],
+      "tabs": [
+        {
+          "label": "Open (0)",
+          "scope": "open",
+          "selected": true
+        },
+        {
+          "label": "Done (0)",
+          "scope": "done",
+          "selected": false
+        },
+        {
+          "label": "All (0)",
+          "scope": "all",
+          "selected": false
+        }
+      ]
+    },
+    "error": {
+      "canChange": true,
+      "columns": [
+        {
+          "align": "right",
+          "title": "ID",
+          "wide": true
+        },
+        {
+          "align": "left",
+          "title": "TITLE",
+          "wide": false
+        },
+        {
+          "align": "right",
+          "title": "AGE",
+          "wide": false
+        }
+      ],
+      "emptyMessage": null,
+      "error": "There is already an open task with that title.",
+      "filter": "",
+      "isLoading": false,
+      "notice": null,
+      "rows": [
+        {
+          "cells": [
+            "1",
+            "Write the architecture doc",
+            "3d"
+          ],
+          "done": false,
+          "id": 1,
+          "title": "Write the architecture doc"
+        },
+        {
+          "cells": [
+            "2",
+            "Try the TUI with vim keys",
+            "1h"
+          ],
+          "done": false,
+          "id": 2,
+          "title": "Try the TUI with vim keys"
+        },
+        {
+          "cells": [
+            "4",
+            "Generate Swift bindings",
+            "5m"
+          ],
+          "done": false,
+          "id": 4,
+          "title": "Generate Swift bindings"
+        }
+      ],
+      "tabs": [
+        {
+          "label": "Open (3)",
+          "scope": "open",
+          "selected": true
+        },
+        {
+          "label": "Done (1)",
+          "scope": "done",
+          "selected": false
+        },
+        {
+          "label": "All (4)",
+          "scope": "all",
+          "selected": false
+        }
+      ]
+    },
+    "loading": {
+      "canChange": true,
+      "columns": [
+        {
+          "align": "right",
+          "title": "ID",
+          "wide": true
+        },
+        {
+          "align": "left",
+          "title": "TITLE",
+          "wide": false
+        },
+        {
+          "align": "right",
+          "title": "AGE",
+          "wide": false
+        }
+      ],
+      "emptyMessage": "Nothing here yet. Add your first task.",
+      "error": null,
+      "filter": "",
+      "isLoading": true,
+      "notice": null,
+      "rows": [],
+      "tabs": [
+        {
+          "label": "Open (0)",
+          "scope": "open",
+          "selected": true
+        },
+        {
+          "label": "Done (0)",
+          "scope": "done",
+          "selected": false
+        },
+        {
+          "label": "All (0)",
+          "scope": "all",
+          "selected": false
+        }
+      ]
+    },
+    "read-only": {
+      "canChange": false,
+      "columns": [
+        {
+          "align": "right",
+          "title": "ID",
+          "wide": true
+        },
+        {
+          "align": "left",
+          "title": "TITLE",
+          "wide": false
+        },
+        {
+          "align": "right",
+          "title": "AGE",
+          "wide": false
+        }
+      ],
+      "emptyMessage": null,
+      "error": null,
+      "filter": "",
+      "isLoading": false,
+      "notice": null,
+      "rows": [
+        {
+          "cells": [
+            "1",
+            "Write the architecture doc",
+            "3d"
+          ],
+          "done": false,
+          "id": 1,
+          "title": "Write the architecture doc"
+        },
+        {
+          "cells": [
+            "2",
+            "Try the TUI with vim keys",
+            "1h"
+          ],
+          "done": false,
+          "id": 2,
+          "title": "Try the TUI with vim keys"
+        },
+        {
+          "cells": [
+            "4",
+            "Generate Swift bindings",
+            "5m"
+          ],
+          "done": false,
+          "id": 4,
+          "title": "Generate Swift bindings"
+        }
+      ],
+      "tabs": [
+        {
+          "label": "Open (3)",
+          "scope": "open",
+          "selected": true
+        },
+        {
+          "label": "Done (1)",
+          "scope": "done",
+          "selected": false
+        },
+        {
+          "label": "All (4)",
+          "scope": "all",
+          "selected": false
+        }
+      ]
+    },
+    "sample": {
+      "canChange": true,
+      "columns": [
+        {
+          "align": "right",
+          "title": "ID",
+          "wide": true
+        },
+        {
+          "align": "left",
+          "title": "TITLE",
+          "wide": false
+        },
+        {
+          "align": "right",
+          "title": "AGE",
+          "wide": false
+        }
+      ],
+      "emptyMessage": null,
+      "error": null,
+      "filter": "",
+      "isLoading": false,
+      "notice": null,
+      "rows": [
+        {
+          "cells": [
+            "1",
+            "Write the architecture doc",
+            "3d"
+          ],
+          "done": false,
+          "id": 1,
+          "title": "Write the architecture doc"
+        },
+        {
+          "cells": [
+            "2",
+            "Try the TUI with vim keys",
+            "1h"
+          ],
+          "done": false,
+          "id": 2,
+          "title": "Try the TUI with vim keys"
+        },
+        {
+          "cells": [
+            "4",
+            "Generate Swift bindings",
+            "5m"
+          ],
+          "done": false,
+          "id": 4,
+          "title": "Generate Swift bindings"
+        }
+      ],
+      "tabs": [
+        {
+          "label": "Open (3)",
+          "scope": "open",
+          "selected": true
+        },
+        {
+          "label": "Done (1)",
+          "scope": "done",
+          "selected": false
+        },
+        {
+          "label": "All (4)",
+          "scope": "all",
+          "selected": false
+        }
+      ]
+    }
+  }
+}

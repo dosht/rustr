@@ -12,7 +12,9 @@ path = "src/main.rs"
 [dependencies]
 taskr-core.workspace = true
 taskr-infra = { workspace = true, features = ["native"] }
+taskr-client.workspace = true
 ratatui.workspace = true
+tokio = { version = "1", features = ["rt"] }
 
 [dev-dependencies]
 taskr-core = { workspace = true, features = ["testing"] }

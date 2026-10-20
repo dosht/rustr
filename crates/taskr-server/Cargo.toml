@@ -1,0 +1,29 @@
+[package]
+name = "taskr-server"
+description = "HTTP shell: the same use cases behind an Axum JSON API, with Supabase JWT auth and Postgres storage."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "taskr-server"
+path = "src/main.rs"
+
+[dependencies]
+# "testing" provides the in-memory repositories behind TASKR_STORAGE=memory.
+taskr-core = { workspace = true, features = ["testing"] }
+taskr-api.workspace = true
+taskr-infra = { workspace = true, features = ["native"] }
+taskr-postgres.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+axum = "0.8"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "signal", "sync"] }
+tower-http = { version = "0.7", features = ["cors", "fs"] }
+jsonwebtoken = { version = "11", default-features = false, features = ["rust_crypto", "use_pem"] }
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }
+uuid = { version = "1", features = ["v4"] }
+
+[dev-dependencies]
+serde_json.workspace = true
+taskr-client.workspace = true

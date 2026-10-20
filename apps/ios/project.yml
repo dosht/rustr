@@ -18,9 +18,20 @@ targets:
     dependencies:
       - framework: TaskrCore.xcframework
         embed: false
+    info:
+      path: Taskr/Info.plist
+      properties:
+        # Signed-in mode. The simulator reaches the Mac's dev server at localhost.
+        TaskrApiUrl: $(TASKR_API_URL)
+        TaskrAuthUrl: $(TASKR_AUTH_URL)
+        TaskrAuthKey: $(TASKR_AUTH_KEY)
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+        UILaunchScreen: {}
+        CFBundleDisplayName: taskr
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.taskr.ios
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_CFBundleDisplayName: taskr
+        TASKR_API_URL: ""
+        TASKR_AUTH_URL: ""
+        TASKR_AUTH_KEY: ""

@@ -42,12 +42,12 @@ The database connects at exactly one place: an **adapter that implements a port*
 
 ```text
 crates/
-  taskr-infra/            JSON file (today)
-  taskr-infra-sqlite/     rusqlite: CLI, TUI, mobile (local)
-  taskr-infra-postgres/   sqlx: the server
+  taskr-infra/            JSON file (local shells)
+  taskr-postgres/         sqlx: the server (built in M1, chapter 13)
+  taskr-infra-sqlite/     rusqlite: offline storage for signed-in clients (later)
 ```
 
-Each adapter owns its migrations and passes the same `task_list_repository_contract` as every other repository. If it passes, every use case test is valid for it.
+Each adapter owns its migrations and passes the same `task_list_repository_contract` as every other repository. If it passes, every use case test is valid for it. `taskr-postgres` does, against a real database.
 
 Three things change when the data gets real.
 
@@ -61,7 +61,7 @@ Loading the whole list to add one task is fine for a few hundred tasks, and wron
 
 ### Ports become async
 
-Network databases are async in Rust. The port changes shape:
+Network databases are async in Rust. taskr made this change in M1 (chapter 13) with a boxed future, `BoxFuture`, so ports stay object safe; the sketch below uses `impl Future`, the other common shape. The port changes shape:
 
 ```rust
 pub trait TaskRepository: Send + Sync {
@@ -70,15 +70,15 @@ pub trait TaskRepository: Send + Sync {
 }
 ```
 
-Use cases become `async fn`. The presentation state machine **doesn't change**: it already treats "load requested" and "loaded" as separate events. Only the controller (now awaiting effects) and the facades (now exposing async functions) change. UniFFI supports async functions that become Kotlin `suspend` functions and Swift `async` functions.
+Use cases become `async fn`. The presentation state machine **doesn't change**: it already treats "load requested" and "loaded" as separate events. Only the controller (now awaiting effects) and the facades (now exposing async functions) change. That is what happened in M1. UniFFI also supports async functions that become Kotlin `suspend` functions and Swift `async` functions; taskr keeps one blocking call per intent instead, because the shells already call off the main thread.
 
 ### Concurrent writers need versions
 
-With many writers, last-writer-wins loses data. Add a `version` to each aggregate, and make `save` conditional (`UPDATE ... WHERE id = ? AND version = ?`). A mismatch becomes a `StorageError::Conflict`, and the presentation layer turns it into "Someone else changed this task. Reload?".
+With many writers, last-writer-wins loses data. Add a `version` to each aggregate, and make `save` conditional (`UPDATE ... WHERE id = ? AND version = ?`). A mismatch becomes a conflict. taskr does this with `Revision` and `SaveError::Conflict` (chapter 5); because a task list change is small and safe to redo, the use case reloads and retries instead of asking the person. A change that is expensive or ambiguous to redo should go back to the person: "Someone else changed this task. Reload?".
 
 ## Identity, RBAC and the super admin
 
-Authorization splits cleanly into two questions, and they live in different layers.
+Authorization splits cleanly into two questions, and they live in different layers. This section is the general design; chapter 13 shows the smaller version taskr built in M1: an `Identity` port that turns a token into a principal, roles per workspace, and one `can(role, action)` function.
 
 ### Who is this? (cross-cutting infrastructure)
 

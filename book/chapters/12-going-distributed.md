@@ -4,17 +4,17 @@ So far taskr runs entirely on the user's device. This chapter adds a server, the
 
 ## The server is another shell
 
-A server is a composition root with an HTTP front end, built over the same use cases:
+A server is a composition root with an HTTP front end, built over the same use cases. taskr has one since M1 (chapter 13):
 
 ```text
 crates/taskr-server/
-  main.rs      composition root: Postgres adapter, OTLP telemetry, Identity from JWT or mTLS
-  http.rs      axum routes: decode request -> call use case -> encode response
+  main.rs      composition root: Postgres adapter, JSON-lines telemetry, Identity from Supabase JWTs
+  lib.rs       axum routes: verify the caller -> call the API port -> encode the response
 ```
 
 Route handlers contain no rules. They do what the CLI does: translate input, call a use case, translate the result (errors become HTTP status codes in one mapping, the way the CLI maps them to exit codes).
 
-On the clients, the server shows up as **adapters**: an HTTP or sync implementation of the repository port. The web, mobile and CLI shells don't change, only their composition roots pick a different adapter.
+On the clients, the server shows up as **adapters**. taskr puts the seam one level above the repository: an HTTP implementation of the API ports (`TasksApi`, `WorkspacesApi`), so permissions and rules run on the server and the client only sends intents. A future offline mode adds a sync implementation behind the same ports. The web, mobile and CLI shells don't change, only their composition roots pick a different adapter.
 
 ## Fitting into Kubernetes
 

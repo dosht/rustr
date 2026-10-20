@@ -29,23 +29,24 @@ Treat the FFI surface as a **public, versioned API**, because once an app ships,
 3. **Explicit threading.** Calls are synchronous and may touch disk, so shells must call them off the main thread. The presenter locks internally and is safe to share.
 4. **Platform services come in as callbacks.** Anything the core needs from the platform is a callback interface implemented in Kotlin or Swift.
 
-The whole mobile API is one object:
+The local mobile API is one object:
 
 ```{.rust file="crates/taskr-ffi/src/lib.rs"}
     #[uniffi::constructor]
     pub fn new(data_dir: String, sink: Box<dyn LogSink>) -> Self {
         let telemetry: Arc<dyn Telemetry> = Arc::new(ForeignTelemetry(sink));
         telemetry.record(LogEvent::info("app.started").field("shell", "mobile"));
-        let repo = JsonFileTaskListRepository::new(paths::tasks_file(&PathBuf::from(data_dir)));
+        let repo = JsonFileTaskListRepository::new(PathBuf::from(data_dir));
         let tasks = Tasks::new(Arc::new(repo), Arc::new(SystemClock), telemetry);
-        Self { controller: Mutex::new(TaskListController::new(tasks)) }
+        Self { controller: TaskListController::local(tasks) }
     }
 
     pub fn dispatch(&self, intent: TaskIntent) -> TaskListView {
-        let mut controller = self.controller.lock().unwrap_or_else(|e| e.into_inner());
-        to_view(controller.dispatch(to_intent(intent)))
+        to_view(block_on(self.controller.dispatch(to_intent(intent))))
     }
 ```
+
+The core's ports are async, but the local file store's futures finish immediately, so the facade runs them with the core's tiny `block_on` and keeps a plain synchronous call for Kotlin and Swift. The signed-in `AppPresenter` (below) does real network calls and owns a small tokio runtime for them; it is still one blocking call per intent, so the threading rule stays the same.
 
 ### A port implemented in another language
 
@@ -198,3 +199,29 @@ What's verified where, honestly: the bindings and the platform containers' threa
 ::: exercise
 Add a **share** action on mobile: long-pressing a task shares its title through the platform share sheet. Decide which parts are shell (the gesture, the share sheet) and which, if any, are core (the shared text format). Then add an `Effect::Share(text)` only if you decided the text is product behavior. Can you justify it either way?
 :::
+
+## Signed in on mobile
+
+The signed-in app is a second object, `AppPresenter`, with the same shape: one `dispatch(AppIntent) -> AppView` per user action, called off the main thread. It runs the same `AppController` the browser and the TUI run, so sign-in, workspaces, members and session expiry need no Kotlin or Swift logic.
+
+The one new platform service is where the session lives between launches. It is a callback interface, like `LogSink`:
+
+```{.rust file="crates/taskr-ffi/src/app.rs"}
+#[uniffi::export(callback_interface)]
+pub trait SessionVault: Send + Sync {
+    fn load(&self) -> Option<String>;
+    fn save(&self, value: String);
+    fn clear(&self);
+}
+```
+
+The value is an opaque string; the platform only stores it securely. Android implements it with app-private preferences (`PrefsSessionVault`), iOS with the Keychain (`KeychainSessionVault`).
+
+The screens follow each platform's idiom for the same `SignedInView`: a `ModalNavigationDrawer` with workspaces and sections on Android, a `NavigationSplitView` on iOS (a stack on iPhone, a sidebar on iPad), and the web's sidebar from chapter 9. The decisions about what is selected and what a role may do arrive as data.
+
+Configuration is a build setting: `-Ptaskr.apiUrl=...` for Gradle, `TASKR_API_URL` in the XcodeGen spec. Without it, both apps stay local. From Waydroid, the host's dev server is at the Waydroid gateway, `http://192.168.240.1:8787/api`; the debug manifest allows plain http for it.
+
+::: note
+On a distro Rust without rustup, Android's standard library is missing too. `TASKR_ANDROID_BUILD_STD=1 TASKR_ANDROID_ABIS=x86_64 ./scripts/build-android.sh` builds std from `rust-src`, for the one ABI Waydroid needs. `scripts/setup-android-toolchain.sh` installs the JDK, Gradle, SDK, NDK and cargo-ndk for the current user. That is how the signed-in app was first built and run on Waydroid.
+:::
+

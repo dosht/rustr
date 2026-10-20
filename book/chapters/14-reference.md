@@ -31,6 +31,11 @@
 | Use case | an operation the outside can ask the core for (`Tasks::add`) |
 | Value object | an immutable value, valid by construction (`Title`) |
 | ViewModel | everything a renderer needs, already decided (`TaskListVm`) |
+| Actor | a principal inside one workspace, with a role (`Actor`) |
+| API port | what a client may ask for, one workspace at a time (`TasksApi`, `WorkspacesApi`) |
+| Outbox | domain events written in the same transaction as the change, for later consumers |
+| Principal | a signed-in person as the identity provider vouches for them |
+| Revision | the optimistic concurrency token a repository hands out on load |
 
 ## Decision log {-}
 
@@ -42,7 +47,12 @@ Each decision here was made for taskr, with the main alternative and why it lost
 | Pure state machine plus a controller | ViewModels that call use cases directly | effects as data make screen logic testable with no fakes |
 | Web runs the core as WebAssembly | thin client over HTTP | same controller everywhere, offline for free, one API to version |
 | Ports are `Arc<dyn Trait>` | generics | FFI and wasm can't export generics; adapters are chosen at runtime |
-| Ports are synchronous for now | async from day one | local storage is sync; the event design lets async arrive later in the controller only |
+| Ports return `BoxFuture` (since M1) | `async fn` in traits, `async-trait` | object safe, no dependency in the core; the controller was the only presentation code that changed |
+| API ports between presentation and use cases | an HTTP repository adapter | rules and permissions stay on the server; local and remote look the same to the controller |
+| Role policy is one pure `can(role, action)` | database row-level security | every shell and test gets the same rules; RLS can come later as a safety net |
+| Membership keyed by email | user ids plus invitations | invite before sign-up with no extra tables; revisit if emails change often |
+| Outbox in the same transaction | publish events after commit | no lost or phantom events; consumers can be added later |
+| Supabase only as an adapter | Supabase client SDKs in the shells | JWTs and plain Postgres keep the provider swappable |
 | `taskr-core` has zero dependencies | serde derives on domain types | the core compiles for every target and can't do I/O by accident |
 | Whole `TaskList` is the aggregate | `Task` as aggregate | the invariants span tasks, and the data is small; revisit with a server database |
 | Fakes and contract tests | mocking libraries | tests describe behavior and survive refactoring |
@@ -86,14 +96,21 @@ cargo clippy --workspace --all-targets
 cargo run -p taskr-cli -- --help
 cargo run -p taskr-tui
 
-./scripts/build-web.sh                 # wasm core into apps/web
+./scripts/build-web.sh                 # wasm core into apps/web (TASKR_WASM_BUILD_STD=1 without rustup)
 (cd apps/web && npm run smoke && npm run build)
+(cd apps/web && npm run test:ci && npm run e2e)   # Vitest, then Playwright on desktop and phone
+(cd apps/web && npm run storybook)                # every screen, desktop and mobile
 
 ./scripts/gen-bindings.sh              # Kotlin and Swift bindings
 ./scripts/smoke-kotlin.sh              # needs kotlinc, java, JNA_JAR
 ./scripts/smoke-swift.sh               # needs a Swift toolchain
-./scripts/build-android.sh             # needs the NDK and cargo-ndk
+./scripts/setup-android-toolchain.sh   # JDK, Gradle, SDK, NDK, cargo-ndk for this user
+./scripts/build-android.sh             # TASKR_ANDROID_BUILD_STD=1 TASKR_ANDROID_ABIS=x86_64 for Waydroid
 ./scripts/build-ios.sh                 # macOS only
+
+docker compose -f deploy/dev/compose.yaml up -d                 # Postgres + Supabase Auth
+TASKR_STORAGE=memory TASKR_DEV_AUTH=1 cargo run -p taskr-server # throwaway server
+TASKR_TEST_DATABASE_URL=postgres://... cargo test --workspace    # include the Postgres tests
 
 ./scripts/build-book.sh                # this book, EPUB and PDF
 ./scripts/build-book.sh --check        # code listings still match the source
@@ -116,3 +133,13 @@ cargo run -p taskr-tui
 - The Core and Shells pattern, with taskr as the sample: one `tasks` context, telemetry as the cross-cutting concern, and CLI, TUI, web, Android and iOS shells.
 - Primers on Rust, Svelte 5, Kotlin and Swift.
 - Part four: databases, identity and RBAC, desktop platforms, servers on Kubernetes, realtime, messaging, analytics, static sites, content, and a family of apps on one platform.
+
+### Web testing {-}
+
+- Desktop and phone views for every web screen, Storybook grouped by `DesktopViews` and `MobileViews`, Vitest component tests, and Playwright end-to-end tests on both layouts (chapter 9).
+
+### M1: signed in {-}
+
+- New chapter 13: async ports, roles and the `can()` policy, workspaces, API ports, the Axum server, Supabase Auth, Postgres with an outbox, and `AppState` for sign-in and navigation.
+- Chapters 2 and 4 to 12 updated for async ports, workspaces, revisions and the signed-in shells.
+

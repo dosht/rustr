@@ -11,9 +11,12 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 taskr-core.workspace = true
 taskr-infra.workspace = true
+taskr-client.workspace = true
 wasm-bindgen.workspace = true
+wasm-bindgen-futures = "0.4"
 js-sys.workspace = true
 web-sys = { version = "0.3", features = ["Storage", "console"] }
 serde.workspace = true
+serde_json.workspace = true
 serde-wasm-bindgen.workspace = true
 ts-rs.workspace = true

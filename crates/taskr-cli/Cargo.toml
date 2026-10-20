@@ -12,6 +12,8 @@ path = "src/main.rs"
 [dependencies]
 taskr-core.workspace = true
 taskr-infra = { workspace = true, features = ["native"] }
-clap.workspace = true
+taskr-client.workspace = true
+tokio = { version = "1", features = ["rt", "macros"] }
+clap = { workspace = true, features = ["env"] }
 serde.workspace = true
 serde_json.workspace = true

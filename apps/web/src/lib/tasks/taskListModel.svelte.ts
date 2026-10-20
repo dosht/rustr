@@ -4,17 +4,19 @@ import type { TaskCore, TaskIntent, TaskListView } from "../core";
 
 export interface TaskListModel {
   readonly view: TaskListView;
-  send(intent: TaskIntent): void;
+  send(intent: TaskIntent): Promise<void>;
 }
 
-export function createTaskListModel(core: TaskCore): TaskListModel {
-  let view = $state<TaskListView>(core.dispatch({ type: "Opened" }));
+export async function createTaskListModel(core: TaskCore): Promise<TaskListModel> {
+  let view = $state<TaskListView>(await core.dispatch({ type: "Opened" }));
   return {
     get view() {
       return view;
     },
-    send(intent) {
-      view = core.dispatch(intent);
+    async send(intent) {
+      await core.dispatch(intent);
+      // The latest state, not this dispatch's, in case an earlier slow one finished last.
+      view = core.current();
     },
   };
 }

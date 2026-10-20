@@ -20,4 +20,11 @@ cli = ["uniffi/cli"]
 [dependencies]
 taskr-core.workspace = true
 taskr-infra = { workspace = true, features = ["native"] }
+taskr-client.workspace = true
 uniffi.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio = { version = "1", features = ["rt-multi-thread"] }
+
+[dev-dependencies]
+taskr-core = { workspace = true, features = ["testing"] }

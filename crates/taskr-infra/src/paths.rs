@@ -18,3 +18,7 @@ pub fn tasks_file(dir: &std::path::Path) -> PathBuf {
 pub fn log_file(dir: &std::path::Path) -> PathBuf {
     dir.join("taskr.log.jsonl")
 }
+
+pub fn session_file(dir: &std::path::Path) -> PathBuf {
+    dir.join("session.json")
+}

@@ -32,12 +32,14 @@ All the Rust tests together run in well under a second.
 The React guide mocks repositories with `jest.fn()`. In Rust you can do that too (the `mockall` crate), but taskr writes small **fakes** instead: real, working, in-memory implementations of each port.
 
 ```{.rust file="crates/taskr-core/src/testing.rs"}
-/// Stores a snapshot rather than the aggregate so every load goes through
-/// `TaskList::restore`, exactly like the real adapters.
+/// Stores snapshots rather than aggregates so every load goes through
+/// `restore`, exactly like the real adapters.
 #[derive(Default)]
 pub struct InMemoryTaskListRepository {
-    stored: Mutex<TaskListSnapshot>,
+    stored: Mutex<BTreeMap<WorkspaceId, (TaskListSnapshot, Revision)>>,
+    outbox: Mutex<Vec<DomainEvent>>,
     fail_saves: AtomicBool,
+    conflicts_left: AtomicUsize,
     saves: AtomicUsize,
 }
 ```
@@ -48,7 +50,9 @@ Why fakes:
 - **Refactoring doesn't break them.** If a use case starts loading twice, a mock-based test fails. A fake-based test still passes, because the behavior didn't change.
 - **One fake serves hundreds of tests.** A mock gets configured again in every test.
 
-There are three fakes: `InMemoryTaskListRepository`, `FixedClock` and `RecordingTelemetry`. They live in `taskr-core/src/testing.rs` behind the `testing` feature, so the TUI's tests can use them too.
+The fake can also be told to fail (`fail_saves`) or to report a conflict on the next saves (`conflict_next_saves`), so the retry loop from chapter 5 is tested without two real writers. It keeps the outbox too, so a test can check which domain events a change produced.
+
+The fakes live in `taskr-core/src/testing.rs` behind the `testing` feature, so every crate's tests can use them: `InMemoryTaskListRepository`, `InMemoryWorkspaceRepository`, `FixedClock`, `RecordingTelemetry`, and for the signed-in mode `FakeAuth`, `FakeIdentity` and `MemorySessionStore`. There is also `block_on`, a few lines of `std` that run a future to completion, so tests of async use cases need no runtime.
 
 Mocks still have a place: asserting that something happened when there is no state to observe, like "an email was sent". Even then, a recording fake (like `RecordingTelemetry`) is usually clearer.
 
@@ -60,24 +64,31 @@ A fake is only useful if it behaves like the real thing. So every repository, fa
 pub fn task_list_repository_contract<R: TaskListRepository>(
     fresh: impl Fn() -> R,
     reopen: impl Fn(&R) -> R,
+    workspace: impl Fn(&R) -> WorkspaceId,
 ) {
 ```
 
-It checks that empty storage loads as an empty list, that what you save comes back equal (including non-ASCII titles), that data survives reopening the storage, and that a later save replaces an earlier one. The JSON file adapter runs it in `taskr-infra`:
+It checks that empty storage loads as an empty list, that what you save comes back equal (including non-ASCII titles), that data survives reopening the storage, that a stale revision is refused, that a later save replaces an earlier one, and that two workspaces never see each other's tasks. The JSON file adapter runs it in `taskr-infra`:
 
 ```{.rust file="crates/taskr-infra/src/json_file.rs"}
     #[test]
     fn honours_the_repository_contract() {
         let dir = temp_dir("contract");
+        let next = AtomicU32::new(0);
         task_list_repository_contract(
-            || JsonFileTaskListRepository::new(dir.join("nested/tasks.json")),
-            |r| JsonFileTaskListRepository::new(r.path()),
+            || JsonFileTaskListRepository::new(dir.join("nested")),
+            |r| JsonFileTaskListRepository::new(r.dir()),
+            |_| match next.fetch_add(1, Ordering::SeqCst) {
+                0 => WorkspaceId::local(),
+                n => WorkspaceId(format!("team/{n}")),
+            },
         );
+        assert!(dir.join("nested/tasks.json").exists());
         assert!(!dir.join("nested/tasks.json.tmp").exists());
     }
 ```
 
-When a SQLite or Postgres adapter arrives, it gets one more call to the same function. If it passes, every use case test written against the fake is also valid for it.
+The Postgres adapter (chapter 13) makes one more call to the same function, against a real database when `TASKR_TEST_DATABASE_URL` is set. It passes, so every use case test written against the fake is also valid for Postgres. Workspaces have their own contract, `workspace_repository_contract`, run the same three ways.
 
 ## Testing each layer
 
@@ -99,7 +110,7 @@ A small `World` builds the use cases from fakes and keeps handles to them, so te
     #[test]
     fn rejected_add_changes_nothing_and_is_recorded() {
         let w = world();
-        let err = w.tasks.add("   ").unwrap_err();
+        let err = block_on(w.tasks.add(&w.owner, "   ")).unwrap_err();
         assert_eq!(err, TasksError::Rejected(TaskError::InvalidTitle(TitleError::Empty)));
         assert_eq!(w.repo.save_count(), 0);
         let events = w.telemetry.events();
@@ -134,7 +145,8 @@ Shell tests are few and coarse, because the shells are thin:
 - **CLI**: run the real binary in a temp directory and check stdout, stderr and exit codes.
 - **TUI**: drive `Shell::handle` with keys against a controller built from fakes, and render into ratatui's `TestBackend` to check what's on screen.
 - **Web**: a Node script loads the real `.wasm` and runs a scenario; a headless browser run checks the page.
-- **Mobile**: the generated Kotlin bindings run on a plain JVM, and the generated Swift bindings plus the iOS model run with the Linux Swift toolchain, both against the host build of the core.
+- **Mobile**: the generated Kotlin bindings run on a plain JVM, and the generated Swift bindings plus the iOS models run with the Linux Swift toolchain, both against the host build of the core.
+- **Server**: real HTTP on a random port, driven by the real client and the shared `AppController`, on in-memory storage and on Postgres (chapter 13).
 
 ## The outside-in loop
 

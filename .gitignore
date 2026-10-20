@@ -15,3 +15,5 @@ apps/ios/TaskrCore.xcframework/
 .idea/
 .vscode/
 *.swp
+apps/ios/Taskr/Info.plist
+apps/android/local.properties

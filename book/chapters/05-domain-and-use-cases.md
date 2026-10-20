@@ -110,10 +110,26 @@ The adapter in `taskr-infra` maps the snapshot to its own versioned JSON structs
 
 ```{.rust file="crates/taskr-core/src/tasks/app.rs"}
 pub trait TaskListRepository: Send + Sync {
-    fn load(&self) -> Result<TaskList, StorageError>;
-    fn save(&self, list: &TaskList) -> Result<(), StorageError>;
+    fn load<'a>(
+        &'a self,
+        workspace: &'a WorkspaceId,
+    ) -> BoxFuture<'a, Result<(TaskList, Revision), StorageError>>;
+
+    fn save<'a>(
+        &'a self,
+        workspace: &'a WorkspaceId,
+        list: &'a TaskList,
+        expected: Revision,
+        events: &'a [DomainEvent],
+    ) -> BoxFuture<'a, Result<(), SaveError>>;
 }
 ```
+
+Three things in this signature came from growing the product (chapter 13), and they are worth reading now because every port in the codebase follows them:
+
+- **The port is async.** `BoxFuture` is a boxed future, defined in the shared kernel with plain `std`. A JSON file returns a future that is already finished; Postgres and HTTP return real ones. The use cases are written once for both.
+- **There is one list per workspace.** Signed out, the only workspace is `WorkspaceId::local()`.
+- **Saves are checked.** `load` hands out a `Revision`. `save` refuses with `SaveError::Conflict` if someone else saved since, and it writes the change's domain events in the same step.
 
 `Tasks` is the use case object. It's built from three ports, and it has no other state:
 
@@ -127,43 +143,60 @@ pub struct Tasks {
 
 ### One unit of work
 
-Every write follows the same steps: load the aggregate, apply one domain operation, save, record what happened. That's written once:
+Every write follows the same steps: check the actor may change tasks, load the aggregate, apply one domain operation, save it together with a domain event, record what happened. That's written once:
 
 ```{.rust file="crates/taskr-core/src/tasks/app.rs"}
-    fn change(
+    async fn change(
         &self,
+        actor: &Actor,
         name: &'static str,
-        apply: impl FnOnce(&mut TaskList) -> Result<TaskId, TaskError>,
+        apply: impl Fn(&mut TaskList) -> Result<TaskId, TaskError> + Send,
     ) -> Result<TaskSummary, TasksError> {
-        let mut list = self.repo.load().inspect_err(|e| self.storage_failed(name, e))?;
-        let id = apply(&mut list).inspect_err(|e| {
-            self.telemetry.record(
-                LogEvent::warn("task.rejected")
-                    .field("action", name)
-                    .field("reason", format!("{e:?}")),
-            )
-        })?;
-        self.repo.save(&list).inspect_err(|e| self.storage_failed(name, e))?;
-        let task = list.get(id).map(summarize).expect("the task we just changed exists");
-        self.telemetry
-            .record(LogEvent::info(name).field("id", id.0).field("open", list.open_count()));
-        Ok(task)
+        actor.ensure(Action::ChangeTasks).inspect_err(|e| self.rejected(name, e))?;
+        for attempt in 1..=MAX_ATTEMPTS {
+            let (mut list, revision) = self
+                .repo
+                .load(&actor.workspace)
+                .await
+                .inspect_err(|e| self.storage_failed(name, e))?;
+            let id = apply(&mut list).inspect_err(|e| self.rejected(name, e))?;
+            // ...
+            match self.repo.save(&actor.workspace, &list, revision, &[event]).await {
+                Ok(()) => {
+                    // ...
+                    return Ok(task);
+                }
+                Err(SaveError::Conflict) => self.telemetry.record(
+                    LogEvent::warn("storage.conflict")
+                        .field("action", name)
+                        .field("attempt", attempt),
+                ),
+                Err(SaveError::Failed(e)) => {
+                    self.storage_failed(name, &e);
+                    return Err(e.into());
+                }
+            }
+        }
+        Err(TasksError::Storage(StorageError("too many people are editing at once".into())))
     }
 ```
 
-and each use case is a one-liner on top of it:
+The loop is optimistic concurrency. If two people change the same list at once, the second save is refused, and the use case reloads the fresh list and applies its change again. `apply` is `Fn`, not `FnOnce`, because it may run more than once.
+
+Each use case is a few lines on top of it:
 
 ```{.rust file="crates/taskr-core/src/tasks/app.rs"}
-    pub fn add(&self, raw_title: &str) -> Result<TaskSummary, TasksError> {
+    pub async fn add(&self, actor: &Actor, raw_title: &str) -> Result<TaskSummary, TasksError> {
         let now = self.clock.now();
-        self.change("task.added", |list| {
+        self.change(actor, "task.added", |list| {
             let title = Title::parse(raw_title)?;
             list.add(title, now)
         })
+        .await
     }
 ```
 
-If the domain says no, nothing is saved. If saving fails, the caller gets a `Storage` error and telemetry records it. There's no partial state.
+If the role says no, or the domain says no, nothing is saved. If saving fails, the caller gets a `Storage` error and telemetry records it. There's no partial state.
 
 ### Read models, not entities
 

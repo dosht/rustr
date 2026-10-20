@@ -10,9 +10,11 @@
 //! would otherwise be written once per platform.
 
 use std::collections::VecDeque;
+use std::sync::{Arc, Mutex, MutexGuard};
 
-use crate::shared::clock::Millis;
-use crate::tasks::app::{Scope, TaskSummary, Tasks, TasksError};
+use crate::shared::access::{AccessError, Action, WorkspaceId, describe_access};
+use crate::shared::clock::{Clock, Millis};
+use crate::tasks::app::{LocalTasks, Scope, TaskSummary, Tasks, TasksApi, TasksError};
 use crate::tasks::domain::{TaskError, TitleError};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -94,9 +96,11 @@ pub struct TaskListVm {
     pub is_loading: bool,
     pub error: Option<String>,
     pub notice: Option<String>,
+    /// False for viewers: shells hide the add form and disable the toggles.
+    pub can_change: bool,
 }
 
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TaskListState {
     scope: Scope,
     filter: String,
@@ -104,9 +108,33 @@ pub struct TaskListState {
     loading: bool,
     error: Option<String>,
     notice: Option<String>,
+    can_change: bool,
+}
+
+impl Default for TaskListState {
+    fn default() -> Self {
+        Self::new(true)
+    }
 }
 
 impl TaskListState {
+    pub fn new(can_change: bool) -> Self {
+        Self {
+            scope: Scope::default(),
+            filter: String::new(),
+            tasks: vec![],
+            loading: false,
+            error: None,
+            notice: None,
+            can_change,
+        }
+    }
+
+    /// The role changed while the screen was open.
+    pub fn set_can_change(&mut self, can_change: bool) {
+        self.can_change = can_change;
+    }
+
     pub fn update(&mut self, event: Event) -> Vec<Effect> {
         match event {
             Event::User(intent) => self.on_intent(intent),
@@ -142,6 +170,10 @@ impl TaskListState {
             Intent::Opened | Intent::Refreshed => {
                 self.loading = true;
                 vec![Effect::LoadAll]
+            }
+            Intent::AddSubmitted(_) | Intent::ToggleRequested(_) if !self.can_change => {
+                self.show_error(&AccessError::Forbidden(Action::ChangeTasks).into());
+                vec![]
             }
             Intent::AddSubmitted(title) => vec![Effect::Add(title)],
             Intent::ToggleRequested(id) => match self.tasks.iter().find(|t| t.id == id) {
@@ -202,6 +234,7 @@ impl TaskListState {
             is_loading: self.loading,
             error: self.error.clone(),
             notice: self.notice.clone(),
+            can_change: self.can_change,
         }
     }
 
@@ -222,6 +255,7 @@ impl TaskListState {
 pub fn describe(e: &TasksError) -> String {
     match e {
         TasksError::Storage(s) => format!("Could not read or save your tasks ({}).", s.0),
+        TasksError::Access(a) => describe_access(a),
         TasksError::Rejected(r) => match r {
             TaskError::InvalidTitle(TitleError::Empty) => "A task needs a title.".into(),
             TaskError::InvalidTitle(TitleError::TooLong { max }) => {
@@ -254,36 +288,53 @@ pub fn age_label(from: Millis, now: Millis) -> String {
 }
 
 pub struct TaskListController {
-    state: TaskListState,
-    tasks: Tasks,
+    state: Mutex<TaskListState>,
+    api: Arc<dyn TasksApi>,
+    workspace: WorkspaceId,
+    clock: Arc<dyn Clock>,
 }
 
 impl TaskListController {
-    pub fn new(tasks: Tasks) -> Self {
-        Self { state: TaskListState::default(), tasks }
+    pub fn new(api: Arc<dyn TasksApi>, workspace: WorkspaceId, clock: Arc<dyn Clock>) -> Self {
+        Self { state: Mutex::new(TaskListState::default()), api, workspace, clock }
     }
 
-    pub fn dispatch(&mut self, intent: Intent) -> TaskListVm {
+    /// The signed-out shells: the local workspace, run in process.
+    pub fn local(tasks: Tasks) -> Self {
+        let clock = tasks.clock();
+        Self::new(Arc::new(LocalTasks::new(tasks)), WorkspaceId::local(), clock)
+    }
+
+    /// The state lock is only held while updating, never across an await, so
+    /// concurrent dispatches interleave like messages instead of blocking.
+    pub async fn dispatch(&self, intent: Intent) -> TaskListVm {
         let mut queue = VecDeque::from([Event::User(intent)]);
         while let Some(event) = queue.pop_front() {
-            for effect in self.state.update(event) {
-                queue.push_back(self.run(effect));
+            let effects = self.state().update(event);
+            for effect in effects {
+                queue.push_back(run(self.api.as_ref(), &self.workspace, effect).await);
             }
         }
         self.view()
     }
 
     pub fn view(&self) -> TaskListVm {
-        self.state.view(self.tasks.now())
+        self.state().view(self.clock.now())
     }
 
-    fn run(&self, effect: Effect) -> Event {
-        match effect {
-            Effect::LoadAll => Event::Loaded(self.tasks.list(Scope::All)),
-            Effect::Add(title) => Event::Changed(Change::Added, self.tasks.add(&title)),
-            Effect::Complete(id) => Event::Changed(Change::Completed, self.tasks.complete(id)),
-            Effect::Reopen(id) => Event::Changed(Change::Reopened, self.tasks.reopen(id)),
+    fn state(&self) -> MutexGuard<'_, TaskListState> {
+        self.state.lock().unwrap_or_else(|e| e.into_inner())
+    }
+}
+
+pub async fn run(api: &dyn TasksApi, workspace: &WorkspaceId, effect: Effect) -> Event {
+    match effect {
+        Effect::LoadAll => Event::Loaded(api.list(workspace).await),
+        Effect::Add(title) => Event::Changed(Change::Added, api.add(workspace, title).await),
+        Effect::Complete(id) => {
+            Event::Changed(Change::Completed, api.complete(workspace, id).await)
         }
+        Effect::Reopen(id) => Event::Changed(Change::Reopened, api.reopen(workspace, id).await),
     }
 }
 
@@ -332,22 +383,33 @@ pub mod fixtures {
         s.view(NOW)
     }
 
+    pub fn read_only() -> TaskListVm {
+        let mut s = sample_state();
+        s.can_change = false;
+        s.view(NOW)
+    }
+
     pub fn all() -> Vec<(&'static str, TaskListVm)> {
         vec![
             ("empty", empty()),
             ("loading", loading()),
             ("sample", sample()),
             ("error", with_error()),
+            ("read-only", read_only()),
         ]
     }
 
-    fn sample_state() -> TaskListState {
-        loaded(vec![
+    pub fn sample_tasks() -> Vec<TaskSummary> {
+        vec![
             task(1, "Write the architecture doc", 3 * 24 * 60, false),
             task(2, "Try the TUI with vim keys", 90, false),
             task(4, "Generate Swift bindings", 5, false),
             task(3, "Set up the workspace", 2 * 24 * 60, true),
-        ])
+        ]
+    }
+
+    fn sample_state() -> TaskListState {
+        loaded(sample_tasks())
     }
 }
 
@@ -356,8 +418,7 @@ mod tests {
     use super::*;
     use crate::shared::telemetry::NoTelemetry;
     use crate::tasks::app::StorageError;
-    use crate::testing::{FixedClock, InMemoryTaskListRepository};
-    use std::sync::Arc;
+    use crate::testing::{FixedClock, InMemoryTaskListRepository, block_on};
 
     fn summary(id: u32, title: &str, done: bool) -> TaskSummary {
         TaskSummary { id, title: title.into(), created_at: 0, done_at: done.then_some(1) }
@@ -467,12 +528,23 @@ mod tests {
     }
 
     #[test]
+    fn viewers_see_why_they_cannot_change_anything() {
+        let mut s = TaskListState::new(false);
+        s.update(Event::Loaded(Ok(vec![summary(1, "a", false)])));
+        assert!(!s.view(0).can_change);
+        assert!(s.update(Event::User(Intent::ToggleRequested(1))).is_empty());
+        assert!(s.update(Event::User(Intent::AddSubmitted("b".into()))).is_empty());
+        assert_eq!(s.view(0).error.as_deref(), Some("Viewers cannot change tasks."));
+    }
+
+    #[test]
     fn fixtures_cover_the_main_screen_states() {
         assert!(fixtures::loading().is_loading);
         assert!(fixtures::empty().empty_message.is_some());
         assert_eq!(fixtures::sample().rows.len(), 3);
         assert!(fixtures::with_error().error.is_some());
         assert_eq!(fixtures::sample().rows[0].cells[2], "3d");
+        assert!(fixtures::sample().can_change && !fixtures::read_only().can_change);
     }
 
     #[test]
@@ -482,17 +554,17 @@ mod tests {
             Arc::new(FixedClock::at(0)),
             Arc::new(NoTelemetry),
         );
-        let mut c = TaskListController::new(tasks);
-        assert!(c.dispatch(Intent::Opened).rows.is_empty());
+        let c = TaskListController::local(tasks);
+        assert!(block_on(c.dispatch(Intent::Opened)).rows.is_empty());
 
-        let vm = c.dispatch(Intent::AddSubmitted("Buy milk".into()));
+        let vm = block_on(c.dispatch(Intent::AddSubmitted("Buy milk".into())));
         assert_eq!(titles(&vm), ["Buy milk"]);
         assert!(!vm.is_loading);
 
-        let vm = c.dispatch(Intent::AddSubmitted("buy milk".into()));
+        let vm = block_on(c.dispatch(Intent::AddSubmitted("buy milk".into())));
         assert_eq!(vm.error.as_deref(), Some("There is already an open task with that title."));
 
-        let vm = c.dispatch(Intent::ToggleRequested(1));
+        let vm = block_on(c.dispatch(Intent::ToggleRequested(1)));
         assert!(vm.rows.is_empty());
         assert_eq!(vm.tabs[1].label, "Done (1)");
         assert_eq!(vm.notice.as_deref(), Some("Done: \"Buy milk\""));

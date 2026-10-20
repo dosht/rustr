@@ -1,1 +1,4 @@
 .smoke-localstorage
+playwright-report/
+test-results/
+storybook-static/

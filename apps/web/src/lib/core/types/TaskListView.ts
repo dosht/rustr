@@ -3,4 +3,4 @@ import type { ColumnView } from "./ColumnView";
 import type { ScopeTabView } from "./ScopeTabView";
 import type { TaskRowView } from "./TaskRowView";
 
-export type TaskListView = { tabs: Array<ScopeTabView>, filter: string, columns: Array<ColumnView>, rows: Array<TaskRowView>, emptyMessage: string | null, isLoading: boolean, error: string | null, notice: string | null, };
+export type TaskListView = { tabs: Array<ScopeTabView>, filter: string, columns: Array<ColumnView>, rows: Array<TaskRowView>, emptyMessage: string | null, isLoading: boolean, error: string | null, notice: string | null, canChange: boolean, };

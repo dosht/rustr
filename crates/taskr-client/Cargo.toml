@@ -1,0 +1,16 @@
+[package]
+name = "taskr-client"
+description = "HTTP adapters for the client-side ports: TasksApi and WorkspacesApi over taskr-server, AuthClient over Supabase Auth (GoTrue) or dev tokens. Builds for native and wasm32."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+taskr-core.workspace = true
+taskr-api.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+reqwest = { version = "0.13", default-features = false, features = ["json"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }

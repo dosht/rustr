@@ -5,13 +5,11 @@ struct TaskListScreen: View {
     let view: TaskListView?
     let onIntent: (TaskIntent) -> Void
 
-    @State private var draft = ""
-
     var body: some View {
         NavigationStack {
             Group {
                 if let view {
-                    content(view)
+                    TaskListContent(view: view, onIntent: onIntent)
                 } else {
                     ProgressView()
                 }
@@ -19,8 +17,16 @@ struct TaskListScreen: View {
             .navigationTitle("taskr")
         }
     }
+}
 
-    private func content(_ view: TaskListView) -> some View {
+/// The list without its own navigation, so the signed-in frame can embed it.
+struct TaskListContent: View {
+    let view: TaskListView
+    let onIntent: (TaskIntent) -> Void
+
+    @State private var draft = ""
+
+    var body: some View {
         List {
             Section {
                 Picker("Show", selection: scopeBinding(view)) {
@@ -30,11 +36,16 @@ struct TaskListScreen: View {
                 }
                 .pickerStyle(.segmented)
 
-                HStack {
-                    TextField("New task", text: $draft)
-                        .onSubmit(submit)
-                        .submitLabel(.done)
-                    Button("Add", action: submit)
+                if view.canChange {
+                    HStack {
+                        TextField("New task", text: $draft)
+                            .onSubmit(submit)
+                            .submitLabel(.done)
+                        Button("Add", action: submit)
+                    }
+                } else {
+                    Text("You can view this list. Ask an owner for editor access to change it.")
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -57,6 +68,7 @@ struct TaskListScreen: View {
                     TaskRowCell(row: row, columns: view.columns) {
                         onIntent(.toggleRequested(id: row.id))
                     }
+                    .disabled(!view.canChange)
                 }
             }
         }

@@ -42,6 +42,8 @@ The core never changes as the product grows. Each rung adds adapters and shells.
 6. Background jobs and uploads: long-running work, webhooks, provider fallback. Transgate's hardest ADRs came from here.
 7. Realtime and offline: hardest and least needed for an MVP, so last.
 
+M1 was built on 2026-10-17; see `docs/milestones/m1-multi-user.md` for decisions and open questions.
+
 ## Q&A
 
 **Which Lambda alternative did we discuss?** Kappa: one event log you can replay, instead of Lambda's separate batch and stream paths. Not sure it is the one mentioned earlier.

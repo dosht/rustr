@@ -10,4 +10,6 @@ pub mod json_file;
 #[cfg(feature = "native")]
 pub mod paths;
 #[cfg(feature = "native")]
+pub mod session_file;
+#[cfg(feature = "native")]
 pub mod telemetry;

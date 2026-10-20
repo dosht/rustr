@@ -2,6 +2,7 @@
 # Compiles the generated Kotlin bindings plus apps/android/smoke on the JVM and
 # runs them against the host build of the core. Needs kotlinc, java and the
 # JNA jar (JNA_JAR, e.g. jna-5.18.1.jar from Maven Central).
+# TASKR_SMOKE_API=http://localhost:8787/api (dev auth) adds a signed-in run.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 : "${JNA_JAR:?set JNA_JAR to a jna-5.x.jar}"
