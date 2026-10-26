@@ -36,7 +36,18 @@ omp --session /home/mu/.omp/agent/sessions/-src-rustr/2026-10-24T06-22-20-764Z_0
 
 Run from the repository root. Decision files are comma-separated repository-relative paths. They are chosen explicitly; neither latest mtime nor a roadmap phase silently selects a decision. A missing designation warns. Add other accepted decision files explicitly when they become relevant to the current batch. The two fixed checkpoint files are always observed. A missing, unreadable, non-regular or larger-than-1-MiB input warns without blocking conversation. No document content is copied into an instruction; reminders contain only paths, hashes and guard-authored guidance.
 
-The overlay sets exactly `advisor.enabled: false`, `prewalk.enabled: false`, `prewalk.auto: "off"`, `retry.modelFallback: false`. It does not replace `modelRoles`, memory, auth or unrelated settings, and it does not set a model itself. It is read via `--config` for this process, never saved globally. Settings precedence still applies: an existing environment/runtime override can outrank an overlay, so Y must inspect **effective** values. The explicit CLI model/effort does not authorize provider fallback. Same-model retries and normal host compaction are not disabled by `retry.modelFallback`.
+The overlay sets `advisor.enabled: false`, `prewalk.enabled: false`, `prewalk.auto: "off"`, `retry.modelFallback: false`, and loads the Claude usage gate (below) through `extensions`. It does not replace `modelRoles`, memory, auth or unrelated settings, and it does not set a model itself. It is read via `--config` for this process, never saved globally. Settings precedence still applies: an existing environment/runtime override can outrank an overlay, so Y must inspect **effective** values. The explicit CLI model/effort does not authorize provider fallback. Same-model retries and normal host compaction are not disabled by `retry.modelFallback`.
+
+## Claude usage gate
+
+`scripts/lead-workflow/claude-usage-gate.ts` (mu's request, 2026-10-26) holds every Anthropic provider request (`before_provider_request`, `ctx.model.provider === "anthropic"`) while an observed Claude window is at its limit, then sleeps until that window resets. Usage comes from `omarchy agent usage claude --limits-only`, polled at most once a minute; freshness is `fetchedAtMs` in `~/.cache/omarchy/agent-usage/claude-limits.json`, not the record's `updatedAt`.
+
+- **Windows:** the 5-hour session and 7-day weekly windows gate every Claude model; the Fable weekly window gates Fable only. Default threshold 0.98 consumed; `--claude-usage-threshold <0-1>` overrides.
+- **Release:** after the reset time, only a forced fetch (`--force`) that reports the window below the threshold releases the hold. A failed or stale post-reset fetch keeps holding and rechecks every 5 minutes.
+- **Fail open:** with no hold in progress, unreadable or stale (over 15 minutes) usage does not block; it warns once and shows "unknown" in the status line.
+- **Cancel:** Esc aborts the turn when the provider event carries an abort signal; otherwise the hold lasts until the reset.
+- **Loading:** the lead gets it through `lead-session.yml`; workers add `--extension /home/mu/src/rustr/scripts/lead-workflow/claude-usage-gate.ts` to their launch command. Non-Anthropic requests are untouched.
+- **Evidence:** `node --experimental-strip-types --test scripts/lead-workflow/claude-usage-gate.test.ts` 9 PASS; actual `omp -p` with Haiku: under the limit replied `OK`; with `--claude-usage-threshold 0.01` held without replying until the 20-second cap, both via `--extension` and via the overlay.
 
 ## Actual API/event seams
 
