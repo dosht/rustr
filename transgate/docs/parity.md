@@ -1,0 +1,460 @@
+# Parity suite
+
+One row per user flow, endpoint, email, schedule and locale of the current app, per surface. Assembled by `scripts/assemble-discovery.py` from `discovery/`; edit there. PRD section 7.3 is the contract: the Transgate gate fails on any row without a green test.
+
+Columns: ID, the flow, the surface, where it lives today, the Playwright spec or Rust test that proves it (`tbd` until written), and status: `inventoried` (P0), `tested`, `dropped` (mu decided; the reason is in keep-throw.md). CLI, TUI, Android and iOS rows describe applicable current behavior to carry to new shells, not existing native or terminal implementations.
+
+## Summary
+
+| Surface | Rows |
+|---|---|
+| web-desktop | 111 |
+| web-phone | 94 |
+| cli | 6 |
+| tui | 6 |
+| android | 10 |
+| ios | 10 |
+| api | 101 |
+| email | 23 |
+| cron | 11 |
+| locale | 16 |
+| Total | 388 |
+
+## web-desktop
+
+| ID | Flow | Surface | Today | Test | Status | Topic |
+|---|---|---|---|---|---|---|
+| AI-F01 | Consent grant/refusal/revocation | web-desktop | frontend/src/lib/ai/consent-service.ts:55-153 | tbd | inventoried | ai |
+| AI-F03 | Stream detected type, summary and specialized highlights | web-desktop | frontend/src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:204-266 | tbd | inventoried | ai |
+| AI-F05 | Reload completed/partial/interrupted analysis and retry | web-desktop | frontend/src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:105-202,268-279 | tbd | inventoried | ai |
+| AI-F07 | Ask transcript question, stream answer, persist and reload history | web-desktop | frontend/src/features/aiAnalysis/viewmodels/useChatViewModel.ts:63-214 | tbd | inventoried | ai |
+| AI-F09 | Reject exhausted freemium quota; paid user bypasses quota | web-desktop | frontend/src/lib/ai/ai-service-manager.ts:204-227; frontend/src/features/aiAnalysis/viewmodels/useChatViewModel.ts:153-163 | tbd | inventoried | ai |
+| API-F08 | Create/copy/list/revoke API keys with scope and expiry | web-desktop | frontend/src/pages/dashboard/api-keys.tsx:50-235 | tbd | inventoried | api |
+| JOB-F01 | Pick/drop files, progress, failed upload and restore queue | web-desktop | frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:379-413,608-764 | tbd | inventoried | jobs-transcription |
+| JOB-F03 | Select language, auto-detect, speakers and start transcription | web-desktop | frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:969-1012 | tbd | inventoried | jobs-transcription |
+| JOB-F05 | Select source/target and start translation | web-desktop | frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:791-878,969-1012 | tbd | inventoried | jobs-transcription |
+| JOB-F07 | Add YouTube link, resolve captions, report failure | web-desktop | frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:880-959 | tbd | inventoried | jobs-transcription |
+| JOB-F09 | Observe pending/running/completion and live lines | web-desktop | frontend/src/features/transcriptLines/containers/TranscriptLinesContainer.tsx:164-235 | tbd | inventoried | jobs-transcription |
+| JOB-F11 | Edit text, select/rename speakers and seek playback | web-desktop | frontend/src/features/transcriptLines/services/TranscriptLineService.ts:76-115; frontend/src/features/transcriptLines/views/TranscriptLineView.tsx:134 | tbd | inventoried | jobs-transcription |
+| JOB-F13 | Export visible text or all formats, copy text | web-desktop | frontend/src/utils/transcriptFileSaver.ts:62-183,213-228 | tbd | inventoried | jobs-transcription |
+| JOB-F15 | List/paginate history and delete job | web-desktop | frontend/src/dao/JobRepository.ts:147-211,334-363 | tbd | inventoried | jobs-transcription |
+| OPS-P001 | Effective feature visibility | web-desktop | User-gated hook versus guest utility and server authorization; FLG-001 to FLG-009 | tbd | inventoried | platform |
+| OPS-P003 | Consent and browser telemetry | web-desktop | Accepted/rejected cookie, default opt-out, events, Sentry correlation; `frontend/src/components/PostHogProvider/PostHogProvider.tsx:15-62,99-114` | tbd | inventoried | platform |
+| SEO-L01 | English sitemap manifest | web-desktop | 356 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L02 | Turkish sitemap manifest | web-desktop | 282 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L03 | Portuguese sitemap manifest | web-desktop | 267 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L04 | Spanish sitemap manifest | web-desktop | 273 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L05 | German sitemap manifest | web-desktop | 343 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L06 | Indonesian sitemap manifest | web-desktop | 287 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L07 | Italian sitemap manifest | web-desktop | 266 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L08 | French sitemap manifest | web-desktop | 263 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L09 | Greek sitemap manifest | web-desktop | 264 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L10 | Russian sitemap manifest | web-desktop | 305 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L11 | Danish sitemap manifest | web-desktop | 265 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L12 | Swedish sitemap manifest | web-desktop | 264 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L13 | Norwegian sitemap manifest | web-desktop | 263 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L14 | Finnish sitemap manifest | web-desktop | 261 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L15 | Kazakh sitemap manifest | web-desktop | 300 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-L16 | Azerbaijani sitemap manifest | web-desktop | 268 URLs; source derivation in R5, `frontend/public/sitemap-0.xml` | tbd | inventoried | static-pages |
+| SEO-P001 | Public home, editorial, personas and feature navigation | web-desktop | Route families and counts above; `frontend/src/pages/index.tsx:1`; `frontend/src/config/features.ts:1` | tbd | inventoried | static-pages |
+| SEO-P003 | Root keyword and language matrix metadata | web-desktop | Indexing, canonical and hreflang rules SEO-002 to SEO-006; `frontend/src/components/SEO/KeywordPageIndexing.tsx:26-54` | tbd | inventoried | static-pages |
+| SEO-P005 | Translation matrix and keyword pages | web-desktop | Forward/reverse/keyword templates and locale redirects; `frontend/src/pages/translation/[...slug].tsx:489-580,618-628` | tbd | inventoried | static-pages |
+| SEO-P007 | Localized tool keyword pages | web-desktop | 138 de/tr/kk routes and invalid-slug redirect; `frontend/src/pages/tools/[keywords].tsx:21-57` | tbd | inventoried | static-pages |
+| SEO-P009 | Blog list, article, images, locale and legacy redirects | web-desktop | Metadata slugs, full sorted list, Article/FAQ data; `frontend/src/pages/blog/[[...articleSlug]].tsx:46-115`; `frontend/src/components/BlogList/BlogList.tsx:64-118` | tbd | inventoried | static-pages |
+| SEO-P011 | Pricing, FAQ and signup CTA | web-desktop | Monthly/yearly cards from package catalog; `frontend/src/components/LandingPage/Pricing/Pricing.tsx:34-57,85-94` | tbd | inventoried | static-pages |
+| SEO-P013 | Legal, contact, certificates and supported-language content | web-desktop | Existing routes and generated certificate ids; `frontend/src/pages/certification/[id].tsx:150-172`; `frontend/src/pages/contact/index.tsx:1`; `frontend/src/pages/legal/index.tsx:1` | tbd | inventoried | static-pages |
+| SEO-P015 | Free-tool index and three trimming routes | web-desktop | Pick file, trim, processor progress, two outputs/ZIP; `frontend/src/utils/free-tools/trimAudioServer.ts:60-132` | tbd | inventoried | static-pages |
+| SEO-P017 | Convert audio | web-desktop | Upload, format/options, convert, download; `frontend/src/utils/free-tools/convertAudioServer.ts:37-64` | tbd | inventoried | static-pages |
+| SEO-P019 | Reduce audio | web-desktop | Upload, quality, process/poll, download; `frontend/src/utils/free-tools/reduceAudioServer.ts:37-73` | tbd | inventoried | static-pages |
+| SEO-P021 | Remove noise | web-desktop | Upload, level, denoise/poll, download; `frontend/src/utils/free-tools/removeNoiseServer.ts:34-76` | tbd | inventoried | static-pages |
+| SEO-P023 | Extract video audio | web-desktop | Upload, format, extract/poll, download; `frontend/src/utils/free-tools/videoToAudioServer.ts:40-89` | tbd | inventoried | static-pages |
+| SEO-P025 | Compress video | web-desktop | Upload, quality, compress/poll, download; `frontend/src/utils/free-tools/compressVideoServer.ts:33-77` | tbd | inventoried | static-pages |
+| SEO-P027 | Convert video | web-desktop | Upload, format/options, convert/poll, download; `frontend/src/utils/free-tools/convertVideoServer.ts:44-96` | tbd | inventoried | static-pages |
+| SEO-P029 | Free YouTube caption extraction and export | web-desktop | Paste URL, request captions, copy/download or signup CTA; `frontend/src/components/features/youtube-transcript/YouTubeTranscriptTool.tsx:136-139` | tbd | inventoried | static-pages |
+| SEO-P031 | Record microphone audio locally | web-desktop | Permission, device selection, record/stop/preview/download; `frontend/src/pages/tools/record-audio-online.tsx:195-230` | tbd | inventoried | static-pages |
+| SEO-P033 | Capture tab audio locally | web-desktop | Pick display/tab, record, WAV download; `frontend/src/pages/tools/tab-audio-capture.tsx:168-171`; `frontend/src/components/TabAudioCapture/DownloadControls.tsx:59-96` | tbd | inventoried | static-pages |
+| WEB-001 | Password sign-in, signup, magic link, Google and recovery (screen) | web-desktop | Choose Auth UI view/provider, submit, return to home; `frontend/src/pages/signin.tsx:145-176` | tbd | inventoried | screens |
+| WEB-003 | Set new password (screen) | web-desktop | Submit password, show result, redirect; `frontend/src/pages/new-password.tsx:20-29` | tbd | inventoried | screens |
+| WEB-005 | First-visit sign-in and cookie prompts (screen) | web-desktop | Homepage Google popup after two seconds, dismiss; global cookie prompt; `frontend/src/components/SimpleSignInPopup.tsx:14-71`; `frontend/src/pages/_app.tsx:67-74` | tbd | inventoried | screens |
+| WEB-007 | Upload files and start transcription (screen) | web-desktop | Pick/drop, prepare, select language/speakers, submit, navigate; `frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:961-1052` | tbd | inventoried | screens |
+| WEB-009 | Restore drafts and preparation/error states (screen) | web-desktop | Drafts restored without language; readiness and balance alerts; `frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:378-454,1038-1046` | tbd | inventoried | screens |
+| WEB-011 | Add YouTube and start (screen) | web-desktop | Add URL, metadata, queue, resolve, navigate; `frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:890-967,1074-1111` | tbd | inventoried | screens |
+| WEB-013 | Translate source to target (screen) | web-desktop | Select translation, source/target, speakers, submit; `frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:819-878,969-1008` | tbd | inventoried | screens |
+| WEB-015 | List, page, select, refresh and delete jobs (screen) | web-desktop | Table/actions, infinite scroll and delete confirm; `frontend/src/features/job-management/views/JobListTable.tsx:247-282,429-467` | tbd | inventoried | screens |
+| WEB-017 | View live transcript and playback (screen) | web-desktop | Status updates, waveform/YouTube seek, timestamp and speaker toggles; `frontend/src/features/transcriptLines/containers/TranscriptLinesContainer.tsx:150-235,309-353` | tbd | inventoried | screens |
+| WEB-019 | Edit line and speaker labels (screen) | web-desktop | Pencil, save/cancel, line speaker or rename; `frontend/src/features/transcriptLines/containers/TranscriptLinesContainer.tsx:345-353`; `frontend/src/components/SpeakerLabel/SpeakerLabel.tsx:201-224` | tbd | inventoried | screens |
+| WEB-021 | View translation and gated original (screen) | web-desktop | Translation default, original tabs restricted; `frontend/src/features/transcriptLines/viewmodels/useTranscriptLinesVM.ts:77-114` | tbd | inventoried | screens |
+| WEB-023 | Freemium transcript fade and upgrade (screen) | web-desktop | Above 20 minutes, show lines through 22-minute start bound; `frontend/src/features/transcriptLines/containers/TranscriptLinesContainer.tsx:309-335` | tbd | inventoried | screens |
+| WEB-025 | Export TXT, Word, SRT, VTT and CSV ZIP (screen) | web-desktop | Format inclusion depends on video/speakers/options; all-formats entry; `frontend/src/utils/transcriptFileSaver.ts:101-170`; `frontend/src/components/Transcript/Transcript.tsx:311-328` | tbd | inventoried | screens |
+| WEB-027 | AI consent, analysis, highlights, retry and export (screen) | web-desktop | Accept consent, open analysis, stream sections, retry/copy/export; `frontend/src/components/AIFeatureWrapper/AIFeatureWrapper.tsx:9-33`; `frontend/src/features/aiAnalysis/views/desktop/DesktopSummaryView.tsx:149-272` | tbd | inventoried | screens |
+| WEB-029 | AI chat, limits, copy, retry, rating and export (screen) | web-desktop | Ask AI side panel and streamed responses; `frontend/src/features/aiAnalysis/views/desktop/DesktopChatView.tsx:172-309`; `frontend/src/components/Transcript/Transcript.tsx:273-301` | tbd | inventoried | screens |
+| WEB-031 | Job feedback (screen) | web-desktop | Select rating, optional comment, submit and success/error; `frontend/src/components/FeedbackModal/FeedbackModal.tsx:86-118` | tbd | inventoried | screens |
+| WEB-033 | Contact support (screen) | web-desktop | Message and job context POST; `frontend/src/components/SupportModal/SupportModal.tsx:14-48` | tbd | inventoried | screens |
+| WEB-035 | Balance, choose package, coupon and checkout (screen) | web-desktop | Balance -> billing modal -> gateway form -> confirmation; `frontend/src/components/Balance/Balance.tsx:15-46`; `frontend/src/features/billing/containers/BillingModalContainer.tsx:1`; `frontend/src/pages/checkout/confirm.tsx:27-40` | tbd | inventoried | screens |
+| WEB-037 | Invoice history, PDF and privileged lookup (screen) | web-desktop | Completed payments table, preview/download, admin-only lookup; `frontend/src/pages/billing/index.tsx:374-438,507-540,639-688` | tbd | inventoried | screens |
+| WEB-039 | Profile, theme and locale settings (screen) | web-desktop | Profile tab shows email/joined date, theme and locale; `frontend/src/features/settings/views/tabs/ProfileView.tsx:38-79` | tbd | inventoried | screens |
+| WEB-041 | AI consent, subscription and data settings (screen) | web-desktop | Revoke consent, inspect/cancel subscription, retention switches, delete-all confirmations; `frontend/src/features/settings/views/SettingsView.tsx:123-156` | tbd | inventoried | screens |
+| WEB-043 | Delete account and sign out (screen) | web-desktop | Confirm deletion, server action, centralized logout; `frontend/src/features/settings/containers/SettingsContainer.tsx:84-89` | tbd | inventoried | screens |
+| WEB-045 | API-key list, create, copy and revoke (screen) | web-desktop | Name/scope/expiration, one-time secret, confirmation; `frontend/src/pages/dashboard/api-keys.tsx:30-68,170-237` | tbd | inventoried | screens |
+| WEB-047 | API docs, contact, certificate and error navigation (screen) | web-desktop | Existing public routes in route inventory; static/API topics own content; `frontend/src/pages/api-reference.tsx:1`; `frontend/src/pages/contact/index.tsx:1`; `frontend/src/pages/certification/[id].tsx:10-20`; `frontend/src/pages/404.tsx:1` | tbd | inventoried | screens |
+| WEB-BIL-001 | View the balance in the user area and on the all-transcripts page (minutes under 60, else hours and minutes, refreshed every 30 seconds) | web-desktop | `frontend/src/components/Balance/Balance.tsx:18-60`; used at `frontend/src/components/UserArea/UserArea.tsx:167,221` and `frontend/src/pages/home/all-transcripts/all-transcripts.tsx:108` | tbd | inventoried | billing |
+| WEB-BIL-003 | Open the billing dialog and view packages (pay-as-you-go card, monthly or yearly toggle, Premium and Business cards, summary, Turkish card note) | web-desktop | `frontend/src/features/billing/ui/BillingModalView.tsx`, `SubscriptionSection.tsx`, `PayAsYouGoCard.tsx`, `PaymentSummary.tsx` | tbd | inventoried | billing |
+| WEB-BIL-005 | Choose pay-as-you-go hours (presets 5, 10, 25, typed value, arrows, minimum 5 warning) | web-desktop | `frontend/src/features/billing/ui/PayAsYouGoCard.tsx:37-215` (rules CPN-005) | tbd | inventoried | billing |
+| WEB-BIL-007 | Apply a coupon (error tooltip, green check when applied) | web-desktop | `frontend/src/features/billing/ui/PaymentSummary.tsx:93-152` (CPN-008 to CPN-013) | tbd | inventoried | billing |
+| WEB-BIL-009 | Buy a package: accept terms, press Pay with Card, land on Iyzico's hosted form, pay | web-desktop | `frontend/src/features/billing/viewModels/useBillingViewModel.ts:146-223`; `frontend/src/pages/checkout/index.tsx` | tbd | inventoried | billing |
+| WEB-BIL-011 | Checkout success page, countdown, return home | web-desktop | `frontend/src/pages/checkout/confirm.tsx:89-102` | tbd | inventoried | billing |
+| WEB-BIL-013 | Checkout failure page and the "We couldn't start your checkout" page with a back-to-plans link | web-desktop | `frontend/src/pages/checkout/confirm.tsx:103-117`; `frontend/src/pages/checkout/index.tsx:91-107` | tbd | inventoried | billing |
+| WEB-BIL-015 | Billing history list, invoice preview and PDF download (no link from the live UI, reached by address) | web-desktop | `frontend/src/pages/billing/index.tsx` (table at `sm` width and above) | tbd | inventoried | billing |
+| WEB-BIL-017 | Admin: look up a customer's invoices by email and type a custom "Bill To" block (flag `BILLING_CUSTOMER_LOOKUP`) | web-desktop | `frontend/src/pages/billing/index.tsx:372-420` and `frontend/src/pages/api/admin/customer-invoices.ts` | tbd | inventoried | billing |
+| WEB-BIL-018 | Invoice information form (personal or business, tax id, address); today it saves nothing and is not linked. Verdict throw, so no new test unless mu reverses it | web-desktop | `frontend/src/pages/InvoiceForm/index.tsx:48-52` | tbd | inventoried | billing |
+| WEB-BIL-020 | View the current plan (name, total minutes, valid until, next payment) in settings | web-desktop | `frontend/src/features/subscription/views/SubscriptionView.tsx`; `frontend/src/features/subscription/services/SubscriptionService.ts` | tbd | inventoried | billing |
+| WEB-BIL-022 | Cancel the subscription (confirm dialog, then the canceled message) | web-desktop | `frontend/src/features/subscription/views/SubscriptionView.tsx`; `useSubscriptionViewModel.ts` (the request is real, the cancel at Iyzico is manual, see BIL-062) | tbd | inventoried | billing |
+| WEB-BIL-024 | Not-enough-balance alert with an "Add minutes" button when a job is refused (HTTP 402) | web-desktop | `frontend/src/components/NotEnoughBalanceAlert/NotEnoughBalanceAlert.tsx`; `useTranscriptionViewModel.ts:1038-1046` | tbd | inventoried | billing |
+| WEB-BIL-026 | Freemium upgrade banner and cut transcript (22 minutes, fade on three lines) | web-desktop | `frontend/src/features/transcriptLines/containers/TranscriptLinesContainer.tsx:307-341`; `FreemiumLimitsBanner.tsx` (FRE-020 to FRE-023) | tbd | inventoried | billing |
+| WEB-BIL-028 | Special client discount alert (inside the billing dialog and on transcript pages) | web-desktop | `frontend/src/components/SpecialClientDiscountAlert/SpecialClientDiscountAlert.tsx` (CPN-019) | tbd | inventoried | billing |
+| WEB-BIL-030 | Pricing section on the landing page and the pricing page (cards from the catalog, monthly or yearly toggle, struck price, Free Trial link) | web-desktop | `frontend/src/components/LandingPage/Pricing/Pricing.tsx`; `frontend/src/pages/pricing.tsx` | tbd | inventoried | billing |
+| WEB-IDN-001 | Sign up with email and password | web-desktop | `/signin` Auth UI sign up view, library `signUp`, redirect `<site>/<locale>/home`, welcome email and freemium package follow (IDN-002, IDN-004, IDN-008, IDN-009); frontend/src/pages/signin.tsx:151-160 | tbd | inventoried | privacy-identity |
+| WEB-IDN-003 | Sign in with email and password | web-desktop | `/signin` Auth UI sign in view; signed in users go to `/home` (IDN-009, IDN-011); frontend/src/pages/signin.tsx:24-28,151-160 | tbd | inventoried | privacy-identity |
+| WEB-IDN-005 | Sign in with a magic link | web-desktop | Auth UI "Send a magic link email"; confirmation text "Check your email for the magic link" (IDN-009); frontend/src/pages/signin.tsx:151-160,270-273 | tbd | inventoried | privacy-identity |
+| WEB-IDN-007 | Sign in with Google from the sign in page | web-desktop | Google button of the Auth UI, `providers={["google"]}`, returns to `<site>/<locale>/home` (IDN-009, IDN-010); frontend/src/pages/signin.tsx:155-157 | tbd | inventoried | privacy-identity |
+| WEB-IDN-009 | Home page Google sign in popup | web-desktop | Top right popup 2 s after load on `/` only, "Sign in with Google" and "Continue as guest", no dismissal memory (IDN-012, IDN-013); frontend/src/components/SimpleSignInPopup.tsx:14-52 | tbd | inventoried | privacy-identity |
+| WEB-IDN-011 | Forgot password: request the reset email | web-desktop | Auth UI "Forgot your password?" view, text "Check your email for the password reset link" (IDN-016); frontend/src/pages/signin.tsx:275-283 | tbd | inventoried | privacy-identity |
+| WEB-IDN-013 | Set a new password after the reset link | web-desktop | Auth UI update password view, or the orphan page `/new-password` (IDN-016, IDN-017); frontend/src/pages/new-password.tsx:6-81 | tbd | inventoried | privacy-identity |
+| WEB-IDN-015 | Signed in visitor on the sign in page or on `/` | web-desktop | `/signin` and `/new-signin` redirect to `/home`; a session cookie on `/` redirects to `/home` with the locale (IDN-011, IDN-021); frontend/src/middleware.ts:34-40 | tbd | inventoried | privacy-identity |
+| WEB-IDN-017 | Protected page without a session | web-desktop | `/home` and the 8 dashboard pages show a spinner then replace the route with `/signin` (IDN-022); frontend/src/utils/withUserProfile.tsx:15-30 | tbd | inventoried | privacy-identity |
+| WEB-IDN-019 | Sign out from the user menu | web-desktop | User area menu item "Sign Out"; PostHog reset, `signOut`, back to `/` (IDN-024, IDN-025); frontend/src/hooks/useLogout.ts:49-70 | tbd | inventoried | privacy-identity |
+| WEB-IDN-021 | Settings, Profile tab | web-desktop | Shows email, "Joined on" (email confirmed date), theme toggle and language switcher; display name is the email prefix; no editing (IDN-026); frontend/src/features/settings/views/tabs/ProfileView.tsx:52-74 | tbd | inventoried | privacy-identity |
+| WEB-IDN-023 | Captcha on the sign in page (production only) | web-desktop | Turnstile widget reveals the form; decorative (IDN-015); frontend/src/pages/signin.tsx:150,176 | tbd | inventoried | privacy-identity |
+| WEB-PRV-001 | Settings, Manage Data: automatic transcript cleanup switch | web-desktop | Switch with confirm "Disable automatic transcript cleanup?" when turning off; on writes immediately; info banner and 2 AM UTC warning (PRV-027, PRV-028); frontend/src/features/data-management/views/ManageDataView.tsx:85-108,140-190,265-277 | tbd | inventoried | privacy-identity |
+| WEB-PRV-003 | Settings, Manage Data: Delete All transcripted files | web-desktop | Confirm "Are you sure you want to delete all of your data?" then soft delete of every job (PRV-011); frontend/src/features/data-management/views/ManageDataView.tsx:215-219,245-253 | tbd | inventoried | privacy-identity |
+| WEB-PRV-005 | Settings, Manage Data: Delete Account | web-desktop | Confirm, soft delete jobs, `POST /api/delete-account`, sign out (PRV-001 to PRV-010); frontend/src/features/data-management/views/ManageDataView.tsx:113-117,221-224,255-262 | tbd | inventoried | privacy-identity |
+| WEB-PRV-007 | Settings, Manage Data: legacy "Delete my data automatically" switch | web-desktop | Confirm "Are you sure you want to delete all your data automatically?"; stores `deleted_monthly`; no effect (PRV-036); frontend/src/features/data-management/views/ManageDataView.tsx:193-206,233-241 | tbd | inventoried | privacy-identity |
+| WEB-PRV-009 | Settings, AI Features: give or revoke AI consent | web-desktop | Tab only when flag `AI_FEATURES` is on; enable button; disable asks "Confirm Disable AI Features" and deletes AI content (PRV-038 to PRV-044); frontend/src/features/ai-consent/views/AIConsentView.tsx:52-69,160-210 | tbd | inventoried | privacy-identity |
+| WEB-PRV-011 | Cookie consent banner: accept or reject | web-desktop | Bottom banner "We use cookies to ensure you get the best experience on our website" with Accept and Reject, cookie `cookieConsent` for 365 days (PRV-046 to PRV-049); frontend/src/components/CookieConsent/CookieConsent.tsx:52-72 | tbd | inventoried | privacy-identity |
+| WEB-PRV-013 | Job list history window and `unlimited_history` | web-desktop | Sidebar and All transcripts show jobs of the last calendar month, or everything when `unlimited_history` is true; 20 per page (PRV-032 to PRV-034); frontend/src/dao/JobRepository.ts:147-213 | tbd | inventoried | privacy-identity |
+| WEB-PRV-015 | Blocked user adds or resolves a YouTube link | web-desktop | 403 `Account suspended` (PRV-051); frontend/src/pages/api/youtube/add.ts:43-52 | tbd | inventoried | privacy-identity |
+| WEB-PRV-017 | Privacy policy page (EN and TR) | web-desktop | Static legal pages `/legal/privacy-policy-en` and `/legal/privacy-policy-tr` with the promises in PRV-053 to PRV-058; also listed by the static site topic; frontend/src/pages/legal/privacy-policy-en.tsx | tbd | inventoried | privacy-identity |
+| WEB-PRV-019 | Terms and conditions page (EN and TR) | web-desktop | Static legal pages `/legal/terms-and-conditions-en` and `-tr` (PRV-060); also listed by the static site topic; frontend/src/pages/legal/terms-and-conditions-en.tsx | tbd | inventoried | privacy-identity |
+
+## web-phone
+
+| ID | Flow | Surface | Today | Test | Status | Topic |
+|---|---|---|---|---|---|---|
+| AI-F02 | Consent grant/refusal/revocation | web-phone | frontend/src/lib/ai/consent-service.ts:55-153 | tbd | inventoried | ai |
+| AI-F04 | Stream detected type, summary and specialized highlights | web-phone | frontend/src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:204-266 | tbd | inventoried | ai |
+| AI-F06 | Reload completed/partial/interrupted analysis and retry | web-phone | frontend/src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:105-202,268-279 | tbd | inventoried | ai |
+| AI-F08 | Ask transcript question, stream answer, persist and reload history | web-phone | frontend/src/features/aiAnalysis/viewmodels/useChatViewModel.ts:63-214 | tbd | inventoried | ai |
+| AI-F10 | Reject exhausted freemium quota; paid user bypasses quota | web-phone | frontend/src/lib/ai/ai-service-manager.ts:204-227; frontend/src/features/aiAnalysis/viewmodels/useChatViewModel.ts:153-163 | tbd | inventoried | ai |
+| API-F09 | Create/copy/list/revoke API keys with scope and expiry | web-phone | frontend/src/pages/dashboard/api-keys.tsx:50-235 | tbd | inventoried | api |
+| JOB-F02 | Pick files, progress, failed upload and restore queue | web-phone | frontend/src/features/transcription/ui/mobile/components/FileUploadButton.tsx:21-87; frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:608-764 | tbd | inventoried | jobs-transcription |
+| JOB-F04 | Select language, auto-detect, speakers and start transcription | web-phone | frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:969-1012 | tbd | inventoried | jobs-transcription |
+| JOB-F06 | Select source/target and start translation | web-phone | frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:791-878,969-1012 | tbd | inventoried | jobs-transcription |
+| JOB-F08 | Add YouTube link, resolve captions, report failure | web-phone | frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:880-959 | tbd | inventoried | jobs-transcription |
+| JOB-F10 | Observe pending/running/completion and live lines | web-phone | frontend/src/features/transcriptLines/containers/TranscriptLinesContainer.tsx:164-235 | tbd | inventoried | jobs-transcription |
+| JOB-F12 | Edit text, select/rename speakers and seek playback | web-phone | frontend/src/features/transcriptLines/services/TranscriptLineService.ts:76-115; frontend/src/features/transcriptLines/views/TranscriptLineView.tsx:134 | tbd | inventoried | jobs-transcription |
+| JOB-F14 | Export job from phone details | web-phone | frontend/src/features/job-management/views/mobile/MobileJobDetailsContainer.tsx:117 | tbd | inventoried | jobs-transcription |
+| JOB-F16 | List/paginate history and delete job | web-phone | frontend/src/dao/JobRepository.ts:147-211,334-363 | tbd | inventoried | jobs-transcription |
+| OPS-P002 | Effective phone feature visibility | web-phone | Mobile layout flags plus shared capability rules; FLG-001 to FLG-009 | tbd | inventoried | platform |
+| OPS-P004 | Consent and phone-browser telemetry | web-phone | Same browser policy and schema, not a second analytics implementation; `frontend/src/components/CookieConsent/CookieConsent.tsx:15-49` | tbd | inventoried | platform |
+| SEO-P002 | Public home, editorial, personas and feature navigation | web-phone | Same content with responsive layout; `frontend/src/pages/index.tsx:1`; `frontend/src/config/features.ts:1` | tbd | inventoried | static-pages |
+| SEO-P004 | Root keyword and language matrix metadata | web-phone | Same indexability and content; `frontend/src/components/SEO/KeywordPageIndexing.tsx:26-54` | tbd | inventoried | static-pages |
+| SEO-P006 | Translation matrix and keyword pages | web-phone | Same templates and route behavior; `frontend/src/pages/translation/[...slug].tsx:489-580,618-628` | tbd | inventoried | static-pages |
+| SEO-P008 | Localized tool keyword pages | web-phone | Same route and content; `frontend/src/pages/tools/[keywords].tsx:21-57` | tbd | inventoried | static-pages |
+| SEO-P010 | Blog list, article, images, locale and legacy redirects | web-phone | Same content and responsive list; `frontend/src/components/BlogList/BlogList.tsx:63-118` | tbd | inventoried | static-pages |
+| SEO-P012 | Pricing, FAQ and signup CTA | web-phone | Stacked cards and same catalog; `frontend/src/components/LandingPage/Pricing/Pricing.tsx:54-57` | tbd | inventoried | static-pages |
+| SEO-P014 | Legal, contact, certificates and supported-language content | web-phone | Same content on responsive pages; `frontend/src/pages/certification/[id].tsx:150-172`; `frontend/src/pages/contact/index.tsx:1` | tbd | inventoried | static-pages |
+| SEO-P016 | Free-tool index and three trimming routes | web-phone | Same processing with phone file picker and controls; `frontend/src/components/TrimAudio/TrimAudioTool.tsx:154-158,243-246` | tbd | inventoried | static-pages |
+| SEO-P018 | Convert audio | web-phone | Same server-first flow; `frontend/src/components/ConvertAudio/ConvertAudioTool.tsx:114-118,152-155` | tbd | inventoried | static-pages |
+| SEO-P020 | Reduce audio | web-phone | Same runtime flow; `frontend/src/utils/free-tools/reduceAudioServer.ts:37-73` | tbd | inventoried | static-pages |
+| SEO-P022 | Remove noise | web-phone | Same runtime flow; `frontend/src/utils/free-tools/removeNoiseServer.ts:34-76` | tbd | inventoried | static-pages |
+| SEO-P024 | Extract video audio | web-phone | Same runtime flow; `frontend/src/utils/free-tools/videoToAudioServer.ts:40-89` | tbd | inventoried | static-pages |
+| SEO-P026 | Compress video | web-phone | Same runtime flow; `frontend/src/utils/free-tools/compressVideoServer.ts:33-77` | tbd | inventoried | static-pages |
+| SEO-P028 | Convert video | web-phone | Same runtime flow; `frontend/src/utils/free-tools/convertVideoServer.ts:44-96` | tbd | inventoried | static-pages |
+| SEO-P030 | Free YouTube caption extraction and export | web-phone | Same public caption endpoint; `frontend/src/components/features/youtube-transcript/YouTubeTranscriptTool.tsx:136-139` | tbd | inventoried | static-pages |
+| SEO-P032 | Record microphone audio locally | web-phone | Same browser-permission flow with supported MIME fallback; `frontend/src/pages/tools/record-audio-online.tsx:15-25,195-230` | tbd | inventoried | static-pages |
+| SEO-P034 | Tab-capture capability/error behavior | web-phone | Preserve browser unsupported/permission outcome, not a promised native capture capability; `frontend/src/pages/tools/tab-audio-capture.tsx:168-171,268-305` | tbd | inventoried | static-pages |
+| WEB-002 | Password sign-in, signup, magic link, Google and recovery (screen) | web-phone | Same Auth UI; `frontend/src/pages/signin.tsx:145-176` | tbd | inventoried | screens |
+| WEB-004 | Set new password (screen) | web-phone | Same password form; `frontend/src/pages/new-password.tsx:20-29` | tbd | inventoried | screens |
+| WEB-006 | First-visit cookie prompt (screen) | web-phone | Google popup suppressed; cookie component remains; `frontend/src/components/SimpleSignInPopup.tsx:16-23`; `frontend/src/pages/_app.tsx:67-74` | tbd | inventoried | screens |
+| WEB-008 | Upload files and start transcription (screen) | web-phone | Source buttons, queue, configuration, fixed submit; `frontend/src/features/transcription/ui/mobile/MobileNewTranscript.tsx:181-315` | tbd | inventoried | screens |
+| WEB-010 | Restore drafts and preparation/error states (screen) | web-phone | Shared VM, preparation timeout state; `frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:378-454,496-520` | tbd | inventoried | screens |
+| WEB-012 | Add YouTube and start (screen) | web-phone | Same VM via source button; `frontend/src/features/transcription/ui/mobile/MobileNewTranscript.tsx:203-212` | tbd | inventoried | screens |
+| WEB-014 | Translate source to target (screen) | web-phone | Translation switch and language sheets, same submit contract; `frontend/src/features/transcription/ui/mobile/MobileNewTranscript.tsx:280-315` | tbd | inventoried | screens |
+| WEB-016 | List, filter, select, refresh and delete jobs (screen) | web-phone | Cards, filters, swipe deletion and pull refresh; `frontend/src/features/job-management/views/mobile/MobileJobListView.tsx:1` | tbd | inventoried | screens |
+| WEB-018 | View live transcript and playback (screen) | web-phone | Sticky player, tabs and action sheet; `frontend/src/features/job-management/views/mobile/MobileJobDetailsView.tsx:184-254` | tbd | inventoried | screens |
+| WEB-020 | Edit line and speaker labels (screen) | web-phone | Same line container and speaker actions; `frontend/src/features/job-management/views/mobile/MobileJobDetailsView.tsx:192-204` | tbd | inventoried | screens |
+| WEB-022 | View translation and gated original (screen) | web-phone | Shared transcript line VM; `frontend/src/features/transcriptLines/viewmodels/useTranscriptLinesVM.ts:77-114` | tbd | inventoried | screens |
+| WEB-024 | Freemium transcript fade and upgrade (screen) | web-phone | Same line filtering and upgrade path; `frontend/src/features/transcriptLines/containers/TranscriptLinesContainer.tsx:309-335` | tbd | inventoried | screens |
+| WEB-026 | Export transcript/translation ZIP (screen) | web-phone | Action-sheet download; current option mismatch UI-01; `frontend/src/features/job-management/views/mobile/MobileJobDetailsContainer.tsx:108-118` | tbd | inventoried | screens |
+| WEB-028 | AI consent, analysis, highlights, retry and export (screen) | web-phone | Phone analysis tab, same AI use cases; `frontend/src/features/job-management/views/mobile/MobileJobDetailsView.tsx:184-254` | tbd | inventoried | screens |
+| WEB-030 | AI chat and limits (screen) | web-phone | Chat tab and phone input; `frontend/src/features/job-management/views/mobile/MobileJobDetailsView.tsx:184-254` | tbd | inventoried | screens |
+| WEB-032 | Job feedback (screen) | web-phone | Responsive feedback modal; `frontend/src/components/FeedbackModal/FeedbackModal.tsx:86-118` | tbd | inventoried | screens |
+| WEB-034 | Contact support (screen) | web-phone | Phone navigation wrapper, same support request; `frontend/src/components/SupportModal/SupportModal.tsx:14-48` | tbd | inventoried | screens |
+| WEB-036 | Balance, choose package, coupon and checkout (screen) | web-phone | Billing bottom sheet then responsive gateway; `frontend/src/features/billing/ui/mobile/MobileBillingBottomSheet.tsx:1`; `frontend/src/pages/checkout/index.tsx:70-124` | tbd | inventoried | screens |
+| WEB-038 | Invoice history and PDF (screen) | web-phone | Cards with PDF download; `frontend/src/pages/billing/index.tsx:639-688` | tbd | inventoried | screens |
+| WEB-040 | Profile, theme and locale settings (screen) | web-phone | Same settings feature via phone wrapper; `frontend/src/features/settings/views/tabs/ProfileView.tsx:38-79` | tbd | inventoried | screens |
+| WEB-042 | AI consent, subscription and data settings (screen) | web-phone | Same feature actions and confirmations; `frontend/src/features/settings/views/SettingsView.tsx:123-156` | tbd | inventoried | screens |
+| WEB-044 | Delete account and sign out (screen) | web-phone | Same deletion/logout contract; `frontend/src/features/settings/containers/SettingsContainer.tsx:84-89` | tbd | inventoried | screens |
+| WEB-046 | API-key list, create, copy and revoke (screen) | web-phone | Shared responsive dashboard page; `frontend/src/pages/dashboard/api-keys.tsx:30-68,170-237` | tbd | inventoried | screens |
+| WEB-048 | API docs, contact, certificate and error navigation (screen) | web-phone | Same responsive public routes; `frontend/src/pages/api-reference.tsx:1`; `frontend/src/pages/contact/index.tsx:1`; `frontend/src/pages/certification/[id].tsx:10-20`; `frontend/src/pages/404.tsx:1` | tbd | inventoried | screens |
+| WEB-BIL-002 | View the balance in the drawer and bottom sheet | web-phone | `frontend/src/features/billing/ui/mobile/DrawerBalanceIndicator.tsx`; `frontend/src/features/sidebar/views/mobile/MobileDrawerView.tsx:286`; `MobileBottomSheetView.tsx:121` (same `Balance` component) | tbd | inventoried | billing |
+| WEB-BIL-004 | Open the billing bottom sheet and view packages | web-phone | `frontend/src/features/billing/ui/mobile/MobileBillingBottomSheet.tsx`, `MobilePayAsYouGoCard.tsx`, `MobileSubscriptionSection.tsx`, `MobilePaymentSummary.tsx` | tbd | inventoried | billing |
+| WEB-BIL-006 | Choose pay-as-you-go hours | web-phone | `frontend/src/features/billing/ui/mobile/MobilePayAsYouGoCard.tsx` | tbd | inventoried | billing |
+| WEB-BIL-008 | Apply a coupon | web-phone | `frontend/src/features/billing/ui/mobile/MobilePaymentSummary.tsx` | tbd | inventoried | billing |
+| WEB-BIL-010 | Buy a package from the bottom sheet | web-phone | `frontend/src/features/billing/containers/BillingModalContainer.tsx:99-130` | tbd | inventoried | billing |
+| WEB-BIL-012 | Checkout success page, countdown, return home | web-phone | same page, no phone variant | tbd | inventoried | billing |
+| WEB-BIL-014 | Checkout failure page and the start-failure page | web-phone | same pages, no phone variant | tbd | inventoried | billing |
+| WEB-BIL-016 | Billing history cards and PDF download | web-phone | `frontend/src/pages/billing/index.tsx` (card list under `sm`) | tbd | inventoried | billing |
+| WEB-BIL-019 | Invoice information form (same page, same stub) | web-phone | same | tbd | inventoried | billing |
+| WEB-BIL-021 | View the current plan | web-phone | same settings tab (the phone opens it through `frontend/src/features/mobile-navigation/wrappers/SettingsModalWrapper.tsx`) | tbd | inventoried | billing |
+| WEB-BIL-023 | Cancel the subscription | web-phone | same view | tbd | inventoried | billing |
+| WEB-BIL-025 | Not-enough-balance alert | web-phone | same component | tbd | inventoried | billing |
+| WEB-BIL-027 | Freemium upgrade banner and cut transcript | web-phone | `frontend/src/features/transcriptLines/views/mobile/MobileTranscriptView.tsx` | tbd | inventoried | billing |
+| WEB-BIL-029 | Special client discount alert | web-phone | same component, compact variant | tbd | inventoried | billing |
+| WEB-BIL-031 | Pricing section on the landing page and the pricing page | web-phone | same components (responsive grid) | tbd | inventoried | billing |
+| WEB-IDN-002 | Sign up with email and password | web-phone | `/signin` Auth UI sign up view, library `signUp`, redirect `<site>/<locale>/home`, welcome email and freemium package follow (IDN-002, IDN-004, IDN-008, IDN-009); frontend/src/pages/signin.tsx:151-160 | tbd | inventoried | privacy-identity |
+| WEB-IDN-004 | Sign in with email and password | web-phone | `/signin` Auth UI sign in view; signed in users go to `/home` (IDN-009, IDN-011); frontend/src/pages/signin.tsx:24-28,151-160 | tbd | inventoried | privacy-identity |
+| WEB-IDN-006 | Sign in with a magic link | web-phone | Auth UI "Send a magic link email"; confirmation text "Check your email for the magic link" (IDN-009); frontend/src/pages/signin.tsx:151-160,270-273 | tbd | inventoried | privacy-identity |
+| WEB-IDN-008 | Sign in with Google from the sign in page | web-phone | Google button of the Auth UI, `providers={["google"]}`, returns to `<site>/<locale>/home` (IDN-009, IDN-010); frontend/src/pages/signin.tsx:155-157 | tbd | inventoried | privacy-identity |
+| WEB-IDN-010 | Home page Google sign in popup | web-phone | Not shown: the popup returns early when the width is 768 px or less or the user agent is mobile (IDN-013); frontend/src/components/SimpleSignInPopup.tsx:16-23 | tbd | inventoried | privacy-identity |
+| WEB-IDN-012 | Forgot password: request the reset email | web-phone | Auth UI "Forgot your password?" view, text "Check your email for the password reset link" (IDN-016); frontend/src/pages/signin.tsx:275-283 | tbd | inventoried | privacy-identity |
+| WEB-IDN-014 | Set a new password after the reset link | web-phone | Auth UI update password view, or the orphan page `/new-password` (IDN-016, IDN-017); frontend/src/pages/new-password.tsx:6-81 | tbd | inventoried | privacy-identity |
+| WEB-IDN-016 | Signed in visitor on the sign in page or on `/` | web-phone | `/signin` and `/new-signin` redirect to `/home`; a session cookie on `/` redirects to `/home` with the locale (IDN-011, IDN-021); frontend/src/middleware.ts:34-40 | tbd | inventoried | privacy-identity |
+| WEB-IDN-018 | Protected page without a session | web-phone | `/home` and the 8 dashboard pages show a spinner then replace the route with `/signin` (IDN-022); frontend/src/utils/withUserProfile.tsx:15-30 | tbd | inventoried | privacy-identity |
+| WEB-IDN-020 | Sign out from the user menu | web-phone | User area menu item "Sign Out"; PostHog reset, `signOut`, back to `/` (IDN-024, IDN-025); frontend/src/hooks/useLogout.ts:49-70 | tbd | inventoried | privacy-identity |
+| WEB-IDN-022 | Settings, Profile tab | web-phone | Shows email, "Joined on" (email confirmed date), theme toggle and language switcher; display name is the email prefix; no editing (IDN-026); frontend/src/features/settings/views/tabs/ProfileView.tsx:52-74 | tbd | inventoried | privacy-identity |
+| WEB-IDN-024 | Captcha on the sign in page (production only) | web-phone | Turnstile widget reveals the form; decorative (IDN-015); frontend/src/pages/signin.tsx:150,176 | tbd | inventoried | privacy-identity |
+| WEB-PRV-002 | Settings, Manage Data: automatic transcript cleanup switch | web-phone | Switch with confirm "Disable automatic transcript cleanup?" when turning off; on writes immediately; info banner and 2 AM UTC warning (PRV-027, PRV-028); frontend/src/features/data-management/views/ManageDataView.tsx:85-108,140-190,265-277 | tbd | inventoried | privacy-identity |
+| WEB-PRV-004 | Settings, Manage Data: Delete All transcripted files | web-phone | Confirm "Are you sure you want to delete all of your data?" then soft delete of every job (PRV-011); frontend/src/features/data-management/views/ManageDataView.tsx:215-219,245-253 | tbd | inventoried | privacy-identity |
+| WEB-PRV-006 | Settings, Manage Data: Delete Account | web-phone | Confirm, soft delete jobs, `POST /api/delete-account`, sign out (PRV-001 to PRV-010); frontend/src/features/data-management/views/ManageDataView.tsx:113-117,221-224,255-262 | tbd | inventoried | privacy-identity |
+| WEB-PRV-008 | Settings, Manage Data: legacy "Delete my data automatically" switch | web-phone | Confirm "Are you sure you want to delete all your data automatically?"; stores `deleted_monthly`; no effect (PRV-036); frontend/src/features/data-management/views/ManageDataView.tsx:193-206,233-241 | tbd | inventoried | privacy-identity |
+| WEB-PRV-010 | Settings, AI Features: give or revoke AI consent | web-phone | Tab only when flag `AI_FEATURES` is on; enable button; disable asks "Confirm Disable AI Features" and deletes AI content (PRV-038 to PRV-044); frontend/src/features/ai-consent/views/AIConsentView.tsx:52-69,160-210 | tbd | inventoried | privacy-identity |
+| WEB-PRV-012 | Cookie consent banner: accept or reject | web-phone | Bottom banner "We use cookies to ensure you get the best experience on our website" with Accept and Reject, cookie `cookieConsent` for 365 days (PRV-046 to PRV-049); frontend/src/components/CookieConsent/CookieConsent.tsx:52-72 | tbd | inventoried | privacy-identity |
+| WEB-PRV-014 | Job list history window and `unlimited_history` | web-phone | Sidebar and All transcripts show jobs of the last calendar month, or everything when `unlimited_history` is true; 20 per page (PRV-032 to PRV-034); frontend/src/dao/JobRepository.ts:147-213 | tbd | inventoried | privacy-identity |
+| WEB-PRV-016 | Blocked user adds or resolves a YouTube link | web-phone | 403 `Account suspended` (PRV-051); frontend/src/pages/api/youtube/add.ts:43-52 | tbd | inventoried | privacy-identity |
+| WEB-PRV-018 | Privacy policy page (EN and TR) | web-phone | Static legal pages `/legal/privacy-policy-en` and `/legal/privacy-policy-tr` with the promises in PRV-053 to PRV-058; also listed by the static site topic; frontend/src/pages/legal/privacy-policy-en.tsx | tbd | inventoried | privacy-identity |
+| WEB-PRV-020 | Terms and conditions page (EN and TR) | web-phone | Static legal pages `/legal/terms-and-conditions-en` and `-tr` (PRV-060); also listed by the static site topic; frontend/src/pages/legal/terms-and-conditions-en.tsx | tbd | inventoried | privacy-identity |
+
+## cli
+
+| ID | Flow | Surface | Today | Test | Status | Topic |
+|---|---|---|---|---|---|---|
+| OPS-P009 | Terminal feature/telemetry applicability | cli | No current terminal shell; server outcome events shared, local consent/telemetry decision explicit; Inventory flag/analytics contracts | tbd | inventoried | platform |
+| WEB-049 | Sign in and sign out | cli | Carry current identity flows via identity port or browser OAuth handoff; `frontend/src/pages/signin.tsx:145-176` | tbd | inventoried | screens |
+| WEB-053 | Upload and transcription/translation configuration | cli | File/source, language/target, speakers, progress and errors; web source `frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:961-1052` | tbd | inventoried | screens |
+| WEB-057 | YouTube source submission | cli | Add/resolve source without embedded player; web source `frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:890-967` | tbd | inventoried | screens |
+| WEB-061 | List jobs, status, fetch transcript/translation and delete | cli | Core list/get/delete with errors and freemium bounds; web source `frontend/src/features/job-management/views/JobListTable.tsx:247-282,429-467` | tbd | inventoried | screens |
+| WEB-065 | Transcript/translation export | cli | Save same content formats with explicit options; web source `frontend/src/utils/transcriptFileSaver.ts:101-170` | tbd | inventoried | screens |
+
+## tui
+
+| ID | Flow | Surface | Today | Test | Status | Topic |
+|---|---|---|---|---|---|---|
+| OPS-P010 | Interactive terminal applicability | tui | No current terminal shell; same capability rules and server outcomes, no browser replay; Inventory flag/analytics contracts | tbd | inventoried | platform |
+| WEB-050 | Sign in and sign out | tui | Carry current identity flows without browser Auth UI widgets; `frontend/src/pages/signin.tsx:145-176` | tbd | inventoried | screens |
+| WEB-054 | Upload and transcription/translation configuration | tui | Same core intents with terminal progress; web source `frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:961-1052` | tbd | inventoried | screens |
+| WEB-058 | YouTube source submission | tui | Add/resolve source without embedded player; web source `frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:890-967` | tbd | inventoried | screens |
+| WEB-062 | List jobs, status, fetch transcript/translation and delete | tui | Same core flow rendered as list/detail; web source `frontend/src/features/job-management/views/JobListTable.tsx:247-282,429-467` | tbd | inventoried | screens |
+| WEB-066 | Transcript/translation export | tui | Same export intent and options; web source `frontend/src/utils/transcriptFileSaver.ts:101-170` | tbd | inventoried | screens |
+
+## android
+
+| ID | Flow | Surface | Today | Test | Status | Topic |
+|---|---|---|---|---|---|---|
+| OPS-P007 | Native feature/telemetry applicability | android | No current native shell; carry shared capability/event meaning, not browser replay or layout flags; Inventory flag/analytics contracts | tbd | inventoried | platform |
+| WEB-051 | Sign in, signup, recovery and sign out | android | Native identity UI or browser OAuth handoff; web source `frontend/src/pages/signin.tsx:145-176` | tbd | inventoried | screens |
+| WEB-055 | Upload and transcription/translation configuration | android | Native file picker, progress, same selection order; web source `frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:961-1052` | tbd | inventoried | screens |
+| WEB-059 | YouTube source and playback handoff | android | Same add/resolve and transcript flow; web source `frontend/src/features/job-management/views/mobile/MobileJobDetailsView.tsx:184-254` | tbd | inventoried | screens |
+| WEB-063 | List jobs, status, transcript editing and playback | android | Native list/detail, edits/speakers, freemium/consent states; web source `frontend/src/features/transcriptLines/containers/TranscriptLinesContainer.tsx:309-353` | tbd | inventoried | screens |
+| WEB-067 | Transcript/translation export | android | Share/save files through platform adapter; web source `frontend/src/utils/transcriptFileSaver.ts:101-170` | tbd | inventoried | screens |
+| WEB-069 | AI consent, analysis, highlights and streamed chat | android | Same consent/limits/streaming/retry/copy/export states; web source `frontend/src/components/Transcript/Transcript.tsx:250-301` | tbd | inventoried | screens |
+| WEB-071 | Balance, purchase and invoice browser handoff | android | Same entitlement and checkout outcome; no new store subscription behavior; web source `frontend/src/pages/checkout/index.tsx:70-124`; `frontend/src/pages/billing/index.tsx:374-438` | tbd | inventoried | screens |
+| WEB-073 | Settings, retention, consent and account deletion | android | Same settings/confirmations and logout; web source `frontend/src/features/settings/views/SettingsView.tsx:111-156`; `frontend/src/features/settings/containers/SettingsContainer.tsx:84-89` | tbd | inventoried | screens |
+| WEB-075 | Feedback, support and API administration handoff | android | Reuse authenticated server/browser flows, not new native admin scope; `frontend/src/components/SupportModal/SupportModal.tsx:14-48`; `frontend/src/pages/dashboard/api-keys.tsx:170-237` | tbd | inventoried | screens |
+
+## ios
+
+| ID | Flow | Surface | Today | Test | Status | Topic |
+|---|---|---|---|---|---|---|
+| OPS-P008 | Native feature/telemetry applicability | ios | No current native shell; carry shared capability/event meaning, not browser replay or layout flags; Inventory flag/analytics contracts | tbd | inventoried | platform |
+| WEB-052 | Sign in, signup, recovery and sign out | ios | Native identity UI or browser OAuth handoff; web source `frontend/src/pages/signin.tsx:145-176` | tbd | inventoried | screens |
+| WEB-056 | Upload and transcription/translation configuration | ios | Native file picker, progress, same selection order; web source `frontend/src/features/transcription/viewmodels/useTranscriptionViewModel.ts:961-1052` | tbd | inventoried | screens |
+| WEB-060 | YouTube source and playback handoff | ios | Same add/resolve and transcript flow; web source `frontend/src/features/job-management/views/mobile/MobileJobDetailsView.tsx:184-254` | tbd | inventoried | screens |
+| WEB-064 | List jobs, status, transcript editing and playback | ios | Native list/detail, edits/speakers, freemium/consent states; web source `frontend/src/features/transcriptLines/containers/TranscriptLinesContainer.tsx:309-353` | tbd | inventoried | screens |
+| WEB-068 | Transcript/translation export | ios | Share/save files through platform adapter; web source `frontend/src/utils/transcriptFileSaver.ts:101-170` | tbd | inventoried | screens |
+| WEB-070 | AI consent, analysis, highlights and streamed chat | ios | Same consent/limits/streaming/retry/copy/export states; web source `frontend/src/components/Transcript/Transcript.tsx:250-301` | tbd | inventoried | screens |
+| WEB-072 | Balance, purchase and invoice browser handoff | ios | Same entitlement outcome subject to store decision; web source `frontend/src/pages/checkout/index.tsx:70-124`; `frontend/src/pages/billing/index.tsx:374-438` | tbd | inventoried | screens |
+| WEB-074 | Settings, retention, consent and account deletion | ios | Same settings/confirmations and logout; web source `frontend/src/features/settings/views/SettingsView.tsx:111-156`; `frontend/src/features/settings/containers/SettingsContainer.tsx:84-89` | tbd | inventoried | screens |
+| WEB-076 | Feedback, support and API administration handoff | ios | Reuse authenticated server/browser flows, not new native admin scope; `frontend/src/components/SupportModal/SupportModal.tsx:14-48`; `frontend/src/pages/dashboard/api-keys.tsx:170-237` | tbd | inventoried | screens |
+
+## api
+
+| ID | Flow | Surface | Today | Test | Status | Topic |
+|---|---|---|---|---|---|---|
+| API-BIL-001 | `POST /checkout` (form post from the modal, returns the Iyzico form page) | api | `frontend/src/pages/checkout/index.tsx:141-262` | tbd | inventoried | billing |
+| API-BIL-002 | `POST /checkout/confirm` (Iyzico returns the browser here with `token`) | api | `frontend/src/pages/checkout/confirm.tsx:120-155` | tbd | inventoried | billing |
+| API-BIL-003 | `POST /api/cancel-subscription` with `{ paymentId }`; 405 for other methods | api | `frontend/src/pages/api/cancel-subscription.ts` | tbd | inventoried | billing |
+| API-BIL-004 | `POST /api/subscription-callback` (Iyzico webhook: `subscription.order.success` and `.failed`) | api | `frontend/src/pages/api/subscription-callback.ts` | tbd | inventoried | billing |
+| API-BIL-005 | `POST /api/admin/customer-invoices` with `{ email }` (405, 401, 403, 400, 404, 200) | api | `frontend/src/pages/api/admin/customer-invoices.ts` | tbd | inventoried | billing |
+| API-BIL-006 | `POST /api/hooks/payment-updated` (internal webhook from the database; replaced by the outbox, internal contract only) | api | `frontend/src/pages/api/hooks/payment-updated.ts`; `frontend/src/webhooks.ts:4-11` | tbd | inventoried | billing |
+| API-BIL-007 | Browser reads the balance (`user_balance_view`, own row) straight from the database API | api | `frontend/src/dao/Balances.ts:12` | tbd | inventoried | billing |
+| API-BIL-008 | Browser reads own packages (also used to decide freemium) | api | `frontend/src/dao/Balances.ts:20`; `frontend/src/features/subscription/services/SubscriptionService.ts:19-41` | tbd | inventoried | billing |
+| API-BIL-009 | Browser reads own completed payments and the latest `billing_info` | api | `frontend/src/pages/billing/index.tsx:379-381` | tbd | inventoried | billing |
+| API-BIL-010 | Browser reads a coupon by id (anyone may read the whole coupon table today) | api | `frontend/src/features/billing/services/SupabaseCouponDataSource.ts:28-35`; policy `frontend/supabase/migrations/20251130113249_remote_schema.sql:4515` | tbd | inventoried | billing |
+| API-BIL-011 | `GET /api/ai/chat-limits?jobId=` (limits shown to freemium users only; the AI topic owns the rest) | api | `frontend/src/pages/api/ai/chat-limits.ts:38-120` | tbd | inventoried | billing |
+| API-BIL-012 | Public API: starting jobs answers 402 `insufficient_balance` when the balance is 0 or less, and success answers carry `newBalance` and `isFreemium` (the API topic owns the endpoints) | api | `frontend/src/services/unified-transcription/services/transcription.ts:241-246`, `:630-660`; `frontend/src/pages/api-docs.tsx:361-369` | tbd | inventoried | billing |
+| API-F01 | POST /api/v1/transcriptions | api | frontend/src/app/api/v1/transcriptions/route.ts:201-280 | tbd | inventoried | api |
+| API-F02 | GET /api/v1/transcriptions?jobId | api | frontend/src/app/api/v1/transcriptions/route.ts:401-465 | tbd | inventoried | api |
+| API-F03 | POST /api/v1-beta/transcriptions/url | api | frontend/src/app/api/v1-beta/transcriptions/url/route.ts:1-14 | tbd | inventoried | api |
+| API-F04 | GET /api/v1-beta/transcriptions/[id] | api | frontend/src/app/api/v1-beta/transcriptions/[id]/route.ts:1-14 | tbd | inventoried | api |
+| API-F05 | GET and POST /api/unified/transcriptions redirect | api | frontend/src/app/api/unified/transcriptions/route.ts:9-50 | tbd | inventoried | api |
+| API-F06 | Browser legacy /api/transcripts submission | api | frontend/src/pages/api/transcripts.ts:9-38 | tbd | inventoried | api |
+| API-F07 | GET /api/keys/list | api | frontend/src/pages/api/keys/list.ts:8-49 | tbd | inventoried | api |
+| API-F10 | Deliver customer job callback and record result | api | frontend/src/services/unified-transcription/services/callback-delivery.ts:25-75 | tbd | inventoried | api |
+| API-F11 | POST /api/webhooks key lifecycle events | api | frontend/src/app/api/webhooks/route.ts:5-90 | tbd | inventoried | api |
+| API-F12 | /api/init-upload signing | api | frontend/src/pages/api/init-upload.ts:7-49 | tbd | inventoried | api |
+| API-F13 | POST /api/streaming-url | api | frontend/src/pages/api/streaming-url.ts:7-62 | tbd | inventoried | api |
+| API-F14 | POST /api/youtube/add | api | frontend/src/pages/api/youtube/add.ts:30-59 | tbd | inventoried | api |
+| API-F15 | POST /api/youtube/metadata | api | frontend/src/pages/api/youtube/metadata.ts:23-41 | tbd | inventoried | api |
+| API-F16 | POST /api/youtube/resolve | api | frontend/src/pages/api/youtube/resolve.ts:30-59 | tbd | inventoried | api |
+| API-F17 | POST /api/youtube/public-transcript: txt/timestamped/srt/vtt, unavailable/rate-limited | api | frontend/src/pages/api/youtube/public-transcript.ts:62-144 | tbd | inventoried | api |
+| API-F18 | POST /api/v1/ai/analyze SSE | api | frontend/src/pages/api/v1/ai/analyze.ts:106-303 | tbd | inventoried | api |
+| API-F19 | POST /api/v1/ai/chat SSE | api | frontend/src/pages/api/v1/ai/chat.ts:26-170 | tbd | inventoried | api |
+| API-F20 | GET/POST/DELETE /api/ai/consent | api | frontend/src/pages/api/ai/consent.ts:7-47 | tbd | inventoried | api |
+| API-F21 | GET /api/ai/chat-limits | api | frontend/src/pages/api/ai/chat-limits.ts:9-22 | tbd | inventoried | api |
+| API-F22 | POST /api/deepgram/callback | api | frontend/src/pages/api/deepgram/callback.ts:16-50 | tbd | inventoried | api |
+| API-F23 | POST /api/soniox/callback | api | frontend/src/pages/api/soniox/callback.ts:86-117 | tbd | inventoried | api |
+| API-F24 | /api/hooks/job-updated | api | frontend/src/pages/api/hooks/job-updated.ts:14-29 | tbd | inventoried | api |
+| API-F25 | /api/hooks/user-inserted | api | frontend/src/pages/api/hooks/user-inserted.ts:29-48 | tbd | inventoried | api |
+| API-F26 | /api/hooks/payment-updated | api | frontend/src/pages/api/hooks/payment-updated.ts:14-29 | tbd | inventoried | api |
+| API-F27 | /api/cron/process-deepgram-queue | api | frontend/src/pages/api/cron/process-deepgram-queue.ts:7-34 | tbd | inventoried | api |
+| API-F28 | /api/cron/process-soniox-recovery | api | frontend/src/pages/api/cron/process-soniox-recovery.ts:7-12 | tbd | inventoried | api |
+| API-F29 | GET /api/queue/status | api | frontend/src/pages/api/queue/status.ts:6-9 | tbd | inventoried | api |
+| API-F30 | POST /api/queue/trigger | api | frontend/src/pages/api/queue/trigger.ts:6-9 | tbd | inventoried | api |
+| API-F31 | GET/POST /api/unified/monitoring | api | frontend/src/app/api/unified/monitoring/route.ts:11-64,100-172 | tbd | inventoried | api |
+| API-F32 | GET/POST /api/unified/monitoring/providers | api | frontend/src/app/api/unified/monitoring/providers/route.ts:16-20,181-249 | tbd | inventoried | api |
+| API-F33 | GET /api/health | api | frontend/src/pages/api/health.ts:30-36 | tbd | inventoried | api |
+| API-F34 | GET /api/monitoring/memory | api | frontend/src/pages/api/monitoring/memory.ts:27-29 | tbd | inventoried | api |
+| API-F35 | GET /api/test-ffmpeg | api | frontend/src/pages/api/test-ffmpeg.ts:17-20 | tbd | inventoried | api |
+| API-F36 | POST /api/contact-us | api | frontend/src/pages/api/contact-us.ts:12-16 | tbd | inventoried | api |
+| API-F37 | POST /api/subscribe | api | frontend/src/pages/api/subscribe.ts:10-14 | tbd | inventoried | api |
+| API-F38 | POST /api/support | api | frontend/src/pages/api/support.ts:14-40 | tbd | inventoried | api |
+| API-F39 | POST /api/cancel-subscription | api | frontend/src/pages/api/cancel-subscription.ts:12-29 | tbd | inventoried | api |
+| API-F40 | /api/subscription-callback | api | frontend/src/pages/api/subscription-callback.ts:67-70 | tbd | inventoried | api |
+| API-F41 | POST /api/admin/customer-invoices (scope gap) | api | frontend/src/pages/api/admin/customer-invoices.ts:8-20 | tbd | inventoried | api |
+| API-F42 | /api/delete-account | api | frontend/src/pages/api/delete-account.ts:16-20 | tbd | inventoried | api |
+| API-F43 | POST /api/download | api | frontend/src/pages/api/download.ts:6-38 | tbd | inventoried | api |
+| API-F44 | POST /api/voice-demo/deepseek (excluded by P4 D6) | api | frontend/src/pages/api/voice-demo/deepseek.ts:29-81 | decision:docs/plans/p4-ai/decisions.md#d6-exclude-only-the-inventoried-voice-demo | dropped | api |
+| API-F45 | Processor GET /health | api | frontend/services/free-tools-processor/src/index.ts:34-36 | cargo:transgate-processor:all_forty_routes_are_mounted_and_anything_else_is_the_express_404 | tested | api |
+| API-F46 | Processor POST /trim-audio/upload | api | frontend/services/free-tools-processor/src/routes/trim-audio.ts:476-574 | cargo:transgate-processor:trim_audio_cuts_two_parts_serves_them_singly_and_as_a_zip_then_cleans_up; cargo:transgate-processor:trim_video_reencodes_off_a_keyframe_and_copies_on_one_without_duplicate_frames | tested | api |
+| API-F47 | Processor POST /trim-audio/trim | api | frontend/services/free-tools-processor/src/routes/trim-audio.ts:588-660 | cargo:transgate-processor:trim_audio_cuts_two_parts_serves_them_singly_and_as_a_zip_then_cleans_up; cargo:transgate-processor:trim_video_reencodes_off_a_keyframe_and_copies_on_one_without_duplicate_frames; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker | tested | api |
+| API-F48 | Processor GET /trim-audio/progress | api | frontend/services/free-tools-processor/src/routes/trim-audio.ts:664-742 | cargo:transgate-processor:trim_audio_cuts_two_parts_serves_them_singly_and_as_a_zip_then_cleans_up; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker | tested | api |
+| API-F49 | Processor GET /trim-audio/download, part 1/2 | api | frontend/services/free-tools-processor/src/routes/trim-audio.ts:745-799 | cargo:transgate-processor:trim_audio_cuts_two_parts_serves_them_singly_and_as_a_zip_then_cleans_up; cargo:transgate-processor:trim_video_reencodes_off_a_keyframe_and_copies_on_one_without_duplicate_frames | tested | api |
+| API-F50 | Processor GET /trim-audio/download-zip | api | frontend/services/free-tools-processor/src/routes/trim-audio.ts:802-845 | cargo:transgate-processor:trim_audio_cuts_two_parts_serves_them_singly_and_as_a_zip_then_cleans_up; cargo:transgate-processor:zip::tests::the_stored_layout_is_a_valid_zip | tested | api |
+| API-F51 | Processor DELETE /trim-audio/invalidate | api | frontend/services/free-tools-processor/src/routes/trim-audio.ts:848-859 | cargo:transgate-processor:acceptance::every_family_invalidates_its_live_session_and_only_its_own_files; cargo:transgate-processor:acceptance::invalidating_in_flight_processing_reaps_children_and_cannot_publish_late_files | changed | api |
+| API-F52 | Processor POST /convert-audio/upload | api | frontend/services/free-tools-processor/src/routes/convert-audio.ts:325-412 | cargo:transgate-processor:acceptance::audio_conversion_encodes_each_distinct_codec_and_container_with_effective_options; cargo:transgate-processor:convert_audio_answers_when_done_forces_opus_to_48k_and_cleans_up_after_download | tested | api |
+| API-F53 | Processor POST /convert-audio/convert | api | frontend/services/free-tools-processor/src/routes/convert-audio.ts:414-508 | cargo:transgate-processor:acceptance::audio_conversion_encodes_each_distinct_codec_and_container_with_effective_options; cargo:transgate-processor:convert_audio_answers_when_done_forces_opus_to_48k_and_cleans_up_after_download | tested | api |
+| API-F54 | Processor GET /convert-audio/progress | api | frontend/services/free-tools-processor/src/routes/convert-audio.ts:510-523 | cargo:transgate-processor:acceptance::audio_conversion_encodes_each_distinct_codec_and_container_with_effective_options; cargo:transgate-processor:convert_audio_answers_when_done_forces_opus_to_48k_and_cleans_up_after_download; cargo:transgate-processor:the_deployable_binary_loses_sessions_on_restart_keeps_their_files_and_stops_on_sigterm | tested | api |
+| API-F55 | Processor GET /convert-audio/download | api | frontend/services/free-tools-processor/src/routes/convert-audio.ts:525-570 | cargo:transgate-processor:acceptance::audio_conversion_encodes_each_distinct_codec_and_container_with_effective_options; cargo:transgate-processor:convert_audio_answers_when_done_forces_opus_to_48k_and_cleans_up_after_download | tested | api |
+| API-F56 | Processor DELETE /convert-audio/invalidate | api | frontend/services/free-tools-processor/src/routes/convert-audio.ts:572-582 | cargo:transgate-processor:acceptance::every_family_invalidates_its_live_session_and_only_its_own_files; cargo:transgate-processor:acceptance::invalidating_in_flight_processing_reaps_children_and_cannot_publish_late_files | changed | api |
+| API-F57 | Processor POST /reduce-audio/upload | api | frontend/services/free-tools-processor/src/routes/reduce-audio.ts:408-515 | cargo:transgate-processor:reduce_denoise_and_extract_run_detached_and_poll_to_their_outputs; cargo:transgate-processor:acceptance::reduction_encodes_lossless_aac_opus_and_mp3_presets_with_their_real_channels_and_rates | tested | api |
+| API-F58 | Processor POST /reduce-audio/reduce | api | frontend/services/free-tools-processor/src/routes/reduce-audio.ts:517-607 | cargo:transgate-processor:acceptance::reduction_encodes_lossless_aac_opus_and_mp3_presets_with_their_real_channels_and_rates; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker | tested | api |
+| API-F59 | Processor GET /reduce-audio/progress | api | frontend/services/free-tools-processor/src/routes/reduce-audio.ts:609-642 | cargo:transgate-processor:acceptance::reduction_encodes_lossless_aac_opus_and_mp3_presets_with_their_real_channels_and_rates; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker | tested | api |
+| API-F60 | Processor GET /reduce-audio/download | api | frontend/services/free-tools-processor/src/routes/reduce-audio.ts:644-690 | cargo:transgate-processor:reduce_denoise_and_extract_run_detached_and_poll_to_their_outputs; cargo:transgate-processor:acceptance::reduction_encodes_lossless_aac_opus_and_mp3_presets_with_their_real_channels_and_rates | tested | api |
+| API-F61 | Processor DELETE /reduce-audio/invalidate | api | frontend/services/free-tools-processor/src/routes/reduce-audio.ts:692-702 | cargo:transgate-processor:acceptance::every_family_invalidates_its_live_session_and_only_its_own_files; cargo:transgate-processor:acceptance::invalidating_in_flight_processing_reaps_children_and_cannot_publish_late_files | changed | api |
+| API-F62 | Processor POST /remove-noise/upload | api | frontend/services/free-tools-processor/src/routes/remove-noise.ts:400-497 | cargo:transgate-processor:reduce_denoise_and_extract_run_detached_and_poll_to_their_outputs; cargo:transgate-processor:acceptance::denoise_encodes_audio_containers_and_preserves_video_for_video_inputs | tested | api |
+| API-F63 | Processor POST /remove-noise/denoise | api | frontend/services/free-tools-processor/src/routes/remove-noise.ts:499-552 | cargo:transgate-processor:acceptance::denoise_encodes_audio_containers_and_preserves_video_for_video_inputs; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker | tested | api |
+| API-F64 | Processor GET /remove-noise/progress | api | frontend/services/free-tools-processor/src/routes/remove-noise.ts:554-603 | cargo:transgate-processor:acceptance::denoise_encodes_audio_containers_and_preserves_video_for_video_inputs; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker | tested | api |
+| API-F65 | Processor GET /remove-noise/download | api | frontend/services/free-tools-processor/src/routes/remove-noise.ts:605-655 | cargo:transgate-processor:reduce_denoise_and_extract_run_detached_and_poll_to_their_outputs; cargo:transgate-processor:acceptance::denoise_encodes_audio_containers_and_preserves_video_for_video_inputs | tested | api |
+| API-F66 | Processor DELETE /remove-noise/invalidate | api | frontend/services/free-tools-processor/src/routes/remove-noise.ts:657-667 | cargo:transgate-processor:acceptance::every_family_invalidates_its_live_session_and_only_its_own_files; cargo:transgate-processor:acceptance::invalidating_in_flight_processing_reaps_children_and_cannot_publish_late_files | changed | api |
+| API-F67 | Processor POST /video-to-audio/upload | api | frontend/services/free-tools-processor/src/routes/video-to-audio.ts:503-647 | cargo:transgate-processor:reduce_denoise_and_extract_run_detached_and_poll_to_their_outputs; cargo:transgate-processor:acceptance::extraction_encodes_lossless_native_vorbis_and_forced_opus_rate_as_real_media | tested | api |
+| API-F68 | Processor GET /video-to-audio/thumbnail | api | frontend/services/free-tools-processor/src/routes/video-to-audio.ts:649-682 | cargo:transgate-processor:reduce_denoise_and_extract_run_detached_and_poll_to_their_outputs | tested | api |
+| API-F69 | Processor POST /video-to-audio/extract | api | frontend/services/free-tools-processor/src/routes/video-to-audio.ts:684-780 | cargo:transgate-processor:reduce_denoise_and_extract_run_detached_and_poll_to_their_outputs; cargo:transgate-processor:acceptance::extraction_encodes_lossless_native_vorbis_and_forced_opus_rate_as_real_media; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker | tested | api |
+| API-F70 | Processor GET /video-to-audio/progress | api | frontend/services/free-tools-processor/src/routes/video-to-audio.ts:782-832 | cargo:transgate-processor:acceptance::extraction_encodes_lossless_native_vorbis_and_forced_opus_rate_as_real_media; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker | tested | api |
+| API-F71 | Processor GET /video-to-audio/download | api | frontend/services/free-tools-processor/src/routes/video-to-audio.ts:834-884 | cargo:transgate-processor:reduce_denoise_and_extract_run_detached_and_poll_to_their_outputs; cargo:transgate-processor:acceptance::extraction_encodes_lossless_native_vorbis_and_forced_opus_rate_as_real_media | tested | api |
+| API-F72 | Processor DELETE /video-to-audio/invalidate | api | frontend/services/free-tools-processor/src/routes/video-to-audio.ts:886-896 | cargo:transgate-processor:acceptance::every_family_invalidates_its_live_session_and_only_its_own_files; cargo:transgate-processor:acceptance::invalidating_in_flight_processing_reaps_children_and_cannot_publish_late_files | changed | api |
+| API-F73 | Processor POST /compress-video/upload | api | frontend/services/free-tools-processor/src/routes/compress-video.ts:579-717 | cargo:transgate-processor:compress_and_convert_video_report_results_and_refuse_a_second_concurrent_job; cargo:transgate-processor:acceptance::compression_encodes_all_containers_and_the_scale_quality_and_audio_branches | tested | api |
+| API-F74 | Processor GET /compress-video/thumbnail | api | frontend/services/free-tools-processor/src/routes/compress-video.ts:719-749 | cargo:transgate-processor:compress_and_convert_video_report_results_and_refuse_a_second_concurrent_job | tested | api |
+| API-F75 | Processor POST /compress-video/compress | api | frontend/services/free-tools-processor/src/routes/compress-video.ts:751-811 | cargo:transgate-processor:acceptance::compression_encodes_all_containers_and_the_scale_quality_and_audio_branches; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker | tested | api |
+| API-F76 | Processor GET /compress-video/progress | api | frontend/services/free-tools-processor/src/routes/compress-video.ts:813-859 | cargo:transgate-processor:acceptance::compression_encodes_all_containers_and_the_scale_quality_and_audio_branches; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker | tested | api |
+| API-F77 | Processor GET /compress-video/download | api | frontend/services/free-tools-processor/src/routes/compress-video.ts:861-910 | cargo:transgate-processor:compress_and_convert_video_report_results_and_refuse_a_second_concurrent_job; cargo:transgate-processor:acceptance::compression_encodes_all_containers_and_the_scale_quality_and_audio_branches | tested | api |
+| API-F78 | Processor DELETE /compress-video/invalidate | api | frontend/services/free-tools-processor/src/routes/compress-video.ts:912-922 | cargo:transgate-processor:acceptance::every_family_invalidates_its_live_session_and_only_its_own_files; cargo:transgate-processor:acceptance::invalidating_in_flight_processing_reaps_children_and_cannot_publish_late_files | changed | api |
+| API-F79 | Processor POST /convert-video/upload | api | frontend/services/free-tools-processor/src/routes/convert-video.ts:528-659 | cargo:transgate-processor:compress_and_convert_video_report_results_and_refuse_a_second_concurrent_job; cargo:transgate-processor:acceptance::video_conversion_encodes_four_codecs_containers_and_numeric_or_original_fps; cargo:transgate-processor:acceptance::invalidating_video_upload_reaps_its_background_thumbnail_before_returning | tested | api |
+| API-F80 | Processor GET /convert-video/thumbnail | api | frontend/services/free-tools-processor/src/routes/convert-video.ts:661-694 | cargo:transgate-processor:compress_and_convert_video_report_results_and_refuse_a_second_concurrent_job | tested | api |
+| API-F81 | Processor POST /convert-video/convert | api | frontend/services/free-tools-processor/src/routes/convert-video.ts:696-813 | cargo:transgate-processor:acceptance::video_conversion_encodes_four_codecs_containers_and_numeric_or_original_fps; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker; cargo:transgate-processor:compress_and_convert_video_report_results_and_refuse_a_second_concurrent_job | tested | api |
+| API-F82 | Processor GET /convert-video/progress | api | frontend/services/free-tools-processor/src/routes/convert-video.ts:815-864 | cargo:transgate-processor:acceptance::video_conversion_encodes_four_codecs_containers_and_numeric_or_original_fps; cargo:transgate-processor:acceptance::every_asynchronous_family_charges_busy_checks_without_starting_another_worker | tested | api |
+| API-F83 | Processor GET /convert-video/download | api | frontend/services/free-tools-processor/src/routes/convert-video.ts:866-916 | cargo:transgate-processor:compress_and_convert_video_report_results_and_refuse_a_second_concurrent_job; cargo:transgate-processor:acceptance::video_conversion_encodes_four_codecs_containers_and_numeric_or_original_fps | tested | api |
+| API-F84 | Processor DELETE /convert-video/invalidate | api | frontend/services/free-tools-processor/src/routes/convert-video.ts:918-928 | cargo:transgate-processor:acceptance::every_family_invalidates_its_live_session_and_only_its_own_files; cargo:transgate-processor:acceptance::invalidating_in_flight_processing_reaps_children_and_cannot_publish_late_files | changed | api |
+| API-IDN-001 | `POST /api/delete-account`: delete the signed in user | api | Admin delete of the auth user, always 200 `OK`, 401 `Not authorised` without a session (PRV-001, PRV-004); frontend/src/pages/api/delete-account.ts:13-45 | tbd | inventoried | privacy-identity |
+| API-IDN-002 | `GET`, `POST`, `DELETE /api/ai/consent`: read, record, revoke AI consent | api | Returns the consent state; POST needs boolean `hasConsented`; DELETE revokes and cleans AI data; 401, 405, 500 as in the file (PRV-043); frontend/src/pages/api/ai/consent.ts:7-65 | tbd | inventoried | privacy-identity |
+| API-IDN-003 | `POST /api/hooks/user-inserted`: signup hook | api | Secret header, payload check, `user_signed_up` event, welcome email (IDN-006 to IDN-008); frontend/src/pages/api/hooks/user-inserted.ts:29-71 | tbd | inventoried | privacy-identity |
+| CRN-P003 | Authorized HTTP Deepgram recovery | api | Independent HTTP entry, Bearer comparison; CRN-004 | tbd | inventoried | platform |
+| CRN-P004 | Authorized HTTP Soniox recovery | api | Independent HTTP entry, Bearer comparison; CRN-004 | tbd | inventoried | platform |
+| OPS-P005 | Server signup/payment analytics | api | Stable event ids, no payment failure due to analytics failure; `frontend/src/utils/analytics/server.ts:81-123` | tbd | inventoried | platform |
+| OPS-P006 | Application health response | api | GET memory/uptime; unhealthy 503, otherwise 200; `frontend/src/pages/api/health.ts:31-78` | tbd | inventoried | platform |
+
+## email
+
+| ID | Flow | Surface | Today | Test | Status | Topic |
+|---|---|---|---|---|---|---|
+| EML-BIL-001 | Purchase thank-you email to the buyer, subject `Woohoo! Your Transgate purchase is complete!`, needs only the first name | email | `frontend/src/emails/purchase-email.tsx`; sent by `frontend/src/pages/api/hooks/payment-updated.ts:67-75` | tbd | inventoried | billing |
+| EML-BIL-002 | "Payment Completed" email to the sales address with payment id, amount, currency, JSON, user id and email | email | `frontend/src/emails/backoffice/sales_email.tsx`; `payment-updated.ts:77-83` | tbd | inventoried | billing |
+| EML-BIL-003 | Cancellation request email to support, subject `!!!CANCEL SUBSCRIPTION!!!`, body is the payment id | email | `frontend/src/pages/api/cancel-subscription.ts:26` | tbd | inventoried | billing |
+| EML-BIL-004 | Debug email with the full Iyzico callback body to a personal address. Verdict throw | email | `frontend/src/pages/api/subscription-callback.ts:142-150` | tbd | inventoried | billing |
+| EML-IDN-001 | Welcome email "Welcome to the Transgate Family!" | email | Sent by the app through Resend after the signup hook; greeting uses the full name or "there" (IDN-008); frontend/src/pages/api/hooks/user-inserted.ts:65-69 | tbd | inventoried | privacy-identity |
+| EML-IDN-002 | Signup confirmation email | email | Sent by GoTrue when confirmations are on (local config: off); template and sender unknown (IDN-019); frontend/supabase/config.toml:128 | tbd | inventoried | privacy-identity |
+| EML-IDN-003 | Magic link email | email | Sent by GoTrue for `signInWithOtp`; template and sender unknown (IDN-009); frontend/supabase/config.toml:134-136 | tbd | inventoried | privacy-identity |
+| EML-IDN-004 | Password recovery email | email | Sent by GoTrue for `resetPasswordForEmail`; link target unknown (IDN-016, IDN-D05); frontend/supabase/config.toml:132 | tbd | inventoried | privacy-identity |
+| EML-IDN-005 | Email change confirmation (to old and new address) | email | Sent by GoTrue; `double_confirm_changes = true` locally; no screen in the app starts an email change (IDN-D11); frontend/supabase/config.toml:126 | tbd | inventoried | privacy-identity |
+| EML-P001 | Welcome after signup | email | Authenticated validated users INSERT sends English welcome; EML-002 | tbd | inventoried | platform |
+| EML-P002 | Completed purchase confirmation | email | Payer notification for pending-to-completed payment; EML-003 | tbd | inventoried | platform |
+| EML-P003 | Completed purchase sales notification | email | Sales mailbox receives payment/user details; EML-003 | tbd | inventoried | platform |
+| EML-P004 | Failed job user notification | email | Current failed job sends named failure template if address exists; EML-004 | tbd | inventoried | platform |
+| EML-P005 | Failed job operator notification | email | Support gets job/error/user/language; EML-004 | tbd | inventoried | platform |
+| EML-P006 | Partial job errors | email | Completed job with error sends support only; EML-005 | tbd | inventoried | platform |
+| EML-P007 | Support request delivery | email | Submitted message and job context sent to support; EML-006 | tbd | inventoried | platform |
+| EML-P008 | Support acknowledgement | email | Personalized reply after support send; EML-006 | tbd | inventoried | platform |
+| EML-P009 | Public contact delivery | email | Submitted message sent to contact-us; EML-007 | tbd | inventoried | platform |
+| EML-P010 | Public contact acknowledgement | email | Reply to supplied address after contact send; EML-007 | tbd | inventoried | platform |
+| EML-P011 | Newsletter interest notification | email | Operator receives supplied address, no campaign inferred; EML-008 | tbd | inventoried | platform |
+| EML-P012 | Cancellation support notification | email | Payment id after timestamp update; EML-009 | tbd | inventoried | platform |
+| EML-P013 | Subscription callback diagnostic | email | Maintainer notification, send failure swallowed after logging; EML-010 | tbd | inventoried | platform |
+| EML-P014 | Provider unhealthy operations alert | email | Cached healthy-to-unhealthy transition; scoring removal decision required; EML-011 | tbd | inventoried | platform |
+
+## cron
+
+| ID | Flow | Surface | Today | Test | Status | Topic |
+|---|---|---|---|---|---|---|
+| CRN-P001 | Recover/process Deepgram queue | cron | Three-minute production scheduler, 30-minute stuck threshold; CRN-001/002 | tbd | inventoried | platform |
+| CRN-P002 | Recover Soniox jobs | cron | Three-minute production scheduler, 30-minute stuck threshold; CRN-001/003 | tbd | inventoried | platform |
+| CRN-P005 | Daily transcript cleanup | cron | 02:00 UTC, 30-day argument; privacy owns content selection; CRN-005 | tbd | inventoried | platform |
+| CRN-P006 | Daily health-metrics cleanup | cron | 03:00 UTC, 30 days; tied to scoring-retirement decision; CRN-006 | tbd | inventoried | platform |
+| CRN-P007 | Weekly execution-history cleanup | cron | Sunday 04:00 UTC, 90 days; CRN-007 | tbd | inventoried | platform |
+| CRN-P008 | Expired free-tool sessions | cron | Seven processor families every ten minutes, one/two-hour TTL; CRN-008/009 | cargo:transgate-processor:acceptance::every_family_purges_only_past_its_session_and_orphan_ttl; cargo:transgate-processor:acceptance::cleanup_timer_waits_ten_minutes_then_sweeps_all_seven_orphan_prefixes | tested | platform |
+| CRN-P009 | Orphan processor files after restart | cron | Same sweep, file mtime expiry even without in-memory session; CRN-008/009 | cargo:transgate-processor:the_deployable_binary_loses_sessions_on_restart_keeps_their_files_and_stops_on_sigterm; cargo:transgate-processor:acceptance::every_family_purges_only_past_its_session_and_orphan_ttl; cargo:transgate-processor:acceptance::cleanup_timer_waits_ten_minutes_then_sweeps_all_seven_orphan_prefixes | tested | platform |
+| CRN-P010 | Provider alert-condition timer | cron | One-minute timer, health data itself event-driven; CRN-010 | tbd | inventoried | platform |
+| CRN-PRV-001 | `cleanup-old-transcripts`: daily 02:00 UTC, `cleanup_old_transcripts(30)` | cron | Deletes transcript lines of completed jobs 31 days old or more for users with auto delete on; writes an audit row (PRV-014 to PRV-021, PRV-029); frontend/supabase/migrations/20251221200006_schedule_cleanup_jobs.sql:30-34 | tbd | inventoried | privacy-identity |
+| CRN-PRV-002 | `cleanup-old-health-metrics`: daily 03:00 UTC, `cleanup_old_health_metrics(30)` | cron | Deletes provider health metrics older than 31 days; table is dropped with health scoring if mu agrees (PRV-024, PRV-030); frontend/supabase/migrations/20251221200006_schedule_cleanup_jobs.sql:42-46 | tbd | inventoried | privacy-identity |
+| CRN-PRV-003 | `cleanup-cron-job-history`: Sundays 04:00 UTC, `cleanup_cron_job_history(90)` | cron | Deletes pg_cron run history older than 91 days (PRV-025, PRV-031); frontend/supabase/migrations/20251221200006_schedule_cleanup_jobs.sql:54-58 | tbd | inventoried | privacy-identity |
+
+## locale
+
+| ID | Flow | Surface | Today | Test | Status | Topic |
+|---|---|---|---|---|---|---|
+| LOC-001 | App renders in locale en (English) | locale | public/locales/en (98 files) | tbd | inventoried | languages |
+| LOC-002 | App renders in locale tr (Turkish) | locale | public/locales/tr (34 files) | tbd | inventoried | languages |
+| LOC-003 | App renders in locale pt (Portuguese) | locale | public/locales/pt (15 files) | tbd | inventoried | languages |
+| LOC-004 | App renders in locale es (Spanish) | locale | public/locales/es (15 files) | tbd | inventoried | languages |
+| LOC-005 | App renders in locale de (German) | locale | public/locales/de (99 files) (app.json does not parse) | tbd | inventoried | languages |
+| LOC-006 | App renders in locale id (Indonesian) | locale | public/locales/id (15 files) | tbd | inventoried | languages |
+| LOC-007 | App renders in locale it (Italian) | locale | public/locales/it (15 files) | tbd | inventoried | languages |
+| LOC-008 | App renders in locale fr (French) | locale | public/locales/fr (15 files) | tbd | inventoried | languages |
+| LOC-009 | App renders in locale el (Greek) | locale | public/locales/el (15 files) | tbd | inventoried | languages |
+| LOC-010 | App renders in locale ru (Russian) | locale | public/locales/ru (14 files) | tbd | inventoried | languages |
+| LOC-011 | App renders in locale da (Danish) | locale | public/locales/da (14 files) | tbd | inventoried | languages |
+| LOC-012 | App renders in locale sv (Swedish) | locale | public/locales/sv (14 files) | tbd | inventoried | languages |
+| LOC-013 | App renders in locale no (Norwegian) | locale | public/locales/no (14 files) | tbd | inventoried | languages |
+| LOC-014 | App renders in locale fi (Finnish) | locale | public/locales/fi (14 files) | tbd | inventoried | languages |
+| LOC-015 | App renders in locale kk (Kazakh) | locale | public/locales/kk (48 files) | tbd | inventoried | languages |
+| LOC-016 | App renders in locale az (Azerbaijani) | locale | public/locales/az (14 files) | tbd | inventoried | languages |
+

@@ -1,0 +1,26 @@
+[package]
+name = "transgate-core"
+description = "Transgate transcription and privacy: jobs, routing, transcripts, exports, retention, erasure and presentation. Pure Rust; no network, SQL or subprocess."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+billing-core = { path = "../../modules/billing/core" }
+bytes = "1"
+futures-core = "0.3"
+llm-core = { path = "../../crates/llm-core" }
+media-ports = { path = "../../crates/media-ports" }
+regex = "1"
+serde.workspace = true
+serde_json.workspace = true
+uuid = { version = "1", default-features = false, features = ["serde", "v4"] }
+ts-rs = { workspace = true, optional = true, features = ["uuid-impl", "serde-json-impl"] }
+
+[features]
+# TypeScript declarations of the view models and intents; enabled only by
+# transgate-wasm's generator.
+ts = ["dep:ts-rs", "billing-core/ts"]
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt", "macros"] }

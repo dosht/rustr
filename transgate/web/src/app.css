@@ -1,0 +1,58 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* Tailwind utilities name semantic tokens only; there are no hex colors in
+   components. Tokens come from scripts/gen-tokens.py (design-tokens.json). */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-accent: var(--on-accent);
+  --color-cursor-bg: var(--cursor-bg);
+  --color-notice-bg: var(--notice-bg);
+  --color-error: var(--error);
+  --color-error-bg: var(--error-bg);
+  --color-on-error: var(--on-error);
+  --color-success: var(--success);
+  --color-progress: var(--progress);
+  --color-focus: var(--focus);
+}
+
+@layer base {
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 15px/1.5 system-ui, sans-serif;
+  }
+
+  :where(button, input, select, textarea, a, [tabindex]):focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted);
+    opacity: 1;
+  }
+
+  dialog::backdrop {
+    background: color-mix(in srgb, var(--fg) 45%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

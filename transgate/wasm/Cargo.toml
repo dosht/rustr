@@ -1,0 +1,45 @@
+[package]
+name = "transgate-wasm"
+description = "Transgate browser presenter: core AppState and its effect driver over transgate-client and browser capability ports."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+billing-core = { path = "../../modules/billing/core" }
+futures-util = "0.3"
+js-sys.workspace = true
+reqwest = { version = "0.13", default-features = false }
+serde.workspace = true
+serde_json.workspace = true
+serde-wasm-bindgen.workspace = true
+transgate-client = { path = "../client" }
+transgate-core = { path = "../core" }
+transgate-export = { path = "../export" }
+url = "2.5"
+uuid = { version = "1", default-features = false }
+wasm-bindgen.workspace = true
+wasm-bindgen-futures = "0.4"
+web-sys = { version = "0.3", features = [
+    "Crypto",
+    "Document",
+    "Element",
+    "Event",
+    "EventTarget",
+    "History",
+    "HtmlElement",
+    "HtmlFormElement",
+    "HtmlInputElement",
+    "Location",
+    "Navigator",
+    "Node",
+    "Storage",
+    "StorageEvent",
+    "Window",
+] }
+
+[target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies]
+uuid = { version = "1", default-features = false, features = ["js"] }

@@ -1,0 +1,114 @@
+[
+  {
+    "code": "en",
+    "name": "English",
+    "direction": "ltr",
+    "default": true,
+    "namespaces_complete": true
+  },
+  {
+    "code": "tr",
+    "name": "Turkish",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "pt",
+    "name": "Portuguese",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "es",
+    "name": "Spanish",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "de",
+    "name": "German",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "id",
+    "name": "Indonesian",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "it",
+    "name": "Italian",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "fr",
+    "name": "French",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "el",
+    "name": "Greek",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "ru",
+    "name": "Russian",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "da",
+    "name": "Danish",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "sv",
+    "name": "Swedish",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "no",
+    "name": "Norwegian",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "fi",
+    "name": "Finnish",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "kk",
+    "name": "Kazakh",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  },
+  {
+    "code": "az",
+    "name": "Azerbaijani",
+    "direction": "ltr",
+    "default": false,
+    "namespaces_complete": false
+  }
+]

@@ -1,0 +1,30 @@
+[package]
+name = "transgate-client"
+description = "Transgate client adapters for the browser (wasm32) and native shells: GoTrue PKCE auth, HTTP API and AI watch decoding. No product rules."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+base64 = "0.22"
+billing-core = { path = "../../modules/billing/core" }
+futures-util = "0.3"
+llm-core = { path = "../../crates/llm-core" }
+llm-http = { path = "../../crates/llm-http" }
+media-ports = { path = "../../crates/media-ports" }
+reqwest = { version = "0.13", default-features = false, features = ["json", "stream"] }
+serde.workspace = true
+serde_json.workspace = true
+sha2 = { version = "0.10", default-features = false }
+url = "2.5"
+uuid = { version = "1", default-features = false, features = ["serde"] }
+transgate-core = { path = "../core" }
+transgate-export = { path = "../export" }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+getrandom = "0.3"
+reqwest = { version = "0.13", default-features = false, features = ["json", "stream", "rustls"] }
+
+[dev-dependencies]
+axum = "0.8"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "sync", "time"] }

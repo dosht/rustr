@@ -1,0 +1,13 @@
+{"documentCount":7}
+---
+{"type":"detectedType","value":"lecture","confidence":99}
+---
+{"type":"summary","content":"A useful café summary with --- quoted data."}
+---
+{"type":"topics","data":[{"title":"Concurrency","timestamp":0,"duration":12.5}]}
+---
+{"type":"concepts","data":[{"concept":"Backpressure","explanation":"Bound work in flight","examples":["A queue"]}]}
+---
+{"type":"reviewQuestions","data":["What bounds memory?"]}
+---
+{"type":"studyGuide","data":["Measure the producer and consumer"]}

@@ -1,0 +1,86 @@
+# Same file as transgate/processor/deploy/Dockerfile.dockerignore: keep them identical.
+# Cargo loads every workspace member. Both images receive member manifests,
+# Rust source and migrations plus the versioned web build/checkout inputs.
+# Only file patterns are re-included; directory exceptions admit their contents.
+**
+!Cargo.toml
+!Cargo.lock
+!crates/*/Cargo.toml
+!crates/*/src/**/*.rs
+!crates/*/migrations/*.sql
+!modules/billing/*/Cargo.toml
+!modules/billing/*/src/**/*.rs
+!modules/billing/*/migrations/*.sql
+!modules/billing/gateways/*/Cargo.toml
+!modules/billing/gateways/*/src/**/*.rs
+!transgate/*/Cargo.toml
+!transgate/*/src/**/*.rs
+!transgate/*/migrations/*.sql
+
+# Document fonts, license/provenance notices and invoice logo used by Vite.
+!transgate/export/fonts/*.ttf
+!transgate/export/fonts/*.otf
+!transgate/export/fonts/*-OFL.txt
+!transgate/export/fonts/*-COPYRIGHT.txt
+!transgate/export/fonts/provenance.json
+!transgate/export/assets/invoice-logo.jpg
+!transgate/export/assets/provenance.json
+
+# Checkout templates/catalogs are also compile-time inputs of the Rust server.
+!transgate/web/checkout/document.html
+!transgate/web/checkout/failure.html
+!transgate/web/package.json
+!transgate/web/package-lock.json
+!transgate/web/index.html
+!transgate/web/public/_app/theme-init.js
+!transgate/web/vite.config.ts
+!transgate/web/svelte.config.js
+!transgate/web/tsconfig.json
+!transgate/web/src/**/*.svelte
+!transgate/web/src/**/*.ts
+!transgate/web/src/**/*.css
+!transgate/web/src/**/*.json
+!transgate/web/locales/*.json
+!transgate/web/locales/*/*.json
+
+# Vite assets are file inputs, not just source code or SVG feedback art.
+# Cover these classes anywhere in the web tree, including public assets.
+!transgate/web/**/*.png
+!transgate/web/**/*.jpg
+!transgate/web/**/*.jpeg
+!transgate/web/**/*.svg
+!transgate/web/**/*.webp
+!transgate/web/**/*.woff
+!transgate/web/**/*.woff2
+!transgate/web/**/*.ttf
+!transgate/web/**/*.otf
+!transgate/web/**/*.txt
+
+# Asset rules above must not admit dependency caches, generated output or tests.
+transgate/web/**/node_modules/**
+transgate/web/dist/**
+transgate/web/storybook-static/**
+transgate/web/playwright-report/**
+transgate/web/test-results/**
+transgate/web/.storybook/**
+transgate/web/e2e/**
+transgate/web/src/lib/core/pkg/**
+transgate/web/**/test/**
+transgate/web/**/tests/**
+transgate/web/**/__tests__/**
+transgate/web/**/*.test.*
+transgate/web/**/*.stories.*
+transgate/web/**/*.spec.*
+transgate/web/**/*Story.svelte
+
+# Security boundary: never send these, even beneath an allowed source directory.
+# The `/**` forms are needed: Docker matches a file against its parents, so without them
+# the source exceptions above re-include e.g. src/.env/leak.rs (proved by a canary).
+**/.env
+**/.env/**
+**/.env.*
+**/.env.*/**
+**/*.pem
+**/*.pem/**
+**/*.key
+**/*.key/**

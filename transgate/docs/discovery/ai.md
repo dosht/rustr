@@ -1,0 +1,158 @@
+# AI features
+
+Signed-in users stream specialized analysis and ask questions over transcript lines. Completion callbacks also generate a separate plain-text general summary.
+Analysis and chat routes explicitly select DeepSeek; translation is Soniox speech translation, not these LLM endpoints.
+This is source discovery only. Production configuration is cited from the lead's `../production-facts.md`, not queried here.
+
+## Inventory
+
+| Surface or component | Current behavior | Source |
+|---|---|---|
+| POST `/api/v1/ai/analyze` | Session auth, owned job, consent, nonempty transcript and ENABLE_AI_FEATURES=true. Streams named SSE events sectionCount, typeDetected, sectionReady, complete, error. Client persists the result. | frontend/src/pages/api/v1/ai/analyze.ts:106-200,207-303 |
+| POST `/api/v1/ai/chat` | Session auth; jobId, nonblank message, history array. Streams data objects with token/done/error types. Transcript query uses session RLS. | frontend/src/pages/api/v1/ai/chat.ts:26-99,121-169 |
+| Analysis prompt | One model call detects lecture, meeting, sales, support, interview or generic. JSON documents separated by `---`; documentCount header, detectedType and confidence, summary under 300 words, relevant specialized sections only. | frontend/src/lib/ai/prompt-templates.ts:65-73,93-146 |
+| Chat prompt | Transcript is embedded in a system message. Answer only transcript-related questions, redirect unrelated requests, admit uncertainty, concise but comprehensive. Non-English language adds an explicit response-language instruction. | frontend/src/lib/ai/ai-service-manager.ts:74-91 |
+| General summary prompt | Helpful assistant, concise accurate summary; detailed only when summaryType=detailed, otherwise concise; under 300 words. Separate from specialized analysis. | frontend/src/lib/ai/ai-service-manager.ts:99-139 |
+| Chat charging | Only freemium users face configured chat limits. Paid users skip checking and usage increments. Plan lookup errors are treated as freemium. | frontend/src/lib/ai/ai-service-manager.ts:204-227,276-282 |
+| Prompt context | Current lines plus caller-supplied history; no retrieval/vector store in this path. History is sanitized, then inserted between system message and current question. | frontend/src/lib/ai/ai-service-manager.ts:189-199,245-263 |
+| Analysis stale thresholds | Partial and pending stale at five minutes; pending warning after one minute. | frontend/src/lib/ai/analysis-config.ts:8-15 |
+| Configuration declarations | AIConfig defaults: provider deepseek, summary/highlights/chat/consent enabled, 100000 transcript length, 50 history, 30000ms request timeout, consent version 1.0, retention 30 days. These declarations are not proof every route enforces them. | frontend/src/lib/ai/ai-config.ts:120-139 |
+
+The route rejects chat messages over 100000 characters and patterns including script/JavaScript URLs and SQL-like words followed by whitespace. It only requires history to be an array and each message to have truthy role/content with string content; it does not constrain roles to user/assistant. `frontend/src/pages/api/v1/ai/chat.ts:41-77,121-131`.
+
+### Output, storage and provider inventory
+
+| Item | Contract | Source |
+|---|---|---|
+| Meeting analysis | actionItems (task, optional owner/deadline, status), decisions, discussionPoints, nextSteps | frontend/src/lib/ai/schemas.ts:32-66 |
+| Lecture analysis | topics, concepts, reviewQuestions, studyGuide | frontend/src/lib/ai/schemas.ts:74-106 |
+| Sales analysis | callMetrics, coachingTips, customerInsights, nextSteps | frontend/src/lib/ai/schemas.ts:114-159 |
+| Support analysis | issueResolution, sentiment, insights, kbUpdates, followUpActions | frontend/src/lib/ai/schemas.ts:167-225 |
+| Interview analysis | assessment, skillsAssessment, notableResponses, prioritized nextSteps | frontend/src/lib/ai/schemas.ts:233-287 |
+| Generic analysis | summary and string highlights | frontend/src/lib/ai/schemas.ts:295-301 |
+| ai_analysis | Browser reads newest analysis_data, type, usage metadata and status; empty completed legacy data is a cache miss. Generation deletes prior job/user rows and inserts pending; section writes set partial; terminal writes completed or interrupted. | frontend/src/lib/ai/analysis-service.ts:200-248,259-406 |
+| chat_messages | Browser loads by job and message_order; obtains next order via RPC and inserts user/assistant pair, provider deepseek. | frontend/src/features/aiAnalysis/services/ChatMessageRepository.ts:15-60 |
+| summaries | General completion summary is separate from ai_analysis; callback consumers read the latest general summary. | frontend/src/services/unified-transcription/services/ai-summary.ts:45-139; frontend/src/services/unified-transcription/services/callback-delivery.ts:122-138 |
+| ai_consent | One user record upserted with version 1.0, provider deepseek, policy URL, consent/revocation dates. No row means false. | frontend/src/lib/ai/consent-service.ts:55-85,158-167 |
+| chat_limits | questions/tokens by transcript or user period. get_or_create_chat_limit and increment_chat_limit are separate calls. | frontend/src/lib/ai/chat-validator.ts:80-215,220-289 |
+| DeepSeek | Base URL default https://api.deepseek.com; model deepseek-chat, temperature 0.3, max_tokens 1000, streaming, store=false, ephemeral=true. | frontend/src/lib/ai/deepseek-provider.ts:13-16,53-76 |
+| OpenAI adapter | Base URL default https://api.openai.com/v1; OPENAI_MODEL default gpt-3.5-turbo, temperature 0.3, max_tokens 1000, streaming. Not selected by current analysis/chat/general-summary route constructors. | frontend/src/lib/ai/openai-provider.ts:13-18,44-63; frontend/src/pages/api/v1/ai/analyze.ts:191; frontend/src/pages/api/v1/ai/chat.ts:139; frontend/src/services/unified-transcription/services/ai-summary.ts:36 |
+| Provider factory | Supports deepseek/openai and explicit AI_MOCK_LLM mode. AI_PROVIDER controls only createFromEnv; explicit constructors bypass it. | frontend/src/lib/ai/provider-factory.ts:8-56 |
+| Voice demo | Public POST collects a DeepSeek prose stream into JSON answer from caller context/productContext/systemPrompt. No transcript/job or consent check here. | frontend/src/pages/api/voice-demo/deepseek.ts:29-81 |
+
+## Rules
+
+No AI-specific pgTAP file is present in the discovered SQL test suite. Source SQL is evidence of rules, not a passing Rust or pgTAP implementation.
+
+P4 evidence reconciliation is incremental. The content-only rows marked tested below use observed core cases from offline workspace artifact781 (251 transgate-core tests within805 total), supplemented by the rebuilt actual source/Rust E4 comparison `target/p4-e4/run-dd8Tk7/report.json` (81 offline cases). Exact clause/test boundaries are in `docs/plans/p4-ai/implementation/content.md:107-156`. Unreconciled policy/browser clauses remain ledger rows; this is not phase-wide, live-model or P5-rendering acceptance.
+
+| ID | Rule | Source | pgTAP | Rust test | Status |
+|---|---|---|---|---|---|
+| AI-001 | Analysis requires a session, visible owned job, has_consented=true, transcript rows, and ENABLE_AI_FEATURES exactly true. Responses before streaming are 401/404/403/400/503 respectively. | frontend/src/pages/api/v1/ai/analyze.ts:106-170 | none | tbd | ledger |
+| AI-002 | Analysis detects one of generic, lecture, meeting, sales, support, interview; prompts request objective relevant sections and a summary under 300 words. This is a prompt instruction, not a hard output truncation or quality guarantee. | frontend/src/lib/ai/prompt-templates.ts:93-143; frontend/src/lib/ai/schemas.ts:24 | none | cargo:transgate-core:ai::analysis::tests::six_shapes_survive_every_character_boundary_with_typed_optional_content; cargo:transgate-core:ai::analysis::tests::ratings_null_and_cross_type_sections_are_validated | tested |
+| AI-003 | Analysis emits sectionCount, typeDetected, sectionReady, complete and error events. Content documents are JSON-only. Legacy YAML syntax is accepted only for the documentCount: N header; the source splits accumulated output on literal three hyphens. | frontend/src/pages/api/v1/ai/analyze.ts:77-96,207-303 | none | tbd | ledger |
+| AI-004 | The analysis provider is explicitly DeepSeek. It receives the entire speaker/text transcript and responseFormat=json_object; supplied timeout/language options are not used by this generator. | frontend/src/pages/api/v1/ai/analyze.ts:191-200; frontend/src/lib/ai/ai-service-manager.ts:355-380 | none | tbd | ledger |
+| AI-005 | DeepSeek streams deepseek-chat at temperature 0.3 with max_tokens 1000, store=false and ephemeral=true. OpenAI has the same temperature/output cap, model from OPENAI_MODEL. | frontend/src/lib/ai/deepseek-provider.ts:53-76; frontend/src/lib/ai/openai-provider.ts:13-18,44-63 | none | tbd | ledger |
+| AI-006 | Analysis persistence is client-side. A new request deletes existing job/user analyses and inserts generic pending. Each section sets partial; complete/interrupted are later writes. | frontend/src/lib/ai/analysis-service.ts:259-406 | none | tbd | ledger |
+| AI-007 | Cache lookup takes the newest job analysis; errors allow regeneration. Completed rows with null/empty analysis_data are cache misses; pending/partial/interrupted rows are returned even without content. | frontend/src/lib/ai/analysis-service.ts:200-248 | none | tbd | ledger |
+| AI-008 | Cached completed content shows success. Partial at least five minutes old becomes interrupted; pending over one minute warns and over five minutes becomes interrupted. Age is calculated from createdAt, not updated_at. | frontend/src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:129-192; frontend/src/lib/ai/analysis-config.ts:8-15 | none | tbd | ledger |
+| AI-009 | Retrying analysis deletes its stored job/user rows and starts generation again; an in-process generating guard suppresses duplicate clicks in one hook instance. | frontend/src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:204-225,268-279 | none | tbd | ledger |
+| AI-010 | Chat requires a session, jobId, nonempty string message of at most 100000 characters and an array when history is supplied. It rejects the listed script/URL/SQL-like patterns. | frontend/src/pages/api/v1/ai/chat.ts:26-77 | none | tbd | ledger |
+| AI-011 | Chat requires nonempty visible transcript rows, ENABLE_AI_FEATURES=true and ENABLE_AI_CHAT=true. Consent requires hasConsented and no revokedDate. | frontend/src/pages/api/v1/ai/chat.ts:79-105; frontend/src/lib/ai/ai-service-manager.ts:163-173; frontend/src/lib/ai/consent-service.ts:121-124 | none | tbd | ledger |
+| AI-012 | Chat context must have 50 through 512000 sanitized characters. When validation is enabled, a question over 10000 characters is rejected, stricter than the route's 100000 cap. Character accounting follows source UTF-16 boundaries. | frontend/src/lib/ai/content-processor.ts:85-98; frontend/src/lib/ai/chat-validator.ts:46-74; frontend/src/lib/ai/ai-service-manager.ts:189-199,229-243 | none | cargo:transgate-core:ai::analysis::sanitize_tests::transcript_context_and_question_security_use_source_utf16_boundaries; cargo:transgate-core:ai::analysis::sanitize_tests::optional_question_validation_is_separate_from_unconditional_route_cap | tested |
+| AI-013 | Chat system instruction limits answers to transcript content and requests the supplied non-English language. Caller history is sanitized and forwarded without truncation in this path. | frontend/src/lib/ai/ai-service-manager.ts:74-91,245-263 | none | tbd | ledger |
+| AI-014 | Chat limits apply only to freemium users; paid users bypass checks and increments. A plan lookup error is treated as freemium. | frontend/src/lib/ai/ai-service-manager.ts:204-227,276-282 | none | tbd | ledger |
+| AI-015 | Question limits reject when stored count has reached max. Token limits reject when stored count plus estimated question tokens is greater than configured max; the response is not reserved in advance. | frontend/src/lib/ai/chat-validator.ts:92-203; frontend/supabase/migrations/20251130113249_remote_schema.sql:719-725 | none | tbd | ledger |
+| AI-016 | After successful chat streaming, enabled question counters increase by one and token counters by ceil((sanitized question plus sanitized answer characters)/4). Transcript context/history tokens are excluded. | frontend/src/lib/ai/ai-service-manager.ts:273-282; frontend/src/lib/ai/content-processor.ts:77-80; frontend/src/lib/ai/chat-validator.ts:220-285 | none | tbd | ledger |
+| AI-017 | Missing/unparseable chat limit env values mean no configured limit. Reset period defaults daily; weekly/monthly/transcript are recognized. User limits with transcript period are checked as daily; transcript limits do not reset. | frontend/src/lib/ai/chat-config.ts:37-74; frontend/src/lib/ai/chat-validator.ts:94-130; frontend/supabase/migrations/20251130113249_remote_schema.sql:666-677 | none | tbd | ledger |
+| AI-018 | Existing timed counters reset on a check at or after reset_date to the next day/week/month boundary. Stored max_limit participates in SQL question checks. | frontend/supabase/migrations/20251130113249_remote_schema.sql:680-725 | none | tbd | ledger |
+| AI-019 | Limit lookup exceptions fail open. Usage increments are separate after generation and failures are logged without failing the answer. | frontend/src/lib/ai/chat-validator.ts:205-214,285-289 | none | tbd | ledger |
+| AI-020 | Chat sends raw tokens progressively, then computes a sanitized final answer. The route emits done metadata only, not the sanitized answer content. | frontend/src/lib/ai/ai-service-manager.ts:263-293; frontend/src/pages/api/v1/ai/chat.ts:150-159 | none | tbd | ledger |
+| AI-021 | Browser persists the user/assistant pair after receiving an answer, ordered by get_next_message_order. A failed save leaves the answer visible with a sync warning. | frontend/src/features/aiAnalysis/services/ChatMessageRepository.ts:31-60; frontend/src/features/aiAnalysis/viewmodels/useChatViewModel.ts:176-187 | none | tbd | ledger |
+| AI-022 | Consent recording upserts version 1.0, privacy policy /legal/privacy-policy-en and provider deepseek. Grant sets consent_date and clears revoked_date; refusal does the inverse. No consent row defaults false. | frontend/src/lib/ai/consent-service.ts:55-85,158-167 | none | tbd | ledger |
+| AI-023 | Revocation sets has_consented=false and revoked_date, then deletes summaries, highlights and chat_messages. This cleanup does not include ai_analysis or chat_limits. | frontend/src/lib/ai/consent-service.ts:90-153 | none | tbd | ledger |
+| AI-024 | General completion summary checks consent when a database client is supplied, sanitizes transcript text, asks for a concise summary under 300 words, and collects the provider stream into text. | frontend/src/lib/ai/ai-service-manager.ts:99-149 | none | tbd | ledger |
+| AI-025 | Summary service requires ENABLE_AI_FEATURES=true and transcript rows. Failure returns no summary without making transcription fail. | frontend/src/services/unified-transcription/services/ai-summary.ts:45-81,210-239 | none | tbd | ledger |
+| AI-026 | Chat/general-summary input removes script blocks/HTML, filters SQL keywords and script/event patterns, normalizes whitespace and redacts card/SSN/email/phone/key-like patterns. Output strips HTML and javascript: text, normalizes/redacts, but does not acquire the input SQL filter. Analysis template streaming directly joins raw speaker/text lines. | frontend/src/lib/ai/content-processor.ts:104-149,169-193; frontend/src/lib/ai/ai-service-manager.ts:355-380 | none | cargo:transgate-core:ai::analysis::sanitize_tests::source_input_and_output_are_distinct_paths_not_token_filters; cargo:transgate-core:ai::analysis::sanitize_tests::source_js_whitespace_and_ascii_case_folding_are_not_unicode_generalizations; cargo:transgate-core:ai::analysis::sanitize_tests::cumulative_sanitation_handles_html_email_and_spacing_across_provider_boundaries; cargo:transgate-core:ai::analysis::sanitize_tests::canonical_analysis_is_raw_while_summary_and_chat_drop_blank_lines_and_sanitize | tested |
+| AI-027 | Voice demo requires context, uses optional supplied system prompt/product context and returns a collected answer. It has no session, consent or per-user limit in the handler. | frontend/src/pages/api/voice-demo/deepseek.ts:29-81 | none | decision:docs/plans/p4-ai/decisions.md#d6-exclude-only-the-inventoried-voice-demo | excluded |
+
+## Defects
+
+| ID | Current behavior | Intended behavior | Proposal |
+|---|---|---|---|
+| AI-D01 | Analysis asks for multiple JSON documents separated by hyphens but enables single json_object mode. `frontend/src/lib/ai/prompt-templates.ts:105-143`; `frontend/src/lib/ai/ai-service-manager.ts:378-380` | Coherent provider response framing | Fixture-test one streaming envelope; retain all section types |
+| AI-D02 | Analysis computes language/timeout options but generator ignores both. Streaming provider fetch has no abort signal or retry loop despite config fields. `frontend/src/lib/ai/ai-service-manager.ts:355-380`; `frontend/src/lib/ai/deepseek-provider.ts:69-76`; `frontend/src/lib/ai/provider-factory.ts:101-115` | Language and cancellation/timeout behavior explicit | Enforce options in the provider port; do not claim configured retries run today |
+| AI-D03 | Analysis token estimate reads speaker_id and text/content but stored rows use speaker and line. `frontend/src/pages/api/v1/ai/analyze.ts:286-295` | Usage reflects actual submitted content | Use one canonical transcript adapter and explicit token-accounting policy |
+| AI-D04 | Chat limit check and increment surround the provider call rather than reserve atomically. Response tokens can exceed the remaining budget. `frontend/src/lib/ai/ai-service-manager.ts:209-227,263-282` | Concurrent chats cannot all spend the same remaining allowance | Atomic reservation/settlement; mu approves exact token policy |
+| AI-D05 | Revocation cleanup omits ai_analysis and ignores returned delete errors. `frontend/src/lib/ai/consent-service.ts:129-153` | Revocation clears all consent-bound derived data | Saga spanning analysis, summary, highlights, chat and in-flight writes; privacy owner integrates |
+| AI-D06 | Caller controls chat history roles, which are passed to provider after the system message. `frontend/src/pages/api/v1/ai/chat.ts:121-131`; `frontend/src/lib/ai/ai-service-manager.ts:254-258` | Transcript chat cannot inject privileged roles | Server-owned history or strict user/assistant validation |
+| AI-D07 | Raw chat tokens reach UI; sanitized final content is omitted from done payload. `frontend/src/pages/api/v1/ai/chat.ts:150-159` | Displayed/persisted final text follows the intended sanitation policy | Reconcile final answer explicitly without corrupting token spacing |
+| AI-D08 | Browser-owned delete/insert and unversioned partial writes can race across tabs, and cache has no transcript revision. `frontend/src/lib/ai/analysis-service.ts:200-248,259-348` | One generation and cache validity tied to content | Generation id and revision-keyed server persistence |
+| AI-D09 | SQL SELECT INTO can null the newly computed reset_date on a missing counter row before INSERT. `frontend/supabase/migrations/20251130113249_remote_schema.sql:680-694` | First timed counter has a reset deadline | Preserve separate calculated and loaded reset values; source-level risk, not runtime-verified here |
+
+## Keep / throw
+
+| Item | Where today | Verdict | Reason | Lands in |
+|---|---|---|---|---|
+| Six analysis schemas and prompts | frontend/src/lib/ai/schemas.ts:24-301; frontend/src/lib/ai/prompt-templates.ts:93-146 | port | These are product output shapes, not interchangeable summaries | AI core schemas and prompt fixtures |
+| DeepSeek/OpenAI HTTP shape | frontend/src/lib/ai/deepseek-provider.ts:46-126; frontend/src/lib/ai/openai-provider.ts:37-113 | simplify | Plain streaming adapter suffices; E4 must compare identical prompts/models | LLM port |
+| Chat limits and paid bypass | frontend/src/lib/ai/ai-service-manager.ts:204-282 | port | Preserve commercial rule, fix atomicity separately | AI use case with quota port |
+| Consent rules and revocation lesson | frontend/src/lib/ai/consent-service.ts:55-153 | keep-knowledge | Avoid partial deletion and post-revoke writes | Consent/deletion saga |
+| Browser DB orchestration | frontend/src/lib/ai/analysis-service.ts:259-406 | simplify | Shared state machine should not make each shell its own persistence coordinator | Core generation state and server storage |
+| Legacy summary/highlights storage | frontend/src/lib/ai/analysis-service.ts:224-229; frontend/src/lib/ai/consent-service.ts:131-147 | keep-knowledge | Needed for migration/cleanup, not a second live analysis engine | Migration mapping and privacy cleanup |
+| Voice demo | frontend/src/pages/api/voice-demo/deepseek.ts:19-81 | throw | Lead confirms the PRD exclusion under mu's delegated authority: P4 D6, AI-027 and API-F44 remain inventoried | No port; docs/plans/p4-ai/decisions.md#d6-exclude-only-the-inventoried-voice-demo |
+
+## Parity rows
+
+| ID | Flow | Surface | Today | Test | Status |
+|---|---|---|---|---|---|
+| AI-F01 | Consent grant/refusal/revocation | web-desktop | frontend/src/lib/ai/consent-service.ts:55-153 | tbd | inventoried |
+| AI-F02 | Consent grant/refusal/revocation | web-phone | frontend/src/lib/ai/consent-service.ts:55-153 | tbd | inventoried |
+| AI-F03 | Stream detected type, summary and specialized highlights | web-desktop | frontend/src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:204-266 | tbd | inventoried |
+| AI-F04 | Stream detected type, summary and specialized highlights | web-phone | frontend/src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:204-266 | tbd | inventoried |
+| AI-F05 | Reload completed/partial/interrupted analysis and retry | web-desktop | frontend/src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:105-202,268-279 | tbd | inventoried |
+| AI-F06 | Reload completed/partial/interrupted analysis and retry | web-phone | frontend/src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:105-202,268-279 | tbd | inventoried |
+| AI-F07 | Ask transcript question, stream answer, persist and reload history | web-desktop | frontend/src/features/aiAnalysis/viewmodels/useChatViewModel.ts:63-214 | tbd | inventoried |
+| AI-F08 | Ask transcript question, stream answer, persist and reload history | web-phone | frontend/src/features/aiAnalysis/viewmodels/useChatViewModel.ts:63-214 | tbd | inventoried |
+| AI-F09 | Reject exhausted freemium quota; paid user bypasses quota | web-desktop | frontend/src/lib/ai/ai-service-manager.ts:204-227; frontend/src/features/aiAnalysis/viewmodels/useChatViewModel.ts:153-163 | tbd | inventoried |
+| AI-F10 | Reject exhausted freemium quota; paid user bypasses quota | web-phone | frontend/src/lib/ai/ai-service-manager.ts:204-227; frontend/src/features/aiAnalysis/viewmodels/useChatViewModel.ts:153-163 | tbd | inventoried |
+
+Endpoint rows belong to `api.md`; privacy retention and schedule rows belong to their topic owners. No native/CLI AI flow is claimed to exist today.
+
+## Research
+
+### R2: exact model, prompt and limit boundary
+
+Current analysis, chat and completion summary explicitly instantiate DeepSeek, so AI_PROVIDER does not switch those paths. Model deepseek-chat, temperature 0.3, output cap 1000 tokens. The available OpenAI adapter defaults to gpt-3.5-turbo or OPENAI_MODEL. Both use direct fetch streaming, not a gateway. Prompt sources and section contracts are listed above. Analysis requests json_object; chat/general summary request prose. Sources: `frontend/src/lib/ai/deepseek-provider.ts:53-76`, `frontend/src/lib/ai/openai-provider.ts:13-18,44-63`, `frontend/src/lib/ai/ai-service-manager.ts:99-139,251-263,355-380`.
+
+Configured production chat limits are 50 questions and 20000 tokens per transcript, 500 questions and 50000 tokens per user per day. Reset daily. Production configuration also reports 60 requests/minute, three retries and 60-second timeout, but these values are not evidence of active enforcement in streaming fetch. `../production-facts.md:15`; `frontend/src/lib/ai/chat-config.ts:37-74`; `frontend/src/lib/ai/deepseek-provider.ts:69-76`. Do not carry the nominal global request rate as an observed request guard.
+
+Analysis has no chat quota check. General summary does not spend chat question counters. Chat checks estimated question tokens first and increments question+answer estimates only after success. The declared AI_MAX_CHAT_HISTORY=50 is not a truncation in the active chat path. E4 must use the same provider/model/prompts and compare section and prose fixtures, not replace these calls with a different model.
+
+### R1 and translation
+
+Speech translation is Soniox one_way, with 53 application-declared source/target choices and the first target only; no separate LLM translation call is present in the live job path. See `jobs-transcription.md` R1/R2 and `frontend/src/services/unified-transcription/providers/soniox.ts:150-186`. The old RunPod grammar correction is a separate dropped-provider capability, not the translation implementation.
+
+### R4: voice demo
+
+The voice demo endpoint really exists and uses DeepSeek for product-question fallback, accepting caller context/system prompt with no transcript or billing link (`frontend/src/pages/api/voice-demo/deepseek.ts:19-81`). P4 D6 confirms the PRD exclusion under mu's delegated authority. AI-027 and API-F44 retain their source and explicit decision; no runtime or dummy 404 test is claimed. Free tools and URL/YouTube billing boundaries are in `api.md`, `static-pages.md` and `jobs-transcription.md`.
+
+### Cross-ledger reconciliation
+
+The lead applied the source-backed corrections to billing, privacy and languages: actual chat limits; duration-gated web Start; deferred-billing exceptions to usage invariants; strict callback deduction rather than a first-job bypass; retained deprecated-state rows; ignored returned consent-delete errors; browser and server revocation paths; path-specific consent/version gates; and ignored analysis/general-summary language options. The topic ledger remains the canonical record for each rule.
+
+## Needs mu
+
+- Provider retention guarantees cannot be proved by request flags store=false/ephemeral=true. Workaround: preserve consent wording and do not claim zero provider retention from source alone.
+- No real-provider calls, keys or production state were accessed. Workaround: fixture contracts for six analysis types, multilingual prose, truncated streams and quota errors; later authorized smoke validates provider acceptance.
+- Consent version 1.0 is stored, but hasValidConsent does not require current version. Workaround: preserve current grant validity until mu chooses a re-consent policy; privacy owner records that decision.
+- Decide whether chat should use translation target language. Today chat reads job language, analysis computes target-aware language but drops the option. Workaround: do not silently change language outcomes during discovery.
+
+## Open questions for the design
+
+- How does a generation id survive reconnects, tab changes and native-shell suspension without duplicate provider charges?
+- Can one server-owned stream commit sections and quota settlement while all shells render the same progress state?
+- What is the approved quota reservation model when answer length is unknown? Preserve paid bypass and current configured caps.
+- How are transcript edits, model/prompt versions and language choices included in cache identity?
+- Which derived artifacts must be deleted on consent revocation, and how are already-running provider responses prevented from recreating them?
+- What framing contract replaces the conflicting multi-document prompt and single-object provider mode without losing specialized sections?

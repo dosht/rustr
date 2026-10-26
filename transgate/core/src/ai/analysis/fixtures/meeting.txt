@@ -1,0 +1,13 @@
+{"documentCount":7}
+---
+{"type":"detectedType","value":"meeting","confidence":95}
+---
+{"type":"summary","content":"A useful café summary with --- quoted data."}
+---
+{"type":"actionItems","data":[{"task":"Review","owner":"Ada","deadline":"Friday"}]}
+---
+{"type":"decisions","data":[{"decision":"Ship","timestamp":1.25,"participants":["Ada","Lin"]}]}
+---
+{"type":"discussionPoints","data":["Capacity"]}
+---
+{"type":"nextSteps","data":["Confirm scope"]}

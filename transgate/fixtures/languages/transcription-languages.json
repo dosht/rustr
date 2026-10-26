@@ -1,0 +1,1813 @@
+[
+  {
+    "code": "af",
+    "name": "Afrikaans",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "af"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "af"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "af"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "af"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:2; capabilities.ts:13-105"
+  },
+  {
+    "code": "ar",
+    "name": "Arabic",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "ar"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "ar"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "ar"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "ar"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:3; capabilities.ts:13-105"
+  },
+  {
+    "code": "hy",
+    "name": "Armenian",
+    "providers": [
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "hy"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "hy"
+      }
+    ],
+    "auto_detect": false,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:4; capabilities.ts:13-105; excluded from soniox and soniox_v5 at capabilities.ts:37,67"
+  },
+  {
+    "code": "az",
+    "name": "Azerbaijani",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "az"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "az"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "az"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "az"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:5; capabilities.ts:13-105"
+  },
+  {
+    "code": "be",
+    "name": "Belarusian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "be"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "be"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "be"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "be"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:6; capabilities.ts:13-105"
+  },
+  {
+    "code": "bs",
+    "name": "Bosnian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "bs"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "bs"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "bs"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "bs"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:7; capabilities.ts:13-105"
+  },
+  {
+    "code": "bg",
+    "name": "Bulgarian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "bg"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "bg"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "bg"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "bg"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:8; capabilities.ts:13-105"
+  },
+  {
+    "code": "ca",
+    "name": "Catalan",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "ca"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "ca"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "ca"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "ca"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:9; capabilities.ts:13-105"
+  },
+  {
+    "code": "zh",
+    "name": "Chinese",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "zh"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "zh"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "zh"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "zh"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:10; capabilities.ts:13-105"
+  },
+  {
+    "code": "hr",
+    "name": "Croatian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "hr"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "hr"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "hr"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "hr"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:11; capabilities.ts:13-105"
+  },
+  {
+    "code": "cs",
+    "name": "Czech",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "cs"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "cs"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "cs"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "cs"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:12; capabilities.ts:13-105"
+  },
+  {
+    "code": "da",
+    "name": "Danish",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "da"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "da"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "da"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "da"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:13; capabilities.ts:13-105"
+  },
+  {
+    "code": "nl",
+    "name": "Dutch",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "nl"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "nl"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "nl"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "nl"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:14; capabilities.ts:13-105"
+  },
+  {
+    "code": "en",
+    "name": "English",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "en"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "en"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "en"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "en"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:15; capabilities.ts:13-105"
+  },
+  {
+    "code": "et",
+    "name": "Estonian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "et"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "et"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "et"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "et"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:16; capabilities.ts:13-105"
+  },
+  {
+    "code": "fi",
+    "name": "Finnish",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "fi"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "fi"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "fi"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "fi"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:17; capabilities.ts:13-105"
+  },
+  {
+    "code": "fr",
+    "name": "French",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "fr"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "fr"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "fr"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "fr"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:18; capabilities.ts:13-105"
+  },
+  {
+    "code": "gl",
+    "name": "Galician",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "gl"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "gl"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "gl"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "gl"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:19; capabilities.ts:13-105"
+  },
+  {
+    "code": "de",
+    "name": "German",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "de"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "de"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "de"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "de"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:20; capabilities.ts:13-105"
+  },
+  {
+    "code": "el",
+    "name": "Greek",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "el"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "el"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "el"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "el"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:21; capabilities.ts:13-105"
+  },
+  {
+    "code": "he",
+    "name": "Hebrew",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "he"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "he"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "he"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "he"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:22; capabilities.ts:13-105"
+  },
+  {
+    "code": "hi",
+    "name": "Hindi",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "hi"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "hi"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "hi"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "hi"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:23; capabilities.ts:13-105"
+  },
+  {
+    "code": "hu",
+    "name": "Hungarian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "hu"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "hu"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "hu"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "hu"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:24; capabilities.ts:13-105"
+  },
+  {
+    "code": "is",
+    "name": "Icelandic",
+    "providers": [
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "is"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "is"
+      }
+    ],
+    "auto_detect": false,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:25; capabilities.ts:13-105; excluded from soniox and soniox_v5 at capabilities.ts:37,67"
+  },
+  {
+    "code": "id",
+    "name": "Indonesian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "id"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "id"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "id"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "id"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:26; capabilities.ts:13-105"
+  },
+  {
+    "code": "it",
+    "name": "Italian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "it"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "it"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "it"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "it"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:27; capabilities.ts:13-105"
+  },
+  {
+    "code": "ja",
+    "name": "Japanese",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "ja"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "ja"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "ja"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "ja"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:28; capabilities.ts:13-105"
+  },
+  {
+    "code": "kn",
+    "name": "Kannada",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "kn"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "kn"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "kn"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "kn"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:29; capabilities.ts:13-105"
+  },
+  {
+    "code": "kk",
+    "name": "Kazakh",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "kk"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "kk"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "kk"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "kk"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:30; capabilities.ts:13-105"
+  },
+  {
+    "code": "ko",
+    "name": "Korean",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "ko"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "ko"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "ko"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "ko"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:31; capabilities.ts:13-105"
+  },
+  {
+    "code": "lv",
+    "name": "Latvian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "lv"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "lv"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "lv"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "lv"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:32; capabilities.ts:13-105"
+  },
+  {
+    "code": "lt",
+    "name": "Lithuanian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "lt"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "lt"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "lt"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "lt"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:33; capabilities.ts:13-105"
+  },
+  {
+    "code": "mk",
+    "name": "Macedonian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "mk"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "mk"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "mk"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "mk"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:34; capabilities.ts:13-105"
+  },
+  {
+    "code": "ms",
+    "name": "Malay",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "ms"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "ms"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "ms"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "ms"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:35; capabilities.ts:13-105"
+  },
+  {
+    "code": "mr",
+    "name": "Marathi",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "mr"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "mr"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "mr"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "mr"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:36; capabilities.ts:13-105"
+  },
+  {
+    "code": "mi",
+    "name": "Maori",
+    "providers": [
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "mi"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "mi"
+      }
+    ],
+    "auto_detect": false,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:37; capabilities.ts:13-105; excluded from soniox and soniox_v5 at capabilities.ts:37,67"
+  },
+  {
+    "code": "ne",
+    "name": "Nepali",
+    "providers": [
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "ne"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "ne"
+      }
+    ],
+    "auto_detect": false,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:38; capabilities.ts:13-105; excluded from soniox and soniox_v5 at capabilities.ts:37,67"
+  },
+  {
+    "code": "no",
+    "name": "Norwegian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "no"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "no"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "no"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "no"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:39; capabilities.ts:13-105"
+  },
+  {
+    "code": "fa",
+    "name": "Persian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "fa"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "fa"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "fa"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "fa"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:40; capabilities.ts:13-105"
+  },
+  {
+    "code": "pl",
+    "name": "Polish",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "pl"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "pl"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "pl"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "pl"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:41; capabilities.ts:13-105"
+  },
+  {
+    "code": "pt",
+    "name": "Portuguese",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "pt"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "pt"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "pt"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "pt"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:42; capabilities.ts:13-105"
+  },
+  {
+    "code": "ro",
+    "name": "Romanian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "ro"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "ro"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "ro"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "ro"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:43; capabilities.ts:13-105"
+  },
+  {
+    "code": "ru",
+    "name": "Russian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "ru"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "ru"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "ru"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "ru"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:44; capabilities.ts:13-105"
+  },
+  {
+    "code": "sr",
+    "name": "Serbian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "sr"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "sr"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "sr"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "sr"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:45; capabilities.ts:13-105"
+  },
+  {
+    "code": "sk",
+    "name": "Slovak",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "sk"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "sk"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "sk"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "sk"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:46; capabilities.ts:13-105"
+  },
+  {
+    "code": "sl",
+    "name": "Slovenian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "sl"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "sl"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "sl"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "sl"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:47; capabilities.ts:13-105"
+  },
+  {
+    "code": "es",
+    "name": "Spanish",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "es"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "es"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "es"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "es"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:48; capabilities.ts:13-105"
+  },
+  {
+    "code": "sw",
+    "name": "Swahili",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "sw"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "sw"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "sw"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "sw"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:49; capabilities.ts:13-105"
+  },
+  {
+    "code": "sv",
+    "name": "Swedish",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "sv"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "sv"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "sv"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "sv"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:50; capabilities.ts:13-105"
+  },
+  {
+    "code": "tl",
+    "name": "Tagalog",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "tl"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "tl"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "tl"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "tl"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:51; capabilities.ts:13-105"
+  },
+  {
+    "code": "ta",
+    "name": "Tamil",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "ta"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "ta"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "ta"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "ta"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:52; capabilities.ts:13-105"
+  },
+  {
+    "code": "th",
+    "name": "Thai",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "th"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "th"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "th"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "th"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:53; capabilities.ts:13-105"
+  },
+  {
+    "code": "tr",
+    "name": "Turkish",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "tr"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "tr"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "tr"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "tr"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:54; capabilities.ts:13-105"
+  },
+  {
+    "code": "uk",
+    "name": "Ukrainian",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "uk"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "uk"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "uk"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "uk"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:55; capabilities.ts:13-105"
+  },
+  {
+    "code": "ur",
+    "name": "Urdu",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "ur"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "ur"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "ur"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "ur"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:56; capabilities.ts:13-105"
+  },
+  {
+    "code": "vi",
+    "name": "Vietnamese",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "vi"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "vi"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "vi"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "vi"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:57; capabilities.ts:13-105"
+  },
+  {
+    "code": "cy",
+    "name": "Welsh",
+    "providers": [
+      {
+        "provider": "soniox",
+        "model": "stt-async-v3",
+        "code_sent": "cy"
+      },
+      {
+        "provider": "soniox_v5",
+        "model": "stt-async-v5",
+        "code_sent": "cy"
+      },
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "cy"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "cy"
+      }
+    ],
+    "auto_detect": true,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:58; capabilities.ts:13-105"
+  },
+  {
+    "code": "ka",
+    "name": "Georgian",
+    "providers": [
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "ka"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "ka"
+      }
+    ],
+    "auto_detect": false,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:59; capabilities.ts:13-105; excluded from soniox and soniox_v5 at capabilities.ts:37,67; not in DB enum public.language (20251130113249_remote_schema.sql:129), picker offers it anyway"
+  },
+  {
+    "code": "la",
+    "name": "Latin",
+    "providers": [
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "la"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "la"
+      }
+    ],
+    "auto_detect": false,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:60; capabilities.ts:13-105; excluded from soniox and soniox_v5 at capabilities.ts:37,67; not in DB enum public.language (20251130113249_remote_schema.sql:129), picker offers it anyway"
+  },
+  {
+    "code": "uz",
+    "name": "Uzbek",
+    "providers": [
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "uz"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "uz"
+      }
+    ],
+    "auto_detect": false,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:61; capabilities.ts:13-105; excluded from soniox and soniox_v5 at capabilities.ts:37,67; not in DB enum public.language (20251130113249_remote_schema.sql:129), picker offers it anyway"
+  },
+  {
+    "code": "lb",
+    "name": "Luxembourgish",
+    "providers": [
+      {
+        "provider": "deepgram",
+        "model": "whisper-large",
+        "code_sent": "lb"
+      },
+      {
+        "provider": "runpod",
+        "model": "large-v3",
+        "code_sent": "lb"
+      }
+    ],
+    "auto_detect": false,
+    "speaker_labels": true,
+    "grammar_correction": false,
+    "runpod_only": false,
+    "source": "frontend/src/domain/languages.ts:62; capabilities.ts:13-105; excluded from soniox and soniox_v5 at capabilities.ts:37,67; not in DB enum public.language (20251130113249_remote_schema.sql:129), picker offers it anyway"
+  }
+]

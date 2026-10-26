@@ -1,0 +1,13 @@
+{"documentCount":7}
+---
+{"type":"detectedType","value":"interview","confidence":97}
+---
+{"type":"summary","content":"A useful café summary with --- quoted data."}
+---
+{"type":"assessment","data":{"position":"Engineer","overallRating":4.5,"strengths":["Systems thinking"],"concerns":["Limited SQL experience"]}}
+---
+{"type":"skillsAssessment","data":[{"skill":"Rust","rating":4,"level":"Advanced"}]}
+---
+{"type":"notableResponses","data":[{"question":"How do you bound a queue?","answer":"Apply backpressure","assessment":"positive"}]}
+---
+{"type":"nextSteps","data":[{"action":"Practical exercise","priority":"high"}]}

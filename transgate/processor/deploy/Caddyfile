@@ -1,0 +1,33 @@
+{
+	admin off
+
+	servers {
+		# Uploads run to 2 GB on home uplinks: no body read limit. The
+		# processor's own REQUEST_TIMEOUT_MS (30 minutes) bounds a request.
+		timeouts {
+			read_body 0
+			read_header 30s
+			write 0
+			idle 5m
+		}
+	}
+}
+
+{$PROCESSOR_DOMAIN} {
+	# No trusted_proxies: Caddy is the edge, so a client-supplied
+	# X-Forwarded-For stays untrusted. Caddy appends the real peer on the
+	# right, which the processor reads with FREE_TOOLS_TRUSTED_PROXY_COUNT=1.
+	reverse_proxy processor:8080 {
+		transport http {
+			dial_timeout 5s
+			response_header_timeout 30m
+		}
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 10MiB
+			roll_keep 5
+		}
+	}
+}

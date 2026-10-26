@@ -1,0 +1,13 @@
+{"documentCount":7}
+---
+{"type":"detectedType","value":"sales","confidence":90}
+---
+{"type":"summary","content":"A useful café summary with --- quoted data."}
+---
+{"type":"callMetrics","data":{"talkListenRatio":"40:60","questionsAsked":2,"objectionsHandled":1,"nextStepsConfirmed":false}}
+---
+{"type":"coachingTips","data":[{"category":"strength","tip":"Asked about impact"},{"category":"improvement","tip":"Confirm next steps"}]}
+---
+{"type":"customerInsights","data":{"painPoints":["Manual work"],"budgetSignals":["Allocated"],"objections":["Migration"],"buyingSignals":["Asked for demo"]}}
+---
+{"type":"nextSteps","data":["Send demo invitation"]}

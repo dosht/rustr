@@ -1,0 +1,39 @@
+<!doctype html>
+<!--
+  The blank checkout document answered by POST /checkout (P5 D17); not the SPA.
+  Rendered by p1T's CheckoutPage; placeholders and escaping are specified in
+  docs/plans/p5-web/implementation/web-shell.md section 9. Source:
+  pages/checkout/index.tsx:88-127 (always light, like its dark:bg-white).
+-->
+<html lang="{{lang}}" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>{{title}}</title>
+    <style>
+      {{tokens_css}}
+      body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, sans-serif; }
+      .page { display: flex; flex-direction: column; min-height: 100vh; }
+      #iyzipay-checkout-form { flex-grow: 1; }
+      .failure { display: flex; align-items: center; justify-content: center; min-height: 60vh; padding: 0 1rem; }
+      .card { max-width: 28rem; width: 100%; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: 0.5rem; padding: 2rem; }
+      .card h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 0.5rem; }
+      .card p { color: var(--muted); margin: 0 0 1.5rem; }
+      .back { display: inline-block; background: var(--accent); color: var(--on-accent); font-weight: 500; border-radius: 0.375rem; padding: 0.75rem 1.5rem; text-decoration: none; }
+      .back:hover { background: var(--accent-hover); }
+      .back:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+      footer { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; margin: 0 1rem 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.875rem; }
+      footer img { max-width: 100%; height: auto; }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <main id="iyzipay-checkout-form" class="responsive"><!--tg-checkout-body--></main>
+      <footer>
+        <span>© 2025 Transgate</span>
+        <img src="https://cpp.iyzipay.com/img/guvenli_odeme_logo_seridi.svg" alt="Guvenli Odeme" width="699" height="30" />
+      </footer>
+    </div>
+  </body>
+</html>

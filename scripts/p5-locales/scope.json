@@ -1,0 +1,2970 @@
+{
+  "version": 1,
+  "entrypoints": [
+    "src/components/AIAnalysis/AnalysisActions.tsx",
+    "src/components/AIAnalysis/AnalysisContainer.tsx",
+    "src/components/AIAnalysis/AnalysisEmptyState.tsx",
+    "src/components/AIAnalysis/AnalysisErrorBoundary.tsx",
+    "src/components/AIAnalysis/AnalysisHighlights.tsx",
+    "src/components/AIAnalysis/AnalysisProgress.tsx",
+    "src/components/AIAnalysis/AnalysisSkeleton.tsx",
+    "src/components/AIAnalysis/AnalysisSummary.tsx",
+    "src/components/AIAnalysis/AnalysisView.tsx",
+    "src/components/AIAnalysis/AnalysisViewPresentation.tsx",
+    "src/components/AIAnalysis/EmptyState.tsx",
+    "src/components/AIAnalysis/SectionHeader.tsx",
+    "src/components/AIAnalysis/export/ExportDropdown.tsx",
+    "src/components/AIAnalysis/specialized/GenericAnalysis.tsx",
+    "src/components/AIAnalysis/specialized/InterviewAnalysis.tsx",
+    "src/components/AIAnalysis/specialized/LectureAnalysis.tsx",
+    "src/components/AIAnalysis/specialized/MeetingAnalysis.tsx",
+    "src/components/AIAnalysis/specialized/SalesAnalysis.tsx",
+    "src/components/AIAnalysis/specialized/SupportAnalysis.tsx",
+    "src/components/AIAnalysis/specialized/interview/CandidateAssessment.tsx",
+    "src/components/AIAnalysis/specialized/interview/InterviewNextSteps.tsx",
+    "src/components/AIAnalysis/specialized/interview/NotableResponses.tsx",
+    "src/components/AIAnalysis/specialized/interview/SkillsAssessment.tsx",
+    "src/components/AIAnalysis/specialized/interview/index.tsx",
+    "src/components/AIAnalysis/specialized/lecture/ConceptsList.tsx",
+    "src/components/AIAnalysis/specialized/lecture/ReviewQuestions.tsx",
+    "src/components/AIAnalysis/specialized/lecture/StudyGuide.tsx",
+    "src/components/AIAnalysis/specialized/lecture/TopicsList.tsx",
+    "src/components/AIAnalysis/specialized/lecture/index.tsx",
+    "src/components/AIAnalysis/specialized/meeting/ActionItemsList.tsx",
+    "src/components/AIAnalysis/specialized/meeting/DecisionsList.tsx",
+    "src/components/AIAnalysis/specialized/meeting/DiscussionPointsList.tsx",
+    "src/components/AIAnalysis/specialized/meeting/NextStepsList.tsx",
+    "src/components/AIAnalysis/specialized/meeting/index.tsx",
+    "src/components/AIAnalysis/specialized/sales/CallMetrics.tsx",
+    "src/components/AIAnalysis/specialized/sales/CoachingTips.tsx",
+    "src/components/AIAnalysis/specialized/sales/CustomerInsights.tsx",
+    "src/components/AIAnalysis/specialized/sales/SalesNextSteps.tsx",
+    "src/components/AIAnalysis/specialized/sales/index.tsx",
+    "src/components/AIAnalysis/specialized/support/FollowUpActions.tsx",
+    "src/components/AIAnalysis/specialized/support/IssueResolution.tsx",
+    "src/components/AIAnalysis/specialized/support/KBUpdates.tsx",
+    "src/components/AIAnalysis/specialized/support/SentimentAnalysis.tsx",
+    "src/components/AIAnalysis/specialized/support/SupportInsights.tsx",
+    "src/components/AIAnalysis/specialized/support/index.tsx",
+    "src/components/Balance/Balance.tsx",
+    "src/components/Balance/index.tsx",
+    "src/components/CookieConsent/CookieConsent.tsx",
+    "src/components/CookieConsent/index.tsx",
+    "src/components/EditTranscript/EditSpeaker.tsx",
+    "src/components/FeedbackModal/FeedbackModal.tsx",
+    "src/components/FeedbackModal/index.tsx",
+    "src/components/LandscapeBlocker/LandscapeBlocker.tsx",
+    "src/components/NotEnoughBalanceAlert/NotEnoughBalanceAlert.tsx",
+    "src/components/NotEnoughBalanceAlert/index.tsx",
+    "src/components/Settings/AISettings/AISettings.tsx",
+    "src/components/Settings/AISettings/index.tsx",
+    "src/components/Settings/LanguageSwitcher/LanguageSwitcher.tsx",
+    "src/components/Settings/LanguageSwitcher/index.tsx",
+    "src/components/Settings/ManageData/ManageData.tsx",
+    "src/components/Settings/ManageData/index.tsx",
+    "src/components/Settings/ProfileInfo/ProfileInfo.tsx",
+    "src/components/Settings/ProfileInfo/index.tsx",
+    "src/components/Settings/Settings.tsx",
+    "src/components/Settings/SubscriptionInfo/SubscriptionInfo.tsx",
+    "src/components/Settings/SubscriptionInfo/index.tsx",
+    "src/components/Settings/index.tsx",
+    "src/components/SideBar/SideBar.tsx",
+    "src/components/SideBar/index.tsx",
+    "src/components/SpeakerLabel/SpeakerLabel.tsx",
+    "src/components/SpecialClientDiscountAlert/SpecialClientDiscountAlert.tsx",
+    "src/components/SpecialClientDiscountAlert/index.tsx",
+    "src/components/SupportModal/SupportModal.tsx",
+    "src/components/SupportModal/index.tsx",
+    "src/components/ThemeToggle/ThemeToggle.tsx",
+    "src/components/Transcript/Transcript.tsx",
+    "src/components/Transcript/index.tsx",
+    "src/components/TranscriptOptionsMenu/TranscriptOptionsMenu.tsx",
+    "src/components/UserArea/BillingModal.tsx",
+    "src/components/UserArea/UserArea.tsx",
+    "src/components/UserArea/index.tsx",
+    "src/domain/languages.ts",
+    "src/features/ai-consent/containers/ConsentContainer.tsx",
+    "src/features/ai-consent/views/AIConsentView.tsx",
+    "src/features/aiAnalysis/containers/AnalysisContainer.tsx",
+    "src/features/aiAnalysis/containers/ChatContainer.tsx",
+    "src/features/aiAnalysis/viewmodels/index.ts",
+    "src/features/aiAnalysis/viewmodels/types.ts",
+    "src/features/aiAnalysis/viewmodels/useAIFeatures.ts",
+    "src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts",
+    "src/features/aiAnalysis/viewmodels/useAnalysisViewModel.ts",
+    "src/features/aiAnalysis/viewmodels/useChatPanelState.ts",
+    "src/features/aiAnalysis/viewmodels/useChatViewModel.ts",
+    "src/features/aiAnalysis/views/AnalysisActions.tsx",
+    "src/features/aiAnalysis/views/AnalysisEmptyState.tsx",
+    "src/features/aiAnalysis/views/AnalysisErrorBoundary.tsx",
+    "src/features/aiAnalysis/views/AnalysisHighlights.tsx",
+    "src/features/aiAnalysis/views/AnalysisProgress.tsx",
+    "src/features/aiAnalysis/views/AnalysisSummary.tsx",
+    "src/features/aiAnalysis/views/AnalysisView.tsx",
+    "src/features/aiAnalysis/views/AnalysisViewPresentation.tsx",
+    "src/features/aiAnalysis/views/ChatView.tsx",
+    "src/features/aiAnalysis/views/DesktopAiContentPanels.tsx",
+    "src/features/aiAnalysis/views/HighlightsView.tsx",
+    "src/features/aiAnalysis/views/SummaryView.tsx",
+    "src/features/aiAnalysis/views/desktop/DesktopChatView.tsx",
+    "src/features/aiAnalysis/views/desktop/DesktopHighlightsView.tsx",
+    "src/features/aiAnalysis/views/desktop/DesktopSummaryView.tsx",
+    "src/features/aiAnalysis/views/mobile/MobileChatInput.tsx",
+    "src/features/aiAnalysis/views/mobile/MobileChatView.tsx",
+    "src/features/aiAnalysis/views/mobile/MobileHighlightsView.tsx",
+    "src/features/aiAnalysis/views/mobile/MobileSummaryView.tsx",
+    "src/features/aiAnalysis/views/shared/AIAvatar.tsx",
+    "src/features/aiAnalysis/views/shared/ChatMessage.tsx",
+    "src/features/aiAnalysis/views/shared/TypingIndicator.tsx",
+    "src/features/aiAnalysis/views/shared/UserAvatar.tsx",
+    "src/features/billing/containers/BillingModalContainer.tsx",
+    "src/features/billing/ui/BillingModalView.tsx",
+    "src/features/billing/ui/PackageCard.tsx",
+    "src/features/billing/ui/PayAsYouGoCard.tsx",
+    "src/features/billing/ui/PaymentSummary.tsx",
+    "src/features/billing/ui/SubscriptionSection.tsx",
+    "src/features/billing/ui/mobile/DrawerBalanceIndicator.tsx",
+    "src/features/billing/ui/mobile/MobileBillingBottomSheet.tsx",
+    "src/features/billing/ui/mobile/MobilePayAsYouGoCard.tsx",
+    "src/features/billing/ui/mobile/MobilePaymentSummary.tsx",
+    "src/features/billing/ui/mobile/MobileSubscriptionSection.tsx",
+    "src/features/data-management/containers/DataManagementContainer.tsx",
+    "src/features/data-management/views/ManageDataView.tsx",
+    "src/features/job-management/containers/JobListContainer.tsx",
+    "src/features/job-management/views/JobListTable.tsx",
+    "src/features/job-management/views/mobile/FloatingActionButton.tsx",
+    "src/features/job-management/views/mobile/MobileActionSheet.tsx",
+    "src/features/job-management/views/mobile/MobileJobCard.tsx",
+    "src/features/job-management/views/mobile/MobileJobDetailsContainer.tsx",
+    "src/features/job-management/views/mobile/MobileJobDetailsView.tsx",
+    "src/features/job-management/views/mobile/MobileJobListView.tsx",
+    "src/features/job-management/views/mobile/MobileTabBar.tsx",
+    "src/features/job-management/views/mobile/PullToRefresh.tsx",
+    "src/features/job-management/views/mobile/SwipeableJobRow.tsx",
+    "src/features/mobile-navigation/wrappers/BillingModalWrapper.tsx",
+    "src/features/mobile-navigation/wrappers/SettingsModalWrapper.tsx",
+    "src/features/mobile-navigation/wrappers/SupportModalWrapper.tsx",
+    "src/features/settings/containers/SettingsContainer.tsx",
+    "src/features/settings/views/SettingsView.tsx",
+    "src/features/settings/views/tabs/AISettingsView.tsx",
+    "src/features/settings/views/tabs/ProfileView.tsx",
+    "src/features/sidebar/containers/SidebarContainer.tsx",
+    "src/features/sidebar/views/DeleteConfirmationModal.tsx",
+    "src/features/sidebar/views/Sidebar.tsx",
+    "src/features/sidebar/views/SidebarActions.tsx",
+    "src/features/sidebar/views/SidebarHeader.tsx",
+    "src/features/sidebar/views/SidebarJobList.tsx",
+    "src/features/sidebar/views/mobile/MobileBottomSheetView.tsx",
+    "src/features/sidebar/views/mobile/MobileDrawerView.tsx",
+    "src/features/subscription/containers/SubscriptionContainer.tsx",
+    "src/features/subscription/views/SubscriptionView.tsx",
+    "src/features/transcriptLines/components/FreemiumLimitsBanner.tsx",
+    "src/features/transcriptLines/components/LoadingState.tsx",
+    "src/features/transcriptLines/containers/TranscriptLinesContainer.tsx",
+    "src/features/transcriptLines/views/LanguageTabs.tsx",
+    "src/features/transcriptLines/views/TranscriptLineView.tsx",
+    "src/features/transcriptLines/views/TranscriptLinesView.tsx",
+    "src/features/transcriptLines/views/mobile/MobileTranscriptView.tsx",
+    "src/features/transcription/containers/MobileTranscriptionContainer.tsx",
+    "src/features/transcription/containers/TranscriptionContainer.tsx",
+    "src/features/transcription/ui/LanguageDropdown/LanguageDropdown.tsx",
+    "src/features/transcription/ui/LanguageDropdown/MobileLanguageSheet.tsx",
+    "src/features/transcription/ui/TranscriptionLanguageSelector/TranscriptionLanguageSelector.tsx",
+    "src/features/transcription/ui/TranscriptionWorkspace/TranscriptionWorkspace.tsx",
+    "src/features/transcription/ui/TranslationLanguageSelector/TranslationLanguageSelector.tsx",
+    "src/features/transcription/ui/common/ContentPanelWrapper.tsx",
+    "src/features/transcription/ui/common/DropZoneContainer.tsx",
+    "src/features/transcription/ui/common/FileListPanel.tsx",
+    "src/features/transcription/ui/components/BlankState/BlankState.tsx",
+    "src/features/transcription/ui/components/FileListItem/FileListItem.tsx",
+    "src/features/transcription/ui/components/ModeTabs/ModeTabs.tsx",
+    "src/features/transcription/ui/components/PlusButtonMenu/PlusButtonMenu.tsx",
+    "src/features/transcription/ui/components/TranscriptionTabs/TranscriptionTabs.tsx",
+    "src/features/transcription/ui/components/YouTubeBetaBanner/YouTubeBetaBanner.tsx",
+    "src/features/transcription/ui/components/YouTubeDialog/YouTubeDialog.tsx",
+    "src/features/transcription/ui/index.tsx",
+    "src/features/transcription/ui/mobile/MobileNewTranscript.tsx",
+    "src/features/transcription/ui/mobile/components/ConfigurationSection.tsx",
+    "src/features/transcription/ui/mobile/components/FileListItem.tsx",
+    "src/features/transcription/ui/mobile/components/FileUploadButton.tsx",
+    "src/features/transcription/ui/mobile/components/RecordAudioButton.tsx",
+    "src/features/transcription/ui/mobile/components/YouTubeButton.tsx",
+    "src/features/transcription/ui/mode-content/TranscriptionModeContent/TranscriptionModeContent.tsx",
+    "src/features/transcription/ui/mode-content/TranslationModeContent/TranslationModeContent.tsx",
+    "src/features/transcription/viewmodels/index.ts",
+    "src/features/transcription/viewmodels/useTranscriptionViewModel.ts",
+    "src/infrastructure/navigation/components/MobileNavigationContainer.tsx",
+    "src/pages/billing/index.tsx",
+    "src/pages/checkout/confirm.tsx",
+    "src/pages/checkout/index.tsx",
+    "src/pages/dashboard/api-keys.tsx",
+    "src/pages/home/[[...jobId]].tsx",
+    "src/pages/home/all-transcripts/all-transcripts.tsx",
+    "src/pages/home/all-transcripts/index.tsx",
+    "src/pages/new-password.tsx",
+    "src/pages/new-signin.tsx",
+    "src/pages/signin.tsx",
+    "src/utils/transcriptFileSaver.ts"
+  ],
+  "namespaces": [
+    "common",
+    "app",
+    "ai",
+    "dashboard"
+  ],
+  "excludePaths": [
+    "src/features/job-management/views/mobile/MobileJobFilters.tsx",
+    "src/components/Settings/BillingInfo/CountrySelect.tsx",
+    "src/components/Settings/BillingInfo/index.tsx",
+    "src/components/Settings/BillingInfo/BillingInfo.tsx"
+  ],
+  "excludeJsxTags": [
+    "Head"
+  ],
+  "extraKeys": {
+    "common": {
+      "- Transcription Minutes Package": {
+        "english": "- Transcription Minutes Package",
+        "sources": [
+          "src/pages/billing/index.tsx:263"
+        ],
+        "origin": "source_literal"
+      },
+      "Accept": {
+        "english": "Accept",
+        "sources": [
+          "src/components/CookieConsent/CookieConsent.tsx:64"
+        ],
+        "origin": "source_literal"
+      },
+      "Add Balance": {
+        "english": "Add Balance",
+        "sources": [
+          "src/features/billing/ui/mobile/MobileBillingBottomSheet.tsx:149"
+        ],
+        "origin": "source_literal"
+      },
+      "AMOUNT": {
+        "english": "AMOUNT",
+        "sources": [
+          "src/pages/billing/index.tsx:259"
+        ],
+        "origin": "source_literal"
+      },
+      "Amount:": {
+        "english": "Amount:",
+        "sources": [
+          "src/pages/billing/index.tsx:678"
+        ],
+        "origin": "source_literal"
+      },
+      "And {{count}} more transcripts...": {
+        "english": "And {{count}} more transcripts...",
+        "sources": [
+          "src/features/sidebar/containers/SidebarContainer.tsx:111"
+        ],
+        "origin": "source_literal"
+      },
+      "API Keys": {
+        "english": "API Keys",
+        "sources": [
+          "src/components/UserArea/UserArea.tsx:143",
+          "src/components/UserArea/UserArea.tsx:206"
+        ],
+        "origin": "source_literal"
+      },
+      "Apply": {
+        "english": "Apply",
+        "sources": [
+          "src/features/billing/ui/mobile/MobilePaymentSummary.tsx:205",
+          "src/features/billing/ui/PaymentSummary.tsx:134"
+        ],
+        "origin": "source_literal"
+      },
+      "Back to plans": {
+        "english": "Back to plans",
+        "sources": [
+          "src/pages/checkout/index.tsx:104"
+        ],
+        "origin": "source_literal"
+      },
+      "BILL TO": {
+        "english": "BILL TO",
+        "sources": [
+          "src/pages/billing/index.tsx:234"
+        ],
+        "origin": "source_literal"
+      },
+      "Billing": {
+        "english": "Billing",
+        "sources": [
+          "src/components/Settings/Settings.tsx:55"
+        ],
+        "origin": "source_literal"
+      },
+      "Change Password": {
+        "english": "Change Password",
+        "sources": [
+          "src/pages/new-password.tsx:72"
+        ],
+        "origin": "source_literal"
+      },
+      "Clear": {
+        "english": "Clear",
+        "sources": [
+          "src/pages/billing/index.tsx:600",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Click here": {
+        "english": "Click here",
+        "sources": [
+          "src/features/billing/ui/PaymentSummary.tsx:269"
+        ],
+        "origin": "source_literal"
+      },
+      "Confirm Disable AI Features": {
+        "english": "Confirm Disable AI Features",
+        "sources": [
+          "src/features/ai-consent/views/AIConsentView.tsx:187"
+        ],
+        "origin": "source_literal"
+      },
+      "Custom Bill To (tax info, address, company)": {
+        "english": "Custom Bill To (tax info, address, company)",
+        "sources": [
+          "src/pages/billing/index.tsx:620",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Date:": {
+        "english": "Date:",
+        "sources": [
+          "src/pages/billing/index.tsx:677"
+        ],
+        "origin": "source_literal"
+      },
+      "DESCRIPTION": {
+        "english": "DESCRIPTION",
+        "sources": [
+          "src/pages/billing/index.tsx:257"
+        ],
+        "origin": "source_literal"
+      },
+      "Enable notifications": {
+        "english": "Enable notifications",
+        "sources": [
+          "src/features/data-management/views/ManageDataView.tsx:202"
+        ],
+        "origin": "source_literal"
+      },
+      "Error:": {
+        "english": "Error:",
+        "sources": [
+          "src/pages/billing/index.tsx:467"
+        ],
+        "origin": "source_literal"
+      },
+      "For any questions, please contact support@transgate.ai": {
+        "english": "For any questions, please contact support@transgate.ai",
+        "sources": [
+          "src/pages/billing/index.tsx:301"
+        ],
+        "origin": "source_literal"
+      },
+      "FROM": {
+        "english": "FROM",
+        "sources": [
+          "src/pages/billing/index.tsx:223"
+        ],
+        "origin": "source_literal"
+      },
+      "Hours": {
+        "english": "Hours",
+        "sources": [
+          "src/features/billing/ui/mobile/MobilePayAsYouGoCard.tsx:195",
+          "src/features/billing/ui/mobile/MobilePaymentSummary.tsx:135",
+          "src/features/billing/ui/PayAsYouGoCard.tsx:155",
+          "src/features/billing/ui/PaymentSummary.tsx:80"
+        ],
+        "origin": "source_literal"
+      },
+      "I agree with the": {
+        "english": "I agree with the",
+        "sources": [
+          "src/features/billing/ui/mobile/MobilePaymentSummary.tsx:229"
+        ],
+        "origin": "source_literal"
+      },
+      "If you have a local Card (TR Card) Pay in TL": {
+        "english": "If you have a local Card (TR Card) Pay in TL",
+        "sources": [
+          "src/features/billing/ui/PaymentSummary.tsx:264"
+        ],
+        "origin": "source_literal"
+      },
+      "INVOICE": {
+        "english": "INVOICE",
+        "sources": [
+          "src/pages/billing/index.tsx:215"
+        ],
+        "origin": "source_literal"
+      },
+      "Invoice Date:": {
+        "english": "Invoice Date:",
+        "sources": [
+          "src/pages/billing/index.tsx:249"
+        ],
+        "origin": "source_literal"
+      },
+      "Invoice ID:": {
+        "english": "Invoice ID:",
+        "sources": [
+          "src/pages/billing/index.tsx:675"
+        ],
+        "origin": "source_literal"
+      },
+      "Invoice Preview": {
+        "english": "Invoice Preview",
+        "sources": [
+          "src/pages/billing/index.tsx:520",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Leave empty to use the customer's saved billing info": {
+        "english": "Leave empty to use the customer's saved billing info",
+        "sources": [
+          "src/pages/billing/index.tsx:627",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Load": {
+        "english": "Load",
+        "sources": [
+          "src/pages/billing/index.tsx:592",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Loading subscription information...": {
+        "english": "Loading subscription information...",
+        "sources": [
+          "src/features/subscription/views/SubscriptionView.tsx:54",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Look up customer invoices by email": {
+        "english": "Look up customer invoices by email",
+        "sources": [
+          "src/pages/billing/index.tsx:575",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "NEW": {
+        "english": "NEW",
+        "sources": [
+          "src/features/sidebar/views/mobile/MobileDrawerView.tsx:252"
+        ],
+        "origin": "source_literal"
+      },
+      "New Password": {
+        "english": "New Password",
+        "sources": [
+          "src/pages/new-password.tsx:53"
+        ],
+        "origin": "source_literal"
+      },
+      "No saved billing info — invoices will use the account name. Fill in Custom Bill To below to override.": {
+        "english": "No saved billing info — invoices will use the account name. Fill in Custom Bill To below to override.",
+        "sources": [
+          "src/pages/billing/index.tsx:614"
+        ],
+        "origin": "source_literal"
+      },
+      "One line per row. When filled, this replaces the invoice's Bill To details.": {
+        "english": "One line per row. When filled, this replaces the invoice's Bill To details.",
+        "sources": [
+          "src/pages/billing/index.tsx:631",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Open sidebar": {
+        "english": "Open sidebar",
+        "sources": [
+          "src/pages/home/[[...jobId]].tsx:573"
+        ],
+        "origin": "source_literal"
+      },
+      "Package:": {
+        "english": "Package:",
+        "sources": [
+          "src/pages/billing/index.tsx:679"
+        ],
+        "origin": "source_literal"
+      },
+      "Password updated successfully!": {
+        "english": "Password updated successfully!",
+        "sources": [
+          "src/pages/new-password.tsx:66",
+          "docs/plans/p5-web/implementation/core.md:1.1b (namespace correction)"
+        ],
+        "origin": "source_literal"
+      },
+      "Payment Gateway:": {
+        "english": "Payment Gateway:",
+        "sources": [
+          "src/pages/billing/index.tsx:680"
+        ],
+        "origin": "source_literal"
+      },
+      "Payment processed through": {
+        "english": "Payment processed through",
+        "sources": [
+          "src/pages/billing/index.tsx:299"
+        ],
+        "origin": "source_literal"
+      },
+      "Please rotate your device": {
+        "english": "Please rotate your device",
+        "sources": [
+          "src/components/LandscapeBlocker/LandscapeBlocker.tsx:40"
+        ],
+        "origin": "source_literal"
+      },
+      "Preview": {
+        "english": "Preview",
+        "sources": [
+          "src/pages/billing/index.tsx:504",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "QTY": {
+        "english": "QTY",
+        "sources": [
+          "src/pages/billing/index.tsx:258"
+        ],
+        "origin": "source_literal"
+      },
+      "Reject": {
+        "english": "Reject",
+        "sources": [
+          "src/components/CookieConsent/CookieConsent.tsx:67"
+        ],
+        "origin": "source_literal"
+      },
+      "Save 10%": {
+        "english": "Save 10%",
+        "sources": [
+          "src/features/billing/ui/mobile/MobileSubscriptionSection.tsx:190"
+        ],
+        "origin": "source_literal"
+      },
+      "Share your thoughts...": {
+        "english": "Share your thoughts...",
+        "sources": [
+          "src/components/FeedbackModal/FeedbackModal.tsx:202"
+        ],
+        "origin": "source_literal"
+      },
+      "Submitting...": {
+        "english": "Submitting...",
+        "sources": [
+          "src/components/FeedbackModal/FeedbackModal.tsx:230"
+        ],
+        "origin": "source_literal"
+      },
+      "Subtotal": {
+        "english": "Subtotal",
+        "sources": [
+          "src/pages/billing/index.tsx:277"
+        ],
+        "origin": "source_literal"
+      },
+      "Tap to manage billing": {
+        "english": "Tap to manage billing",
+        "sources": [
+          "src/features/billing/ui/mobile/DrawerBalanceIndicator.tsx:71"
+        ],
+        "origin": "source_literal"
+      },
+      "Tax ID:": {
+        "english": "Tax ID:",
+        "sources": [
+          "src/pages/billing/index.tsx:246"
+        ],
+        "origin": "source_literal"
+      },
+      "terms": {
+        "english": "terms",
+        "sources": [
+          "src/features/billing/ui/mobile/MobilePaymentSummary.tsx:237"
+        ],
+        "origin": "source_literal"
+      },
+      "Thank you for your Payment!": {
+        "english": "Thank you for your Payment!",
+        "sources": [
+          "src/pages/billing/index.tsx:298"
+        ],
+        "origin": "source_literal"
+      },
+      "This app works best in portrait mode": {
+        "english": "This app works best in portrait mode",
+        "sources": [
+          "src/components/LandscapeBlocker/LandscapeBlocker.tsx:43"
+        ],
+        "origin": "source_literal"
+      },
+      "This feature is currently unavailable": {
+        "english": "This feature is currently unavailable",
+        "sources": [
+          "src/pages/billing/index.tsx:451",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "TR Card": {
+        "english": "TR Card",
+        "sources": [
+          "src/features/billing/ui/mobile/MobilePaymentSummary.tsx:301"
+        ],
+        "origin": "source_literal"
+      },
+      "Transcript": {
+        "english": "Transcript",
+        "sources": [
+          "src/features/aiAnalysis/views/DesktopAiContentPanels.tsx:95"
+        ],
+        "origin": "source_literal"
+      },
+      "Viewing invoices for": {
+        "english": "Viewing invoices for",
+        "sources": [
+          "src/pages/billing/index.tsx:608",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "We couldn't start your checkout": {
+        "english": "We couldn't start your checkout",
+        "sources": [
+          "src/pages/checkout/index.tsx:94",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Please sign in and try again.": {
+        "english": "Please sign in and try again.",
+        "sources": [
+          "src/pages/checkout/index.tsx:97",
+          "P5 D17: transgate/web/checkout/failure.html",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Something went wrong while preparing your payment. No charge was made — please try again.": {
+        "english": "Something went wrong while preparing your payment. No charge was made — please try again.",
+        "sources": [
+          "src/pages/checkout/index.tsx:98",
+          "P5 D17: transgate/web/checkout/failure.html",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Please select an option and provide your feedback.": {
+        "english": "Please select an option and provide your feedback.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "An error occurred while submitting your feedback. Please try again.": {
+        "english": "An error occurred while submitting your feedback. Please try again.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "Download all formats": {
+        "english": "Download all formats",
+        "sources": [
+          "src/components/TranscriptOptionsMenu/TranscriptOptionsMenu.tsx:127"
+        ],
+        "origin": "source_literal"
+      },
+      "Edit speaker": {
+        "english": "Edit speaker",
+        "sources": [
+          "src/components/SpeakerLabel/SpeakerLabel.tsx:220"
+        ],
+        "origin": "source_literal"
+      },
+      "Coupon is not valid": {
+        "english": "Coupon is not valid",
+        "sources": [
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Coupon has expired": {
+        "english": "Coupon has expired",
+        "sources": [
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Error": {
+        "english": "Error",
+        "sources": [
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Pay-as-you-go will not renew": {
+        "english": "Pay-as-you-go will not renew",
+        "sources": [
+          "src/features/billing/ui/mobile/MobilePaymentSummary.tsx:283",
+          "src/features/billing/ui/PaymentSummary.tsx:253",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Renews on ": {
+        "english": "Renews on ",
+        "sources": [
+          "src/features/billing/ui/mobile/MobilePaymentSummary.tsx:290",
+          "src/features/billing/ui/PaymentSummary.tsx:256",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Checkout": {
+        "english": "Checkout",
+        "sources": [
+          "src/pages/checkout/confirm.tsx:94",
+          "src/pages/checkout/confirm.tsx:108",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Successful!": {
+        "english": "Successful!",
+        "sources": [
+          "src/pages/checkout/confirm.tsx:94",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Your order has been successfully processed.": {
+        "english": "Your order has been successfully processed.",
+        "sources": [
+          "src/pages/checkout/confirm.tsx:96",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Thank you for transcibing with us!": {
+        "english": "Thank you for transcibing with us!",
+        "sources": [
+          "src/pages/checkout/confirm.tsx:97",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Failed": {
+        "english": "Failed",
+        "sources": [
+          "src/pages/checkout/confirm.tsx:108",
+          "src/features/transcription/ui/mobile/components/FileListItem.tsx:92",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Oops! Something went wrong during the checkout process.": {
+        "english": "Oops! Something went wrong during the checkout process.",
+        "sources": [
+          "src/pages/checkout/confirm.tsx:110",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Please try again later or contact customer support.": {
+        "english": "Please try again later or contact customer support.",
+        "sources": [
+          "src/pages/checkout/confirm.tsx:111",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Billing History": {
+        "english": "Billing History",
+        "sources": [
+          "src/pages/billing/index.tsx:450",
+          "src/pages/billing/index.tsx:559",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "No completed payments found": {
+        "english": "No completed payments found",
+        "sources": [
+          "src/pages/billing/index.tsx:639",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Download": {
+        "english": "Download",
+        "sources": [
+          "src/pages/billing/index.tsx:482",
+          "src/features/job-management/views/JobListTable.tsx:257",
+          "src/features/job-management/views/JobListTable.tsx:379",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Close": {
+        "english": "Close",
+        "sources": [
+          "src/pages/billing/index.tsx:533",
+          "src/components/FeedbackModal/FeedbackModal.tsx:218",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Loading...": {
+        "english": "Loading...",
+        "sources": [
+          "src/pages/billing/index.tsx:592",
+          "src/pages/dashboard/api-keys.tsx:439",
+          "src/pages/dashboard/api-keys.tsx:451",
+          "src/pages/dashboard/api-keys.tsx:510",
+          "src/features/settings/views/tabs/ProfileView.tsx:44",
+          "src/features/transcription/ui/mobile/MobileNewTranscript.tsx:247",
+          "src/features/job-management/views/mobile/MobileJobDetailsContainer.tsx:126",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Cancel Subscription": {
+        "english": "Cancel Subscription",
+        "sources": [
+          "src/features/subscription/views/SubscriptionView.tsx:119",
+          "src/components/Settings/SubscriptionInfo/SubscriptionInfo.tsx:135",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Are you sure you want to cancel your subscription?": {
+        "english": "Are you sure you want to cancel your subscription?",
+        "sources": [
+          "src/features/subscription/views/SubscriptionView.tsx:141",
+          "src/components/Settings/SubscriptionInfo/SubscriptionInfo.tsx:151",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Plan Valid Until:": {
+        "english": "Plan Valid Until:",
+        "sources": [
+          "src/features/subscription/views/SubscriptionView.tsx:100",
+          "src/components/Settings/SubscriptionInfo/SubscriptionInfo.tsx:121",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Next Payment:": {
+        "english": "Next Payment:",
+        "sources": [
+          "src/features/subscription/views/SubscriptionView.tsx:103",
+          "src/components/Settings/SubscriptionInfo/SubscriptionInfo.tsx:124",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Your subscription is canceled, but you can still use your minutes.": {
+        "english": "Your subscription is canceled, but you can still use your minutes.",
+        "sources": [
+          "src/features/subscription/views/SubscriptionView.tsx:125",
+          "src/components/Settings/SubscriptionInfo/SubscriptionInfo.tsx:140",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Special Offer for Valued Clients!": {
+        "english": "Special Offer for Valued Clients!",
+        "sources": [
+          "src/components/SpecialClientDiscountAlert/SpecialClientDiscountAlert.tsx:378",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "Use this code at checkout to get your discount!": {
+        "english": "Use this code at checkout to get your discount!",
+        "sources": [
+          "src/components/SpecialClientDiscountAlert/SpecialClientDiscountAlert.tsx:514",
+          "docs/plans/p5-web/implementation/billing.md:9-10"
+        ],
+        "origin": "source_literal"
+      },
+      "redirectMessage_one": {
+        "english": "You will be redirected to the home page in {{count}} second.",
+        "sources": [
+          "src/pages/checkout/confirm.tsx:99",
+          "src/pages/checkout/confirm.tsx:113",
+          "docs/plans/p5-web/implementation/billing.md:9-10",
+          "public/locales/en/common.json",
+          "src/pages/checkout/confirm.tsx:99,113"
+        ],
+        "origin": "source_literal"
+      },
+      "redirectMessage_other": {
+        "english": "You will be redirected to the home page in {{count}} seconds.",
+        "sources": [
+          "src/pages/checkout/confirm.tsx:99",
+          "src/pages/checkout/confirm.tsx:113",
+          "docs/plans/p5-web/implementation/billing.md:9-10",
+          "public/locales/en/common.json",
+          "src/pages/checkout/confirm.tsx:99,113"
+        ],
+        "origin": "source_literal"
+      }
+    },
+    "app": {
+      "Copy all transcripts": {
+        "english": "Copy all transcripts",
+        "sources": [
+          "src/components/Transcript/Transcript.tsx:515",
+          "src/components/Transcript/Transcript.tsx:694",
+          "src/components/Transcript/Transcript.tsx:780"
+        ],
+        "origin": "source_literal"
+      },
+      "Download Transcript": {
+        "english": "Download Transcript",
+        "sources": [
+          "src/features/job-management/views/mobile/MobileActionSheet.tsx:100"
+        ],
+        "origin": "source_literal"
+      },
+      "Error loading jobs": {
+        "english": "Error loading jobs",
+        "sources": [
+          "src/features/job-management/views/JobListTable.tsx:139",
+          "src/features/job-management/views/mobile/MobileJobListView.tsx:244"
+        ],
+        "origin": "source_literal"
+      },
+      "Loading jobs...": {
+        "english": "Loading jobs...",
+        "sources": [
+          "src/features/job-management/views/JobListTable.tsx:130",
+          "src/features/job-management/views/mobile/MobileJobListView.tsx:234"
+        ],
+        "origin": "source_literal"
+      },
+      "Loading more...": {
+        "english": "Loading more...",
+        "sources": [
+          "src/features/job-management/views/JobListTable.tsx:459",
+          "src/features/job-management/views/mobile/MobileJobListView.tsx:142"
+        ],
+        "origin": "source_literal"
+      },
+      "New transcription": {
+        "english": "New transcription",
+        "sources": [
+          "src/features/job-management/views/mobile/MobileJobListView.tsx:318"
+        ],
+        "origin": "source_literal"
+      },
+      "New Transcription": {
+        "english": "New Transcription",
+        "sources": [
+          "src/features/job-management/views/mobile/MobileJobListView.tsx:273"
+        ],
+        "origin": "source_literal"
+      },
+      "No more jobs to load": {
+        "english": "No more jobs to load",
+        "sources": [
+          "src/features/job-management/views/JobListTable.tsx:467",
+          "src/features/job-management/views/mobile/MobileJobListView.tsx:150",
+          "docs/plans/p5-web/implementation/core.md:1.1b"
+        ],
+        "origin": "source_literal"
+      },
+      "No transcripts found": {
+        "english": "No transcripts found",
+        "sources": [
+          "src/features/job-management/views/JobListTable.tsx:149",
+          "src/features/job-management/views/mobile/MobileJobListView.tsx:263"
+        ],
+        "origin": "source_literal"
+      },
+      "Pull to refresh": {
+        "english": "Pull to refresh",
+        "sources": [
+          "src/features/job-management/views/mobile/PullToRefresh.tsx:147"
+        ],
+        "origin": "source_literal"
+      },
+      "Refreshing...": {
+        "english": "Refreshing...",
+        "sources": [
+          "src/features/job-management/views/mobile/PullToRefresh.tsx:142"
+        ],
+        "origin": "source_literal"
+      },
+      "Release to refresh": {
+        "english": "Release to refresh",
+        "sources": [
+          "src/features/job-management/views/mobile/PullToRefresh.tsx:142"
+        ],
+        "origin": "source_literal"
+      },
+      "Show Time": {
+        "english": "Show Time",
+        "sources": [
+          "src/features/job-management/views/mobile/MobileActionSheet.tsx:110"
+        ],
+        "origin": "source_literal"
+      },
+      "Try Again": {
+        "english": "Try Again",
+        "sources": [
+          "src/features/job-management/views/mobile/MobileJobListView.tsx:251"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.support.send_failed": {
+        "english": "Your message could not be sent. Please try again.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:21"
+        ],
+        "origin": "approved"
+      },
+      "p5.erasure.requested": {
+        "english": "Your account is closed. Your data will be erased once every active subscription is confirmed stopped.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:22"
+        ],
+        "origin": "approved"
+      },
+      "p5.erasure.local_data_erased": {
+        "english": "Your data has been erased. Remote cleanup is still in progress ({{count}} remaining).",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:23"
+        ],
+        "origin": "approved"
+      },
+      "p5.erasure.fully_erased": {
+        "english": "Your account and all of its data have been erased.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:24"
+        ],
+        "origin": "approved"
+      },
+      "p5.erasure.erased_with_exceptions": {
+        "english": "Your data has been erased, but some items could not be removed automatically. Our team is handling them.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:25"
+        ],
+        "origin": "approved"
+      },
+      "p5.erasure.request_failed": {
+        "english": "Your account deletion could not be started. Please try again.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:26"
+        ],
+        "origin": "approved"
+      },
+      "p5.session.account_erased": {
+        "english": "This account is unavailable due to account erasure.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:27"
+        ],
+        "origin": "approved"
+      },
+      "p5.session.unavailable": {
+        "english": "Your account could not be loaded. Please try again.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:28"
+        ],
+        "origin": "approved"
+      },
+      "p5.balance.none": {
+        "english": "-",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:29"
+        ],
+        "origin": "approved"
+      },
+      "p5.balance.minutes": {
+        "english": "{{minutes}} min",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:30"
+        ],
+        "origin": "approved"
+      },
+      "p5.balance.hours_minutes": {
+        "english": "{{hours}} hr , {{minutes}} min",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:31"
+        ],
+        "origin": "approved"
+      },
+      "p5.auth.invalid_credentials": {
+        "english": "Invalid login credentials",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:32"
+        ],
+        "origin": "approved"
+      },
+      "p5.auth.email_not_confirmed": {
+        "english": "Email not confirmed",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:33"
+        ],
+        "origin": "approved"
+      },
+      "p5.auth.rate_limited": {
+        "english": "Too many requests. Please try again later.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:34"
+        ],
+        "origin": "approved"
+      },
+      "p5.auth.weak_password": {
+        "english": "Password should be at least 6 characters.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:35"
+        ],
+        "origin": "approved"
+      },
+      "p5.auth.user_exists": {
+        "english": "User already registered",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:36"
+        ],
+        "origin": "approved"
+      },
+      "p5.auth.invalid_or_expired_code": {
+        "english": "This link is invalid or has expired. Please request a new one.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:37"
+        ],
+        "origin": "approved"
+      },
+      "p5.auth.captcha_failed": {
+        "english": "Captcha verification failed. Please try again.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:38"
+        ],
+        "origin": "approved"
+      },
+      "p5.auth.network": {
+        "english": "Network error. Check your connection and try again.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:39"
+        ],
+        "origin": "approved"
+      },
+      "p5.auth.unavailable": {
+        "english": "Sign-in is temporarily unavailable. Please try again later.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:40"
+        ],
+        "origin": "approved"
+      },
+      "This video has no captions available. As this feature is still in beta, you can download the video and upload it here to transcribe and analyze it as audio or video.": {
+        "english": "This video has no captions available. As this feature is still in beta, you can download the video and upload it here to transcribe and analyze it as audio or video.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "This video requires age verification and cannot be transcribed": {
+        "english": "This video requires age verification and cannot be transcribed",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "Too many requests, please try again in a few minutes": {
+        "english": "Too many requests, please try again in a few minutes",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "Network error fetching captions — please try again": {
+        "english": "Network error fetching captions — please try again",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "Failed to transcribe this YouTube video. Please try again.": {
+        "english": "Failed to transcribe this YouTube video. Please try again.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "No YouTube video found in queue": {
+        "english": "No YouTube video found in queue",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "An unexpected error occurred. Please try again.": {
+        "english": "An unexpected error occurred. Please try again.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61",
+          "docs/plans/p5-web/implementation/billing.md:9 (InvoicesVm.document_failure)",
+          "transgate/core/src/presentation/billing.rs (BillingMessages.document_failure)"
+        ],
+        "origin": "approved"
+      },
+      "Audio is not available.": {
+        "english": "Audio is not available.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "N/A": {
+        "english": "N/A",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "DRAFT": {
+        "english": "DRAFT",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "NOT STARTED": {
+        "english": "NOT STARTED",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "PENDING": {
+        "english": "PENDING",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "RUNNING": {
+        "english": "RUNNING",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "COMPLETED": {
+        "english": "COMPLETED",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "FAILED": {
+        "english": "FAILED",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "CANCELED": {
+        "english": "CANCELED",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "DELETED": {
+        "english": "DELETED",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "SPEAKER LABELING": {
+        "english": "SPEAKER LABELING",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "UPLOADED": {
+        "english": "UPLOADED",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "PROCESSING": {
+        "english": "PROCESSING",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "READY": {
+        "english": "READY",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "Failed to load consent preferences": {
+        "english": "Failed to load consent preferences",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "Failed to record consent decision": {
+        "english": "Failed to record consent decision",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "Failed to enable AI features. Please try again.": {
+        "english": "Failed to enable AI features. Please try again.",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "Failed to disable AI features. Please try again.": {
+        "english": "Failed to disable AI features. Please try again.",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "This answer could not be saved. It may disappear after refresh.": {
+        "english": "This answer could not be saved. It may disappear after refresh.",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "Failed to export as DOCX": {
+        "english": "Failed to export as DOCX",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "Failed to export as PDF": {
+        "english": "Failed to export as PDF",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "Export failed": {
+        "english": "Export failed",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "Failed to load chat history": {
+        "english": "Failed to load chat history",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "The AI request could not be confirmed. Check your connection and retry.": {
+        "english": "The AI request could not be confirmed. Check your connection and retry.",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "Scroll to latest message": {
+        "english": "Scroll to latest message",
+        "sources": [
+          "p21 published locale contract: accessibility"
+        ],
+        "origin": "approved"
+      },
+      "Light mode": {
+        "english": "Light mode",
+        "sources": [
+          "src/infrastructure/theming/components/ThemeToggle.tsx:42-59",
+          "p1V profile theme locale contract"
+        ],
+        "origin": "source_literal"
+      },
+      "Dark mode": {
+        "english": "Dark mode",
+        "sources": [
+          "src/infrastructure/theming/components/ThemeToggle.tsx:42-59",
+          "p1V profile theme locale contract"
+        ],
+        "origin": "source_literal"
+      },
+      "System mode": {
+        "english": "System mode",
+        "sources": [
+          "src/infrastructure/theming/components/ThemeToggle.tsx:42-59",
+          "p1V profile theme locale contract"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.web.config_unavailable": {
+        "english": "Transgate is not available right now because this site is not configured correctly. Please try again later.",
+        "sources": [
+          "transgate/web/src/lib/features/app/views/ConfigErrorPage.svelte",
+          "p1V published configuration-error locale contract"
+        ],
+        "origin": "approved"
+      },
+      "Expand player": {
+        "english": "Expand player",
+        "sources": [
+          "src/features/transcript-header/views/mobile/MobileAudioPlayer.tsx:227"
+        ],
+        "origin": "source_literal"
+      },
+      "Close player": {
+        "english": "Close player",
+        "sources": [
+          "src/features/transcript-header/views/mobile/MobileAudioPlayer.tsx:256"
+        ],
+        "origin": "source_literal"
+      },
+      "Player mode": {
+        "english": "Player mode",
+        "sources": [
+          "src/features/transcript-header/views/youtube-layouts/YouTubePlayerLayout.tsx:191"
+        ],
+        "origin": "source_literal"
+      },
+      "Untitled": {
+        "english": "Untitled",
+        "sources": [
+          "src/features/transcript-header/views/mobile/MobileAudioPlayer.tsx:104"
+        ],
+        "origin": "source_literal"
+      },
+      "2+ speakers": {
+        "english": "2+ speakers",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1b"
+        ],
+        "origin": "source_literal"
+      },
+      "Invalid YouTube URL": {
+        "english": "Invalid YouTube URL",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1b"
+        ],
+        "origin": "source_literal"
+      },
+      "Account suspended": {
+        "english": "Account suspended",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1b"
+        ],
+        "origin": "source_literal"
+      },
+      "Video not found or is private": {
+        "english": "Video not found or is private",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1b"
+        ],
+        "origin": "source_literal"
+      },
+      "Too many requests. Please try again in a minute.": {
+        "english": "Too many requests. Please try again in a minute.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1b"
+        ],
+        "origin": "source_literal"
+      },
+      "Failed to fetch video metadata": {
+        "english": "Failed to fetch video metadata",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1b"
+        ],
+        "origin": "source_literal"
+      },
+      "Failed to create transcript job": {
+        "english": "Failed to create transcript job",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1b"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.consent.provider_processing": {
+        "english": "Your transcript content and chat questions are sent to {{provider}}, our AI provider, to create AI results.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1a (D22 FINAL: decline POST false; settings DELETE)"
+        ],
+        "origin": "approved"
+      },
+      "p5.consent.provider_retention": {
+        "english": "We cannot verify how long the AI provider keeps this data or whether it deletes it.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1a (D22 FINAL: decline POST false; settings DELETE)"
+        ],
+        "origin": "approved"
+      },
+      "p5.consent.account_results": {
+        "english": "Saved AI results, such as summaries, analyses and chat history, are stored with your account, not only in this browser.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1a (D22 FINAL: decline POST false; settings DELETE)"
+        ],
+        "origin": "approved"
+      },
+      "p5.consent.decline_keeps": {
+        "english": "If you decline, nothing new is sent to the AI provider. AI results already saved stay in your account.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1a (D22 FINAL: decline POST false; settings DELETE)"
+        ],
+        "origin": "approved"
+      },
+      "p5.consent.settings_delete": {
+        "english": "You can later turn off AI and delete your saved AI data in Settings. This removes it from your account; it does not confirm deletion by the AI provider.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1a (D22 FINAL: decline POST false; settings DELETE)"
+        ],
+        "origin": "approved"
+      },
+      "p5.consent.turn_off_delete_action": {
+        "english": "Turn off AI and delete saved AI data",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1a (D22 FINAL: decline POST false; settings DELETE)"
+        ],
+        "origin": "approved"
+      },
+      "p5.consent.turn_off_delete_title": {
+        "english": "Turn off AI and delete your saved AI data?",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1a (D22 FINAL: decline POST false; settings DELETE)"
+        ],
+        "origin": "approved"
+      },
+      "p5.consent.turn_off_delete_confirm": {
+        "english": "AI features will be turned off and your saved AI results (summaries, analyses and chat history) will be deleted from your account. This does not confirm deletion by the AI provider. This cannot be undone.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1a (D22 FINAL: decline POST false; settings DELETE)"
+        ],
+        "origin": "approved"
+      },
+      "p5.consent.turn_off_delete_button": {
+        "english": "Turn off and delete",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1a (D22 FINAL: decline POST false; settings DELETE)"
+        ],
+        "origin": "approved"
+      },
+      "p5.consent.cleanup_pending": {
+        "english": "Your saved AI data is still being deleted from your account.",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1a (D22 FINAL: decline POST false; settings DELETE)"
+        ],
+        "origin": "approved"
+      },
+      "Collapse Sidebar": {
+        "english": "Collapse Sidebar",
+        "sources": [
+          "src/pages/home/[[...jobId]].tsx:412"
+        ],
+        "origin": "source_literal"
+      },
+      "Expand Sidebar": {
+        "english": "Expand Sidebar",
+        "sources": [
+          "src/pages/home/[[...jobId]].tsx:412",
+          "src/components/SideBar/SideBar.tsx:121"
+        ],
+        "origin": "source_literal"
+      },
+      "Main navigation menu": {
+        "english": "Main navigation menu",
+        "sources": [
+          "src/infrastructure/navigation/components/MobileNavigationContainer.tsx (hamburgerLabel)"
+        ],
+        "origin": "source_literal"
+      },
+      "More options": {
+        "english": "More options",
+        "sources": [
+          "src/pages/home/[[...jobId]].tsx:391"
+        ],
+        "origin": "source_literal"
+      },
+      "My Transcripts": {
+        "english": "My Transcripts",
+        "sources": [
+          "src/pages/home/[[...jobId]].tsx:376",
+          "docs/plans/p5-web/implementation/core.md:1.1b"
+        ],
+        "origin": "source_literal"
+      },
+      "All Transcripts": {
+        "english": "All Transcripts",
+        "sources": [
+          "src/pages/home/[[...jobId]].tsx:376",
+          "src/pages/home/[[...jobId]].tsx:468",
+          "src/pages/home/all-transcripts/all-transcripts.tsx:104",
+          "src/features/sidebar/containers/SidebarContainer.tsx:109",
+          "src/components/SideBar/SideBar.tsx:148",
+          "src/components/SideBar/SideBar.tsx:207",
+          "docs/plans/p5-web/implementation/core.md:1.1b"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.duration.minutes": {
+        "english": "{{minutes}} min",
+        "sources": [
+          "docs/plans/p5-web/implementation/core.md:1.1b"
+        ],
+        "origin": "approved"
+      },
+      "p5.player.skip_back": {
+        "english": "Skip backward 10 seconds",
+        "sources": [
+          "src/features/transcript-header/views/mobile/MobileAudioPlayer.tsx:296"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.player.skip_forward": {
+        "english": "Skip forward 10 seconds",
+        "sources": [
+          "src/features/transcript-header/views/mobile/MobileAudioPlayer.tsx:311"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.player.speed": {
+        "english": "Playback Speed",
+        "sources": [
+          "src/features/transcript-header/views/mobile/MobileAudioPlayer.tsx:321"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.youtube.mode_video": {
+        "english": "Video",
+        "sources": [
+          "src/features/transcript-header/views/youtube-layouts/YouTubePlayerLayout.tsx:197"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.youtube.mode_strip": {
+        "english": "Strip",
+        "sources": [
+          "src/features/transcript-header/views/youtube-layouts/YouTubePlayerLayout.tsx:203"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.youtube.mode_float": {
+        "english": "Float",
+        "sources": [
+          "src/features/transcript-header/views/youtube-layouts/YouTubePlayerLayout.tsx:209"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.transcript.edit_line": {
+        "english": "Edit line",
+        "sources": [
+          "P5 D3/a11y: p1Z published icon-only control meaning (Edit line)"
+        ],
+        "origin": "approved"
+      },
+      "p5.transcript.save_line": {
+        "english": "Save",
+        "sources": [
+          "P5 D3/a11y: p1Z published icon-only control meaning (Save)"
+        ],
+        "origin": "approved"
+      },
+      "p5.transcript.edit_speaker_label": {
+        "english": "Edit speaker label",
+        "sources": [
+          "src/components/EditTranscript/EditSpeaker.tsx:87"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.history.translation_job": {
+        "english": "Translation job",
+        "sources": [
+          "src/features/job-management/views/JobListTable.tsx:200"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.player.play": {
+        "english": "Play",
+        "sources": [
+          "P5 D3/a11y: p1Z published icon-only control meaning (Play)"
+        ],
+        "origin": "approved"
+      },
+      "p5.player.pause": {
+        "english": "Pause",
+        "sources": [
+          "P5 D3/a11y: p1Z published icon-only control meaning (Pause)"
+        ],
+        "origin": "approved"
+      },
+      "p5.billing.no_active_subscription": {
+        "english": "No active subscription to cancel",
+        "sources": [
+          "docs/plans/p5-web/implementation/billing.md:9 (accepted by p1X)",
+          "transgate/core/src/presentation/billing.rs:15-18"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.billing.payment_unconfirmed": {
+        "english": "We could not confirm your payment yet. Do not pay again; check your billing history shortly.",
+        "sources": [
+          "docs/plans/p5-web/implementation/billing.md:9 (accepted by p1X)",
+          "transgate/core/src/presentation/billing.rs:15-18"
+        ],
+        "origin": "approved"
+      },
+      "p5.billing.customer_not_found": {
+        "english": "No customer found for that email",
+        "sources": [
+          "docs/plans/p5-web/implementation/billing.md:9 (accepted by p1X)",
+          "transgate/core/src/presentation/billing.rs:15-18"
+        ],
+        "origin": "source_literal"
+      },
+      "p5.billing.lookup_failed": {
+        "english": "Failed to load customer invoices",
+        "sources": [
+          "docs/plans/p5-web/implementation/billing.md:9 (accepted by p1X)",
+          "transgate/core/src/presentation/billing.rs:15-18"
+        ],
+        "origin": "source_literal"
+      },
+      "Resize video player (drag up or down)": {
+        "english": "Resize video player (drag up or down)",
+        "sources": [
+          "src/features/transcript-header/views/youtube-layouts/YouTubePlayerLayout.tsx:364"
+        ],
+        "origin": "source_literal"
+      },
+      "Move to top-left": {
+        "english": "Move to top-left",
+        "sources": [
+          "src/features/transcript-header/views/youtube-layouts/YouTubePlayerLayout.tsx:331-336"
+        ],
+        "origin": "source_literal"
+      },
+      "Move to top-right": {
+        "english": "Move to top-right",
+        "sources": [
+          "src/features/transcript-header/views/youtube-layouts/YouTubePlayerLayout.tsx:331-336"
+        ],
+        "origin": "source_literal"
+      },
+      "Move to bottom-left": {
+        "english": "Move to bottom-left",
+        "sources": [
+          "src/features/transcript-header/views/youtube-layouts/YouTubePlayerLayout.tsx:331-336"
+        ],
+        "origin": "source_literal"
+      },
+      "Move to bottom-right": {
+        "english": "Move to bottom-right",
+        "sources": [
+          "src/features/transcript-header/views/youtube-layouts/YouTubePlayerLayout.tsx:331-336"
+        ],
+        "origin": "source_literal"
+      }
+    },
+    "ai": {
+      "Agent Performance": {
+        "english": "Agent Performance",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/SupportInsights.tsx:99"
+        ],
+        "origin": "source_literal"
+      },
+      "Analysis Error": {
+        "english": "Analysis Error",
+        "sources": [
+          "src/features/aiAnalysis/views/AnalysisErrorBoundary.tsx:59"
+        ],
+        "origin": "source_literal"
+      },
+      "Analysis was interrupted.": {
+        "english": "Analysis was interrupted.",
+        "sources": [
+          "src/features/aiAnalysis/views/desktop/DesktopSummaryView.tsx:217"
+        ],
+        "origin": "source_literal"
+      },
+      "Analyzing...": {
+        "english": "Analyzing...",
+        "sources": [
+          "src/features/aiAnalysis/views/mobile/MobileSummaryView.tsx:219",
+          "src/features/aiAnalysis/views/mobile/MobileSummaryView.tsx:286",
+          "src/features/aiAnalysis/views/desktop/DesktopSummaryView.tsx:192",
+          "src/features/aiAnalysis/views/desktop/DesktopSummaryView.tsx:258"
+        ],
+        "origin": "source_literal"
+      },
+      "Areas for Improvement": {
+        "english": "Areas for Improvement",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/SupportInsights.tsx:122"
+        ],
+        "origin": "source_literal"
+      },
+      "Ask questions about your transcript and get AI-powered insights": {
+        "english": "Ask questions about your transcript and get AI-powered insights",
+        "sources": [
+          "src/features/aiAnalysis/views/mobile/MobileChatView.tsx:198"
+        ],
+        "origin": "source_literal"
+      },
+      "At:": {
+        "english": "At:",
+        "sources": [
+          "src/components/AIAnalysis/specialized/meeting/DecisionsList.tsx:106"
+        ],
+        "origin": "source_literal"
+      },
+      "Budget Signals": {
+        "english": "Budget Signals",
+        "sources": [
+          "src/components/AIAnalysis/specialized/sales/CustomerInsights.tsx:154"
+        ],
+        "origin": "source_literal"
+      },
+      "Buying Signals": {
+        "english": "Buying Signals",
+        "sources": [
+          "src/components/AIAnalysis/specialized/sales/CustomerInsights.tsx:184"
+        ],
+        "origin": "source_literal"
+      },
+      "Call Metrics": {
+        "english": "Call Metrics",
+        "sources": [
+          "src/components/AIAnalysis/specialized/sales/CallMetrics.tsx:81"
+        ],
+        "origin": "source_literal"
+      },
+      "Choose a format to download your analysis": {
+        "english": "Choose a format to download your analysis",
+        "sources": [
+          "src/components/AIAnalysis/export/ExportDropdown.tsx:196"
+        ],
+        "origin": "source_literal"
+      },
+      "Coaching Tips": {
+        "english": "Coaching Tips",
+        "sources": [
+          "src/components/AIAnalysis/specialized/sales/CoachingTips.tsx:99"
+        ],
+        "origin": "source_literal"
+      },
+      "Copy chat": {
+        "english": "Copy chat",
+        "sources": [
+          "src/features/aiAnalysis/views/mobile/MobileChatView.tsx:167",
+          "src/features/aiAnalysis/views/desktop/DesktopChatView.tsx:179"
+        ],
+        "origin": "source_literal"
+      },
+      "Customer Insights": {
+        "english": "Customer Insights",
+        "sources": [
+          "src/components/AIAnalysis/specialized/sales/CustomerInsights.tsx:131"
+        ],
+        "origin": "source_literal"
+      },
+      "Customer Sentiment": {
+        "english": "Customer Sentiment",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/SentimentAnalysis.tsx:57"
+        ],
+        "origin": "source_literal"
+      },
+      "Decisions Made": {
+        "english": "Decisions Made",
+        "sources": [
+          "src/components/AIAnalysis/specialized/meeting/DecisionsList.tsx:90"
+        ],
+        "origin": "source_literal"
+      },
+      "Discussion Points": {
+        "english": "Discussion Points",
+        "sources": [
+          "src/components/AIAnalysis/specialized/GenericAnalysis.tsx:56",
+          "src/components/AIAnalysis/specialized/meeting/DiscussionPointsList.tsx:56"
+        ],
+        "origin": "source_literal"
+      },
+      "Dismiss": {
+        "english": "Dismiss",
+        "sources": [
+          "src/components/AIAnalysis/export/ExportDropdown.tsx:225"
+        ],
+        "origin": "source_literal"
+      },
+      "Download chat": {
+        "english": "Download chat",
+        "sources": [
+          "src/features/aiAnalysis/views/mobile/MobileChatView.tsx:174",
+          "src/features/aiAnalysis/views/desktop/DesktopChatView.tsx:186"
+        ],
+        "origin": "source_literal"
+      },
+      "Due:": {
+        "english": "Due:",
+        "sources": [
+          "src/components/AIAnalysis/specialized/meeting/ActionItemsList.tsx:94"
+        ],
+        "origin": "source_literal"
+      },
+      "Duration:": {
+        "english": "Duration:",
+        "sources": [
+          "src/components/AIAnalysis/specialized/lecture/TopicsList.tsx:123"
+        ],
+        "origin": "source_literal"
+      },
+      "Examples:": {
+        "english": "Examples:",
+        "sources": [
+          "src/components/AIAnalysis/specialized/lecture/ConceptsList.tsx:91"
+        ],
+        "origin": "source_literal"
+      },
+      "Export as PDF": {
+        "english": "Export as PDF",
+        "sources": [
+          "src/components/AIAnalysis/export/ExportDropdown.tsx:115"
+        ],
+        "origin": "source_literal"
+      },
+      "Export as Word (.docx)": {
+        "english": "Export as Word (.docx)",
+        "sources": [
+          "src/components/AIAnalysis/export/ExportDropdown.tsx:109"
+        ],
+        "origin": "source_literal"
+      },
+      "Failed to generate analysis": {
+        "english": "Failed to generate analysis",
+        "sources": [
+          "src/features/aiAnalysis/viewmodels/useAnalysisViewModel.ts:210"
+        ],
+        "origin": "source_literal"
+      },
+      "Final": {
+        "english": "Final",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/SentimentAnalysis.tsx:71"
+        ],
+        "origin": "source_literal"
+      },
+      "Follow-Up Actions": {
+        "english": "Follow-Up Actions",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/FollowUpActions.tsx:67"
+        ],
+        "origin": "source_literal"
+      },
+      "Highlights extraction cancelled": {
+        "english": "Highlights extraction cancelled",
+        "sources": [
+          "src/features/aiAnalysis/views/mobile/MobileHighlightsView.tsx:175"
+        ],
+        "origin": "source_literal"
+      },
+      "Initial": {
+        "english": "Initial",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/SentimentAnalysis.tsx:61"
+        ],
+        "origin": "source_literal"
+      },
+      "Issue Resolution": {
+        "english": "Issue Resolution",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/IssueResolution.tsx:40"
+        ],
+        "origin": "source_literal"
+      },
+      "Key Concepts": {
+        "english": "Key Concepts",
+        "sources": [
+          "src/components/AIAnalysis/specialized/lecture/ConceptsList.tsx:79"
+        ],
+        "origin": "source_literal"
+      },
+      "Key Moments": {
+        "english": "Key Moments",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/SentimentAnalysis.tsx:79"
+        ],
+        "origin": "source_literal"
+      },
+      "Knowledge Base Updates": {
+        "english": "Knowledge Base Updates",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/KBUpdates.tsx:67"
+        ],
+        "origin": "source_literal"
+      },
+      "Markdown format": {
+        "english": "Markdown format",
+        "sources": [
+          "src/components/AIAnalysis/export/ExportDropdown.tsx:129"
+        ],
+        "origin": "source_literal"
+      },
+      "Microsoft Word format": {
+        "english": "Microsoft Word format",
+        "sources": [
+          "src/components/AIAnalysis/export/ExportDropdown.tsx:111"
+        ],
+        "origin": "source_literal"
+      },
+      "minutes": {
+        "english": "minutes",
+        "sources": [
+          "src/pages/billing/index.tsx:265"
+        ],
+        "origin": "source_literal"
+      },
+      "New message": {
+        "english": "New message",
+        "sources": [
+          "src/features/aiAnalysis/views/desktop/DesktopChatView.tsx:283"
+        ],
+        "origin": "source_literal"
+      },
+      "Next Steps": {
+        "english": "Next Steps",
+        "sources": [
+          "src/components/AIAnalysis/specialized/meeting/NextStepsList.tsx:56"
+        ],
+        "origin": "source_literal"
+      },
+      "Next Steps Confirmed": {
+        "english": "Next Steps Confirmed",
+        "sources": [
+          "src/components/AIAnalysis/specialized/sales/CallMetrics.tsx:106"
+        ],
+        "origin": "source_literal"
+      },
+      "No meeting insights available for this transcript.": {
+        "english": "No meeting insights available for this transcript.",
+        "sources": [
+          "src/components/AIAnalysis/specialized/MeetingAnalysis.tsx:59"
+        ],
+        "origin": "source_literal"
+      },
+      "Objections": {
+        "english": "Objections",
+        "sources": [
+          "src/components/AIAnalysis/specialized/sales/CustomerInsights.tsx:169"
+        ],
+        "origin": "source_literal"
+      },
+      "Objections Handled": {
+        "english": "Objections Handled",
+        "sources": [
+          "src/components/AIAnalysis/specialized/sales/CallMetrics.tsx:100"
+        ],
+        "origin": "source_literal"
+      },
+      "Pain Points": {
+        "english": "Pain Points",
+        "sources": [
+          "src/components/AIAnalysis/specialized/sales/CustomerInsights.tsx:139"
+        ],
+        "origin": "source_literal"
+      },
+      "Participants:": {
+        "english": "Participants:",
+        "sources": [
+          "src/components/AIAnalysis/specialized/meeting/DecisionsList.tsx:101"
+        ],
+        "origin": "source_literal"
+      },
+      "Plain text format": {
+        "english": "Plain text format",
+        "sources": [
+          "src/components/AIAnalysis/export/ExportDropdown.tsx:123"
+        ],
+        "origin": "source_literal"
+      },
+      "Portable Document Format": {
+        "english": "Portable Document Format",
+        "sources": [
+          "src/components/AIAnalysis/export/ExportDropdown.tsx:117"
+        ],
+        "origin": "source_literal"
+      },
+      "Preparing highlights...": {
+        "english": "Preparing highlights...",
+        "sources": [
+          "src/features/aiAnalysis/views/mobile/MobileHighlightsView.tsx:248"
+        ],
+        "origin": "source_literal"
+      },
+      "Preparing summary...": {
+        "english": "Preparing summary...",
+        "sources": [
+          "src/features/aiAnalysis/views/mobile/MobileSummaryView.tsx:310"
+        ],
+        "origin": "source_literal"
+      },
+      "Problem": {
+        "english": "Problem",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/IssueResolution.tsx:44"
+        ],
+        "origin": "source_literal"
+      },
+      "Processing time": {
+        "english": "Processing time",
+        "sources": [
+          "src/features/aiAnalysis/views/AnalysisViewPresentation.tsx:147",
+          "src/components/AIAnalysis/AnalysisViewPresentation.tsx:168"
+        ],
+        "origin": "source_literal"
+      },
+      "Questions Asked": {
+        "english": "Questions Asked",
+        "sources": [
+          "src/components/AIAnalysis/specialized/sales/CallMetrics.tsx:94"
+        ],
+        "origin": "source_literal"
+      },
+      "Resolution": {
+        "english": "Resolution",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/IssueResolution.tsx:61"
+        ],
+        "origin": "source_literal"
+      },
+      "Resolution Time": {
+        "english": "Resolution Time",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/IssueResolution.tsx:68"
+        ],
+        "origin": "source_literal"
+      },
+      "Review Questions": {
+        "english": "Review Questions",
+        "sources": [
+          "src/components/AIAnalysis/specialized/lecture/ReviewQuestions.tsx:67"
+        ],
+        "origin": "source_literal"
+      },
+      "Root Cause": {
+        "english": "Root Cause",
+        "sources": [
+          "src/components/AIAnalysis/specialized/support/IssueResolution.tsx:54"
+        ],
+        "origin": "source_literal"
+      },
+      "Something went wrong": {
+        "english": "Something went wrong",
+        "sources": [
+          "src/features/aiAnalysis/views/AnalysisErrorBoundary.tsx:69"
+        ],
+        "origin": "source_literal"
+      },
+      "Start a conversation": {
+        "english": "Start a conversation",
+        "sources": [
+          "src/features/aiAnalysis/views/mobile/MobileChatView.tsx:195"
+        ],
+        "origin": "source_literal"
+      },
+      "Starts:": {
+        "english": "Starts:",
+        "sources": [
+          "src/components/AIAnalysis/specialized/lecture/TopicsList.tsx:120"
+        ],
+        "origin": "source_literal"
+      },
+      "Study Guide": {
+        "english": "Study Guide",
+        "sources": [
+          "src/components/AIAnalysis/specialized/lecture/StudyGuide.tsx:67"
+        ],
+        "origin": "source_literal"
+      },
+      "Talk:Listen Ratio": {
+        "english": "Talk:Listen Ratio",
+        "sources": [
+          "src/components/AIAnalysis/specialized/sales/CallMetrics.tsx:88"
+        ],
+        "origin": "source_literal"
+      },
+      "The analysis did not complete. Any sections that finished are shown below.": {
+        "english": "The analysis did not complete. Any sections that finished are shown below.",
+        "sources": [
+          "src/features/aiAnalysis/views/desktop/DesktopSummaryView.tsx:220"
+        ],
+        "origin": "source_literal"
+      },
+      "Tokens used": {
+        "english": "Tokens used",
+        "sources": [
+          "src/features/aiAnalysis/views/AnalysisViewPresentation.tsx:144",
+          "src/components/AIAnalysis/AnalysisViewPresentation.tsx:165"
+        ],
+        "origin": "source_literal"
+      },
+      "Topics Covered": {
+        "english": "Topics Covered",
+        "sources": [
+          "src/components/AIAnalysis/specialized/lecture/TopicsList.tsx:105"
+        ],
+        "origin": "source_literal"
+      },
+      "Analysis in progress…": {
+        "english": "Analysis in progress…",
+        "sources": [
+          "src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:95",
+          "src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:189",
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "Analysis in progress… taking longer than expected": {
+        "english": "Analysis in progress… taking longer than expected",
+        "sources": [
+          "src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:183",
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "Analysis in progress… (you may have had another tab open)": {
+        "english": "Analysis in progress… (you may have had another tab open)",
+        "sources": [
+          "src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts:165",
+          "docs/plans/p5-web/implementation/core.md:53-61"
+        ],
+        "origin": "approved"
+      },
+      "Get an intelligent summary of your transcript content": {
+        "english": "Get an intelligent summary of your transcript content",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "Automatically extracts key points": {
+        "english": "Automatically extracts key points",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "Saves time reading long transcripts": {
+        "english": "Saves time reading long transcripts",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "Highlights main discussion topics": {
+        "english": "Highlights main discussion topics",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "Start Summarizing": {
+        "english": "Start Summarizing",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "Ask questions about your transcript content": {
+        "english": "Ask questions about your transcript content",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "Interactive Q&A about content": {
+        "english": "Interactive Q&A about content",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "Get clarifications instantly": {
+        "english": "Get clarifications instantly",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "Explore topics in depth": {
+        "english": "Explore topics in depth",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "Start Chatting": {
+        "english": "Start Chatting",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "Learn More": {
+        "english": "Learn More",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "AI features process your transcript content securely. You can disable them anytime in settings.": {
+        "english": "AI features process your transcript content securely. You can disable them anytime in settings.",
+        "sources": [
+          "p21 published locale contract: introduction"
+        ],
+        "origin": "approved"
+      },
+      "AI Features Consent": {
+        "english": "AI Features Consent",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "AI Processing Information": {
+        "english": "AI Processing Information",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "To provide AI-powered features like summaries, highlights, and chat assistance, we need to send your transcript content to our AI service provider": {
+        "english": "To provide AI-powered features like summaries, highlights, and chat assistance, we need to send your transcript content to our AI service provider",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "What this means:": {
+        "english": "What this means:",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "Your transcript content will be sent to": {
+        "english": "Your transcript content will be sent to",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "for AI processing": {
+        "english": "for AI processing",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "We use secure HTTPS connections to protect your data in transit": {
+        "english": "We use secure HTTPS connections to protect your data in transit",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "AI Features include:": {
+        "english": "AI Features include:",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "Automatic transcript summaries": {
+        "english": "Automatic transcript summaries",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "Key highlights extraction": {
+        "english": "Key highlights extraction",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "Interactive AI chat assistant": {
+        "english": "Interactive AI chat assistant",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "By accepting, you agree to the processing of your transcript data as described above. For more information, please review our": {
+        "english": "By accepting, you agree to the processing of your transcript data as described above. For more information, please review our",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "Accept & Enable AI Features": {
+        "english": "Accept & Enable AI Features",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "Decline": {
+        "english": "Decline",
+        "sources": [
+          "p21 published locale contract: consent"
+        ],
+        "origin": "approved"
+      },
+      "Usage Limits": {
+        "english": "Usage Limits",
+        "sources": [
+          "p21 published locale contract: limits"
+        ],
+        "origin": "approved"
+      },
+      "Tokens": {
+        "english": "Tokens",
+        "sources": [
+          "p21 published locale contract: limits"
+        ],
+        "origin": "approved"
+      },
+      "Resets in less than 1 hour": {
+        "english": "Resets in less than 1 hour",
+        "sources": [
+          "p21 published locale contract: limits"
+        ],
+        "origin": "approved"
+      },
+      "Resets in": {
+        "english": "Resets in",
+        "sources": [
+          "p21 published locale contract: limits"
+        ],
+        "origin": "approved"
+      },
+      "hour": {
+        "english": "hour",
+        "sources": [
+          "p21 published locale contract: limits"
+        ],
+        "origin": "approved"
+      },
+      "hours": {
+        "english": "hours",
+        "sources": [
+          "p21 published locale contract: limits"
+        ],
+        "origin": "approved"
+      },
+      "day": {
+        "english": "day",
+        "sources": [
+          "p21 published locale contract: limits"
+        ],
+        "origin": "approved"
+      },
+      "days": {
+        "english": "days",
+        "sources": [
+          "p21 published locale contract: limits"
+        ],
+        "origin": "approved"
+      },
+      "Resets on": {
+        "english": "Resets on",
+        "sources": [
+          "p21 published locale contract: limits"
+        ],
+        "origin": "approved"
+      },
+      "Lecture": {
+        "english": "Lecture",
+        "sources": [
+          "p21 published locale contract: badges"
+        ],
+        "origin": "approved"
+      },
+      "Meeting": {
+        "english": "Meeting",
+        "sources": [
+          "p21 published locale contract: badges"
+        ],
+        "origin": "approved"
+      },
+      "Sales Call": {
+        "english": "Sales Call",
+        "sources": [
+          "p21 published locale contract: badges"
+        ],
+        "origin": "approved"
+      },
+      "Support": {
+        "english": "Support",
+        "sources": [
+          "p21 published locale contract: badges"
+        ],
+        "origin": "approved"
+      },
+      "Interview": {
+        "english": "Interview",
+        "sources": [
+          "p21 published locale contract: badges"
+        ],
+        "origin": "approved"
+      },
+      "Failed to copy": {
+        "english": "Failed to copy",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "TRANSCRIPT_QUESTIONS_LIMIT_EXCEEDED": {
+        "english": "This question exceeds the question limit for this transcript ({{ maxQuestionsPerTranscript }} questions).",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "USER_QUESTIONS_LIMIT_EXCEEDED": {
+        "english": "This question exceeds the question limit for this user ({{ maxQuestionsPerUser }} questions).",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "TRANSCRIPT_TOKENS_LIMIT_EXCEEDED": {
+        "english": "This question exceeds the token limit for this transcript ({{ maxTokensPerTranscript }} tokens).",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      },
+      "USER_TOKENS_LIMIT_EXCEEDED": {
+        "english": "This question exceeds the token limit for this user ({{ maxTokensPerUser }} tokens).",
+        "sources": [
+          "p21 published locale contract: core"
+        ],
+        "origin": "approved"
+      }
+    }
+  },
+  "notes": [
+    "P5 app source set; P6-only SEO metadata and thrown BillingInfo/filter view paths excluded.",
+    "Dynamic key cases are recorded for explicit consumer integration; catalog data is a conservative source-backed union, not permission to mount an unmounted control."
+  ],
+  "sourceHashes": {
+    "public/locales/en/common.json": "101c28618f7d6c96481cd704179d978ea060ec88dc10109918265a59c9cf04b3",
+    "public/locales/en/app.json": "3ea89d46e84d441a949015b4bad333126821b05300aa0a568035a4bf80a4bcc0",
+    "public/locales/en/ai.json": "8feef4d7e9524baeec7615102745fe75dff63a431c5dcb933585b1fa4e794ba1",
+    "public/locales/en/dashboard.json": "04f8bc92611dede392b0487c3891a6a6dca762334a7c7d28d7d14ef123a88c64",
+    "public/locales/tr/common.json": "6c611b41a11ec8ff121fabb6cf4923996dc07ed07bddad9e9fa699685a5caffa",
+    "public/locales/tr/app.json": "87e13b2971320cbf981d0904ce3381662a170f6e2c263d9a02952d8b7a4b3bb4",
+    "public/locales/tr/ai.json": "03ea8643607f3ecd26944cfd54cf90874aa37d93540c7f2f903c659e42243fd8",
+    "public/locales/tr/dashboard.json": "d2a63940dba9204a813584f30d13cdf19888ab9b593ae455fbe0fba41759b8da",
+    "public/locales/pt/common.json": "9a6ffb20b774dc160ef9ce3f35b564ac15a006dccf94731e834535cacc22e8d1",
+    "public/locales/pt/app.json": "5be7bbf749ee9037df178d93a43506cec48243dd799eee11079d5f2f458636ba",
+    "public/locales/pt/ai.json": "a3e3aa726d6088fa3c31c564ba8b6badf994e6955092fd30d81910fff354b0c5",
+    "public/locales/pt/dashboard.json": "e3d06075e951a82b31d341ed98fa605da5ad5cbeaaeea4f496281f25bb8a2b1c",
+    "public/locales/es/common.json": "743cf110af07e455521fdc30a83f36ab865c217373b9b8b976cb8231e9f2c950",
+    "public/locales/es/app.json": "6bf636894a98b803ee528cd121994c56293e05680269d74b0eaa86cabec3f7e5",
+    "public/locales/es/ai.json": "0e6f2f543c523fa5471316e0e9ec6fdcd11b02d6408896dec88ecd7914abdacf",
+    "public/locales/es/dashboard.json": "af415b8e220d4d68f2cd5389158a502836b57200c596fc3f5a812b6466dd4521",
+    "public/locales/de/common.json": "f7ff6bbfea58ca00e3e7ba5e760d80eac29e915f85a21186d8654cc0d3d8575b",
+    "public/locales/de/app.json": "7ac175fd7359307f0310a6cf6f074d580cb5a4b65baad50253d7ffc4a4d2682d",
+    "public/locales/de/ai.json": "06fae84009e1c789e4dba86f5e5701a237dff783e1a3831b760efdf36a4155ac",
+    "public/locales/de/dashboard.json": "820cfffc1c862270c1179ce4e4357ad916f5b6713775a550fccbbe8b1427738f",
+    "public/locales/id/common.json": "7a10330dde0325aa38b700d576725f1ac078e38b14684730585df14e198cba5a",
+    "public/locales/id/app.json": "ba86d484262a958a54f650c786fd9eb65c45dcfda40d7abbc77f73b44eaec73e",
+    "public/locales/id/ai.json": "e4732b4293fe27ed075f66a7865ddc47f403e491dfeeaf2581241457e35af299",
+    "public/locales/id/dashboard.json": "17706c4b14128d0d2fe9ec10497d29ce7f50161b5c4bea29adcd45c4f3d2a8b9",
+    "public/locales/it/common.json": "111d9191193df885129eac4852db9616e98d389bb046da149cfe21b86643016e",
+    "public/locales/it/app.json": "d2d23c8102e762b9c6d84506edbb51f6a3fb665a0eccfc641368284a99e63705",
+    "public/locales/it/ai.json": "ee29f7f138dedc9c8c1936ebcc37deaa382b073c5ac0f01dfed1003535119715",
+    "public/locales/it/dashboard.json": "6f1fe0fb53cb10e7b4796931f0fc0a2696e4e6a799d08a20848756623cfd3afa",
+    "public/locales/fr/common.json": "45b41e108b629a71ba228dc6bee63733910c1bbebb36757445015b21fdbeb581",
+    "public/locales/fr/app.json": "fd1a7b12e064aa668f3cdde0c2c38528c4763d0a617958d289fb3ab6e8a53f0d",
+    "public/locales/fr/ai.json": "f15f53f2776c63da3f26dda79aa6aa29fa7518894ea58070e942eb49fc158df2",
+    "public/locales/fr/dashboard.json": "d832b7940593da42a44743f58f3daa45ae77c05daa8b8d8a16dd6397a403a38e",
+    "public/locales/el/common.json": "cdf88e9e477bcee1a26abb845918e12d4f985a26d187843344d0afef8cea5e4c",
+    "public/locales/el/app.json": "56221928332cf0fb0bfc1af09eb15f21d87e15216a6573b3873453d75a4ecc1a",
+    "public/locales/el/ai.json": "4ec50ecbcd5fe00b01dc2bd35d416e934b477a7d8ad1f626c37aa75c2ece1d83",
+    "public/locales/el/dashboard.json": "fbbc89c63eb779f28035e97697b5058db92d79db9f824c913e827fdc81b379c0",
+    "public/locales/ru/common.json": "5ccda13f8c3f075e151a21937f90eea711d8a6d21359e962c2ec441c5183593a",
+    "public/locales/ru/app.json": "46bb8807613c9cfa8301157baf7735c943256aba48e8a51e16343c00c8265b83",
+    "public/locales/ru/ai.json": "3b3d4774fae410bd3023a60bcabd1fe14a0bb1ff53b04b2c2142bf6a30789b7c",
+    "public/locales/ru/dashboard.json": "72249ef1350a57c6ea37f5ac5541baa2c336de9b8b8766d4690b016889a34839",
+    "public/locales/da/common.json": "b28f3ee8ddfaa10f8bfa9c79e6733e88fc51e151f9f7d6f950f35cdd6b768da8",
+    "public/locales/da/app.json": "00687ea4a733d63ecc2f2731c8e2012d1d16420c8a1e60dbda298a043be21c60",
+    "public/locales/da/ai.json": "aa3929d73b5b2ae5dc10b3fbab8638701c722afd897424ba918cdce6f03430f8",
+    "public/locales/da/dashboard.json": "0a60ec46dac7d18bcf9ac2500012a511d2746c4a59e8666c75c424940688aa18",
+    "public/locales/sv/common.json": "af7d69f7e0ddc54679849eb3e43b848883950ccca882e2c58de060ff81571698",
+    "public/locales/sv/app.json": "7ec9d03534046af549b1b85ef74b6d1cb5cb08752bc24c937738fd329811eb36",
+    "public/locales/sv/ai.json": "70a147ce3ee56cf81387974528a5a992a0e49b1dc880b83488fa600f61043136",
+    "public/locales/sv/dashboard.json": "e1050fcbdcbcb353a948c805bc32384355a46cd19cd4ae9e59d2e4ed491406d8",
+    "public/locales/no/common.json": "ea43ab5819df75ce34f8b32a7acf5071c26c09c07e71918e1fdface9a3f2ff92",
+    "public/locales/no/app.json": "d779389f99e320defea0758952e8eab65300c47794492cec6c0641d1b991320a",
+    "public/locales/no/ai.json": "3cda58525d23b367eabb64c64618878946451c0e2b5db002e28583beaee191ad",
+    "public/locales/no/dashboard.json": "f2e07a01a83139c2095356698a7a9ea93dae8e55a40fd8d53d8c7857e5e841e2",
+    "public/locales/fi/common.json": "a04aec3e25469c9ea51f3082edd9750df078477761f7c7f70e5cd2ac13d29d6e",
+    "public/locales/fi/app.json": "31b9ce2b7240435ba126b2c9d2bbc751a26dfbccbd17ba489393f2e3590e1b19",
+    "public/locales/fi/ai.json": "66fabb7f463ee31de48a98d562bb3e74671bb621841fc8f773ee2ee9c7db7b9d",
+    "public/locales/fi/dashboard.json": "b7325a713803d7b0ecc8fb1fbdc6f72133c22e2c112b152510327122275d5d52",
+    "public/locales/kk/common.json": "a1f04cdea47882bf991dbc7805d24d53d22327236e7f59a70f4d49376329976b",
+    "public/locales/kk/app.json": "94e9f6738ce876e880f9a9b56af6101974d774da23901fa4dd16b14b67b935f6",
+    "public/locales/kk/ai.json": "2d1ddceb8ce38b6fd3d287e64088dcd1ba07dae6d453140dc7c6e5dde9b33c0a",
+    "public/locales/kk/dashboard.json": "20813a7e06e2890aa97871abe71bffe82240098e189163e0b80ff75721dc0e4f",
+    "public/locales/az/common.json": "3a6fd002b040178f23612edd509a84d18c2ec84e0cb87b156fa37174a1a696d7",
+    "public/locales/az/app.json": "03375979b0137bab86ecb2f6631ed0540c1fe5604f4d2d615420aa13eae8d260",
+    "public/locales/az/ai.json": "b381f523dc2631f87b151f74cac0a576a652f5a46b47fceeda9b2d3438fb7f94",
+    "public/locales/az/dashboard.json": "94e7f25477dba7b1e8a568e410e95516ce16683c9b4e9185c299c7fd42b01d80",
+    "src/pages/signin.tsx": "384ea516f71b4bda8641f1f192492c570667e005e6c7bb68631cb260b198b628",
+    "src/pages/home/[[...jobId]].tsx": "2ca5b65135d1883b5f9c088eafe2f192da6226a13b10a22b5bca8c1c0af3c049",
+    "src/pages/home/all-transcripts/all-transcripts.tsx": "6294d1a906728226a041077419a13e3763d7604f5a0aaab56cf57fefd0ab1a36",
+    "src/pages/home/all-transcripts/index.tsx": "5030a8cebfe53b71b7249f1237d73d676d89068d34513b5d5587e4cbd2b4df04",
+    "src/pages/new-signin.tsx": "69d7f278f436f15ea2040dc4045e4c68527e40fe2756deffb5efb02dfe9509a9",
+    "src/pages/new-password.tsx": "c03806b4cf8adcc6e4723be0c2715b61db672c6ae74e4617aebc44c7a67ec531",
+    "src/pages/checkout/confirm.tsx": "b482c7a0156d0de61ea8e01f61eabb2686380a0d2f80b87c211914a1b30edb91",
+    "src/pages/checkout/index.tsx": "4093c5c104ef9a3b10a9dd8bfd4c17a7a38324501626a29ffd564c4f7bde2966",
+    "src/pages/billing/index.tsx": "25558654014db07d55e7037f20090cb46c3f420471ccc711f51efc40add413de",
+    "src/pages/dashboard/api-keys.tsx": "1cbfe9ac3d775ca93af9201a685bc6ae7744ec908fdd70819089c0a73305917e",
+    "src/features/aiAnalysis/views/shared/ChatMessage.tsx": "e7ffca5ad06d37fb7f818e6ba3c632b2820d3d1f670344f6974884a67b845dde",
+    "src/features/aiAnalysis/views/shared/TypingIndicator.tsx": "11a9b1fd0438051350525eb6c21ffbbe22842213545bb62d771d42e0abbb9951",
+    "src/features/aiAnalysis/views/shared/UserAvatar.tsx": "82582ee30904af90b10ed0f45b7cdeb39be49521d0bc07c00a51abcdb48cb696",
+    "src/features/aiAnalysis/views/mobile/MobileChatInput.tsx": "aebba312dd0de71cbf7fb905ada92f12aeea8e8c3f32bceb38775f58b9b755d0",
+    "src/features/aiAnalysis/views/mobile/MobileChatView.tsx": "6156f91b64264e228e6a14a9a518ec9034fdf3b48f37ec1125df5d1f02040e39",
+    "src/features/aiAnalysis/views/mobile/MobileHighlightsView.tsx": "be6d4762b1a6f49c3e1b24fd2edbf222a57abfd99cf6916343266db9ce1337bb",
+    "src/features/aiAnalysis/views/mobile/MobileSummaryView.tsx": "4995dcb4bea888dee333a6758129d949e6dcbd4864f4967246dc541f08ce5c0e",
+    "src/features/aiAnalysis/views/shared/AIAvatar.tsx": "3269f831e6e640c59d895c96a2daa0dd53326f9be4061587c125a620beaf3d98",
+    "src/features/aiAnalysis/views/desktop/DesktopChatView.tsx": "46ea9163e9f6cfd63111f50b63697f10106efcd44b9a563288e6a2673e3614c5",
+    "src/features/aiAnalysis/views/desktop/DesktopHighlightsView.tsx": "bd3e43d4424004c88e10d9f1338645047b73e7163585d327ba84b894b7624a0b",
+    "src/features/aiAnalysis/views/desktop/DesktopSummaryView.tsx": "da87be7e9ce11afe8ae2cd429641931d6cf32bfa2300c399e11621579968231c",
+    "src/features/aiAnalysis/views/AnalysisEmptyState.tsx": "5dbd4b14203afc64b18cab9284e3f9982807fc992e644c01f33dd02408474167",
+    "src/features/aiAnalysis/views/AnalysisErrorBoundary.tsx": "849ed11dac5fe4cb4dc240762f155c165c501a2e8ff4aa4ebc5762669244a799",
+    "src/features/aiAnalysis/views/AnalysisHighlights.tsx": "a3ef433dc422986c6056ab408f8ee85f8b445d5719d07413bd15fc1c8963585c",
+    "src/features/aiAnalysis/views/AnalysisProgress.tsx": "84a37c2042b6938ad3e5be3a5498400ee6757fa647b82a0c416eec369311952e",
+    "src/features/aiAnalysis/views/AnalysisSummary.tsx": "77df92493c028e7d4ea9307e76eefe8b6738b7999e050cd00f574b5684123578",
+    "src/features/aiAnalysis/views/AnalysisView.tsx": "84fe980780a2e7342937afdabe3bfd25467bcbdd1306de453f575176d0280dbe",
+    "src/features/aiAnalysis/views/AnalysisViewPresentation.tsx": "08502e9c8d012479c6c63456daa31a3185159ff8b441dc3dc68f51490169105f",
+    "src/features/aiAnalysis/views/ChatView.tsx": "6d42406070b595df98018ddd32d95a1ea9ade4d8918e2cad996dd28921a3579f",
+    "src/features/aiAnalysis/views/DesktopAiContentPanels.tsx": "bfc1e82383039c45aa4acd2e41f107c72bb270e33e3f9bcca7e10852dc41b628",
+    "src/features/aiAnalysis/views/HighlightsView.tsx": "e86e460af71ff8041d68889bec20b66454549f2c4d9d1960cd20c65722185a49",
+    "src/features/aiAnalysis/views/SummaryView.tsx": "a6b683de732794ddccbd46e6df5bf751c453f5659b66aa4bcbf800310208dc02",
+    "src/features/aiAnalysis/views/AnalysisActions.tsx": "e5fb42a4e3eb7165132477020df9cc142dcacb7008ffbe92def59843f5e7beb7",
+    "src/features/aiAnalysis/containers/AnalysisContainer.tsx": "508646f44232bd711f73d5ac3c5b110e42408d249a2bec2af38d3316bc0a84e0",
+    "src/features/aiAnalysis/containers/ChatContainer.tsx": "0ecc75abab13a54f8e98207a25fec2c1fb6286de921dd01e10c8abec112b1941",
+    "src/features/aiAnalysis/viewmodels/types.ts": "92832807f86ee0ab2e62a7d1a75dce1bbaacd050c34bf04528d0178dca889428",
+    "src/features/aiAnalysis/viewmodels/useAIFeatures.ts": "5e62c5dc72b0e51b9274d79a076b8705ce1e89c581c54484100c66444e3ee1bf",
+    "src/features/aiAnalysis/viewmodels/useAnalysisSummaryViewModel.ts": "6384c77d52f27fca5af5c206a36d7c4c8209e6b08f0d1df297c6a5437bfb4517",
+    "src/features/aiAnalysis/viewmodels/useAnalysisViewModel.ts": "9a612e12c83869797f1ebb4fb366220f1d67feed1a7c611a3b7bfa3140deafda",
+    "src/features/aiAnalysis/viewmodels/useChatPanelState.ts": "5fbe58476828f49dfdd2c4bb0c1a0ccd159905acf17476c137d05d564203a9c1",
+    "src/features/aiAnalysis/viewmodels/useChatViewModel.ts": "6bb78bfad152ee39b4f0120622ebac41799a8b161652eb4d42c34656cfc10fa1",
+    "src/features/aiAnalysis/viewmodels/index.ts": "4bb50471a1875f66a8ce80feb6994d6b3f8a116e68836d4d4f0b01c385fea0d2",
+    "src/features/ai-consent/views/AIConsentView.tsx": "1f49fb7efcc523a5d144f0036dec7d948d3aa290b3d3ebe80bdabd150a3ce2ac",
+    "src/features/ai-consent/containers/ConsentContainer.tsx": "2c9984d5185186ee95acc1cf85c09c3fda841498cc8edd9b223d0505ea4bbe47",
+    "src/features/settings/views/tabs/AISettingsView.tsx": "2c510954cf052542e25029c13aa9b355d512467ead030e108d33fdd37b31de1a",
+    "src/features/settings/views/tabs/ProfileView.tsx": "7002774c348f3cddc5b7954ec9e5aa684e99a457ec926fcab34cfe35d274e16a",
+    "src/features/settings/views/SettingsView.tsx": "5991428178e4ee25d1b457e80574fb782a8de0a538d71f7d4198d0b8876fcc2b",
+    "src/features/settings/containers/SettingsContainer.tsx": "5056f31d365aef847654057d46d6da9d2e3d59170a7752dd7587144df0af9ba4",
+    "src/features/subscription/views/SubscriptionView.tsx": "48a77459aab5e134ef3e8f99be05be80df3b3a5c832ad2872de42d0540d200a0",
+    "src/features/subscription/containers/SubscriptionContainer.tsx": "d62e9a6d55c9470afb7f98c4f2eb2c8c9a8adc295eafba208029bb559e6fb7ba",
+    "src/features/data-management/views/ManageDataView.tsx": "a68d4699f67a22a4e445e6aed1368e9a0bae31d0115e3c0c1af2a7b3a6424f31",
+    "src/features/data-management/containers/DataManagementContainer.tsx": "e2297b9f3c2a872c3f5790cbb76566efbaf66a62f2da773c1bca4ad2125a8f96",
+    "src/features/billing/ui/mobile/MobileSubscriptionSection.tsx": "a243dd6e236fbafb30152ca01d237dd4553d5b9b5476c2d63cbd41e14d82d36d",
+    "src/features/billing/ui/mobile/DrawerBalanceIndicator.tsx": "79198a5079d89ca1bd02df30b2e6266853ad9c86fde273372a4fd4c1b3a4ef29",
+    "src/features/billing/ui/mobile/MobileBillingBottomSheet.tsx": "2e6278c910c7254d19f93ad7d48fe9daa861404a3912599c049a59c32a635ec6",
+    "src/features/billing/ui/mobile/MobilePayAsYouGoCard.tsx": "5b01fed9f328aa6cb3940a5925573ebe4428f45ac6b9d59165fd7f75ae16c1b2",
+    "src/features/billing/ui/mobile/MobilePaymentSummary.tsx": "0def2b47cc42d70c583f41629e0ac83ad42e30d5893c00746b1e63d115fa9cc3",
+    "src/features/billing/ui/PackageCard.tsx": "dc0b56453a78ed79345c433675b5dfb3003e3618695c1b48911366f62a5318cf",
+    "src/features/billing/ui/PayAsYouGoCard.tsx": "8b8213e9f746485f860ad2518aadad6f1b8d668db4528172472ff56f8000769b",
+    "src/features/billing/ui/PaymentSummary.tsx": "0a00e251ae35bea1cfd5db293b413821cb41e3f492d7f3046222db7ec5b80ed6",
+    "src/features/billing/ui/SubscriptionSection.tsx": "44285b2467a0812cb5705d7601e7574d4332e45e7e88e28a2f7f3c37865dea61",
+    "src/features/billing/ui/BillingModalView.tsx": "c572f19fc9c1fe870629e0e7460ee8769e583f4849a6d7cd4403070c2c55994e",
+    "src/features/billing/containers/BillingModalContainer.tsx": "fde3afcb4c147acf54b55c7fe962db839f88fe4f40ca7717e211fa7365d765cf",
+    "src/features/mobile-navigation/wrappers/SettingsModalWrapper.tsx": "56a30035ade336e0cfc6f2f60507f5315e78672d7f6668507eb28f6581020e01",
+    "src/features/mobile-navigation/wrappers/SupportModalWrapper.tsx": "8013e2cee17f30be15811a48cf6c228fb52611ac5d1741c7611ae3b2a7230062",
+    "src/features/mobile-navigation/wrappers/BillingModalWrapper.tsx": "c53ef86f0c9a82f44c76e8cdd476e33923d6005aaf0f8d0cd0a4a063d4730edc",
+    "src/features/sidebar/views/mobile/MobileBottomSheetView.tsx": "23fc7358e85a0187cc5cedf6193489218c2219e54882bb56f5ecb6c365772eca",
+    "src/features/sidebar/views/mobile/MobileDrawerView.tsx": "a6d95e91dd9fed99c92545de9783d230e9c7e664d75396c94948d09a5ec969c9",
+    "src/features/sidebar/views/Sidebar.tsx": "016378ab29fc13d776c5441f4e152d0b746633e7fbe0db1b8d1531a05b0aa141",
+    "src/features/sidebar/views/SidebarActions.tsx": "7c1ea93a2c81fc174b08445f763f7baf379a8a8c8c3c332d79237456e6c2294a",
+    "src/features/sidebar/views/SidebarHeader.tsx": "bdc526acca0b2d2889c44f7443f93a9c9b474aeea82dfe38918933d9c2aceefc",
+    "src/features/sidebar/views/SidebarJobList.tsx": "0d9efec2b7567c19d28b7da3bcaa4dced11b0a2dde476f07ec9bb2f40947f12b",
+    "src/features/sidebar/views/DeleteConfirmationModal.tsx": "4bf4ad1388f0ff762229f709a913d928e8d7b8c067bbfbc9833b48dce25fef78",
+    "src/features/sidebar/containers/SidebarContainer.tsx": "d8639c5fc94af3d24ceec0020632ac490f2df412910a537b8d0949d2a2140d3e",
+    "src/features/job-management/containers/JobListContainer.tsx": "440c863f24d1a29a0ed06dc7704b2768630421e94984f9816869b77d5eedab4f",
+    "src/features/job-management/views/JobListTable.tsx": "92316ccc175d4da29c5d1b3ffa58075b271fb1ba9a95b4a282a1b70f5c8546ec",
+    "src/features/job-management/views/mobile/MobileJobDetailsView.tsx": "8072c5e145fea7f2444a8494a8e57224e90a24fbfc18dbb621635494140a70f5",
+    "src/features/job-management/views/mobile/MobileJobListView.tsx": "a77c4340853d9c38fb2bf34e347f3adb8516c53196a5444caf2e82e259611c88",
+    "src/features/job-management/views/mobile/MobileTabBar.tsx": "20328bf7c15a5035f88b46e2accb8c27958ce222732b95f49584607ca2a340a8",
+    "src/features/job-management/views/mobile/PullToRefresh.tsx": "6ded6fd49ed78281e590fad967a294b71b47c7e5d7dd35e4680077ee905802a6",
+    "src/features/job-management/views/mobile/SwipeableJobRow.tsx": "a53498d5bf2aba3e8b370c0aac5c8ea02b9cb62f32bf4d5505d3b67fc17bbb70",
+    "src/features/job-management/views/mobile/FloatingActionButton.tsx": "f9849c73ceed360d29a2862a8ef1b35be890f3e2da38698b202afb88467bf8cd",
+    "src/features/job-management/views/mobile/MobileActionSheet.tsx": "d033661f3be6946619de6ce3b1e38513c6ca2245cae08bd29c0513d10b01c333",
+    "src/features/job-management/views/mobile/MobileJobCard.tsx": "e783f8b6b5c167c020ffa706524e37a92bf7b7e20094dafaa56e7427ad674fcb",
+    "src/features/job-management/views/mobile/MobileJobDetailsContainer.tsx": "d6b9257ab704399ea86295d99e4a92ccbeb7685fab23a2f6ae85d583f81e64f7",
+    "src/features/transcriptLines/views/LanguageTabs.tsx": "e85d8a15a6b94d0ee1c6d23c5ade404ac87c3db9b012cebdb83a9164b70dbe0f",
+    "src/features/transcriptLines/views/TranscriptLineView.tsx": "94672168206e9d3ab48d611ddc5dec371b71d1eaf3d73e46e438a80de7849ac1",
+    "src/features/transcriptLines/views/TranscriptLinesView.tsx": "010baeaff36699ffe1bbd1fb540d4587770c2c50be2517a9cc7d08b1f675355f",
+    "src/features/transcriptLines/views/mobile/MobileTranscriptView.tsx": "f9fe55d9a5938c4d792f83c042085781cc3e5c4c5a436776a4f204879f057ec9",
+    "src/features/transcriptLines/containers/TranscriptLinesContainer.tsx": "66949dff61237eb76050c12783b29d8daa63b5d0b48be70a226c1d022d4b22b1",
+    "src/features/transcriptLines/components/LoadingState.tsx": "94350afd57963b7b00632c551defbb71f47ee252ad36907583f1a0e7f88644cc",
+    "src/features/transcriptLines/components/FreemiumLimitsBanner.tsx": "3d45c35ef69c59cfef09ada11572c021cf3b4e610e089a375322b291259676f6",
+    "src/features/transcription/ui/TranscriptionLanguageSelector/TranscriptionLanguageSelector.tsx": "988d967aa05332d154212bfb5e612920c84f30d1f6adc207c51ac21d80ca3b5c",
+    "src/features/transcription/ui/mobile/components/ConfigurationSection.tsx": "c76cd7a090dd3e3e3aaa77702519210ceb2db5094707e0464335b1f891a2fe47",
+    "src/features/transcription/ui/LanguageDropdown/MobileLanguageSheet.tsx": "4b4810f55da4d739c0d22acb20609d120db31e7419c44b38b4348b18dd4d4d08",
+    "src/features/transcription/ui/LanguageDropdown/LanguageDropdown.tsx": "55b4c0185659407cb03bce4106b754276d2b40ea9769768e6bd27e77c1bd6727",
+    "src/features/transcription/ui/mode-content/TranslationModeContent/TranslationModeContent.tsx": "51935cd7ffba357f47b9e932cb9fcd8a85f8ac93a59e8e19a7b10162c3ef0227",
+    "src/features/transcription/ui/mode-content/TranscriptionModeContent/TranscriptionModeContent.tsx": "8918c0cfe41c96c349f74ab218f407f78703e71c5a4640c6822b8c99a27ee0cf",
+    "src/features/transcription/ui/mobile/components/FileListItem.tsx": "93841174d2bdf683a8d1c9deb51cff655d8c675d27e23b4118dc27be1d1434d6",
+    "src/features/transcription/ui/mobile/components/FileUploadButton.tsx": "a6a8d25da8cebb6fe8c4d75cd6d4312b13f846c65c558213ae06594ed552c9b8",
+    "src/features/transcription/ui/mobile/components/RecordAudioButton.tsx": "07cf31359db89b88c2c9806451ea1682c1eea6f32015c653b1d81dc10306d36d",
+    "src/features/transcription/ui/mobile/components/YouTubeButton.tsx": "b3c929188c2ada97ddccde73617535f9bc9d74770ebcd0c55c9f5c1fe2197337",
+    "src/features/transcription/ui/mobile/MobileNewTranscript.tsx": "91f79a840b8a8e33f9ea946b537ac092d74c3a10ad42d68a491528a61674c700",
+    "src/features/transcription/ui/components/YouTubeDialog/YouTubeDialog.tsx": "1a4b659712d40bd86bbc849a013c5bdd812f9887c2ff5ccd42295831753fee4c",
+    "src/features/transcription/ui/index.tsx": "5904913f43dd26455a5f4acc98ca319f57dc8b9d22698526bb7d3430139257f0",
+    "src/features/transcription/ui/components/TranscriptionTabs/TranscriptionTabs.tsx": "6ca42772e75ebc3354a4126a1810d2e5c8813c71387d3e74987baa5ded1001cd",
+    "src/features/transcription/ui/components/YouTubeBetaBanner/YouTubeBetaBanner.tsx": "bf03c6a699b1c99c97b272f022a1c6c484664a6b0e2638d56f7825c4c1e5bd31",
+    "src/features/transcription/ui/components/PlusButtonMenu/PlusButtonMenu.tsx": "00fac65845daa40c7e4d8739badd43b7578b62a3c5f48e01c3c0153ef2a33f2f",
+    "src/features/transcription/ui/components/FileListItem/FileListItem.tsx": "eb9982c573b3411c2a725252a67dc12b22cd0336c748e55abc7d1cccc7db9e6b",
+    "src/features/transcription/ui/components/ModeTabs/ModeTabs.tsx": "3c0318543841468b0aa5d1d6c883d6c2a892ab04fbde22ce1e88f82f0bfd6fb2",
+    "src/features/transcription/ui/components/BlankState/BlankState.tsx": "986e934ac3f7a2d3c1065afea7a690add3bb62392b5c66802bbcd1e8f091718b",
+    "src/features/transcription/ui/common/DropZoneContainer.tsx": "314d3529801a211f9a1292a9987196c091a709d63bf7c97235e5862de69dcc42",
+    "src/features/transcription/ui/common/FileListPanel.tsx": "e0af16314326886fc1069002ea52764f661f394445db8b4b2160f3b6002fb4e6",
+    "src/features/transcription/ui/TranslationLanguageSelector/TranslationLanguageSelector.tsx": "f00957c39618bad806b1a0f105cfd5d78eae74677eff036422d9f1bccea3c1c0",
+    "src/features/transcription/ui/common/ContentPanelWrapper.tsx": "2aba4b16ed5d0d327b1848d106257d64ffaf9ef28da6efdbc6c2fe83db438bc4",
+    "src/features/transcription/ui/TranscriptionWorkspace/TranscriptionWorkspace.tsx": "25c8f8691728936186cfc092d908096c438c400f72e0105db877ac4e99dccc99",
+    "src/features/transcription/containers/TranscriptionContainer.tsx": "36314d7e5c8f64b499e5b04dc50be8938991a47b5648fcd17905b07b31881e4d",
+    "src/features/transcription/containers/MobileTranscriptionContainer.tsx": "4c316e307b32e34ce3d14cf697f36ee88c144e79be1fe8607b6761e4259f2280",
+    "src/features/transcription/viewmodels/useTranscriptionViewModel.ts": "e02336f99633af1346725ea5c70b0c2029d68a7f6b9c4b5244863b36f1b5f347",
+    "src/features/transcription/viewmodels/index.ts": "1dae87f48b84cb3d9552aff9f40c30081ef74ac94706e60359016e66114b0f73",
+    "src/infrastructure/navigation/components/MobileNavigationContainer.tsx": "014e7588a7ca795407ef41ea731f4c764c3a52ff5bc4e60659848c4f938f1b4d",
+    "src/components/AIAnalysis/specialized/support/FollowUpActions.tsx": "8dfa2e3eab005fb135da8c0f066bdfcd41e9ad22575bedd091165fd1321b2b46",
+    "src/components/AIAnalysis/specialized/support/IssueResolution.tsx": "1e679226259db8f45b17932c8586f60602501bf075b1a77c9f5c228ccaf4f3b5",
+    "src/components/AIAnalysis/specialized/support/KBUpdates.tsx": "8ad7325861b57e19ba487a3614a8f334ab4d99951b45a225adc0ae5d18326d7b",
+    "src/components/AIAnalysis/specialized/support/SentimentAnalysis.tsx": "452e0e8fda867fbe0800a602cec8ff1572b6c1647088a76b4151ee3a8727a527",
+    "src/components/AIAnalysis/specialized/support/SupportInsights.tsx": "912e7b963d64066ef95f9810616f26bd6900ff79ecee018c37965f275211fbbd",
+    "src/components/AIAnalysis/specialized/support/index.tsx": "560f5e5a496af16c35779b619da1673a91c57f3dd2e0e57d22e6c3f5d6e3f4c2",
+    "src/components/AIAnalysis/specialized/sales/CallMetrics.tsx": "d32c0c24af52b3f5d9ea71f0070fc1a52767d40389992f5126e69a6d9d7628fb",
+    "src/components/AIAnalysis/specialized/sales/CoachingTips.tsx": "4173f2d01b5bdf07a0d8d32d6bc656a0f8f3c80557e59925f0b3686f74626d92",
+    "src/components/AIAnalysis/specialized/sales/CustomerInsights.tsx": "a5e671d29458ae755e6950f4cd3e27b6e5b49b03f39976787752afb4f4203bc2",
+    "src/components/AIAnalysis/specialized/sales/SalesNextSteps.tsx": "8a584f5c26e01701dab6021610e772d68826e37e6143665d25ee65dedc19c5a6",
+    "src/components/AIAnalysis/specialized/sales/index.tsx": "191381fea77fa50bfbbcd64c5000891da10c60ca50edad73d52a3b8cdabfd410",
+    "src/components/AIAnalysis/specialized/meeting/ActionItemsList.tsx": "f91f47fecbb4ee820caf4cb9dda7eea2d856e88d19833ae0e5331bf2831a7fb2",
+    "src/components/AIAnalysis/specialized/meeting/DecisionsList.tsx": "3e03d8880569d8d97fd59e2e5f483d2df85a3215ebf43f6fc51d1982fad2c95c",
+    "src/components/AIAnalysis/specialized/meeting/DiscussionPointsList.tsx": "195dc016c6192e5b11a9b100d9d25e5a7de60c2f247bb0cd5eb59dac891ca9ec",
+    "src/components/AIAnalysis/specialized/meeting/NextStepsList.tsx": "254652763028d649aa07dcb4b1eae720cbedd0b609ea634b20a2f3e1501c35ce",
+    "src/components/AIAnalysis/specialized/meeting/index.tsx": "a9bd4411dab358a2c57d0166eebeeccfd4df92a4dade63ca119b11ca6fdb1e95",
+    "src/components/AIAnalysis/specialized/lecture/ConceptsList.tsx": "63e67c9ccb58a74e84b5798f16f5f2c2851b323f43b164022356a6579ab862e0",
+    "src/components/AIAnalysis/specialized/lecture/ReviewQuestions.tsx": "14d02e6ff9174925a4ea39932a2683e6205608e866e590fd060ad6243c430c52",
+    "src/components/AIAnalysis/specialized/lecture/StudyGuide.tsx": "e0f9b94d10ad0f539a5b12ce0ce850326224ead64f74f67d116029fc2d026238",
+    "src/components/AIAnalysis/specialized/lecture/TopicsList.tsx": "14653f35658e082696f915e18c0a2752f1f1412b2511e1b47f77af18d4f2898d",
+    "src/components/AIAnalysis/specialized/lecture/index.tsx": "dd3577003d7cc6839860f87259796702ee6c17030f721eb15f250338cfe08d86",
+    "src/components/AIAnalysis/specialized/interview/index.tsx": "88752eb6dc4e9c6259dbc19d2414cf1ebbce0d00a70bc7dd7e410dd1e5dc9289",
+    "src/components/AIAnalysis/specialized/interview/CandidateAssessment.tsx": "acc05e78027a4f6134a1377b983ee79954b7a26902a4716901fb4e3ded1f50a8",
+    "src/components/AIAnalysis/specialized/interview/InterviewNextSteps.tsx": "8b97a06bbf01d1fb8ebd866b7792d7bb93fd1d797ab10d3f8f2b5b1644f6a6fc",
+    "src/components/AIAnalysis/specialized/interview/NotableResponses.tsx": "f94b3c6106d92accae3beac990a056c41f4809325e1ad39fc18caa8e8bdeb7d6",
+    "src/components/AIAnalysis/specialized/interview/SkillsAssessment.tsx": "22e1f3d9b6f43de26d2a41c06c4a3bf8c8b1fd3bd36a057de6061d47dd788238",
+    "src/components/AIAnalysis/specialized/InterviewAnalysis.tsx": "32fc1769c418a7cdd08edb839094d729853de82c37f48ac15df06e299e3bca83",
+    "src/components/AIAnalysis/specialized/LectureAnalysis.tsx": "c4271cead0ede0da28fc7e3110d611b6cc99e0cbf278c57754409d2d565adfaa",
+    "src/components/AIAnalysis/specialized/MeetingAnalysis.tsx": "6aefe4e7f2a7284029049f45123fe16dcdc4016432fead2d2dfe78eefb100d9c",
+    "src/components/AIAnalysis/specialized/SalesAnalysis.tsx": "2a3b22b0b77279e12df1ab0d695c6a0673fa2025d622176954d5c3eaa095ab42",
+    "src/components/AIAnalysis/specialized/SupportAnalysis.tsx": "793b7eef159a8bd2d69568e2318824d60f772569c495110b80c1c22206b5ec9a",
+    "src/components/AIAnalysis/specialized/GenericAnalysis.tsx": "af61c7ec481df98fc309f295c8b5cc01959f38685bd8b1e0a3f6d57128053521",
+    "src/components/AIAnalysis/export/ExportDropdown.tsx": "2ec88f9d274228d3ed51feb91f7015e7870c71e69dffa85bdbf139ef1b8787b2",
+    "src/components/AIAnalysis/AnalysisContainer.tsx": "3850d39b0743fa96ffc1f1ec623161f413f05464a60b2366d836333aa4eee6ef",
+    "src/components/AIAnalysis/AnalysisEmptyState.tsx": "5dbd4b14203afc64b18cab9284e3f9982807fc992e644c01f33dd02408474167",
+    "src/components/AIAnalysis/AnalysisErrorBoundary.tsx": "849ed11dac5fe4cb4dc240762f155c165c501a2e8ff4aa4ebc5762669244a799",
+    "src/components/AIAnalysis/AnalysisHighlights.tsx": "94929c23c21d545b48ca6511b322579019123da7cd07092d0756f7f9b88bc3d7",
+    "src/components/AIAnalysis/AnalysisProgress.tsx": "e5f08574d65445872d7814834ad682bf4f2bcf93d13879c604976a3240f0074e",
+    "src/components/AIAnalysis/AnalysisSkeleton.tsx": "9ddb4cdcadc3e3658bdc8eb81f95774ca3c26aa77536b756dba5144c3f93c888",
+    "src/components/AIAnalysis/AnalysisSummary.tsx": "de1b1dda8dad1feeafdfffe229e14fa048a6e59666431186348f53ebf642a85d",
+    "src/components/AIAnalysis/AnalysisView.tsx": "c642f15c5b90a4a9b48f771c06cb8dc4cb90dee9cf1b129f8dfe39add37141e5",
+    "src/components/AIAnalysis/AnalysisViewPresentation.tsx": "2c3d23d69e6a0a18d6cf6efeb28c5c7d5a9a025435ec34b39a1e1e8e2ce60b1e",
+    "src/components/AIAnalysis/EmptyState.tsx": "78d7f32acd89ad4cde2fc771a14c543fc24b133c3fa42972ccc8288ee721a215",
+    "src/components/AIAnalysis/SectionHeader.tsx": "aec3bb88a30933edf4f0679e110b44894c6f8115325ae7629c5cb8525ecb5764",
+    "src/components/AIAnalysis/AnalysisActions.tsx": "c1d96b097c48ebe80f54a7688aaabfba9b637be7c4b87e477efdf222fa036baa",
+    "src/components/Transcript/Transcript.tsx": "6f842235107c0aa42803abae398cf6f09e9254785e2045e8bec829b81358d758",
+    "src/components/Transcript/index.tsx": "1e9c003dfca5a7981920412cd381f9a4f74d4855835b620c66d46cea94ca134e",
+    "src/components/SideBar/SideBar.tsx": "dc6d8d441e746afe09d3e868b4d125c064648dc0309653087768970630067817",
+    "src/components/SideBar/index.tsx": "9752b61deca913ca723cb72c542f67d0db3de16b35f3dc681d4ce66753c1755d",
+    "src/components/UserArea/BillingModal.tsx": "620c1fdac94c1ab1ce1444c7a015a09626337a8c56138c22036394c8211e25b9",
+    "src/components/UserArea/UserArea.tsx": "144b3312da2614adb4402ab2be9a84c6ede68a8c35652059ba869d69fb374274",
+    "src/components/UserArea/index.tsx": "98d1734b499231401381e5a1a198d218b29d284b4b2b142a8fc08e93d120e002",
+    "src/components/Balance/Balance.tsx": "7a0890b16fe3d81d016d4c64188b6f3d6a3c35dee38dfb2d559db027daef1c0a",
+    "src/components/Balance/index.tsx": "d916bd38c44aa58db5c9b8c414358658bc4ec90e89b9ce927344beba3f7f8da9",
+    "src/components/Settings/ProfileInfo/ProfileInfo.tsx": "e9ae3300aab0ad473f7bdb727ee015ce4ca0bfefc54f87c1b5f83e24142abe52",
+    "src/components/Settings/Settings.tsx": "26f79c2bc5ba3e3d31914d4d50b3a3aca915a1911cecef90c50caa4a2661fa60",
+    "src/components/Settings/SubscriptionInfo/SubscriptionInfo.tsx": "496311a9f6d90e77bd2e45a5c47feb0e2033ea3d46539cd342ff627ad6408121",
+    "src/components/Settings/AISettings/index.tsx": "c08eba1ccda10474cdfe1e0162d93e3e26759b63f8ed427b6a507ee38bfe89be",
+    "src/components/Settings/LanguageSwitcher/LanguageSwitcher.tsx": "dd7b275c09ceb80aaaab7788a7a41f4c48ee151d308b9339da5367beff72a04c",
+    "src/components/Settings/ManageData/ManageData.tsx": "5b8cabf43721f9af4d7ec9f76f42bf2b6ac24d089048a47a0ac899c3776b60e4",
+    "src/components/Settings/AISettings/AISettings.tsx": "fc4e36176a9484f5214da7944ce95d687a815b0615c510558b796ea4bd1daf16",
+    "src/components/Settings/LanguageSwitcher/index.tsx": "ccd4fd8ab780d882e39dd4c85206191e833f4e35e5746a04562259073dd799af",
+    "src/components/Settings/ManageData/index.tsx": "609211f9b90671d1752a8f51b2bc93fca0ac9632771b5dc8cc62159ebbbd5eda",
+    "src/components/Settings/ProfileInfo/index.tsx": "5235b103deba38ea7f6cfaf0895c5f526fe593aab58009b4205b9686ad3354da",
+    "src/components/Settings/SubscriptionInfo/index.tsx": "0543eef02ba073b1ce796a83d84ea488183218092d45cb0028e8533b9112828b",
+    "src/components/Settings/index.tsx": "68a2d59d26e4e2ece7335db3f8a4055ad0f7c0692c845c3c0a91b295c4988f58",
+    "src/components/ThemeToggle/ThemeToggle.tsx": "f1d1bf21aee8012e478160d8a45fffdff358ac1f91e69f7170c2dba469bcdfc6",
+    "src/components/CookieConsent/CookieConsent.tsx": "301f7ec75af218554f92ea71ab7afa9242b9dfa5197d1303e622393267dde2ce",
+    "src/components/CookieConsent/index.tsx": "2593817abf5a3668d3a4fe2dcd6611689878716c2ad7ef1512ae8ba445c75a5b",
+    "src/components/LandscapeBlocker/LandscapeBlocker.tsx": "75444b813c1cb5b4889dd7946fc74570b094d08258e29e1568aaf79beb51ee8c",
+    "src/components/SupportModal/SupportModal.tsx": "9b8aae2557d512ec9fb497494f7e81abe2caddf3259ccda910ff77af70beb0d2",
+    "src/components/SupportModal/index.tsx": "e98bf82b9698f33138b2173001a20d320116a8eaba434aee85d3ca3353226bd1",
+    "src/components/FeedbackModal/index.tsx": "1dc45692a770293d8a48f675ba793f20f10c47683fdf487e0fa2cc3ba60cbdb8",
+    "src/components/FeedbackModal/FeedbackModal.tsx": "8098f9951dd4ecfba0a50b40d66445c5d70c82b544400405ac709351a1eb1b23",
+    "src/components/NotEnoughBalanceAlert/NotEnoughBalanceAlert.tsx": "8ad202557ea07c9c910dab937e7d4d712f7d521c7ad737726a8d40ee5e183803",
+    "src/components/NotEnoughBalanceAlert/index.tsx": "82b4d1eb8016d84c168b50e2dda5870ce7c358c036de46240b29eecfba00f9fe",
+    "src/components/SpecialClientDiscountAlert/index.tsx": "c0e878ad1a582dcfbdd47e46c1a4ec56f95ad1505985b116061882ade2b1bdc2",
+    "src/components/SpecialClientDiscountAlert/SpecialClientDiscountAlert.tsx": "460a7135ad95a92aade3982946b6bc7a187fed3eb91cb06bdd6838661a9e7f29",
+    "src/domain/languages.ts": "62bf6daef80269f09525105665ce3565934a930ca2935ce4bb606a8155cc406b",
+    "src/utils/transcriptFileSaver.ts": "cc287eb14642e19d390911fa8443b1a6a85da81ad3da4031172d579d608239ae",
+    "src/components/TranscriptOptionsMenu/TranscriptOptionsMenu.tsx": "7f2c0a4b652cef38c0ff754b059614984b8de3f1e6d4a4a24ca4f7281ba65e17",
+    "src/components/SpeakerLabel/SpeakerLabel.tsx": "afed73d3961425fb7da5a3f1b9b3772d8f58d00e1bd1554542a56cf8bfdef6bf",
+    "src/components/EditTranscript/EditSpeaker.tsx": "9b6ba2c9ee48107224a0e0b0bc5b405eafc1bf3adfc8ee96157c3cc9a9ab85cf"
+  },
+  "untranslatedSourceKeys": [
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "18"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "20"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "21"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "YouTube URL"
+    },
+    {
+      "locale": "pt",
+      "ns": "auth",
+      "key": "sign_in.loading_button_label"
+    },
+    {
+      "locale": "pt",
+      "ns": "auth",
+      "key": "sign_up.loading_button_label"
+    },
+    {
+      "locale": "pt",
+      "ns": "auth",
+      "key": "verify_otp.loading_button_label"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "PAY AS YOU GO"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Show Time"
+    },
+    {
+      "locale": "it",
+      "ns": "app",
+      "key": "Show Speaker"
+    },
+    {
+      "locale": "el",
+      "ns": "auth",
+      "key": "forgotten_password.confirmation_text"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Pay As You Go"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Record Audio"
+    },
+    {
+      "locale": "da",
+      "ns": "ai",
+      "key": "AI Chat Assistant"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Pay As You Go"
+    },
+    {
+      "locale": "sv",
+      "ns": "ai",
+      "key": "AI Chat Assistant"
+    },
+    {
+      "locale": "no",
+      "ns": "auth",
+      "key": "sign_in.button_label"
+    },
+    {
+      "locale": "no",
+      "ns": "auth",
+      "key": "sign_up.button_label"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "YouTube URL"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "YouTube URL"
+    }
+  ]
+}

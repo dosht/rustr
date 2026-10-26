@@ -1,0 +1,11 @@
+import type { Meta, StoryObj } from "@storybook/svelte";
+import { fn } from "storybook/test";
+import { fixture } from "$lib/core/fixtures";
+import DesktopSidebar from "./DesktopSidebar.svelte";
+const meta = { title: "Features/History/DesktopViews/DesktopSidebar", component: DesktopSidebar, args: { collapsed: false, onnew: fn(), onall: fn(), onfeedback: fn(), ondelete: fn(), onconfirmdelete: fn(), oncanceldelete: fn(), onloadmore: fn(), onopen: fn() } } satisfies Meta<typeof DesktopSidebar>;
+export default meta;
+type Story = StoryObj<typeof meta>;
+export const Recent: Story = { args: { vm: fixture("JobListVm", "sample") } };
+export const Empty: Story = { args: { vm: fixture("JobListVm", "empty") } };
+export const Collapsed: Story = { args: { vm: fixture("JobListVm", "sample"), collapsed: true } };
+export const DeleteConfirmation: Story = { args: { vm: fixture("JobListVm", "confirm_delete") } };

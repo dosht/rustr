@@ -1,0 +1,21 @@
+[package]
+name = "transgate-jobs-postgres"
+description = "PostgreSQL adapter for transgate-core jobs, retention and erasure ports: schema `transgate_jobs`, own migration history, host transactions joined by billing, shared rate limits and advisory locks."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+billing-core = { path = "../../modules/billing/core" }
+billing-postgres = { path = "../../modules/billing/postgres" }
+media-ports = { path = "../../crates/media-ports" }
+media-postgres = { path = "../../crates/media-postgres" }
+serde.workspace = true
+serde_json.workspace = true
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "migrate", "macros", "json", "uuid"] }
+transgate-core = { path = "../core" }
+uuid = { version = "1", features = ["v4", "v5"] }
+
+[dev-dependencies]
+llm-core = { path = "../../crates/llm-core" }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }

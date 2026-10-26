@@ -1,0 +1,18 @@
+import type { Meta, StoryObj } from "@storybook/svelte";
+import { fn } from "storybook/test";
+import { fixture } from "$lib/core/fixtures";
+import DesktopTranscript from "./DesktopTranscript.svelte";
+const meta = { title: "Features/Transcript/DesktopViews/Transcript", component: DesktopTranscript, args: { activeIndex: -1, onIntent: fn(), onupgrade: fn(), onfeedback: fn(), onanalysisvisible: fn() }, parameters: { docs: { description: { component: "Pure Rust-fixture transcript surface. No media engine/provider is mounted; these stories are not live playback evidence." } } } } satisfies Meta<typeof DesktopTranscript>;
+export default meta;
+type Story = StoryObj<typeof meta>;
+export const Completed: Story = { args: { vm: fixture("TranscriptVm", "completed") } };
+export const Running: Story = { args: { vm: fixture("TranscriptVm", "running") } };
+export const Labeling: Story = { args: { vm: fixture("TranscriptVm", "speaker_labeling") } };
+export const Editing: Story = { args: { vm: fixture("TranscriptVm", "editing") } };
+export const Freemium: Story = { args: { vm: fixture("TranscriptVm", "freemium") } };
+export const Translation: Story = { args: { vm: fixture("TranscriptVm", "translation") } };
+export const YouTube: Story = { args: { vm: fixture("TranscriptVm", "youtube") } };
+export const NoAudio: Story = { args: { vm: fixture("TranscriptVm", "no_audio") } };
+export const ActiveLine: Story = { args: { vm: fixture("TranscriptVm", "completed"), activeIndex: 1 } };
+export const Rtl: Story = { args: { vm: fixture("TranscriptVm", "rtl") } };
+export const LongStrings: Story = { args: { vm: fixture("TranscriptVm", "long_strings") } };

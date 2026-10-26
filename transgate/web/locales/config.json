@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "locales": ["en", "tr", "pt", "es", "de", "id", "it", "fr", "el", "ru", "da", "sv", "no", "fi", "kk", "az"],
+  "namespaces": ["common", "app", "ai", "dashboard", "auth"],
+  "defaultLocale": "en",
+  "catalogLayout": "<locale>/<namespace>.json",
+  "message": {"namespaceField": "ns", "keyField": "key", "argumentsField": "args"},
+  "i18next": {
+    "fallbackLng": false,
+    "keySeparator": false,
+    "nsSeparator": false,
+    "ignoreJSONStructure": false,
+    "pluralSeparator": "_",
+    "contextSeparator": "_",
+    "returnNull": false,
+    "returnEmptyString": false,
+    "returnObjects": false,
+    "saveMissing": false,
+    "interpolation": {"escapeValue": false}
+  },
+  "catalogObjects": "flat string maps; source nested keys are flattened with literal dots",
+  "rendering": "Render text through escaped Svelte text/attributes; never inject message or argument HTML.",
+  "fallbackManifest": "fallback-manifest.json",
+  "reachabilityManifest": "reachable-keys.json",
+  "provenanceManifest": "source-provenance.json",
+  "policy": "P5 D3 requires complete reachable translations; source fallback inventory is evidence, never an initializer or runtime fallback."
+}

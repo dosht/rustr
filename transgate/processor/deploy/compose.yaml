@@ -1,0 +1,53 @@
+# The free-tools processor host: a Caddy TLS edge in front of one processor.
+# Run from the repository root with a .env next to this file (see env.example):
+#   docker compose --env-file transgate/processor/deploy/.env -f transgate/processor/deploy/compose.yaml up -d --build
+# One processor instance only: sessions and allowances live in its memory.
+name: free-tools
+
+services:
+  caddy:
+    image: free-tools-caddy:${TAG:-dev}
+    build:
+      context: .
+      dockerfile: caddy.Dockerfile
+    restart: unless-stopped
+    environment:
+      PROCESSOR_DOMAIN: ${PROCESSOR_DOMAIN:?set PROCESSOR_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      processor:
+        condition: service_healthy
+
+  processor:
+    image: transgate-processor:${TAG:-dev}
+    build:
+      context: ../../..
+      dockerfile: transgate/processor/deploy/Dockerfile
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:?set ALLOWED_ORIGINS}
+      # Caddy is the only proxy and appends the real peer to X-Forwarded-For.
+      FREE_TOOLS_TRUSTED_PROXY_COUNT: 1
+      FFMPEG_THREADS: ${FFMPEG_THREADS:-1}
+    volumes:
+      # Payloads are files under /tmp; uploads reach 2 GB, so disk, not tmpfs.
+      - processor_tmp:/tmp
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    cpus: 1.5
+    mem_limit: 2g
+    stop_grace_period: 30s
+
+volumes:
+  caddy_data:
+  caddy_config:
+  processor_tmp:

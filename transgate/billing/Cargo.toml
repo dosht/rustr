@@ -1,0 +1,32 @@
+[package]
+name = "transgate-billing"
+description = "Transgate billing host: captured catalog, freemium lists, customer directory, JWT identity, mail delivery and composition of the billing module."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+billing-core = { path = "../../modules/billing/core" }
+billing-postgres = { path = "../../modules/billing/postgres" }
+billing-http = { path = "../../modules/billing/http" }
+billing-iyzico = { path = "../../modules/billing/gateways/iyzico" }
+billing-lemonsqueezy = { path = "../../modules/billing/gateways/lemonsqueezy" }
+axum = "0.8"
+jsonwebtoken = { version = "11", default-features = false, features = ["rust_crypto", "use_pem"] }
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }
+serde.workspace = true
+serde_json.workspace = true
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "migrate", "macros", "json", "uuid"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"] }
+uuid = { version = "1", features = ["v4", "v5"] }
+
+[dev-dependencies]
+axum = "0.8"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "sync"] }
+media-ports = { path = "../../crates/media-ports" }
+transgate-core = { path = "../core" }
+transgate-http = { path = "../http" }
+transgate-jobs-postgres = { path = "../jobs-postgres" }
+llm-core = { path = "../../crates/llm-core" }
+llm-http = { path = "../../crates/llm-http" }
+futures-util = "0.3"

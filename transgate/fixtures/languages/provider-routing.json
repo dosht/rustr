@@ -1,0 +1,103 @@
+{
+  "order": [
+    "soniox",
+    "deepgram",
+    "runpod"
+  ],
+  "rules": [
+    {
+      "when": "job.transcription_provider is already set and the provider passes validate (canHandle, translation capable if translate_to set, available, health thresholds)",
+      "provider": "that provider",
+      "model": "per provider",
+      "source": "frontend/src/services/unified-transcription/services/provider-manager.ts:245-262; frontend/src/services/unified-transcription/services/transcription.ts:507-509"
+    },
+    {
+      "when": "job.duration > SONIOX_MAX_DURATION_MINUTES (env, default 250) and no translate_to",
+      "provider": "deepgram",
+      "model": "whisper-large",
+      "source": "frontend/src/services/unified-transcription/services/provider-manager.ts:273-287"
+    },
+    {
+      "when": "original file extension (from job_name) is qta and no translate_to",
+      "provider": "deepgram",
+      "model": "whisper-large",
+      "source": "frontend/src/services/unified-transcription/services/provider-manager.ts:297-308"
+    },
+    {
+      "when": "request.preferredProvider is set and passes validate",
+      "provider": "that provider",
+      "model": "per provider",
+      "source": "frontend/src/services/unified-transcription/services/provider-manager.ts:311-323"
+    },
+    {
+      "when": "job language is Arabic, Indonesian, Japanese, Korean, Chinese, Urdu or Tamil and soniox passes validate",
+      "provider": "soniox",
+      "model": "stt-async-v3",
+      "source": "frontend/src/services/unified-transcription/services/provider-manager.ts:168-175,341-351"
+    },
+    {
+      "when": "clientType is api or web (every request) and soniox passes validate",
+      "provider": "soniox",
+      "model": "stt-async-v3",
+      "source": "frontend/src/services/unified-transcription/services/provider-manager.ts:193-196,353-361"
+    },
+    {
+      "when": "none of the above chose: chain soniox, deepgram, runpod re-sorted by health score, first that passes validate; translate_to set keeps soniox only",
+      "provider": "first valid in health-sorted chain",
+      "model": "per provider",
+      "source": "frontend/src/services/unified-transcription/services/provider-manager.ts:363-370,1366-1520"
+    },
+    {
+      "when": "chain gave nothing: first of soniox, deepgram, runpod that canHandle and isAvailable; translate_to set keeps soniox only and throws 'Translation jobs require Soniox, but Soniox is unavailable' when none",
+      "provider": "first available",
+      "model": "per provider",
+      "source": "frontend/src/services/unified-transcription/services/provider-manager.ts:372-380,1526-1610"
+    },
+    {
+      "when": "language is null (Auto-detect in the UI)",
+      "provider": "soniox",
+      "model": "stt-async-v3",
+      "source": "frontend/src/services/unified-transcription/providers/deepgram.ts:52-58 (deepgram.canHandle returns false for null); frontend/src/services/unified-transcription/providers/base.ts:118-121 (soniox and runpod accept null); frontend/src/services/unified-transcription/providers/soniox.ts:114-142"
+    },
+    {
+      "when": "translate_to has at least one language",
+      "provider": "soniox",
+      "model": "stt-async-v3",
+      "source": "frontend/src/services/unified-transcription/services/provider-manager.ts:1125-1133 (validate rejects providers with supportsTranslation false); frontend/src/services/unified-transcription/providers/capabilities.ts:54,104; frontend/src/services/unified-transcription/providers/soniox.ts:156-186"
+    },
+    {
+      "when": "language is Armenian, Icelandic, Maori, Nepali, Georgian, Latin, Uzbek or Luxembourgish (soniox canHandle is false)",
+      "provider": "deepgram (first in default chain, runpod if health scores reorder)",
+      "model": "whisper-large",
+      "source": "frontend/src/services/unified-transcription/providers/capabilities.ts:36-39,66-69; frontend/src/services/unified-transcription/services/provider-manager.ts:363-370"
+    },
+    {
+      "when": "soniox_v5 selection",
+      "provider": "soniox_v5",
+      "model": "stt-async-v5",
+      "source": "frontend/src/services/unified-transcription/providers/soniox-v5.ts:133-135; frontend/src/utils/transcriptionProvider.ts:25-36 (only when transcription_provider is set to soniox_v5 by hand; never in any chain)"
+    },
+    {
+      "when": "deepgram request for a hardcoded user id",
+      "provider": "deepgram",
+      "model": "nova-2",
+      "source": "frontend/src/utils/deepgram.ts:134-139"
+    }
+  ],
+  "fallback": [
+    "soniox",
+    "deepgram",
+    "runpod"
+  ],
+  "notes": [
+    "Failover after a provider call fails uses the same chain minus the failed provider, and keeps only translation capable providers for translate_to jobs (provider-manager.ts:516-585). Only when preferences.fallbackEnabled is true (transcription.ts:543).",
+    "Language support is read from capabilities.ts: soniox and soniox_v5 = 61 minus 8 = 53 languages, deepgram = 61, runpod = 61. Comments in the file say 46 and 57, the code gives 53 and 61.",
+    "Language code on the wire is the 2 letter lowercase code from languageInitials: soniox language_hints=[code] only when a language is chosen, enable_language_identification is always true; deepgram query param language=code, model whisper-large (soniox.ts:119-141, deepgram.ts:150-160); runpod lowercases the code at runpod.ts:257 and uses model large-v3 (providers/runpod.ts:288-291).",
+    "Translation is Soniox one_way with target_language = ISO code of translate_to[0] only (soniox.ts:156-173). Deepgram and runpod have supportsTranslation false (capabilities.ts:31,104).",
+    "Speaker labels: soniox enable_speaker_diarization, deepgram diarize, runpod diarization params; no language gates them (soniox.ts:145-148, deepgram.ts:151,164).",
+    "RunPod endpoint env is STAGING when the UI locale is id, unless the feature_flags.runpod row names an env (utils/runpod.ts:50-60). RunPod is reached only if it is selected explicitly or wins the health sort.",
+    "Dead code: frontend/src/utils/transcriptionProvider.ts selectTranscriptionProvider returns job.transcription_provider or soniox; nothing imports it.",
+    "UNVERIFIED: supabase migrations set jobs.transcription_provider DEFAULT 'deepgram' (20251130113249_remote_schema.sql:1420). processJobsWithProvider honors a set provider (transcription.ts:507). If production still has that default, every web job skips this table and goes to deepgram. Needs mu to check the column default and the provider split of recent rows.",
+    "Rules 1 to 8 are the selectProvider steps in evaluation order. Rules 9 to 13 are cross cutting constraints (auto-detect, translation, language gaps, canary, model override) applied inside canHandle and validate."
+  ]
+}

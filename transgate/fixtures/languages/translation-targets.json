@@ -1,0 +1,320 @@
+[
+  {
+    "code": "af",
+    "name": "Afrikaans",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:2; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "ar",
+    "name": "Arabic",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:3; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "az",
+    "name": "Azerbaijani",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:5; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "be",
+    "name": "Belarusian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:6; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "bs",
+    "name": "Bosnian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:7; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "bg",
+    "name": "Bulgarian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:8; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "ca",
+    "name": "Catalan",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:9; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "zh",
+    "name": "Chinese",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:10; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "hr",
+    "name": "Croatian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:11; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "cs",
+    "name": "Czech",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:12; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "da",
+    "name": "Danish",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:13; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "nl",
+    "name": "Dutch",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:14; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "en",
+    "name": "English",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:15; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "et",
+    "name": "Estonian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:16; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "fi",
+    "name": "Finnish",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:17; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "fr",
+    "name": "French",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:18; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "gl",
+    "name": "Galician",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:19; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "de",
+    "name": "German",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:20; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "el",
+    "name": "Greek",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:21; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "he",
+    "name": "Hebrew",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:22; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "hi",
+    "name": "Hindi",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:23; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "hu",
+    "name": "Hungarian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:24; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "id",
+    "name": "Indonesian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:26; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "it",
+    "name": "Italian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:27; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "ja",
+    "name": "Japanese",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:28; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "kn",
+    "name": "Kannada",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:29; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "kk",
+    "name": "Kazakh",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:30; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "ko",
+    "name": "Korean",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:31; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "lv",
+    "name": "Latvian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:32; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "lt",
+    "name": "Lithuanian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:33; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "mk",
+    "name": "Macedonian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:34; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "ms",
+    "name": "Malay",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:35; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "mr",
+    "name": "Marathi",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:36; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "no",
+    "name": "Norwegian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:39; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "fa",
+    "name": "Persian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:40; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "pl",
+    "name": "Polish",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:41; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "pt",
+    "name": "Portuguese",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:42; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "ro",
+    "name": "Romanian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:43; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "ru",
+    "name": "Russian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:44; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "sr",
+    "name": "Serbian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:45; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "sk",
+    "name": "Slovak",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:46; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "sl",
+    "name": "Slovenian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:47; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "es",
+    "name": "Spanish",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:48; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "sw",
+    "name": "Swahili",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:49; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "sv",
+    "name": "Swedish",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:50; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "tl",
+    "name": "Tagalog",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:51; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "ta",
+    "name": "Tamil",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:52; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "th",
+    "name": "Thai",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:53; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "tr",
+    "name": "Turkish",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:54; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "uk",
+    "name": "Ukrainian",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:55; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "ur",
+    "name": "Urdu",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:56; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "vi",
+    "name": "Vietnamese",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:57; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  },
+  {
+    "code": "cy",
+    "name": "Welsh",
+    "engine": "soniox one_way translation (stt-async-v3, stt-async-v5 canary)",
+    "source": "frontend/src/domain/languages.ts:58; capabilities.ts:121-137 (getSupportedTranslationLanguages); soniox.ts:170-173"
+  }
+]

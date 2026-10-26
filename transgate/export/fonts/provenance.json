@@ -1,0 +1,230 @@
+{
+  "source": "google/fonts; exact git blob identities, unchanged downloaded files",
+  "files": [
+    {
+      "file": "NotoSans.ttf",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosans/NotoSans[wdth,wght].ttf",
+      "git_blob": "75575046c015ff623a848096a15779867ba71453",
+      "bytes": 2049096,
+      "sha256": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d",
+      "license": "SIL-OFL-1.1",
+      "script": "Latin/Greek/Cyrillic (16 UI locales)",
+      "license_file": "NotoSans-OFL.txt"
+    },
+    {
+      "file": "NotoSans-Italic.ttf",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosans/NotoSans-Italic[wdth,wght].ttf",
+      "git_blob": "429692da4c3f2751f50bdfab7d0fdb3639717524",
+      "bytes": 2322640,
+      "sha256": "58e6e0ebd1931b29a365aa2d3e2ee9a9e831a3af7cf3ad1462d4e72154f0b291",
+      "license": "SIL-OFL-1.1",
+      "script": "Latin/Greek/Cyrillic italic",
+      "license_file": "NotoSans-OFL.txt"
+    },
+    {
+      "file": "NotoSansArabic.ttf",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosansarabic/NotoSansArabic[wdth,wght].ttf",
+      "git_blob": "f1d01edce4ebaedcbe9a06fc75fec07b304ec3df",
+      "bytes": 844676,
+      "sha256": "63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e",
+      "license": "SIL-OFL-1.1",
+      "script": "Arabic/Persian/Urdu",
+      "license_file": "NotoSansArabic-OFL.txt"
+    },
+    {
+      "file": "NotoSansSymbols2-Regular.ttf",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosanssymbols2/NotoSansSymbols2-Regular.ttf",
+      "git_blob": "caf89dd0e60e23ac39ce18da823095959d409437",
+      "bytes": 1233128,
+      "sha256": "7d5fb73b7ca67a6798101741f5d280a3d016a56a197afcd4199dbb57b4b82a21",
+      "license": "SIL-OFL-1.1",
+      "script": "Source action/rating/status symbols",
+      "license_file": "NotoSansSymbols2-OFL.txt"
+    },
+    {
+      "file": "NotoSans-OFL.txt",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosans/OFL.txt",
+      "git_blob": "6843f31878c9945e1e71e1baa275546b4eefead8",
+      "bytes": 4396,
+      "sha256": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansArabic-OFL.txt",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosansarabic/OFL.txt",
+      "git_blob": "14c589f6384505ede3f8e52627d397513af3662d",
+      "bytes": 4382,
+      "sha256": "07fc70bfeb985cc1a87a8587d0a0c80bab11c86c9dc3fd95b6f0cb332f983e96",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansSymbols2-OFL.txt",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosanssymbols2/OFL.txt",
+      "git_blob": "7c95767f5c669c448148e7e6c8fc4ee2c85128b1",
+      "bytes": 4383,
+      "sha256": "b118dd41337806a5d4797052c77caf3bd096aed783e5eb21b4d11154351e1ac0",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansHebrew.ttf",
+      "script": "Hebrew",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosanshebrew/NotoSansHebrew[wdth,wght].ttf",
+      "git_blob": "f31f73b8be8086692ff0156544f80975640e5a42",
+      "bytes": 112640,
+      "sha256": "7ef36a2c3593758cdb622e1bdef4f84523e92fbc3ccc667438dd80ff54c2de88",
+      "license": "SIL-OFL-1.1",
+      "license_file": "NotoSansHebrew-OFL.txt"
+    },
+    {
+      "file": "NotoSansHebrew-OFL.txt",
+      "script": "Hebrew",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosanshebrew/OFL.txt",
+      "git_blob": "56662b6243717dbe8acee6d87c3f0e795f9c4295",
+      "bytes": 4382,
+      "sha256": "9b9fe028b5ba74d231659a1bbaf0ed09b11e759d1ca6a070999e16d151616b47",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansArmenian.ttf",
+      "script": "Armenian",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosansarmenian/NotoSansArmenian[wdth,wght].ttf",
+      "git_blob": "b36ecaf73f746d66f3ac3e4acb029a5784efdf55",
+      "bytes": 221936,
+      "sha256": "0870908d8318435a5daf1cd280ae15063f990cd9ad60f3e94c734ce9e1ffef71",
+      "license": "SIL-OFL-1.1",
+      "license_file": "NotoSansArmenian-OFL.txt"
+    },
+    {
+      "file": "NotoSansArmenian-OFL.txt",
+      "script": "Armenian",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosansarmenian/OFL.txt",
+      "git_blob": "ff91c77a6d7c685ae633cca02b2092c452a9baf0",
+      "bytes": 4384,
+      "sha256": "0468358b316f69f405b55cadf8a8314e16e3610b8feaad96772bd5d968112d02",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansGeorgian.ttf",
+      "script": "Georgian",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosansgeorgian/NotoSansGeorgian[wdth,wght].ttf",
+      "git_blob": "2b52bdf12ef35bfe9a18cad49d4e1303d9474e52",
+      "bytes": 231988,
+      "sha256": "dc591156f36842d38996c4a7a17fee9bb58e45da3e2cac7a31b7d33de700adb9",
+      "license": "SIL-OFL-1.1",
+      "license_file": "NotoSansGeorgian-OFL.txt"
+    },
+    {
+      "file": "NotoSansGeorgian-OFL.txt",
+      "script": "Georgian",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosansgeorgian/OFL.txt",
+      "git_blob": "437070a9ee723a4018777b51bd7e4a6830b36502",
+      "bytes": 4384,
+      "sha256": "8c02263c5d73d40544f9ed91e30c4e947407057a3cc430d7b786189aeceff6df",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansDevanagari.ttf",
+      "script": "Devanagari",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosansdevanagari/NotoSansDevanagari[wdth,wght].ttf",
+      "git_blob": "163f04bddc5a96fc523e4080466cac5c588f6594",
+      "bytes": 641944,
+      "sha256": "14ec4af41f27482216d1c2229f417ff9b1425e1babb014e57d1d40d03229853e",
+      "license": "SIL-OFL-1.1",
+      "license_file": "NotoSansDevanagari-OFL.txt"
+    },
+    {
+      "file": "NotoSansDevanagari-OFL.txt",
+      "script": "Devanagari",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosansdevanagari/OFL.txt",
+      "git_blob": "cd2cc5c94b4151933eba6ee508e3975274d6fa07",
+      "bytes": 4386,
+      "sha256": "a216f6f8d85c7228093e0ee5e258d9d377e6671f68acb4db1930b29583d0f331",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansKannada.ttf",
+      "script": "Kannada",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosanskannada/NotoSansKannada[wdth,wght].ttf",
+      "git_blob": "8a3ff863d2d742be0583d5602ea1b1637dcec939",
+      "bytes": 641372,
+      "sha256": "cca4f3b3a8cb12fb261f1b43baf5d2f7f59d90fe123d41f0065ed3a183997ec9",
+      "license": "SIL-OFL-1.1",
+      "license_file": "NotoSansKannada-OFL.txt"
+    },
+    {
+      "file": "NotoSansKannada-OFL.txt",
+      "script": "Kannada",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosanskannada/OFL.txt",
+      "git_blob": "bf303a3873549e641591c7360ec669347bc1d9b5",
+      "bytes": 4383,
+      "sha256": "9d49a4e56df9b36403b139f48bf07fd87cc5e716cb3203c54b04b674adb16238",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansTamil.ttf",
+      "script": "Tamil",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosanstamil/NotoSansTamil[wdth,wght].ttf",
+      "git_blob": "cb08d499b2d05ef6fd8e470c36c2be47ff368f0d",
+      "bytes": 340668,
+      "sha256": "aa3a9b321f4b0bb2c40203ffbde9af89713227866e0e13f76e5b9eeea727cf88",
+      "license": "SIL-OFL-1.1",
+      "license_file": "NotoSansTamil-OFL.txt"
+    },
+    {
+      "file": "NotoSansTamil-OFL.txt",
+      "script": "Tamil",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosanstamil/OFL.txt",
+      "git_blob": "677d559b94ba7c63d41a7bf6ffa0a3eb11f2de95",
+      "bytes": 4381,
+      "sha256": "f8ff8ce7d0a81bf8d5e121c635ef027250c531f2fd37d5988b8dd6e45f19d7f1",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansThai.ttf",
+      "script": "Thai",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosansthai/NotoSansThai[wdth,wght].ttf",
+      "git_blob": "34b48ab6f74867dbfce19410a2f452abef34e3ff",
+      "bytes": 218652,
+      "sha256": "5a1c559bb539583c8a1fd99d1c5b9491e5e14478c9cd2bd0970d5c3096cc9ef8",
+      "license": "SIL-OFL-1.1",
+      "license_file": "NotoSansThai-OFL.txt"
+    },
+    {
+      "file": "NotoSansThai-OFL.txt",
+      "script": "Thai",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosansthai/OFL.txt",
+      "git_blob": "7fa8dcb08ce4d2667b683ac4a8e79166e44e5277",
+      "bytes": 4380,
+      "sha256": "2e98fd23a52d253db8612cd5942c8f2ff4111b21d2367050fdca91d8ccc374a0",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansCJKjp-Regular.otf",
+      "script": "Han/Kana/Hangul",
+      "upstream": "https://github.com/notofonts/noto-cjk/blob/main/Sans/OTF/Japanese/NotoSansCJKjp-Regular.otf",
+      "git_blob": "f56224957fb13a81b4c14bac34f2f058a017f9fb",
+      "bytes": 16467736,
+      "sha256": "68a3fc98800b2a27b371f2fb79991daf3633bd89309d4ffaa6946fd587f375b5",
+      "license": "SIL-OFL-1.1",
+      "license_file": "NotoSansCJK-OFL.txt",
+      "copyright_file": "NotoSansCJK-COPYRIGHT.txt"
+    },
+    {
+      "file": "NotoSansCJK-OFL.txt",
+      "script": "Han/Kana/Hangul",
+      "upstream": "https://github.com/notofonts/noto-cjk/blob/main/Sans/LICENSE",
+      "git_blob": "d952d62c065f3f35fb83a173496e90b21525aef3",
+      "bytes": 4301,
+      "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansCJK-COPYRIGHT.txt",
+      "source": "Copyright extracted unchanged from bundled font OpenType name ID0; accompanying explanatory attribution",
+      "bytes": 261,
+      "sha256": "1aef6af90bb1f49538717edbe89717a175aae70829d76a77b91fc50f6ed752c0",
+      "license": "Notice accompanying SIL-OFL-1.1 font"
+    }
+  ],
+  "decision": "P5D18 bounded offered-language-script fallback pack; lazy same-origin PDF assets, no initial font payload"
+}

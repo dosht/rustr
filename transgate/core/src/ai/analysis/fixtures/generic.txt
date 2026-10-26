@@ -1,0 +1,7 @@
+{"documentCount":4}
+---
+{"type":"detectedType","value":"generic","confidence":55}
+---
+{"type":"summary","content":"A useful café summary with --- quoted data."}
+---
+{"type":"highlights","data":["One finding"]}

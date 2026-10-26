@@ -1,0 +1,12 @@
+[package]
+name = "transgate-api"
+description = "Transgate HTTP contract: the request parsing and response shapes of the source routes, mapped from and to the core use cases. No routing, no I/O."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+transgate-core = { path = "../core" }
+serde.workspace = true
+serde_json.workspace = true
+uuid = { version = "1", default-features = false, features = ["serde", "v4"] }

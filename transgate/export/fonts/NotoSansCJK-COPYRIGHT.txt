@@ -1,0 +1,5 @@
+© 2014-2021 Adobe (http://www.adobe.com/).
+
+Copyright notice from OpenType name ID 0 in the unchanged bundled
+NotoSansCJKjp-Regular.otf. The font is distributed under SIL Open Font
+License 1.1; see NotoSansCJK-OFL.txt. No font names or outlines were modified.

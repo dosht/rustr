@@ -1,0 +1,12 @@
+[
+  {"script":"16 UI locales: Latin/Greek/Cyrillic","text":"Azərbaycan ƏəĞğİıŞş Türkçe Português Español Français Ελληνικά Русский Қазақша ӘҒҚҢӨҰҮҺІ","required":[]},
+  {"script":"Arabic/Persian/Urdu","text":"العربية فارسی اردو","required":[]},
+  {"script":"Hebrew","text":"עברית שלום","required":["hebrew"]},
+  {"script":"Armenian","text":"Հայերեն լեզու","required":["armenian"]},
+  {"script":"Georgian","text":"ქართული ენა","required":["georgian"]},
+  {"script":"Hindi/Marathi/Nepali","text":"हिन्दी मराठी नेपाली","required":["devanagari"]},
+  {"script":"Kannada","text":"ಕನ್ನಡ ಭಾಷೆ","required":["kannada"]},
+  {"script":"Tamil","text":"தமிழ் மொழி","required":["tamil"]},
+  {"script":"Thai","text":"ภาษาไทย","required":["thai"]},
+  {"script":"Han/Hiragana/Katakana/Hangul","text":"中文 日本語 ひらがな カタカナ 한글 한국어","required":["cjk"]}
+]

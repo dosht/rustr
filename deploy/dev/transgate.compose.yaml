@@ -1,0 +1,19 @@
+# Local liveness runtime only; no production services or credentials.
+# docker compose -f deploy/dev/transgate.compose.yaml up --build -d
+name: transgate-dev
+
+services:
+  server:
+    build:
+      context: ../..
+      dockerfile: transgate/Dockerfile
+    environment:
+      TRANSGATE_BIND: 0.0.0.0:8788
+    ports:
+      - "127.0.0.1:8788:8788"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 10s

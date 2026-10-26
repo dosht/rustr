@@ -1,0 +1,15 @@
+{"documentCount":8}
+---
+{"type":"detectedType","value":"support","confidence":98}
+---
+{"type":"summary","content":"A useful café summary with --- quoted data."}
+---
+{"type":"issueResolution","data":{"problem":"Cannot sign in","rootCause":"Expired link","resolution":"Escalation accepted","status":"escalated","resolutionTimeMinutes":2.5}}
+---
+{"type":"sentiment","data":{"initial":"frustrated","final":"relieved","keyMoments":[{"timestamp":30,"sentiment":"relieved","reason":"Agent explained next step"}]}}
+---
+{"type":"insights","data":{"strengths":["Clear explanation"],"improvements":["Earlier escalation"]}}
+---
+{"type":"kbUpdates","data":["Document expired links"]}
+---
+{"type":"followUpActions","data":["Check restored access"]}

@@ -1,0 +1,850 @@
+{
+  "common": {
+    "- Transcription Minutes Package": {
+      "english": "- Transcription Minutes Package",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Accept": {
+      "english": "Accept",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Add Balance": {
+      "english": "Add Balance",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "AMOUNT": {
+      "english": "AMOUNT",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Amount:": {
+      "english": "Amount:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "And {{count}} more transcripts...": {
+      "english": "And {{count}} more transcripts...",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "API Keys": {
+      "english": "API Keys",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Apply": {
+      "english": "Apply",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Automatically delete transcripts older than 30 days to save storage. You can disable this to keep transcripts indefinitely.": {
+      "english": "Automatically delete transcripts older than 30 days to save storage. You can disable this to keep transcripts indefinitely.",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Back to plans": {
+      "english": "Back to plans",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "BILL TO": {
+      "english": "BILL TO",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Billing": {
+      "english": "Billing",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Change Password": {
+      "english": "Change Password",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Choose the language": {
+      "english": "Choose the language",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Clear": {
+      "english": "Clear",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Click here": {
+      "english": "Click here",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Confirm Disable AI Features": {
+      "english": "Confirm Disable AI Features",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Custom Bill To (tax info, address, company)": {
+      "english": "Custom Bill To (tax info, address, company)",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Date:": {
+      "english": "Date:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "DESCRIPTION": {
+      "english": "DESCRIPTION",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Enable notifications": {
+      "english": "Enable notifications",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Error:": {
+      "english": "Error:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "For any questions, please contact support@transgate.ai": {
+      "english": "For any questions, please contact support@transgate.ai",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "FROM": {
+      "english": "FROM",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Hours": {
+      "english": "Hours",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "I agree with the": {
+      "english": "I agree with the",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "If you have a local Card (TR Card) Pay in TL": {
+      "english": "If you have a local Card (TR Card) Pay in TL",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "INVOICE": {
+      "english": "INVOICE",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Invoice Date:": {
+      "english": "Invoice Date:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Invoice ID:": {
+      "english": "Invoice ID:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Invoice Preview": {
+      "english": "Invoice Preview",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Leave empty to use the customer's saved billing info": {
+      "english": "Leave empty to use the customer's saved billing info",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Load": {
+      "english": "Load",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Loading subscription information...": {
+      "english": "Loading subscription information...",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Look up customer invoices by email": {
+      "english": "Look up customer invoices by email",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "NEW": {
+      "english": "NEW",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "New Password": {
+      "english": "New Password",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "No saved billing info — invoices will use the account name. Fill in Custom Bill To below to override.": {
+      "english": "No saved billing info — invoices will use the account name. Fill in Custom Bill To below to override.",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "One line per row. When filled, this replaces the invoice's Bill To details.": {
+      "english": "One line per row. When filled, this replaces the invoice's Bill To details.",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Open sidebar": {
+      "english": "Open sidebar",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Package:": {
+      "english": "Package:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Password updated successfully!": {
+      "english": "Password updated successfully!",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Payment Gateway:": {
+      "english": "Payment Gateway:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Payment processed through": {
+      "english": "Payment processed through",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Please rotate your device": {
+      "english": "Please rotate your device",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Preview": {
+      "english": "Preview",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "QTY": {
+      "english": "QTY",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Reject": {
+      "english": "Reject",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Save 10%": {
+      "english": "Save 10%",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Share your thoughts...": {
+      "english": "Share your thoughts...",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Submitting...": {
+      "english": "Submitting...",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Subtotal": {
+      "english": "Subtotal",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Tap to manage billing": {
+      "english": "Tap to manage billing",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Tax ID:": {
+      "english": "Tax ID:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "terms": {
+      "english": "terms",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Thank you for your Payment!": {
+      "english": "Thank you for your Payment!",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "This app works best in portrait mode": {
+      "english": "This app works best in portrait mode",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "This feature is currently unavailable": {
+      "english": "This feature is currently unavailable",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "This will disable all AI features and delete your AI-generated content (summaries, highlights, chat history). This action cannot be undone.": {
+      "english": "This will disable all AI features and delete your AI-generated content (summaries, highlights, chat history). This action cannot be undone.",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "TR Card": {
+      "english": "TR Card",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Transcript": {
+      "english": "Transcript",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Viewing invoices for": {
+      "english": "Viewing invoices for",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "We couldn't start your checkout": {
+      "english": "We couldn't start your checkout",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "We use cookies to ensure you get the best experience on our website": {
+      "english": "We use cookies to ensure you get the best experience on our website",
+      "source": null,
+      "reason": "missing_source_key"
+    }
+  },
+  "app": {
+    "Copy all transcripts": {
+      "english": "Copy all transcripts",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Download Transcript": {
+      "english": "Download Transcript",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Error loading jobs": {
+      "english": "Error loading jobs",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Loading jobs...": {
+      "english": "Loading jobs...",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Loading more...": {
+      "english": "Loading more...",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "New transcription": {
+      "english": "New transcription",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "New Transcription": {
+      "english": "New Transcription",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "No more jobs to load": {
+      "english": "No more jobs to load",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "No transcripts found": {
+      "english": "No transcripts found",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Pull to refresh": {
+      "english": "Pull to refresh",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Refreshing...": {
+      "english": "Refreshing...",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Release to refresh": {
+      "english": "Release to refresh",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Show Time": {
+      "english": "Show Time",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Try Again": {
+      "english": "Try Again",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    }
+  },
+  "ai": {
+    "2-3 paragraph overview": {
+      "english": "2-3 paragraph overview",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Agent Performance": {
+      "english": "Agent Performance",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Analysis": {
+      "english": "Analysis",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Analysis Error": {
+      "english": "Analysis Error",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Analysis was interrupted.": {
+      "english": "Analysis was interrupted.",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Analyzing...": {
+      "english": "Analyzing...",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Areas for Improvement": {
+      "english": "Areas for Improvement",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Ask questions about your transcript and get AI-powered insights": {
+      "english": "Ask questions about your transcript and get AI-powered insights",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "At:": {
+      "english": "At:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Auto-generated summary": {
+      "english": "Auto-generated summary",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Budget Signals": {
+      "english": "Budget Signals",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Buying Signals": {
+      "english": "Buying Signals",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Call Metrics": {
+      "english": "Call Metrics",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Categorized insights": {
+      "english": "Categorized insights",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Chat History": {
+      "english": "Chat History",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Choose a format to download your analysis": {
+      "english": "Choose a format to download your analysis",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Coaching Tips": {
+      "english": "Coaching Tips",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Copy chat": {
+      "english": "Copy chat",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Customer Insights": {
+      "english": "Customer Insights",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Customer Sentiment": {
+      "english": "Customer Sentiment",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Decisions": {
+      "english": "Decisions",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Decisions & actions": {
+      "english": "Decisions & actions",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Decisions Made": {
+      "english": "Decisions Made",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Discussion Points": {
+      "english": "Discussion Points",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Dismiss": {
+      "english": "Dismiss",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Download": {
+      "english": "Download",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Download chat": {
+      "english": "Download chat",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Due:": {
+      "english": "Due:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Duration:": {
+      "english": "Duration:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Estimated time remaining": {
+      "english": "Estimated time remaining",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Examples:": {
+      "english": "Examples:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Export": {
+      "english": "Export",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Export as Markdown": {
+      "english": "Export as Markdown",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Export as PDF": {
+      "english": "Export as PDF",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Export as TXT": {
+      "english": "Export as TXT",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Export as Word (.docx)": {
+      "english": "Export as Word (.docx)",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Failed to generate analysis": {
+      "english": "Failed to generate analysis",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Final": {
+      "english": "Final",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Follow-Up Actions": {
+      "english": "Follow-Up Actions",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Follow-up items": {
+      "english": "Follow-up items",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Generate an AI analysis to get an auto-generated summary and key highlights including decisions, action items, and questions.": {
+      "english": "Generate an AI analysis to get an auto-generated summary and key highlights including decisions, action items, and questions.",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Generate Analysis": {
+      "english": "Generate Analysis",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Generation Failed": {
+      "english": "Generation Failed",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Get AI-Powered Insights": {
+      "english": "Get AI-Powered Insights",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Highlights extraction cancelled": {
+      "english": "Highlights extraction cancelled",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Important takeaways": {
+      "english": "Important takeaways",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Initial": {
+      "english": "Initial",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Issue Resolution": {
+      "english": "Issue Resolution",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Key Concepts": {
+      "english": "Key Concepts",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Key highlights": {
+      "english": "Key highlights",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Key Moments": {
+      "english": "Key Moments",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Key Points": {
+      "english": "Key Points",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Knowledge Base Updates": {
+      "english": "Knowledge Base Updates",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Markdown format": {
+      "english": "Markdown format",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Microsoft Word format": {
+      "english": "Microsoft Word format",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "minutes": {
+      "english": "minutes",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "New message": {
+      "english": "New message",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Next Steps": {
+      "english": "Next Steps",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Next Steps Confirmed": {
+      "english": "Next Steps Confirmed",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "No highlights found": {
+      "english": "No highlights found",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "No meeting insights available for this transcript.": {
+      "english": "No meeting insights available for this transcript.",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Objections": {
+      "english": "Objections",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Objections Handled": {
+      "english": "Objections Handled",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Pain Points": {
+      "english": "Pain Points",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Participants:": {
+      "english": "Participants:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Plain text format": {
+      "english": "Plain text format",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Portable Document Format": {
+      "english": "Portable Document Format",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Preparing highlights...": {
+      "english": "Preparing highlights...",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Preparing summary...": {
+      "english": "Preparing summary...",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Problem": {
+      "english": "Problem",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Processing time": {
+      "english": "Processing time",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Questions Asked": {
+      "english": "Questions Asked",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Questions raised": {
+      "english": "Questions raised",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Regenerate analysis": {
+      "english": "Regenerate analysis",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Resolution": {
+      "english": "Resolution",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Resolution Time": {
+      "english": "Resolution Time",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Review Questions": {
+      "english": "Review Questions",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Root Cause": {
+      "english": "Root Cause",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Something went wrong": {
+      "english": "Something went wrong",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Start a conversation": {
+      "english": "Start a conversation",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Starting analysis...": {
+      "english": "Starting analysis...",
+      "source": null,
+      "reason": "missing_source_key"
+    },
+    "Starts:": {
+      "english": "Starts:",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Study Guide": {
+      "english": "Study Guide",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Talk:Listen Ratio": {
+      "english": "Talk:Listen Ratio",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "The analysis did not complete. Any sections that finished are shown below.": {
+      "english": "The analysis did not complete. Any sections that finished are shown below.",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Tokens used": {
+      "english": "Tokens used",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Topics Covered": {
+      "english": "Topics Covered",
+      "source": null,
+      "reason": "hardcoded_source_copy"
+    },
+    "Try Again": {
+      "english": "Try Again",
+      "source": null,
+      "reason": "missing_source_key"
+    }
+  },
+  "auth": {
+    "sign_in.button_label": {
+      "english": "Sign in",
+      "source": "Sign in",
+      "reason": "source_untranslated_copy"
+    },
+    "sign_up.button_label": {
+      "english": "Sign up",
+      "source": "Sign up",
+      "reason": "source_untranslated_copy"
+    }
+  }
+}

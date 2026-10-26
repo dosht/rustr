@@ -1,0 +1,1 @@
+Synthetic RSA keys generated locally with `openssl genrsa` for the JWKS rotation tests in `src/identity.rs` only. They sign nothing real and protect nothing; the public moduli are embedded in those tests as JWKs (exponent AQAB).

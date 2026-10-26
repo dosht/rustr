@@ -1,0 +1,46 @@
+{
+  "name": "transgate-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "build": "npm run check && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ci": "vitest run",
+    "e2e": "playwright test",
+    "storybook": "storybook dev -p 6007",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@lucide/svelte": "^0.539.0",
+    "@sentry/browser": "^10.39.0",
+    "i18next": "^24.2.3",
+    "paneforge": "1.0.2",
+    "posthog-js": "^1.352.0",
+    "wavesurfer.js": "^7.8.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64",
+    "@storybook/addon-a11y": "10.6.2",
+    "@storybook/addon-docs": "10.6.2",
+    "@storybook/svelte": "10.6.2",
+    "@storybook/svelte-vite": "10.6.2",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@tailwindcss/vite": "^4.1.13",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/svelte": "^5.4.2",
+    "@testing-library/user-event": "^14.6.8",
+    "@tsconfig/svelte": "^5.0.8",
+    "jsdom": "^30.1.3",
+    "storybook": "10.6.2",
+    "svelte": "^5.57.2",
+    "svelte-check": "^4.7.6",
+    "tailwindcss": "^4.1.13",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
+  }
+}

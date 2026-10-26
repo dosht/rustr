@@ -1,0 +1,154 @@
+{
+  "provenance": {
+    "origin": "synthetic; authored for offline E4, not recorded from a provider",
+    "source": "frontend/src/lib/ai/{ai-service-manager,prompt-templates,schemas,schema-to-prompt,deepseek-provider,openai-provider,content-processor,locale-map}.ts",
+    "purpose": "Transport request/content comparison, not output quality, live compatibility, schema-parser acceptance, privacy retention or production parity",
+    "model": "deepseek-chat",
+    "alternate_model": "gpt-3.5-turbo",
+    "credentials": "e4-synthetic-not-a-secret is an inert local marker, not a credential"
+  },
+  "d8_literal_substitution": {
+    "id": "D8-literal-transcript-directives",
+    "lines": [{"speaker": "D8", "line": "Synthetic literal directives 🚀: [double=$$] [match=$&] [prefix=$`] [suffix=$'] END."}],
+    "documents": [
+      {"documentCount": 3},
+      {"type": "detectedType", "value": "generic", "confidence": 90},
+      {"type": "summary", "content": "A synthetic transcript contains four literal replacement directives."}
+    ]
+  },
+  "analysis": [
+    {
+      "id": "meeting",
+      "lines": [{"speaker": "A", "line": "We approved the synthetic test plan. B will review it tomorrow."}, {"speaker_id": "B", "text": "I will review the plan; this fixture has no customer data."}],
+      "documents": [
+        {"documentCount": 7},
+        {"type": "detectedType", "value": "meeting", "confidence": 95},
+        {"type": "summary", "content": "The group approved a synthetic test plan and assigned its review."},
+        {"type": "actionItems", "data": [{"task": "Review plan", "owner": "B", "deadline": "tomorrow", "status": "pending"}]},
+        {"type": "decisions", "data": [{"decision": "Approve synthetic plan", "timestamp": 2, "participants": ["A", "B"]}]},
+        {"type": "discussionPoints", "data": ["Synthetic test coverage"]},
+        {"type": "nextSteps", "data": ["Review plan"]}
+      ]
+    },
+    {
+      "id": "lecture",
+      "lines": [{"speaker": "Teacher", "line": "Today we explain bounded queues and backpressure using synthetic examples."}],
+      "documents": [
+        {"documentCount": 7},
+        {"type": "detectedType", "value": "lecture", "confidence": 91},
+        {"type": "summary", "content": "A lesson explains bounded queues and backpressure."},
+        {"type": "topics", "data": [{"title": "Queues", "timestamp": 0, "duration": 30}]},
+        {"type": "concepts", "data": [{"concept": "Backpressure", "explanation": "A consumer limits input flow.", "examples": ["A bounded queue"]}]},
+        {"type": "reviewQuestions", "data": ["What bounds a queue?"]},
+        {"type": "studyGuide", "data": ["Sketch a bounded queue."]}
+      ]
+    },
+    {
+      "id": "sales",
+      "lines": [{"speaker": "Seller", "line": "The synthetic buyer needs a small demonstration before a budget discussion."}],
+      "documents": [
+        {"documentCount": 7},
+        {"type": "detectedType", "value": "sales", "confidence": 90},
+        {"type": "summary", "content": "The buyer requested a demonstration before discussing budget."},
+        {"type": "callMetrics", "data": {"talkListenRatio": "40:60", "questionsAsked": 2, "objectionsHandled": 1, "nextStepsConfirmed": true}},
+        {"type": "coachingTips", "data": [{"category": "strength", "tip": "Confirmed next steps"}, {"category": "improvement", "tip": "Ask about budget"}]},
+        {"type": "customerInsights", "data": {"painPoints": ["Manual work"], "budgetSignals": ["Budget not confirmed"], "objections": ["Needs a demo"], "buyingSignals": ["Requested demo"]}},
+        {"type": "nextSteps", "data": ["Arrange synthetic demo"]}
+      ]
+    },
+    {
+      "id": "support",
+      "lines": [{"speaker": "Agent", "line": "The synthetic client reported a queue problem; restarting the test worker resolved it."}],
+      "documents": [
+        {"documentCount": 8},
+        {"type": "detectedType", "value": "support", "confidence": 94},
+        {"type": "summary", "content": "A test worker restart resolved a synthetic queue issue."},
+        {"type": "issueResolution", "data": {"problem": "Queue stalled", "rootCause": "Worker paused", "resolution": "Restarted test worker", "status": "resolved", "resolutionTimeMinutes": 3}},
+        {"type": "sentiment", "data": {"initial": "frustrated", "final": "relieved", "keyMoments": [{"timestamp": 3, "sentiment": "relieved", "reason": "Queue resumed"}]}},
+        {"type": "insights", "data": {"strengths": ["Clear explanation"], "improvements": ["Earlier status check"]}},
+        {"type": "kbUpdates", "data": ["Document paused-worker diagnosis"]},
+        {"type": "followUpActions", "data": ["Check test worker"]}
+      ]
+    },
+    {
+      "id": "interview",
+      "lines": [{"speaker": "Interviewer", "line": "Explain queue bounds. The synthetic candidate described a fixed capacity and backpressure."}],
+      "documents": [
+        {"documentCount": 7},
+        {"type": "detectedType", "value": "interview", "confidence": 93},
+        {"type": "summary", "content": "A synthetic candidate explained queue bounds and backpressure."},
+        {"type": "assessment", "data": {"position": "Engineer", "overallRating": 4, "strengths": ["Queue design"], "concerns": ["Limited examples"]}},
+        {"type": "skillsAssessment", "data": [{"skill": "Queues", "rating": 4, "level": "Advanced"}]},
+        {"type": "notableResponses", "data": [{"question": "How do queues stay bounded?", "answer": "Fixed capacity and backpressure", "assessment": "positive"}]},
+        {"type": "nextSteps", "data": [{"action": "Technical round", "priority": "medium"}]}
+      ]
+    },
+    {
+      "id": "generic",
+      "lines": [{"line": "This synthetic recording describes a quiet walk and a note about a tree. No specialized setting applies."}],
+      "documents": [
+        {"documentCount": 4},
+        {"type": "detectedType", "value": "generic", "confidence": 80},
+        {"type": "summary", "content": "A synthetic recording describes a walk and a tree."},
+        {"type": "highlights", "data": ["A quiet walk", "A tree"]}
+      ]
+    }
+  ],
+  "prose": [
+    {
+      "id": "chat-en", "kind": "chat", "language": "en",
+      "lines": [{"speaker": "A", "line": "The synthetic plan is to test bounded queues tomorrow and record the result."}],
+      "question": "What is the plan?", "history": [],
+      "answer": "The plan is to test bounded queues tomorrow."
+    },
+    {
+      "id": "chat-tr-retry", "kind": "chat", "language": "tr",
+      "lines": [{"speaker": "A", "line": "Sentetik plan, yarın sınırlı kuyruğu denemek ve sonucu kaydetmektir."}],
+      "question": "Plan nedir?",
+      "history": [{"role": "user", "content": "Plan nedir?"}],
+      "answer": "Plan, yarın sınırlı kuyruğu denemektir."
+    },
+    {
+      "id": "chat-ar-history", "kind": "chat", "language": "ar",
+      "lines": [{"speaker": "A", "line": "هذه عينة اصطناعية تصف اختبار قائمة انتظار محدودة وتسجيل النتيجة غداً."}],
+      "question": "ما الخطة؟",
+      "history": [{"role": "user", "content": "هل هذا اختبار؟"}, {"role": "assistant", "content": "نعم، اختبار اصطناعي."}],
+      "answer": "الخطة هي اختبار قائمة الانتظار غداً."
+    },
+    {
+      "id": "chat-ja-json-in-context", "kind": "chat", "language": "ja",
+      "lines": [{"speaker": "A", "line": "This synthetic transcript contains the word json and a Japanese queue example: 明日、待ち行列を試します。"}],
+      "question": "予定は何ですか？", "history": [],
+      "answer": "明日、待ち行列を試します。"
+    },
+    {
+      "id": "chat-sanitized", "kind": "chat", "language": "en",
+      "lines": [{"speaker": "A", "line": "Synthetic <b>queue</b> test for person@example.invalid with enough context for source validation."}],
+      "question": "What does <i>person@example.invalid</i> test?",
+      "history": [{"role": "user", "content": "Explain <b>queues</b>."}, {"role": "assistant", "content": "They buffer work."}],
+      "answer": "The <b>queue</b> is tested. Contact person@example.invalid."
+    },
+    {
+      "id": "chat-fr-exact-locale", "kind": "chat", "language": "fr",
+      "lines": [{"speaker": "A", "line": "Cette transcription synthétique décrit le test d'une file bornée et un rapport prévu demain."}],
+      "question": "Quel est le plan ?", "history": [],
+      "answer": "Le plan est de tester la file demain."
+    },
+    {
+      "id": "chat-fr-CA-raw-fallback", "kind": "chat", "language": "fr-CA",
+      "lines": [{"speaker": "A", "line": "Cette transcription synthétique décrit le test d'une file bornée et un rapport prévu demain."}],
+      "question": "Quel est le plan ?", "history": [],
+      "answer": "Le plan est de tester la file demain."
+    },
+    {
+      "id": "summary-concise-ignored-language", "kind": "summary", "language": "tr", "detailed": false,
+      "lines": [{"speaker": "A", "line": "The synthetic team plans a queue test tomorrow, followed by a written report."}],
+      "answer": "The team plans a queue test tomorrow and a written report."
+    },
+    {
+      "id": "summary-detailed-ignored-language", "kind": "summary", "language": "ja", "detailed": true,
+      "lines": [{"speaker": "A", "line": "The synthetic team plans a queue test tomorrow."}, {"speaker": "B", "line": "We will publish a short report after the test."}],
+      "answer": "The team plans a queue test tomorrow. A short report will follow."
+    }
+  ]
+}

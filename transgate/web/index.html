@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Transgate</title>
+    <!-- Applies the stored theme before first paint. A same-origin file, not an
+         inline script, so a strict script-src CSP needs no exception. -->
+    <script src="/_app/theme-init.js"></script>
+    <!-- The host replaces the exact marker below with escaped
+         <script type="application/json" id="tg-config"> and, on the browser
+         checkout return, id="tg-confirm" (web-shell.md section 7). -->
+    <!--tg-inject-->
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

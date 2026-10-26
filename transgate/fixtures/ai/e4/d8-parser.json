@@ -1,0 +1,68 @@
+{
+  "provenance": {
+    "origin": "synthetic; no provider or customer recordings",
+    "decision": "docs/plans/p4-ai/decisions.md D8",
+    "source": "src/pages/api/v1/ai/analyze.ts:77-96,202-295; exact AST-extracted source stream-processing statements",
+    "scope": "Confidence, ordering, framing, invalid-section interruption; not auth/persistence/quota or live quality"
+  },
+  "cases": [
+    {
+      "id": "confidence-absent-zero", "group": "D8-source-confidence-preserved",
+      "documents": [{"type":"detectedType","value":"meeting"},{"type":"summary","content":"Synthetic missing confidence."}],
+      "confidence": 0, "summary": "Synthetic missing confidence."
+    },
+    {
+      "id": "confidence-null-zero", "group": "D8-source-confidence-preserved",
+      "documents": [{"type":"detectedType","value":"meeting","confidence":null},{"type":"summary","content":"Synthetic null confidence."}],
+      "confidence": 0, "summary": "Synthetic null confidence."
+    },
+    {
+      "id": "confidence-string-zero", "group": "D8-source-confidence-preserved",
+      "documents": [{"type":"detectedType","value":"meeting","confidence":"95"},{"type":"summary","content":"Synthetic string confidence."}],
+      "confidence": 0, "summary": "Synthetic string confidence."
+    },
+    {
+      "id": "confidence-negative-preserved", "group": "D8-source-confidence-preserved",
+      "documents": [{"type":"detectedType","value":"meeting","confidence":-3},{"type":"summary","content":"Synthetic negative confidence."}],
+      "confidence": -3, "summary": "Synthetic negative confidence."
+    },
+    {
+      "id": "confidence-over100-preserved", "group": "D8-source-confidence-preserved",
+      "documents": [{"type":"detectedType","value":"meeting","confidence":101},{"type":"summary","content":"Synthetic confidence above one hundred."}],
+      "confidence": 101, "summary": "Synthetic confidence above one hundred."
+    },
+    {
+      "id": "actionItems-before-detectedType", "group": "D8-bounded-pretype-deferral",
+      "documents": [{"type":"actionItems","data":[{"task":"Review synthetic plan"}]},{"type":"detectedType","value":"meeting","confidence":101},{"type":"summary","content":"Synthetic section precedes detection."}],
+      "per_document_chunks": true, "confidence": 101, "summary": "Synthetic section precedes detection.",
+      "pretype_task": "Review synthetic plan"
+    },
+    {
+      "id": "whitespace-around-separator", "group": "D8-top-level-separator-preserved",
+      "documents": [{"type":"detectedType","value":"meeting","confidence":-3},{"type":"summary","content":"Synthetic whitespace separator."}],
+      "separator": " \t--- \r\n", "confidence": -3, "summary": "Synthetic whitespace separator."
+    },
+    {
+      "id": "adjacent-next-document", "group": "D8-top-level-separator-preserved",
+      "documents": [{"type":"detectedType","value":"meeting","confidence":101},{"type":"summary","content":"Synthetic adjacent document."}],
+      "separator": " ---", "confidence": 101, "summary": "Synthetic adjacent document."
+    },
+    {
+      "id": "quoted-separator-data", "group": "D8-quoted-separator-NOT-source-loss-parity",
+      "documents": [{"type":"detectedType","value":"meeting","confidence":95},{"type":"summary","content":"Quoted --- stays data in this synthetic summary."}],
+      "source_summary_missing": true, "confidence": 95, "summary": "Quoted --- stays data in this synthetic summary."
+    },
+    {
+      "id": "all-falsy-section-interrupts", "group": "D8-approved-interruption-NOT-silent-filter-parity",
+      "documents": [{"type":"detectedType","value":"meeting","confidence":95},{"type":"summary","content":"Valid synthetic partial before an all-falsy section."},{"type":"actionItems","data":false,"items":0}],
+      "confidence": 95, "summary": "Valid synthetic partial before an all-falsy section.",
+      "error": "InvalidSection", "source_omitted_section": "actionItems"
+    },
+    {
+      "id": "all-falsy-terminal-value-emitted-then-filtered", "group": "D8-approved-interruption-NOT-render-filter-parity",
+      "documents": [{"type":"detectedType","value":"meeting","confidence":95},{"type":"summary","content":"Valid synthetic partial before emitted falsy content."},{"type":"actionItems","data":null,"items":0,"content":false}],
+      "confidence": 95, "summary": "Valid synthetic partial before emitted falsy content.",
+      "error": "InvalidSection", "source_emitted_invalid_section": "actionItems", "source_emitted_value": false
+    }
+  ]
+}

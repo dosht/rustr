@@ -1,0 +1,28 @@
+[package]
+name = "transgate-export"
+description = "Byte adapters for Transgate exports: the zip container and the OOXML Word parts for the core export model. Core decides every file, name and text; nothing here makes an export decision."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+transgate-core = { path = "../core" }
+# Only the writer and one maintained deflate backend; no encryption, no other codecs.
+zip = { version = "9.1", default-features = false, features = ["deflate-flate2-zlib-rs"] }
+krilla = { version = "=0.8.2", default-features = false, features = ["raster-images"] }
+rustybuzz = { version = "=0.20.1", default-features = false, features = ["std"] }
+unicode-bidi = { version = "=0.3.18", default-features = false, features = ["std", "hardcoded-data"] }
+unicode-linebreak = { version = "=0.1.5", default-features = false }
+unicode-segmentation = { version = "1.12", default-features = false }
+billing-core = { path = "../../modules/billing/core" }
+serde.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+# An XML parser that is not the one that wrote the parts.
+roxmltree = "0.21"
+uuid = { version = "1", features = ["v4"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+# Independent PDF reader; never part of the wasm production graph.
+lopdf = { version = "=0.38.0", default-features = false }

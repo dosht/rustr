@@ -1,6 +1,23 @@
 [workspace]
 resolver = "3"
-members = ["crates/*"]
+members = [
+    "crates/*",
+    "transgate/server",
+    "transgate/billing",
+    "transgate/core",
+    "transgate/processor",
+    "transgate/api",
+    "transgate/http",
+    "transgate/export",
+    "transgate/jobs-postgres",
+    "transgate/client",
+    "transgate/wasm",
+    "modules/billing/core",
+    "modules/billing/postgres",
+    "modules/billing/http",
+    "modules/billing/gateways/iyzico",
+    "modules/billing/gateways/lemonsqueezy",
+]
 
 [workspace.package]
 version = "0.1.0"

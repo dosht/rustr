@@ -1,0 +1,34 @@
+[package]
+name = "transgate-server"
+description = "Transgate HTTP runtime: process liveness, graceful shutdown and, when configured, billing and the transcription job host."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+axum = "0.8"
+billing-core = { path = "../../modules/billing/core" }
+billing-http = { path = "../../modules/billing/http" }
+billing-postgres = { path = "../../modules/billing/postgres" }
+media-adapters = { path = "../../crates/media-adapters" }
+media-ports = { path = "../../crates/media-ports" }
+media-postgres = { path = "../../crates/media-postgres" }
+llm-core = { path = "../../crates/llm-core" }
+llm-http = { path = "../../crates/llm-http" }
+getrandom = "0.3"
+lol_html = "2"
+percent-encoding = "2"
+serde.workspace = true
+serde_json.workspace = true
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres"] }
+tokio = { version = "1", features = ["rt-multi-thread", "net", "signal", "sync", "macros", "time", "fs"] }
+tower = { version = "0.5", default-features = false, features = ["util"] }
+tower-http = { version = "0.6", default-features = false, features = ["fs"] }
+transgate-billing = { path = "../billing" }
+transgate-core = { path = "../core" }
+transgate-http = { path = "../http" }
+transgate-jobs-postgres = { path = "../jobs-postgres" }
+url = "2"
+
+[dev-dependencies]
+uuid = { version = "1", features = ["v4"] }

@@ -1,0 +1,7 @@
+{
+  "source": "frontend/src/lib/ai/analysis-utils.ts:99-105",
+  "decision": "P5 D15: lead-approved narrow plain TXT/MD/copy correction; not unchanged output",
+  "analysis": {"type":"interview","nextSteps":[{"action":"Arrange pairing","priority":"high"}]},
+  "before": "# AI Analysis\n\n## Next Steps\n\n1. [object Object]\n\n",
+  "after": "# AI Analysis\n\n## Next Steps\n\n1. Arrange pairing (Priority: high)\n\n"
+}

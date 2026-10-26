@@ -1,0 +1,24 @@
+[package]
+name = "transgate-http"
+description = "Thin Axum routes over the Transgate core use cases: source route parity, provider callbacks and cron triggers. No business rule lives here."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+transgate-core = { path = "../core" }
+transgate-api = { path = "../api" }
+transgate-export = { path = "../export" }
+billing-core = { path = "../../modules/billing/core" }
+billing-http = { path = "../../modules/billing/http" }
+media-ports = { path = "../../crates/media-ports" }
+llm-core = { path = "../../crates/llm-core" }
+llm-http = { path = "../../crates/llm-http" }
+futures-util = "0.3"
+axum = "0.8"
+serde = { workspace = true }
+serde_json.workspace = true
+sha2 = "0.10"
+subtle = "2.6"
+tokio = { version = "1", features = ["rt", "time"] }
+uuid = { version = "1", features = ["v4"] }

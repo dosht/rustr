@@ -1,0 +1,24 @@
+import { render, screen, fireEvent } from "@testing-library/svelte";
+import userEvent from "@testing-library/user-event";
+import { beforeAll, expect, it, vi } from "vitest";
+import { fixture } from "$lib/core/fixtures";
+import { i18n } from "$lib/i18n/index.svelte";
+import { speakerText } from "./speaker";
+import SpeakerMenu from "./SpeakerMenu.svelte";
+beforeAll(() => i18n.use("en"));
+it("Escape cancels a speaker rename without saving and restores the trigger focus", async () => {
+  const vm = fixture("TranscriptVm", "completed"), row = vm.rows.find((line) => line.speaker && line.speaker_value !== null)!;
+  const onrename = vi.fn();
+  render(SpeakerMenu, { label: row.speaker!, value: row.speaker_value, options: vm.speaker_options, rtl: vm.rtl, onchoose: vi.fn(), onrename });
+  await userEvent.click(screen.getByRole("button", { name: speakerText(row.speaker!) }));
+  await userEvent.click(screen.getByRole("button", { name: "Edit speaker..." }));
+  const input = screen.getByRole("textbox", { name: "Edit speaker label" });
+  await userEvent.clear(input);
+  await userEvent.type(input, "New name");
+  await fireEvent.keyDown(input, { key: "Enter", isComposing: true });
+  expect(onrename).not.toHaveBeenCalled();
+  await userEvent.keyboard("{Escape}");
+  expect(onrename).not.toHaveBeenCalled();
+  expect(screen.queryByRole("textbox")).toBeNull();
+  expect(screen.getByRole("button", { name: speakerText(row.speaker!) })).toHaveFocus();
+});
