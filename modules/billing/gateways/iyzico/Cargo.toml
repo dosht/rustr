@@ -1,0 +1,23 @@
+[package]
+name = "billing-iyzico"
+description = "Iyzico adapter: IYZWSv2 request signing, hosted checkout, subscription checkout and retrieval, V3 renewal webhook verification."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+billing-core = { path = "../../core" }
+base64 = "0.22"
+hex = "0.4"
+hmac = "0.12"
+reqwest = { version = "0.13", default-features = false, features = ["rustls"] }
+serde_json.workspace = true
+sha2 = "0.10"
+subtle = "2"
+tokio = { version = "1", features = ["time"] }
+uuid = { version = "1", features = ["v4"] }
+percent-encoding = "2"
+
+[dev-dependencies]
+axum = "0.8"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "sync"] }

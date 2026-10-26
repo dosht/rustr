@@ -1,0 +1,21 @@
+[package]
+name = "billing-lemonsqueezy"
+description = "LemonSqueezy adapter: custom-price hosted checkout and raw-byte verified order webhooks. No subscriptions."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+billing-core = { path = "../../core" }
+hex = "0.4"
+hmac = "0.12"
+reqwest = { version = "0.13", default-features = false, features = ["rustls"] }
+serde_json.workspace = true
+sha2 = "0.10"
+subtle = "2"
+tokio = { version = "1", features = ["time"] }
+
+[dev-dependencies]
+axum = "0.8"
+uuid = { version = "1", features = ["v4"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "sync"] }

@@ -1,0 +1,20 @@
+[package]
+name = "billing-postgres"
+description = "PostgreSQL adapter for billing-core: schema `billing`, own migration history, account-serialized transactions, outbox."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "billing-provision"
+path = "src/bin/billing-provision.rs"
+
+[dependencies]
+billing-core = { path = "../core" }
+serde_json.workspace = true
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "migrate", "macros", "json", "uuid"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+uuid = { version = "1", features = ["v4", "v5"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }

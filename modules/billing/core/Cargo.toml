@@ -1,0 +1,21 @@
+[package]
+name = "billing-core"
+description = "Billing rules, use cases, presentation policies and ports. No I/O, no host dependencies."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+time = { version = "0.3", default-features = false, features = ["std"] }
+uuid = { version = "1", default-features = false, features = ["serde", "v4", "v5"] }
+ts-rs = { workspace = true, optional = true }
+
+[features]
+# TypeScript declarations of the presentation view models; enabled only through
+# transgate-core's `ts` generator.
+ts = ["dep:ts-rs"]
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt", "macros"] }
