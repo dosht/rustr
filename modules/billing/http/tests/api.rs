@@ -1043,8 +1043,8 @@ async fn d17_the_checkout_document_post_starts_once_and_carries_its_own_policy()
 #[ignore = "needs BILLING_TEST_DATABASE_URL"]
 async fn d17_a_checkout_document_post_refuses_cross_site_mixed_credentials_and_malformed_forms() {
     let page = Arc::new(RecordingCheckout::default());
-    let app = app_full(None, Some(page.clone())).await;
-    let person = app.person(false);
+    let full = app_full(None, Some(page.clone())).await;
+    let person = full.person(false);
     let order = order_field(json!({"pay_as_you_go_hours": 5}));
     let good = format!("order={order}&access_token={}", person.token);
     let cases: Vec<(String, Option<&str>, Option<String>, u16)> = vec![
@@ -1060,19 +1060,19 @@ async fn d17_a_checkout_document_post_refuses_cross_site_mixed_credentials_and_m
         (format!("{good}&pad={}", "x".repeat(CHECKOUT_FORM_MAX_BYTES)), Some(SITE), None, 413),
     ];
     for (body, origin, authorization, status) in cases {
-        let response = app.post_checkout(body.clone(), origin, authorization.as_deref()).await;
+        let response = full.post_checkout(body.clone(), origin, authorization.as_deref()).await;
         assert_eq!(response.status().as_u16(), status, "{origin:?} {} bytes", body.len());
         let rendered = page.0.lock().unwrap().last().cloned().unwrap();
         assert_eq!((rendered["outcome"].clone(), rendered["status"].clone()), (json!("failed"), json!(status)));
     }
-    let json_body = app.http.post(format!("{}/checkout", app.base)).header("content-type", "application/json").header("origin", SITE).body("{}").send().await.unwrap();
+    let json_body = full.http.post(format!("{}/checkout", full.base)).header("content-type", "application/json").header("origin", SITE).body("{}").send().await.unwrap();
     assert_eq!(json_body.status().as_u16(), 415);
-    assert_eq!(app.count("SELECT count(*) FROM billing.payments WHERE account_id = $1", person.account).await, 0, "no refusal starts a checkout");
+    assert_eq!(full.count("SELECT count(*) FROM billing.payments WHERE account_id = $1", person.account).await, 0, "no refusal starts a checkout");
 
     // Without a configured page the route does not exist; the builder refuses non-HTTPS sites.
     let plain = app().await;
     assert_eq!(plain.post_checkout(good, Some(SITE), None).await.status().as_u16(), 404);
-    let state = || BillingHttp::new(Arc::new(Billing::new(Arc::new(PgBillingStore::new(app.owner.clone())), Arc::new(FixedClock), app.directory.clone(), config())), app.tokens.clone());
+    let state = || BillingHttp::new(Arc::new(Billing::new(Arc::new(PgBillingStore::new(full.owner.clone())), Arc::new(FixedClock), full.directory.clone(), config())), full.tokens.clone());
     for origin in ["http://transgate.ai", "https://transgate.ai/app", "ftp://transgate.ai", "https://"] {
         assert!(state().with_checkout_page(page.clone(), origin).is_err(), "{origin}");
     }
