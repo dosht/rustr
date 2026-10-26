@@ -34,7 +34,7 @@ use crate::ai::ports::{
     SummaryRequest,
 };
 use crate::ai::{
-    AiError, AiPassReport, ConsentView, GenerationId, GenerationView, LimitUsage, LimitsView, Started, SummaryView,
+    AiError, AiPassReport, ChatHistory, ConsentView, GenerationId, GenerationView, InFlightChat, LimitUsage, LimitsView, Started, SummaryView,
     consent, prompts, quota, sanitize,
 };
 use crate::ids::{AccountId, JobId, Micros};
@@ -790,17 +790,33 @@ impl Ai {
         Ok(g.filter(|g| !consent::covered(record.as_ref(), g.consent_epoch)).map(|g| GenerationView::of(&g)))
     }
 
-    /// The job's persisted chat (AI-021), in order.
-    pub async fn chat_history(&self, account: AccountId, job: JobId) -> Result<Vec<ChatMessage>, AiError> {
+    /// The job's persisted chat (AI-021), in order, plus its chat answer still
+    /// running (REPAIR-P5-5) so another tab reattaches instead of restarting
+    /// (P5 D6). Work admitted under an earlier consent decision is fenced and
+    /// not offered. Reading never dispatches, meters or extends anything.
+    pub async fn chat_history(&self, account: AccountId, job: JobId) -> Result<ChatHistory, AiError> {
         self.visible_job(account, job).await?;
         let mut uow = self.s.store.begin().await?;
-        let read = async { Ok::<_, StoreError>((uow.ai().consent(account).await?, uow.ai().chat_history(account, job).await?)) }.await;
+        let read = async {
+            let ai = uow.ai();
+            Ok::<_, StoreError>((
+                ai.consent(account).await?,
+                ai.chat_history(account, job).await?,
+                ai.active_for_job(account, job, GenerationKind::Chat).await?,
+            ))
+        }
+        .await;
         let _ = uow.rollback().await;
-        let (record, messages) = read?;
+        let (record, messages, active) = read?;
         if !consent::is_valid(record.as_ref()) {
             return Err(AiError::ConsentRequired);
         }
-        Ok(messages.into_iter().filter(|m| !consent::covered(record.as_ref(), m.consent_epoch)).collect())
+        let messages = messages.into_iter().filter(|m| !consent::covered(record.as_ref(), m.consent_epoch)).collect();
+        let in_flight = active.filter(|g| consent::may_write(record.as_ref(), g.consent_epoch)).and_then(|g| match &g.input {
+            GenerationInput::Chat { question, .. } => Some(InFlightChat { question: question.clone(), generation: GenerationView::of(&g) }),
+            _ => None,
+        });
+        Ok(ChatHistory { messages, in_flight })
     }
 
     /// The general completion summary an owner reads (TRX-039).

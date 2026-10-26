@@ -154,7 +154,7 @@ async fn analysis(State(s): State<Arc<AiHttp>>, headers: HeaderMap, Path(job): P
 }
 async fn history(State(s): State<Arc<AiHttp>>, headers: HeaderMap, Path(job): Path<i64>) -> Response {
     let c = match authenticate(&s, &headers).await { Ok(c) => c, Err(r) => return r.into_response() };
-    match s.ai.chat_history(c.account, JobId(job)).await { Ok(v) => super::ok_json(StatusCode::OK, &json!({"messages":v})), Err(e) => failure(e) }
+    match s.ai.chat_history(c.account, JobId(job)).await { Ok(v) => super::ok_json(StatusCode::OK, &v), Err(e) => failure(e) }
 }
 async fn summary(State(s): State<Arc<AiHttp>>, headers: HeaderMap, Path(job): Path<i64>) -> Response {
     let c = match authenticate(&s, &headers).await { Ok(c) => c, Err(r) => return r.into_response() };

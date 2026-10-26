@@ -209,6 +209,58 @@ async fn ai_http_disconnect_cross_replica_resnapshot_and_saved_final_never_redis
 
 #[tokio::test]
 #[ignore = "needs BILLING_TEST_DATABASE_URL"]
+async fn ai_http_chat_history_reports_the_held_answer_to_a_second_replica_and_only_to_its_owner() {
+    let f = fixture().await;
+    let person = user();
+    let job = completed(&f, &person).await;
+    assert_eq!(f.app.call("POST", "/api/ai/consent", Some(&person.jwt), Some(json!({"hasConsented":true}))).await.0, 200);
+    let path = format!("/api/ai/jobs/{}/chat", job.0);
+    let (status, idle) = f.app.call("GET", &path, Some(&person.jwt), None).await;
+    assert_eq!(status, 200);
+    assert_eq!(idle, json!({"messages": [], "in_flight": null}), "no work in flight is an explicit null");
+
+    let started = f.ai.start_chat(AccountId(person.id), job, Uuid::new_v4(), transgate_core::ai::ChatRequest {
+        message: "  What was decided?  ".into(), history: vec![],
+    }).await.unwrap();
+    let id = started.generation.id;
+    let worker = tokio::spawn({ let ai = f.ai.clone(); async move { ai.run(id).await } });
+    let mut last = Value::Null;
+    let held = tokio::time::timeout(Duration::from_secs(10), async {
+        loop {
+            // The other replica shares only the database: it has no live hub for this generation.
+            let response = f.app.http.get(format!("{}{path}", f.other)).bearer_auth(&person.jwt).send().await.unwrap();
+            assert_eq!(response.status().as_u16(), 200);
+            let body: Value = response.json().await.unwrap();
+            if body["in_flight"]["generation"]["draft"]["text"] == "Hello" { break body; }
+            last = body;
+            tokio::time::sleep(Duration::from_millis(50)).await;
+        }
+    }).await.unwrap_or_else(|_| panic!("the held partial is readable from another replica; last body: {last}"));
+    assert_eq!(held["messages"], json!([]), "the pair is saved only when the answer completes");
+    assert_eq!(held["in_flight"]["question"], "  What was decided?  ", "the question is returned as typed");
+    assert_eq!(held["in_flight"]["generation"]["id"], json!(id));
+    assert_eq!(held["in_flight"]["generation"]["kind"], "chat");
+    assert_eq!(held["in_flight"]["generation"]["status"], "running");
+    assert!(held["in_flight"]["generation"]["final_content"].is_null());
+    assert!(held["in_flight"].as_object().unwrap().keys().all(|k| k == "question" || k == "generation"));
+
+    let foreign = user();
+    super::erasure::register_auth(&f.app, &foreign);
+    assert_eq!(f.app.call("GET", &path, Some(&foreign.jwt), None).await.0, 404, "another account learns nothing of the job or its held answer");
+    assert_eq!(f.app.call("GET", &path, None, None).await.0, 401);
+    assert_eq!(f.provider.calls.load(Ordering::SeqCst), 1, "reading history never dispatches");
+
+    f.provider.finish.notify_one();
+    assert_eq!(worker.await.unwrap().unwrap().status, transgate_core::ai::GenerationStatus::Completed);
+    let (_, done) = f.app.call("GET", &path, Some(&person.jwt), None).await;
+    assert_eq!(done["in_flight"], Value::Null, "a finished generation is no longer in flight");
+    assert_eq!(done["messages"][0]["content"], "  What was decided?  ");
+    assert_eq!(done["messages"][1]["content"], "Hello world");
+    assert_eq!(f.provider.calls.load(Ordering::SeqCst), 1);
+}
+
+#[tokio::test]
+#[ignore = "needs BILLING_TEST_DATABASE_URL"]
 async fn ai_http_watch_capacity_is_held_for_the_stream_and_refuses_legacy_starts_before_admission() {
     let f = fixture().await;
     let person = user();

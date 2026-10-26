@@ -11057,6 +11057,61 @@
       "sync_warning": null,
       "typing": false
     },
+    "reattached": {
+      "can_send": false,
+      "enabled": true,
+      "error": null,
+      "limits": {
+        "questions": {
+          "current": 8,
+          "max": 10,
+          "tone": "progress",
+          "width_percent": 80
+        },
+        "reset": {
+          "hours": 5,
+          "type": "in_hours"
+        },
+        "tokens": {
+          "current": 9500,
+          "max": 10000,
+          "tone": "danger",
+          "width_percent": 95
+        }
+      },
+      "lines": [
+        {
+          "content": "What did we decide about the launch?",
+          "role": "user",
+          "show_actions": false,
+          "streaming": false
+        },
+        {
+          "content": "You agreed to ship the beta on **1 May**, with Ada owning the memo.",
+          "role": "assistant",
+          "show_actions": true,
+          "streaming": false
+        },
+        {
+          "content": "Who owns the venue?",
+          "role": "user",
+          "show_actions": false,
+          "streaming": false
+        },
+        {
+          "content": "The venue was booked by",
+          "role": "assistant",
+          "show_actions": false,
+          "streaming": true
+        }
+      ],
+      "loading_history": false,
+      "notice": null,
+      "show_history_header": true,
+      "show_welcome": false,
+      "sync_warning": null,
+      "typing": false
+    },
     "streaming": {
       "can_send": false,
       "enabled": true,

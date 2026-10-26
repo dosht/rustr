@@ -1,0 +1,113 @@
+//! A second tab on a job whose chat answer is still running: the same session
+//! `GET` chat-history route reports the in-flight generation, and the real chat
+//! leaf answers with exactly one watch, never a start (REPAIR-P5-5, P5-D6).
+use std::collections::HashMap;
+use std::sync::atomic::{AtomicI64, Ordering};
+use std::sync::{Arc, Mutex};
+
+use axum::extract::Path;
+use axum::routing::get;
+use axum::{Json, Router};
+use serde_json::{Value, json};
+use transgate_client::api::HttpApi;
+use transgate_client::auth::{AuthPorts, AuthStorage, Clock, GoTrue, GoTrueConfig, LockGuard, OsRandom, SESSION_KEY, SessionLock};
+use transgate_client::future::BoxFuture;
+use transgate_core::ai::ports::ChatMessage;
+use transgate_core::ai::{
+    ChatHistory, ChatRole, Draft, GenerationId, GenerationKind, GenerationStatus, GenerationView, InFlightChat,
+};
+use transgate_core::presentation::ai::WatchKind;
+use transgate_core::presentation::ai::chat::{ChatPanelState, Effect, Event};
+use transgate_core::{AccountId, JobId, Micros};
+use uuid::Uuid;
+
+#[derive(Default)]
+struct Memory(Mutex<HashMap<String, String>>);
+impl AuthStorage for Memory {
+    fn get(&self, key: &str) -> Option<String> { self.0.lock().unwrap().get(key).cloned() }
+    fn set(&self, key: &str, value: &str) { self.0.lock().unwrap().insert(key.into(), value.into()); }
+    fn remove(&self, key: &str) { self.0.lock().unwrap().remove(key); }
+}
+struct NoContention;
+impl SessionLock for NoContention {
+    fn acquire(&self) -> BoxFuture<'_, LockGuard> { Box::pin(async { LockGuard::new(|| {}) }) }
+}
+struct Fixed(AtomicI64);
+impl Clock for Fixed {
+    fn now_secs(&self) -> i64 { self.0.load(Ordering::SeqCst) }
+}
+
+const USER: Uuid = Uuid::from_u128(1);
+const RUNNING: GenerationId = GenerationId(Uuid::from_u128(77));
+
+fn view(status: GenerationStatus, text: &str) -> GenerationView {
+    GenerationView {
+        id: RUNNING, job: JobId(1), kind: GenerationKind::Chat, status, sequence: 3, source_revision: 1, consent_epoch: 1,
+        draft: Draft::Text { text: text.into() }, final_content: None, durable: false, remote_outcome_unknown: false,
+        execution: Some(Uuid::from_u128(5)), tokens_used: None, interruption: None, created_at: Micros(1), finished_at: None,
+    }
+}
+
+fn saved() -> ChatMessage {
+    ChatMessage {
+        id: Uuid::from_u128(11), account: AccountId(Uuid::from_u128(2)), job: JobId(1), generation: GenerationId(Uuid::from_u128(60)),
+        role: ChatRole::User, content: "Earlier question".into(), order: 1, consent_epoch: 1, created_at: Micros(1),
+    }
+}
+
+async fn host() -> String {
+    let chat = |Path(job): Path<i64>| async move {
+        let body: Value = match job {
+            // The answer is running: the saved messages, plus its question and held partial.
+            1 => serde_json::to_value(ChatHistory {
+                messages: vec![saved()],
+                in_flight: Some(InFlightChat { question: "When is it due?".into(), generation: view(GenerationStatus::Running, "Hel") }),
+            })
+            .unwrap(),
+            _ => json!({"messages": [], "in_flight": null}),
+        };
+        Json(body)
+    };
+    let routes = Router::new().route("/api/ai/jobs/{job}/chat", get(chat));
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let base = format!("http://{}/api", listener.local_addr().unwrap());
+    tokio::spawn(async move { axum::serve(listener, routes).await.unwrap() });
+    base
+}
+
+fn api(base: &str) -> HttpApi {
+    let storage = Arc::new(Memory::default());
+    storage.set(SESSION_KEY, &json!({"access_token": "t", "refresh_token": "r", "expires_at": 4_000_000_000i64,
+                                    "user_id": USER, "email": "ada@example.test"}).to_string());
+    let ports = AuthPorts { storage, random: Arc::new(OsRandom), clock: Arc::new(Fixed(AtomicI64::new(1_800_000_000))), lock: Arc::new(NoContention) };
+    HttpApi::new(base, Arc::new(GoTrue::new(GoTrueConfig { url: "http://127.0.0.1:9".into(), api_key: None }, ports)))
+}
+
+fn loading(job: JobId) -> ChatPanelState {
+    let mut chat = ChatPanelState::default();
+    chat.update(Event::Selected { job });
+    let effects = chat.update(Event::ConsentChanged { granted: true });
+    assert!(effects.contains(&Effect::LoadHistory { job }));
+    chat
+}
+
+#[tokio::test]
+async fn an_in_flight_history_reattaches_with_one_watch_and_no_second_start() {
+    let api = api(&host().await);
+    let history = api.chat_history(USER, JobId(1)).await.unwrap();
+    assert_eq!(history.in_flight.as_ref().map(|f| f.generation.id), Some(RUNNING));
+
+    let mut chat = loading(JobId(1));
+    let effects = chat.update(Event::HistoryLoaded { job: JobId(1), result: Ok(history) });
+    assert_eq!(effects, vec![Effect::Watch { generation: RUNNING, kind: WatchKind::Text, after: None }]);
+    assert!(!effects.iter().any(|e| matches!(e, Effect::StartChat { .. } | Effect::RetryChat { .. })));
+}
+
+#[tokio::test]
+async fn a_history_without_an_in_flight_answer_opens_no_watch() {
+    let api = api(&host().await);
+    let history = api.chat_history(USER, JobId(2)).await.unwrap();
+    assert!(history.in_flight.is_none());
+    let mut chat = loading(JobId(2));
+    assert_eq!(chat.update(Event::HistoryLoaded { job: JobId(2), result: Ok(history) }), vec![]);
+}

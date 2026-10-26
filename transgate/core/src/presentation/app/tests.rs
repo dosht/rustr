@@ -160,6 +160,34 @@ fn a_consent_change_fences_ai_work_but_not_session_work() {
     assert!(s.update(AppEvent::Analysis { epoch: granted, job: JobId(42), event: analysis::Event::Hidden }, NOW).is_empty());
 }
 
+// REPAIR-P5-5, P5 D6: a second tab opening a job whose chat answer is running elsewhere shows the
+// held partial and attaches exactly one watch; nothing starts, retries or meters.
+#[test]
+fn a_second_tab_reattaches_a_running_chat_answer_without_starting_one() {
+    use crate::ai::{ChatHistory, ChatRole, Draft, GenerationId, GenerationKind, GenerationStatus, GenerationView, InFlightChat};
+    use crate::presentation::ai::WatchKind;
+    let (mut s, _) = signed_in("/home/42", desktop());
+    let epoch = s.epoch();
+    let effects = s.update(AppEvent::Consent { epoch, event: consent::Event::Loaded { result: Ok(consent_view(true)) } }, NOW);
+    let ai = s.ai_epoch();
+    assert!(effects.contains(&AppEffect::Chat { epoch: ai, job: JobId(42), effect: chat::Effect::LoadHistory { job: JobId(42) } }));
+    let g = GenerationId(Uuid::from_u128(77));
+    let generation = GenerationView {
+        id: g, job: JobId(42), kind: GenerationKind::Chat, status: GenerationStatus::Running, sequence: 3,
+        source_revision: 1, consent_epoch: 1, draft: Draft::Text { text: "The team reviewed".into() },
+        final_content: None, durable: true, remote_outcome_unknown: false, execution: Some(Uuid::from_u128(5)),
+        tokens_used: None, interruption: None, created_at: NOW, finished_at: None,
+    };
+    let history = ChatHistory { messages: vec![], in_flight: Some(InFlightChat { question: "What did the team agree to review?".into(), generation }) };
+    let effects = s.update(AppEvent::Chat { epoch: ai, job: JobId(42), event: chat::Event::HistoryLoaded { job: JobId(42), result: Ok(history) } }, NOW);
+    assert_eq!(effects, vec![AppEffect::Chat { epoch: ai, job: JobId(42), effect: chat::Effect::Watch { generation: g, kind: WatchKind::Text, after: None } }]);
+    let AppVm::SignedIn(vm) = s.view(NOW) else { panic!("signed in") };
+    let chat = vm.chat.expect("chat on a job route");
+    let last = chat.lines.last().unwrap();
+    assert_eq!((last.role, last.content.as_str(), last.streaming), (ChatRole::Assistant, "The team reviewed", true));
+    assert!(!chat.can_send);
+}
+
 // MOBL-116: a phone landing on /home is replaced by the new-transcript view.
 #[test]
 fn a_phone_on_home_is_sent_to_the_new_transcript_view() {

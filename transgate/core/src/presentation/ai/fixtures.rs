@@ -8,7 +8,8 @@ use serde_json::{Value, json};
 use crate::ai::analysis::{Analysis, AnalysisResult, AnalysisType, DetectedType};
 use crate::ai::ports::Period;
 use crate::ai::{
-    ChatMessage, ChatRole, ConsentView, Draft, FinalContent, GenerationId, GenerationKind, GenerationStatus, GenerationView,
+    ChatHistory, ChatMessage, ChatRole, ConsentView, Draft, FinalContent, GenerationId, GenerationKind, GenerationStatus, GenerationView,
+    InFlightChat,
     Interruption, LimitUsage, LimitsView,
 };
 use crate::documents::DocumentFormat;
@@ -269,7 +270,7 @@ fn chat_panel(history: Vec<ChatMessage>, limits: Result<LimitsView, ApiFailure>)
     let mut s = ChatPanelState::default();
     s.update(chat::Event::ConsentChanged { granted: true });
     s.update(chat::Event::Selected { job: JOB });
-    s.update(chat::Event::HistoryLoaded { job: JOB, result: Ok(history) });
+    s.update(chat::Event::HistoryLoaded { job: JOB, result: Ok(ChatHistory { messages: history, in_flight: None }) });
     s.update(chat::Event::LimitsLoaded { job: JOB, result: limits });
     s
 }
@@ -340,6 +341,19 @@ pub fn chat() -> Vec<(&'static str, ChatPanelVm)> {
         s.update(chat::Event::ChatCopied { ok: true });
         s
     };
+    // REPAIR-P5-5: another tab's running answer, reattached from history.
+    let reattached = {
+        let mut s = ChatPanelState::default();
+        s.update(chat::Event::ConsentChanged { granted: true });
+        s.update(chat::Event::Selected { job: JOB });
+        let mut generation = analysis_view(generation(301), GenerationStatus::Running, None);
+        generation.kind = GenerationKind::Chat;
+        generation.draft = Draft::Text { text: "The venue was booked by".into() };
+        let in_flight = InFlightChat { question: "Who owns the venue?".into(), generation };
+        s.update(chat::Event::HistoryLoaded { job: JOB, result: Ok(ChatHistory { messages: history(), in_flight: Some(in_flight) }) });
+        s.update(chat::Event::LimitsLoaded { job: JOB, result: Ok(limited()) });
+        s
+    };
     vec![
         ("loading_history", loading.view(NOW)),
         ("welcome", chat_panel(vec![], unlimited()).view(NOW)),
@@ -347,6 +361,7 @@ pub fn chat() -> Vec<(&'static str, ChatPanelVm)> {
         ("disabled", chat_panel(vec![], Err(ApiFailure::http(503, None))).view(NOW)),
         ("typing", typing.view(NOW)),
         ("streaming", streaming.view(NOW)),
+        ("reattached", reattached.view(NOW)),
         ("sync_warning", sync_warning.view(NOW)),
         ("limit_reached", limit_reached.view(NOW)),
         ("copied", copied.view(NOW)),

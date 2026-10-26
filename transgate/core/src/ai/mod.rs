@@ -200,6 +200,23 @@ impl GenerationView {
     }
 }
 
+/// `GET /api/ai/jobs/{job}/chat` (AI-021, REPAIR-P5-5): the saved pairs in
+/// order, plus the job's chat answer still running in any tab, so another tab
+/// reattaches its watch instead of restarting it (P5 D6).
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct ChatHistory {
+    pub messages: Vec<ChatMessage>,
+    pub in_flight: Option<InFlightChat>,
+}
+
+/// The owner's own pending question and its generation snapshot. The question
+/// is the original accepted text, as the saved user message will hold it.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct InFlightChat {
+    pub question: String,
+    pub generation: GenerationView,
+}
+
 /// The answer to a start or retry: `created` false is an exact replay of the
 /// same request key (HTTP 200 rather than 202; never another provider call).
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]

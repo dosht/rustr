@@ -13,7 +13,7 @@ use llm_core::{ApplicationFrame, StreamState, StreamStatus, StreamUpdate};
 use serde::{Deserialize, Serialize};
 
 use crate::ai::presentation::public_error;
-use crate::ai::{ChatMessage, ChatRole, Draft, FinalContent, GenerationId, GenerationStatus, GenerationView, Interruption, LimitUsage, LimitsView};
+use crate::ai::{ChatHistory, ChatRole, Draft, FinalContent, GenerationId, GenerationStatus, GenerationView, InFlightChat, Interruption, LimitUsage, LimitsView};
 use crate::ids::{JobId, MICROS_PER_MINUTE, Micros};
 use crate::presentation::ai::{ApiFailure, RequestKey, StartRejection, WatchFailure, WatchKind};
 use crate::presentation::msg::{Msg, ai, app};
@@ -40,7 +40,7 @@ pub enum Rating {
 pub enum Event {
     Selected { job: JobId },
     ConsentChanged { granted: bool },
-    HistoryLoaded { job: JobId, result: Result<Vec<ChatMessage>, ApiFailure> },
+    HistoryLoaded { job: JobId, result: Result<ChatHistory, ApiFailure> },
     LimitsLoaded { job: JobId, result: Result<LimitsView, ApiFailure> },
     SendRequested { text: String, key: RequestKey },
     /// `index` counts displayed messages, as the source's message actions do.
@@ -180,8 +180,20 @@ struct Line {
 
 #[derive(Clone, Debug, PartialEq)]
 enum Request {
-    Send { message: String, history: Vec<HistoryEntry> },
-    Retry { of: GenerationId },
+    Send { key: RequestKey, message: String, history: Vec<HistoryEntry> },
+    Retry { key: RequestKey, of: GenerationId },
+    /// An answer another tab started, reattached from history (REPAIR-P5-5).
+    /// This tab never sent it, so it has no request key and never replays it.
+    Attach,
+}
+
+impl Request {
+    fn key(&self) -> Option<RequestKey> {
+        match self {
+            Request::Send { key, .. } | Request::Retry { key, .. } => Some(*key),
+            Request::Attach => None,
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -193,7 +205,6 @@ enum Step {
 
 #[derive(Clone, Debug, PartialEq)]
 struct Pending {
-    key: RequestKey,
     request: Request,
     /// The answer line this request streams into.
     index: usize,
@@ -248,11 +259,17 @@ impl ChatPanelState {
                 self.loading_history = false;
                 self.history_loaded = true;
                 match result {
-                    Ok(messages) => {
-                        self.lines = messages
+                    Ok(history) => {
+                        self.lines = history
+                            .messages
                             .into_iter()
                             .map(|m| Line { role: m.role, content: m.content, generation: Some(m.generation) })
                             .collect();
+                        // A question this tab sent meanwhile owns the lane; the
+                        // server then reports that same answer, already watched.
+                        if let Some(in_flight) = history.in_flight.filter(|_| self.pending.is_none()) {
+                            return self.attach(in_flight);
+                        }
                     }
                     Err(_) => self.error = Some(ChatErrorVm { message: Some(app("Failed to load chat history")), detail: None }),
                 }
@@ -282,7 +299,7 @@ impl ChatPanelState {
             Event::SendRequested { text, key } => self.send(text, key),
             Event::RetryRequested { index, key } => self.retry(index, key),
             Event::StartAccepted { key, generation } => {
-                let Some(p) = self.pending.as_mut().filter(|p| p.key == key && matches!(p.step, Step::Starting { .. })) else {
+                let Some(p) = self.pending.as_mut().filter(|p| p.request.key() == Some(key) && matches!(p.step, Step::Starting { .. })) else {
                     return vec![];
                 };
                 p.step = Step::Streaming { generation, started: false, reconnected: false };
@@ -290,14 +307,14 @@ impl ChatPanelState {
                 vec![Effect::Watch { generation, kind: WatchKind::Text, after: None }]
             }
             Event::StartRejected { key, failure: _, body } => {
-                if !self.pending.as_ref().is_some_and(|p| p.key == key && matches!(p.step, Step::Starting { .. })) {
+                if !self.pending.as_ref().is_some_and(|p| p.request.key() == Some(key) && matches!(p.step, Step::Starting { .. })) {
                     return vec![];
                 }
                 self.fail(rejection_error(body));
                 vec![]
             }
             Event::StartUnknown { key } => {
-                let Some(p) = self.pending.as_mut().filter(|p| p.key == key) else { return vec![] };
+                let Some(p) = self.pending.as_mut().filter(|p| p.request.key() == Some(key)) else { return vec![] };
                 let Step::Starting { replayed } = p.step else { return vec![] };
                 if replayed {
                     self.fail(ChatErrorVm { message: Some(unconfirmed()), detail: None });
@@ -368,7 +385,8 @@ impl ChatPanelState {
 
     pub fn view(&self, now: Micros) -> ChatPanelVm {
         let streaming_index = match &self.pending {
-            Some(Pending { index, step: Step::Streaming { started: true, .. }, .. }) => Some(*index),
+            // A reattached answer streams from its held partial before any frame.
+            Some(Pending { index, request, step: Step::Streaming { started, .. } }) if *started || *request == Request::Attach => Some(*index),
             _ => None,
         };
         let sending = self.pending.is_some();
@@ -414,7 +432,7 @@ impl ChatPanelState {
         self.lines.push(Line { role: ChatRole::User, content: text.clone(), generation: None });
         self.error = None;
         self.sync_warning = false;
-        let pending = Pending { key, request: Request::Send { message: text, history }, index: self.lines.len(), step: Step::Starting { replayed: false } };
+        let pending = Pending { request: Request::Send { key, message: text, history }, index: self.lines.len(), step: Step::Starting { replayed: false } };
         let effect = self.request_effect(&pending);
         self.pending = Some(pending);
         vec![effect]
@@ -431,7 +449,7 @@ impl ChatPanelState {
         self.lines[index].content.clear();
         self.error = None;
         self.sync_warning = false;
-        let pending = Pending { key, request: Request::Retry { of }, index, step: Step::Starting { replayed: false } };
+        let pending = Pending { request: Request::Retry { key, of }, index, step: Step::Starting { replayed: false } };
         let effects = vec![self.request_effect(&pending), self.telemetry("ai_chat_message_retried", index)];
         self.pending = Some(pending);
         effects
@@ -439,14 +457,32 @@ impl ChatPanelState {
 
     fn request_effect(&self, p: &Pending) -> Effect {
         match &p.request {
-            Request::Send { message, history } => Effect::StartChat {
+            Request::Send { key, message, history } => Effect::StartChat {
                 job: self.job.expect("a question needs a selected job"),
-                key: p.key,
+                key: *key,
                 message: message.clone(),
                 history: history.clone(),
             },
-            Request::Retry { of } => Effect::RetryChat { generation: *of, key: p.key },
+            Request::Retry { key, of } => Effect::RetryChat { generation: *of, key: *key },
+            Request::Attach => unreachable!("an attachment has no key, so it is never started or replayed"),
         }
+    }
+
+    /// Shows another tab's running answer as this tab's streaming answer and
+    /// attaches its watch (P5 D6): no start, retry, key or quota. The held
+    /// partial is shown at once; the watch's first snapshot replaces it.
+    fn attach(&mut self, in_flight: InFlightChat) -> Vec<Effect> {
+        let generation = in_flight.generation.id;
+        self.lines.push(Line { role: ChatRole::User, content: in_flight.question, generation: None });
+        let index = self.lines.len();
+        if let Draft::Text { text } = in_flight.generation.draft {
+            if !text.is_empty() {
+                self.lines.push(Line { role: ChatRole::Assistant, content: text, generation: None });
+            }
+        }
+        self.stream.clear();
+        self.pending = Some(Pending { request: Request::Attach, index, step: Step::Streaming { generation, started: false, reconnected: false } });
+        vec![Effect::Watch { generation, kind: WatchKind::Text, after: None }]
     }
 
     fn frame(&mut self, generation: GenerationId, frame: ApplicationFrame) -> Vec<Effect> {
@@ -547,7 +583,7 @@ impl ChatPanelState {
             answer.generation = Some(generation);
         }
         match p.request {
-            Request::Send { .. } => {
+            Request::Send { .. } | Request::Attach => {
                 if let Some(question) = p.index.checked_sub(1).and_then(|i| self.lines.get_mut(i)) {
                     question.generation = Some(generation);
                 }
@@ -561,7 +597,7 @@ impl ChatPanelState {
     /// a retried answer keeps its emptied placeholder.
     fn fail(&mut self, error: ChatErrorVm) {
         if let Some(p) = self.pending.take() {
-            if matches!(p.request, Request::Send { .. }) {
+            if matches!(p.request, Request::Send { .. } | Request::Attach) {
                 self.lines.pop();
             }
         }

@@ -1,7 +1,7 @@
 use llm_core::{ApplicationFrame, Persistence, StreamIdentity, StreamStatus, TextEvent};
 
 use super::*;
-use crate::ai::{ChatMessage, Draft, FinalContent, GenerationKind, GenerationStatus, Interruption, LimitUsage, LimitsView};
+use crate::ai::{ChatHistory, ChatMessage, Draft, FinalContent, GenerationKind, GenerationStatus, InFlightChat, Interruption, LimitUsage, LimitsView};
 use crate::ai::ports::Period;
 use crate::ids::{AccountId, JobId, MICROS_PER_MINUTE, Micros};
 
@@ -66,7 +66,7 @@ fn panel(history: Vec<ChatMessage>) -> ChatPanelState {
     let mut s = ChatPanelState::default();
     s.update(Event::ConsentChanged { granted: true });
     assert_eq!(s.update(Event::Selected { job: JOB }), vec![Effect::LoadHistory { job: JOB }, Effect::LoadLimits { job: JOB }]);
-    s.update(Event::HistoryLoaded { job: JOB, result: Ok(history) });
+    s.update(Event::HistoryLoaded { job: JOB, result: Ok(ChatHistory { messages: history, in_flight: None }) });
     s.update(Event::LimitsLoaded { job: JOB, result: Ok(LimitsView { enabled: true, ..Default::default() }) });
     s
 }
@@ -128,6 +128,52 @@ fn streamed_text_renders_progressively_and_the_saved_final_replaces_it() {
     let last = vm.lines.last().unwrap();
     assert_eq!((last.content.as_str(), last.streaming, last.show_actions), ("Hello.", false, true));
     assert!(vm.can_send && vm.error.is_none());
+}
+
+// REPAIR-P5-5, P5 D6: a tab that opens a job while its answer runs elsewhere shows the held
+// partial as the streaming answer and attaches the watch. No start, retry, key or quota.
+#[test]
+fn an_answer_running_in_another_tab_is_shown_and_watched_without_a_new_request() {
+    let saved = generation(1);
+    let g = generation(2);
+    let mut s = ChatPanelState::default();
+    s.update(Event::ConsentChanged { granted: true });
+    s.update(Event::Selected { job: JOB });
+    let in_flight = InFlightChat { question: "  What next?  ".into(), generation: generation_view(g, GenerationStatus::Running, "The team reviewed", None, None) };
+    let history = ChatHistory { messages: vec![message(1, ChatRole::User, "Q1", saved), message(2, ChatRole::Assistant, "A1", saved)], in_flight: Some(in_flight) };
+    let effects = s.update(Event::HistoryLoaded { job: JOB, result: Ok(history) });
+    assert_eq!(effects, vec![Effect::Watch { generation: g, kind: WatchKind::Text, after: None }], "exactly one watch");
+    let vm = s.view(NOW);
+    let shown: Vec<_> = vm.lines.iter().map(|l| (l.role, l.content.as_str(), l.streaming, l.show_actions)).collect();
+    assert_eq!(shown[2..], [(ChatRole::User, "  What next?  ", false, false), (ChatRole::Assistant, "The team reviewed", true, false)]);
+    assert!(!vm.can_send && !vm.typing && !vm.show_welcome);
+    assert!(send(&mut s, "another", key(9)).is_empty(), "one question at a time, across tabs");
+
+    s.update(Event::WatchFrame { generation: g, frame: snapshot(g, 5, "The team reviewed the budget") });
+    assert_eq!(s.view(NOW).lines[3].content, "The team reviewed the budget");
+    let effects = s.update(Event::WatchFrame { generation: g, frame: frame(g, 6, TextEvent::Final { text: "The team reviewed the budget.".into(), persistence: Persistence::Saved }) });
+    assert_eq!(effects, vec![Effect::LoadLimits { job: JOB }]);
+    let vm = s.view(NOW);
+    assert_eq!((vm.lines.len(), vm.lines[3].streaming, vm.lines[3].show_actions, vm.can_send), (4, false, true, true));
+    assert_eq!(s.update(Event::RetryRequested { index: 3, key: key(10) }), vec![
+        Effect::RetryChat { generation: g, key: key(10) },
+        Effect::Telemetry { event: TelemetryEvent::new("ai_chat_message_retried").number("jobId", JOB.0 as f64).number("messageIndex", 3.0) },
+    ], "the attached answer becomes an ordinary saved answer");
+}
+
+#[test]
+fn a_running_answer_without_text_yet_shows_typing_and_leaving_detaches() {
+    let g = generation(2);
+    let mut s = ChatPanelState::default();
+    s.update(Event::ConsentChanged { granted: true });
+    s.update(Event::Selected { job: JOB });
+    let in_flight = InFlightChat { question: "Q".into(), generation: generation_view(g, GenerationStatus::Accepted, "", None, None) };
+    let effects = s.update(Event::HistoryLoaded { job: JOB, result: Ok(ChatHistory { messages: vec![], in_flight: Some(in_flight) }) });
+    assert_eq!(effects, vec![Effect::Watch { generation: g, kind: WatchKind::Text, after: None }]);
+    let vm = s.view(NOW);
+    assert_eq!(vm.lines.iter().map(|l| (l.role, l.content.as_str())).collect::<Vec<_>>(), vec![(ChatRole::User, "Q")]);
+    assert!(vm.typing && !vm.can_send);
+    assert_eq!(s.update(Event::Selected { job: JobId(10) })[0], Effect::Detach { generation: g }, "another job closes the attachment");
 }
 
 #[test]

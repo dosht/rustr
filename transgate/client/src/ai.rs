@@ -10,8 +10,7 @@ use llm_http::{ApplicationDecoder, SseDecoder, SseEvent};
 use reqwest::Method;
 use serde_json::{Value, json};
 use transgate_core::JobId;
-use transgate_core::ai::ports::ChatMessage;
-use transgate_core::ai::{ConsentView, GenerationId, GenerationView, LimitUsage, LimitsView};
+use transgate_core::ai::{ChatHistory, ConsentView, GenerationId, GenerationView, LimitUsage, LimitsView};
 use transgate_core::jobs::correlate::parse_rfc3339;
 use transgate_core::presentation::ai::chat::HistoryEntry;
 use transgate_core::presentation::ai::{AnalysisWire, RequestKey, StartRejection, WatchFailure, WatchKind};
@@ -136,10 +135,10 @@ impl HttpApi {
         decode(answer.get_mut("analysis").map(Value::take).unwrap_or(Value::Null))
     }
 
-    /// The job's persisted chat in order (`{"messages": […]}`).
-    pub async fn chat_history(&self, user: Uuid, job: JobId) -> Result<Vec<ChatMessage>, ApiError> {
-        let mut answer = read_json(self.send(user, Method::GET, &format!("/ai/jobs/{}/chat", job.0), None).await?).await?;
-        decode(answer.get_mut("messages").map(Value::take).ok_or_else(|| ApiError::Decode("missing messages".into()))?)
+    /// The job's persisted chat in order, plus its running answer when one is in
+    /// flight (`{"messages": […], "in_flight": {"question", "generation"} | null}`).
+    pub async fn chat_history(&self, user: Uuid, job: JobId) -> Result<ChatHistory, ApiError> {
+        decode(read_json(self.send(user, Method::GET, &format!("/ai/jobs/{}/chat", job.0), None).await?).await?)
     }
 
     /// `GET /api/ai/generations/{id}`: the authoritative snapshot after a non-success terminal.

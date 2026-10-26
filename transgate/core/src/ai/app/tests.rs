@@ -252,7 +252,38 @@ fn chat_minimum_uses_sanitized_utf16_units_and_accepts_fifty() {
     assert_eq!(run(ai.run(started.generation.id)).unwrap().status, GenerationStatus::Completed);
     assert_eq!(w.llm.opened(), 1);
     assert_eq!(w.counter(CounterScope::Transcript(JobId(1)), CounterKind::Questions), Some(1));
-    assert_eq!(run(ai.chat_history(account(), JobId(1))).unwrap().len(), 2);
+    assert_eq!(run(ai.chat_history(account(), JobId(1))).unwrap().messages.len(), 2);
+}
+
+// REPAIR-P5-5, P5 D6: the job's running answer is reported with the owner's original question, so
+// another tab reattaches. Reading meters and dispatches nothing; a saved pair is history only; work
+// admitted under an earlier consent decision is fenced, so no tab is told to attach to it.
+#[test]
+fn chat_history_reports_the_running_answer_until_its_pair_is_saved() {
+    let w = World::new();
+    let ai = w.ai();
+    granted(&ai);
+    w.llm.script(answer("Friday."));
+    let started = run(ai.start_chat(account(), JobId(1), key(1), ask("  When is it due?  "))).unwrap();
+    let history = run(ai.chat_history(account(), JobId(1))).unwrap();
+    assert!(history.messages.is_empty());
+    let in_flight = history.in_flight.expect("the running answer is reported");
+    assert_eq!(in_flight.question, "  When is it due?  ", "D5: the original accepted text");
+    assert_eq!((in_flight.generation.id, in_flight.generation.kind), (started.generation.id, GenerationKind::Chat));
+    assert!(!in_flight.generation.status.is_terminal());
+    assert_eq!(w.llm.opened(), 0, "reading never dispatches");
+    assert_eq!(w.counter(CounterScope::Transcript(JobId(1)), CounterKind::Questions), Some(1), "reading never meters");
+
+    run(ai.run(started.generation.id)).unwrap();
+    let history = run(ai.chat_history(account(), JobId(1))).unwrap();
+    assert_eq!(history.messages.len(), 2);
+    assert!(history.in_flight.is_none(), "a saved pair is history, not in flight");
+
+    let fenced = run(ai.start_chat(account(), JobId(1), key(2), ask("And the budget?"))).unwrap();
+    run(ai.record_consent(account(), false)).unwrap();
+    granted(&ai);
+    assert!(!w.generation(fenced.generation.id).status.is_terminal(), "the worker has not seen the fence yet");
+    assert!(run(ai.chat_history(account(), JobId(1))).unwrap().in_flight.is_none(), "admitted under the old decision");
 }
 
 // AI-016, AI-021, D2, D5: one freemium question reserves on admission, streams, and completes
@@ -270,7 +301,7 @@ fn a_freemium_answer_saves_the_pair_and_settles_once() {
     let done = run(ai.run(started.generation.id)).unwrap();
     assert_eq!(done.status, GenerationStatus::Completed);
     let history = run(ai.chat_history(account(), JobId(1))).unwrap();
-    let pair: Vec<(ChatRole, &str, i64)> = history.iter().map(|m| (m.role, m.content.as_str(), m.order)).collect();
+    let pair: Vec<(ChatRole, &str, i64)> = history.messages.iter().map(|m| (m.role, m.content.as_str(), m.order)).collect();
     assert_eq!(pair, vec![(ChatRole::User, "  When is the report due?  ", 1), (ChatRole::Assistant, "Friday, with the budget.", 2)]);
     let expected = quota::estimate_tokens("When is the report due?Friday, with the budget.");
     assert_eq!(w.counter(CounterScope::Transcript(JobId(1)), CounterKind::Tokens), Some(expected));
@@ -381,16 +412,16 @@ fn refusal_keeps_artifacts_and_delete_purges_older_epochs() {
     run(ai.record_consent(account(), false)).unwrap();
     assert_eq!(run(ai.chat_history(account(), JobId(1))), Err(AiError::ConsentRequired));
     granted(&ai);
-    assert_eq!(run(ai.chat_history(account(), JobId(1))).unwrap().len(), 2, "refusal is not deletion");
+    assert_eq!(run(ai.chat_history(account(), JobId(1))).unwrap().messages.len(), 2, "refusal is not deletion");
     let view = run(ai.revoke_consent(account())).unwrap();
     assert!(!view.cleanup_pending && !view.has_consented);
     granted(&ai);
-    assert!(run(ai.chat_history(account(), JobId(1))).unwrap().is_empty());
+    assert!(run(ai.chat_history(account(), JobId(1))).unwrap().messages.is_empty());
     assert_eq!(run(ai.generation(account(), old.generation.id)), Err(AiError::NotFound));
     w.llm.script(answer("Next week."));
     let new = run(ai.start_chat(account(), JobId(1), key(2), ask("Budget?"))).unwrap();
     run(ai.run(new.generation.id)).unwrap();
-    assert_eq!(run(ai.chat_history(account(), JobId(1))).unwrap().len(), 2);
+    assert_eq!(run(ai.chat_history(account(), JobId(1))).unwrap().messages.len(), 2);
     assert!(w.counter(CounterScope::User, CounterKind::Questions).is_some(), "quota counters survive DELETE");
 }
 
@@ -407,7 +438,7 @@ fn a_failed_purge_stays_pending_and_covered_rows_stay_hidden() {
     w.store.with(|d| d.ai.fail_purge = true);
     assert!(run(ai.revoke_consent(account())).unwrap().cleanup_pending);
     granted(&ai);
-    assert!(run(ai.chat_history(account(), JobId(1))).unwrap().is_empty(), "covered rows are hidden before the purge");
+    assert!(run(ai.chat_history(account(), JobId(1))).unwrap().messages.is_empty(), "covered rows are hidden before the purge");
     w.store.with(|d| d.ai.fail_purge = false);
     assert_eq!(run(ai.purge_pass()).unwrap().completed, 1);
     assert!(!run(ai.consent(account())).unwrap().cleanup_pending);
