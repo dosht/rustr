@@ -463,6 +463,8 @@ class Runtime:
             'GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE': '/auth/v1/verify',
             'GOTRUE_SMTP_HOST': self.mailpit, 'GOTRUE_SMTP_PORT': '1025', 'GOTRUE_SMTP_ADMIN_EMAIL': 'auth@example.test',
             'GOTRUE_SMTP_SENDER_NAME': 'Transgate P5 local', 'GOTRUE_RATE_LIMIT_EMAIL_SENT': '1000',
+            # Loopback suite mails one address repeatedly; production/staging keep real throttles (P9).
+            'GOTRUE_SMTP_MAX_FREQUENCY': '1s',
             # Google is enabled with synthetic credentials: /authorize must redirect with the PKCE challenge;
             # the Google leg itself is never contacted (deployed acceptance stays a named live gate).
             'GOTRUE_EXTERNAL_GOOGLE_ENABLED': 'true', 'GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID': 'p5-synthetic-google-client',
