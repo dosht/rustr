@@ -1,0 +1,32 @@
+{
+  "provenance": "Calculated by lead with Python stdlib hmac/hashlib/base64 from the documented and installed-SDK algorithms, independently of the Rust implementation. Synthetic public inputs, not provider recordings or live acceptance evidence.",
+  "vectors": [
+    {
+      "protocol": "iyzico-subscription-v3",
+      "secret": "test-secret-not-a-credential",
+      "merchant_id": "merchant-test",
+      "event_type": "subscription.order.success",
+      "subscription_ref": "sub-test",
+      "order_ref": "order-test",
+      "customer_ref": "customer-test",
+      "signed_utf8": "merchant-testtest-secret-not-a-credentialsubscription.order.successsub-testorder-testcustomer-test",
+      "sha256_hex": "3a46ec191b74a7e029176525db0f6d1c5389946c70432753442b17aef87e44ea"
+    },
+    {
+      "protocol": "iyzico-get-iyzwsv2",
+      "api_key": "api-test",
+      "secret": "test-secret-not-a-credential",
+      "nonce": "nonce-test",
+      "path": "/v2/subscription/subscriptions/sub-test",
+      "signed_body": "{}",
+      "sha256_hex": "9d690462b6c792319a732a0129ab9e3820e080f51478c359783bf367900f85e6",
+      "authorization": "IYZWSv2 YXBpS2V5OmFwaS10ZXN0JnJhbmRvbUtleTpub25jZS10ZXN0JnNpZ25hdHVyZTo5ZDY5MDQ2MmI2Yzc5MjMxOWE3MzJhMDEyOWFiOWUzODIwZTA4MGY1MTQ3OGMzNTk3ODNiZjM2NzkwMGY4NWU2"
+    },
+    {
+      "protocol": "lemonsqueezy-raw-utf8",
+      "secret": "test-secret-not-a-credential",
+      "raw_body": "{\"meta\":{\"event_name\":\"order_created\"},\"data\":{\"id\":\"order-test\",\"note\":\"İstanbul\"}}",
+      "sha256_hex": "f80ff34cee70d14288b8f68922991f374332363de7734927cdc2dfafdcff3dc7"
+    }
+  ]
+}

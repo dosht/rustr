@@ -25,6 +25,9 @@ apps/
   web/            Svelte 5 + TypeScript + Vite, runs the core as wasm; Vitest, Storybook, Playwright
   android/        Kotlin + Jetpack Compose
   ios/            Swift + SwiftUI, XcodeGen spec
+transgate/server/  process-liveness runtime for the Transgate port (not the product API)
+modules/          reusable billing/CMS boundary contract; implementations arrive in P2/P6
+design-tokens.json three E-Ink palettes, light/dark, generated into web/native/TUI shells
 scripts/          build and smoke-test scripts for each platform
 deploy/dev/       Docker Compose: Postgres + Supabase Auth (GoTrue) for local work
 docs/             architecture.md, thoughts.md, the roadmap, milestone notes
@@ -36,7 +39,7 @@ book/             the study guide (EPUB and PDF), built from Markdown
 The CLI and TUI share data in `$TASKR_HOME` (default: the platform data dir, for example `~/.local/share/taskr`).
 
 ```sh
-cargo test --workspace                      # 144 tests: domain, use cases, presentation, adapters, shells, HTTP
+cargo test --workspace                      # domain, use cases, presentation, adapters, shells, HTTP
 
 cargo run -p taskr-cli -- add Buy milk
 cargo run -p taskr-cli -- list --scope all
@@ -99,6 +102,24 @@ cd apps/web && VITE_TASKR_API=/api npm run dev                       # sign-in, 
 ```
 
 With real Postgres and Supabase Auth, see [docs/milestones/m1-multi-user.md](docs/milestones/m1-multi-user.md#how-to-run-it). `TASKR_TEST_DATABASE_URL` turns on the Postgres tests.
+
+### Transgate foundation and shared tokens
+
+The port's scope and progress live in [docs/prd.md](docs/prd.md) and [WORKING-ON.md](WORKING-ON.md). Discovery is complete; the foundation is not a production-ready Transgate application.
+
+```sh
+cargo run -p transgate-server                # 127.0.0.1:8788/health, process liveness only
+docker compose -f deploy/dev/transgate.compose.yaml up --build -d
+python3 -B scripts/smoke-transgate-runtime.py --docker
+python3 -B scripts/gen-tokens.py             # regenerate shell colors after editing the root JSON
+python3 -B scripts/gen-tokens.py --check     # read-only drift and contrast check
+./scripts/gen-bindings.sh --check            # read-only Kotlin/Swift binding comparison
+```
+
+Storybook's `Pages/App/Palettes` contains the three E3 candidates across task lists, sign-in and members, on desktop and phone. Paper Moss remains default until mu chooses; these are existing taskr fixtures, not Transgate screen implementations.
+
+The [PRD gates](docs/gates.md) run as `./scripts/gate-{rustr,modules,transgate}.sh`. They deliberately report unfinished scenarios, modules and parity as failures. A passing health endpoint must never make those missing features look complete.
+
 
 ## The book
 

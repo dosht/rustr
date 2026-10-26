@@ -8,6 +8,7 @@ The core is Rust: domain, use cases, ports, and a shared presentation state mach
 
 ## Where things are
 
+- `docs/prd.md`: the goal and its gates (Transgate on Rustr). `WORKING-ON.md` at the root is the progress board
 - `docs/architecture.md`: the pattern as built
 - `docs/Roadmaap.md`: Obsidian kanban of concepts. Keep the `**In progress**` and `**Complete**` marker lines, Obsidian uses them. The filename typo is known.
 - `docs/thoughts.md`: running brainstorm, questions and answers, decisions not yet in the book

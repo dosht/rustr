@@ -81,6 +81,15 @@ Each decision here was made for taskr, with the main alternative and why it lost
 5. Add a smoke test that drives the real core through the real boundary.
 6. Confirm `taskr-core` didn't change.
 
+### Porting an existing product {-}
+
+1. Inventory first: every screen, route, email, schedule, table and flag, with a source file.
+2. Rules ledger: one row per rule, exact numbers, `path:line`, the existing test, the Rust test to write. Copy, do not improve; defects go in their own table with a proposal.
+3. Keep/throw: a verdict and a reason per piece before any of it is ported.
+4. Parity suite: one row per flow per surface, each naming the test that will prove it.
+5. Fixtures for lists that must not shrink (locales, languages), asserted as supersets.
+6. One topic file per agent, one assembly script, lints before the owner reads it in the morning.
+
 ### Reviewing a shell change {-}
 
 - Does any `if` depend on business meaning rather than a ViewModel field?
@@ -143,3 +152,6 @@ TASKR_TEST_DATABASE_URL=postgres://... cargo test --workspace    # include the P
 - New chapter 13: async ports, roles and the `can()` policy, workspaces, API ports, the Axum server, Supabase Auth, Postgres with an outbox, and `AppState` for sign-in and navigation.
 - Chapters 2 and 4 to 12 updated for async ports, workspaces, revisions and the signed-in shells.
 
+### P0: discovery for Transgate {-}
+
+- New chapter 14: porting an existing product. Inventory, rules ledger, keep/throw, parity suite and fixtures as the first phase, with the sources ranked and the work split by topic. The reference chapter moved to 15.

@@ -1,0 +1,11 @@
+# Passed with omp --config; never modifies machine-wide settings.
+modelRoles:
+  default: anthropic/claude-sonnet-5-5:high
+  plan: anthropic/claude-opus-5-5:high
+  slow: openai-codex/gpt-6-astra:high
+  smol: anthropic/claude-sonnet-5-5:medium
+  advisor: openai-codex/gpt-6-astra:high
+advisor:
+  enabled: true
+  reviewMode: agent-end
+  maxNotesPerUpdate: 4

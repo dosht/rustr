@@ -9,7 +9,22 @@ A **crate** is a unit of compilation: a library or a binary. A **workspace** is 
 ```{.toml file="Cargo.toml"}
 [workspace]
 resolver = "3"
-members = ["crates/*"]
+members = [
+    "crates/*",
+    "transgate/server",
+    "transgate/billing",
+    "transgate/core",
+    "transgate/processor",
+    "transgate/api",
+    "transgate/http",
+    "transgate/export",
+    "transgate/jobs-postgres",
+    "modules/billing/core",
+    "modules/billing/postgres",
+    "modules/billing/http",
+    "modules/billing/gateways/iyzico",
+    "modules/billing/gateways/lemonsqueezy",
+]
 ```
 
 Shared dependency versions go in `[workspace.dependencies]`, and each crate opts in with `serde.workspace = true`. This keeps versions in one place.
