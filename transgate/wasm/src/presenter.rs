@@ -54,6 +54,11 @@ fn absolute(page: &str, value: &str) -> String {
     Url::parse(page).and_then(|base| base.join(value)).map(|u| u.to_string()).unwrap_or_else(|_| value.to_string()).trim_end_matches('/').to_string()
 }
 
+/// Whether the page is shown now; a page without a document counts as visible.
+fn page_visible() -> bool {
+    web_sys::window().and_then(|w| w.document()).is_none_or(|d| !d.hidden())
+}
+
 /// `ontouchstart in window || navigator.maxTouchPoints > 0`, and `innerWidth`
 /// (`useDeviceType.ts`); later changes arrive as `AppIntent::Viewport` from the shell.
 fn measured_viewport() -> Viewport {
@@ -272,6 +277,13 @@ impl TransgatePresenter {
         let utc_offset_minutes = -(Date::new_0().get_timezone_offset() as i16);
         let started = AppIntent::Started { url: app_location(browser::href()), viewport: measured_viewport(), utc_offset_minutes };
         self.inner.apply(AppEvent::User(started));
+        // `visibilitychange` bubbles from the document to the window (D11: polling
+        // runs only while the page is visible); core is told the starting state too.
+        let inner = self.inner.clone();
+        self.inner.on_window("visibilitychange", move |_| {
+            inner.apply(AppEvent::User(AppIntent::VisibilityChanged { visible: page_visible() }));
+        });
+        self.inner.apply(AppEvent::User(AppIntent::VisibilityChanged { visible: page_visible() }));
     }
 
     /// Applies a user intent and returns the resulting view. Its effects start

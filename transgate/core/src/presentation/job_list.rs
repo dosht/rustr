@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::export::ExportLabels;
 use crate::ids::JobId;
-use crate::jobs::app::{ExportKind, ExportRequest, ExportSurface};
+use crate::jobs::app::{ExportKind, ExportRequest, ExportSurface, PAGE_SIZE};
 use crate::jobs::domain::{Job, JobStatus};
 use crate::presentation::dates;
 use crate::presentation::msg::{Msg, app, common};
@@ -150,9 +150,12 @@ pub enum Event {
     PageLoaded { jobs: Vec<Job>, next_cursor: Option<JobId>, replace: bool },
     /// The page request failed; `detail` is shown under "Error loading jobs".
     LoadFailed { detail: Option<String> },
-    /// A job changed (polling or a later realtime source): replaced by id,
-    /// removed when it left the allow-list (PRV-012).
-    JobChanged { job: Box<Job> },
+    /// D11 poll tick: ask for every loaded row again (`Effect::PollPage`).
+    PollRequested,
+    /// The poll's rows, newest first, down to at least the requested `through`.
+    Polled { jobs: Vec<Job> },
+    /// The poll failed: rows stay, no error is shown, the next tick retries.
+    PollFailed,
     LoadMore,
     DeleteRequested { job: JobId },
     DeleteConfirmed,
@@ -168,6 +171,9 @@ pub enum Event {
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Effect {
     LoadPage { before: Option<JobId> },
+    /// D11: the owned list from the newest job down to the page holding
+    /// `through` (the oldest loaded row); `None` asks for the first page only.
+    PollPage { through: Option<JobId> },
     DeleteJob { job: JobId },
     /// `POST /api/jobs/{id}/export`: the server builds the ZIP and records
     /// `transcript_downloaded` (EXP-016); the shell saves the bytes.
@@ -196,6 +202,10 @@ pub struct JobListState {
     pub confirm_delete: Option<JobId>,
     downloading: Option<JobId>,
     pub labels: ExportLabels,
+    /// The `through` of the poll in flight (D11).
+    polling: Option<Option<JobId>>,
+    /// Rows deleted here; a poll answered before the delete committed never revives them.
+    deleted: Vec<JobId>,
 }
 
 impl JobListState {
@@ -223,12 +233,30 @@ impl JobListState {
                 self.error_detail = detail;
                 vec![]
             }
-            Event::JobChanged { job } => {
-                self.jobs.retain(|j| j.id != job.id);
-                if job.status.is_listed() {
-                    let pos = self.jobs.iter().position(|j| j.id.0 < job.id.0).unwrap_or(self.jobs.len());
-                    self.jobs.insert(pos, *job);
+            Event::PollRequested => {
+                if self.loading != Loading::Idle {
+                    return vec![];
                 }
+                let through = self.jobs.iter().map(|j| j.id).min();
+                self.polling = Some(through);
+                vec![Effect::PollPage { through }]
+            }
+            Event::Polled { jobs } => {
+                let through = self.polling.take().unwrap_or_else(|| self.jobs.iter().map(|j| j.id).min());
+                // The polled window: down to `through`, or a full first page's last row.
+                let floor = match through {
+                    Some(t) => t.0,
+                    None if jobs.len() >= PAGE_SIZE as usize => jobs.iter().map(|j| j.id.0).min().unwrap_or(i64::MIN),
+                    None => i64::MIN,
+                };
+                let deleted = &self.deleted;
+                self.jobs.retain(|j| j.id.0 < floor);
+                self.jobs.extend(jobs.into_iter().filter(|j| j.id.0 >= floor && j.status.is_listed() && !deleted.contains(&j.id)));
+                self.jobs.sort_by(|a, b| b.id.cmp(&a.id));
+                vec![]
+            }
+            Event::PollFailed => {
+                self.polling = None;
                 vec![]
             }
             Event::LoadMore => match (self.loading, self.next_cursor) {
@@ -254,6 +282,7 @@ impl JobListState {
                 Some(job) => {
                     // JOB-036: a soft delete; the row leaves the list.
                     self.jobs.retain(|j| j.id != job);
+                    self.deleted.push(job);
                     vec![Effect::DeleteJob { job }]
                 }
                 None => vec![],
@@ -276,6 +305,11 @@ impl JobListState {
                 vec![]
             }
         }
+    }
+
+    /// D11 cadence: a listed job is still in progress.
+    pub fn has_active(&self) -> bool {
+        self.jobs.iter().any(|j| j.status.is_in_progress())
     }
 
     /// `selected` is the route's job, highlighted in the list; dates are shown

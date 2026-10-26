@@ -130,6 +130,10 @@ pub struct HttpApi {
     auth: Arc<GoTrue>,
 }
 
+/// Most list pages (20 rows each) one D11 poll reads: 500 rows. Older loaded rows
+/// simply keep their last state until the next full load.
+const POLL_PAGE_LIMIT: usize = 25;
+
 impl HttpApi {
     /// `base` is the API root, e.g. `https://app.example/api`.
     pub fn new(base: impl Into<String>, auth: Arc<GoTrue>) -> Self {
@@ -177,6 +181,26 @@ impl HttpApi {
         query.append_pair("offsetNow", &calendar.offset_now_minutes.to_string());
         query.append_pair("offsetThen", &calendar.offset_then_minutes.to_string());
         self.json(user, Method::GET, &format!("/jobs?{}", query.finish()), None).await
+    }
+
+    /// D11 list poll: the owned list newest first, page after page, until the page
+    /// that holds `through` (the oldest id this tab has loaded; `None` = just the
+    /// first page). Bounded by `POLL_PAGE_LIMIT`: rows beyond it keep their loaded
+    /// state, and a failure on any page fails the whole poll so a partial answer
+    /// can never be merged as if complete.
+    pub async fn poll_jobs(&self, user: Uuid, through: Option<JobId>, calendar: CalendarContext) -> Result<Vec<Job>, ApiError> {
+        let mut jobs = Vec::new();
+        let mut before = None;
+        for _ in 0..POLL_PAGE_LIMIT {
+            let page = self.list_jobs(user, before, calendar).await?;
+            let covered = through.is_none_or(|t| page.jobs.iter().any(|j| j.id <= t));
+            jobs.extend(page.jobs);
+            match page.next_cursor {
+                Some(cursor) if !covered => before = Some(cursor),
+                _ => break,
+            }
+        }
+        Ok(jobs)
     }
 
     pub async fn job_detail(&self, user: Uuid, job: JobId) -> Result<JobDetailView, ApiError> {

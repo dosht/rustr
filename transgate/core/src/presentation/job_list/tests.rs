@@ -127,3 +127,63 @@ fn the_sidebar_and_drawer_follow_their_own_source_rules() {
     assert_eq!((vm.recent[1].duration.as_deref(), vm.recent[1].selected), (Some("1m 15s"), true));
     assert_eq!(vm.recent_empty, NO_RECENT);
 }
+
+fn ids(s: &JobListState) -> Vec<i64> {
+    s.jobs.iter().map(|j| j.id.0).collect()
+}
+
+// P5 D11 (replaces the source realtime INSERT/UPDATE channel, `JobRepository.ts:433-464`): a poll
+// covers every loaded row, newest down to the oldest loaded one, and merges by id: rows are updated,
+// added in id order or dropped when they left the list. Polled rows older than the loaded range are
+// not added (that is the next page's job); the cursor and loading state stay as they were.
+#[test]
+fn d11_a_poll_merges_every_loaded_page_without_moving_the_cursor() {
+    let page = |range: std::ops::RangeInclusive<i64>| range.rev().map(|i| fixtures::job(i, JobStatus::Completed, "a.mp3")).collect::<Vec<_>>();
+    let mut s = JobListState::default();
+    s.update(Event::Refresh);
+    s.update(Event::PageLoaded { jobs: page(22..=41), next_cursor: Some(JobId(22)), replace: true });
+    s.update(Event::LoadMore);
+    s.update(Event::PageLoaded { jobs: page(2..=21), next_cursor: Some(JobId(2)), replace: false });
+    assert_eq!(s.update(Event::PollRequested), vec![Effect::PollPage { through: Some(JobId(2)) }]);
+    // 42 is new, 41 left the list (soft deleted elsewhere), 30 failed, 1 is beyond the loaded range.
+    let mut polled: Vec<Job> = std::iter::once(fixtures::job(42, JobStatus::Running, "new.mp3")).chain(page(1..=40)).collect();
+    polled.iter_mut().find(|j| j.id == JobId(30)).unwrap().status = JobStatus::Failed;
+    assert!(s.update(Event::Polled { jobs: polled }).is_empty());
+    assert_eq!(ids(&s), std::iter::once(42).chain((2..=40).rev()).collect::<Vec<_>>());
+    assert_eq!(s.jobs.iter().find(|j| j.id == JobId(30)).unwrap().status, JobStatus::Failed);
+    assert_eq!(s.next_cursor, Some(JobId(2)), "the cursor of the last loaded page is kept");
+    let vm = s.view(None, 0);
+    assert!(!vm.initial_loading && !vm.loading_more && vm.error.is_none() && vm.can_load_more);
+    assert!(s.has_active(), "a running job asks for the fast cadence");
+}
+
+// D11: nothing is polled while a page loads; with nothing loaded the poll asks for the first page and
+// a full first page bounds the merge; a poll never revives a row deleted here, nor shows a polled job
+// whose status left the list; a failed poll keeps rows and shows no error.
+#[test]
+fn d11_polls_never_revive_deleted_rows_and_fail_quietly() {
+    let mut loading = JobListState::default();
+    loading.update(Event::Refresh);
+    assert!(loading.update(Event::PollRequested).is_empty(), "the page load answers first");
+    let mut empty = JobListState::default();
+    assert_eq!(empty.update(Event::PollRequested), vec![Effect::PollPage { through: None }]);
+    empty.update(Event::Polled { jobs: (1..=20).rev().map(|i| fixtures::job(i, JobStatus::Completed, "a.mp3")).collect() });
+    assert_eq!(empty.jobs.len(), 20);
+
+    let mut s = listed();
+    assert_eq!(s.update(Event::PollRequested), vec![Effect::PollPage { through: Some(JobId(11)) }]);
+    s.update(Event::DeleteRequested { job: JobId(11) });
+    s.update(Event::DeleteConfirmed);
+    let mut gone = fixtures::job(13, JobStatus::Completed, "x.mp3");
+    gone.status = JobStatus::Deleted;
+    s.update(Event::Polled { jobs: vec![gone, fixtures::job(12, JobStatus::Completed, "seminar.mp4"), fixtures::job(11, JobStatus::Completed, "podcast.mp3")] });
+    assert_eq!(ids(&s), vec![12], "the poll answered before the delete committed");
+    assert!(!s.has_active());
+    s.update(Event::PollRequested);
+    assert!(s.update(Event::PollFailed).is_empty());
+    let vm = s.view(None, 0);
+    assert_eq!((vm.rows.len(), vm.error), (1, None));
+    s.update(Event::PollRequested);
+    s.update(Event::Polled { jobs: vec![] });
+    assert!(ids(&s).is_empty(), "nothing is listed any more");
+}

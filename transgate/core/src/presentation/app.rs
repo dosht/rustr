@@ -43,6 +43,13 @@ use crate::transcript::LanguageTab;
 /// goes to the public root (IDN-017).
 pub const PASSWORD_UPDATED_REDIRECT_MS: u64 = 2000;
 
+/// D11 owned-list poll while nothing listed is in progress: the draft poll's
+/// 30-second ceiling (`upload_queue::poll_interval_ms`). While a listed job is
+/// in progress the transcript's 2-second running poll applies
+/// (`transcript::RUNNING_POLL_MS`). Both replace the source realtime channel
+/// (`JobRepository.ts:433-464`).
+pub const JOBS_IDLE_POLL_MS: u64 = 30_000;
+
 /// The tab's configuration from the host (`tg-config`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AppConfig {
@@ -161,6 +168,8 @@ pub enum Timer {
     Balance,
     PasswordUpdated,
     Confirmation { sequence: u64 },
+    /// D11 owned-list poll; a stale `sequence` (hidden tab, new chain) is ignored.
+    JobsPoll { sequence: u64 },
 }
 
 // ---- intents (the shell's only input) --------------------------------------------
@@ -391,6 +400,8 @@ pub enum AppIntent {
     /// History navigation (popstate).
     RouteChanged { url: String },
     ViewportChanged { viewport: Viewport },
+    /// `document.visibilityState`; D11 polls the owned list only while visible.
+    VisibilityChanged { visible: bool },
     /// An in-app link: core pushes the history entry.
     Navigate { route: Route },
     /// The language switcher: a full page load of `/{code}/home`, no cookie (LNG-002).
@@ -679,6 +690,12 @@ pub struct AppState {
     invoice_preview_ticket: u64,
     confirmation: Option<ConfirmPageState>,
     confirmation_sequence: u64,
+    /// `document.visibilityState` (D11); assumed visible until told otherwise.
+    visible: bool,
+    /// Cancels a pending owned-list poll timer when bumped.
+    jobs_poll_sequence: u64,
+    jobs_poll_timer: bool,
+    jobs_poll_in_flight: bool,
 }
 
 fn locale_of(code: &str) -> &'static str {
@@ -724,6 +741,10 @@ impl AppState {
             invoice_preview_ticket: 0,
             confirmation: None,
             confirmation_sequence: 0,
+            visible: true,
+            jobs_poll_sequence: 0,
+            jobs_poll_timer: false,
+            jobs_poll_in_flight: false,
         }
     }
 
@@ -813,6 +834,7 @@ impl AppState {
         self.has_lines = false;
         self.queue = upload_queue::UploadQueueState::default();
         self.jobs = job_list::JobListState::default();
+        self.cancel_jobs_poll();
         self.transcript = transcript::TranscriptState::default();
         self.manage_data = data_management::DataManagementState::default();
         self.settings = settings::SettingsState::default();
@@ -859,6 +881,40 @@ impl AppState {
         let route = self.route;
         effects.extend(self.enter_route(route));
         effects
+    }
+
+    // ---- D11 owned-list polling ---------------------------------------------------------
+
+    fn jobs_poll_due(&self) -> bool {
+        self.signed_in() && self.visible && self.profile.is_some()
+    }
+
+    /// One poll now, unless one is already in flight (or a page load answers first).
+    fn poll_jobs_now(&mut self) -> Vec<AppEffect> {
+        if !self.jobs_poll_due() || self.jobs_poll_in_flight {
+            return vec![];
+        }
+        let epoch = self.epoch();
+        let effects: Vec<AppEffect> = self.jobs.update(job_list::Event::PollRequested).into_iter().map(|effect| AppEffect::Jobs { epoch, effect }).collect();
+        self.jobs_poll_in_flight = !effects.is_empty();
+        effects
+    }
+
+    /// The next tick of the single chain: fast while a listed job is in progress.
+    fn arm_jobs_poll(&mut self) -> Vec<AppEffect> {
+        if !self.jobs_poll_due() || self.jobs_poll_timer || self.jobs_poll_in_flight {
+            return vec![];
+        }
+        self.jobs_poll_timer = true;
+        let after_ms = if self.jobs.has_active() { transcript::RUNNING_POLL_MS } else { JOBS_IDLE_POLL_MS };
+        vec![AppEffect::Timer { epoch: self.epoch(), timer: Timer::JobsPoll { sequence: self.jobs_poll_sequence }, after_ms }]
+    }
+
+    /// A pending tick becomes stale; an answer in flight is dropped by its epoch or ignored.
+    fn cancel_jobs_poll(&mut self) {
+        self.jobs_poll_sequence += 1;
+        self.jobs_poll_timer = false;
+        self.jobs_poll_in_flight = false;
     }
 
     fn sign_out(&mut self) -> Vec<AppEffect> {
@@ -1134,6 +1190,11 @@ impl AppState {
                 }
                 Timer::Confirmation { .. } => vec![],
                 Timer::Balance => vec![],
+                Timer::JobsPoll { sequence } if sequence == self.jobs_poll_sequence => {
+                    self.jobs_poll_timer = false;
+                    self.poll_jobs_now()
+                }
+                Timer::JobsPoll { .. } => vec![],
             },
             AppEvent::JobLoaded { epoch, job, result } if self.is_current(epoch) && self.selected == Some(job) => match result {
                 Ok(detail) => self.display_job(detail),
@@ -1141,12 +1202,27 @@ impl AppState {
                 Err(_) => vec![],
             },
             AppEvent::Upload { epoch, event } if self.is_current(epoch) && self.signed_in() => {
+                let started = matches!(event, upload_queue::Event::StartSucceeded { .. });
                 let effects = self.queue.update(event);
-                self.upload_effects(effects)
+                let mut effects = self.upload_effects(effects);
+                // D11: the started jobs appear in the list without a reload.
+                if started {
+                    effects.extend(self.poll_jobs_now());
+                }
+                effects
             }
             AppEvent::Transcript { epoch, job, event } if self.is_current(epoch) && self.selected == Some(job) => self.transcript_event(job, event),
             AppEvent::Jobs { epoch, event } if self.is_current(epoch) && self.signed_in() => {
-                self.jobs.update(event).into_iter().map(|effect| AppEffect::Jobs { epoch, effect }).collect()
+                let answer = matches!(event, job_list::Event::Polled { .. } | job_list::Event::PollFailed);
+                let settles = answer || matches!(event, job_list::Event::PageLoaded { .. } | job_list::Event::LoadFailed { .. });
+                if answer {
+                    self.jobs_poll_in_flight = false;
+                }
+                let mut effects: Vec<AppEffect> = self.jobs.update(event).into_iter().map(|effect| AppEffect::Jobs { epoch, effect }).collect();
+                if settles {
+                    effects.extend(self.arm_jobs_poll());
+                }
+                effects
             }
             AppEvent::ManageData { epoch, event } if self.is_current(epoch) && self.signed_in() => {
                 let effects = self.manage_data.update(event);
@@ -1373,6 +1449,25 @@ impl AppState {
                 Some(l) => self.enter_route(l.route),
                 None => vec![],
             },
+            // The shell reports the initial visibility once after Started. A pending tick is
+            // superseded by a fresh one (stale sequence), so there is still one chain.
+            AppIntent::VisibilityChanged { visible } if visible == self.visible => {
+                if !visible || self.jobs_poll_in_flight {
+                    return vec![];
+                }
+                self.jobs_poll_sequence += 1;
+                self.jobs_poll_timer = false;
+                self.arm_jobs_poll()
+            }
+            AppIntent::VisibilityChanged { visible } => {
+                self.visible = visible;
+                if !visible {
+                    self.cancel_jobs_poll();
+                    return vec![];
+                }
+                // Back in view: catch up at once, then the chain continues.
+                self.poll_jobs_now()
+            }
             AppIntent::ViewportChanged { viewport } => {
                 self.viewport = viewport;
                 let route = self.route;

@@ -77,6 +77,7 @@ pub(crate) fn run(inner: &Rc<Inner>, effect: AppEffect) {
                 Timer::Balance => "balance",
                 Timer::PasswordUpdated => "password-updated",
                 Timer::Confirmation { .. } => "confirmation",
+                Timer::JobsPoll { .. } => "jobs.poll",
             };
             later(inner, key, after_ms, AppEvent::Timer { epoch, timer });
         }
@@ -618,6 +619,22 @@ fn jobs(inner: &Rc<Inner>, epoch: Epoch, effect: job_list::Effect) {
                     Some(list(match result {
                         Ok(page) => Event::PageLoaded { jobs: page.jobs, next_cursor: page.next_cursor, replace: before.is_none() },
                         Err(error) => Event::LoadFailed { detail: Some(error.to_string()) },
+                    }))
+                },
+            )
+        }
+        // D11: the owned list newest first down to the oldest loaded row. A failed
+        // poll keeps every row; the next tick tries again.
+        Effect::PollPage { through } => {
+            let calendar = browser::calendar();
+            fetch(
+                inner,
+                epoch,
+                move |api, user| async move { api.poll_jobs(user, through, calendar).await },
+                move |_, result| {
+                    Some(list(match result {
+                        Ok(jobs) => Event::Polled { jobs },
+                        Err(_) => Event::PollFailed,
                     }))
                 },
             )

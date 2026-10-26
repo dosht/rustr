@@ -1,5 +1,6 @@
 use super::*;
 use crate::ai::ConsentView;
+use crate::jobs::domain::Job;
 use crate::presentation::fixtures;
 use billing_core::presentation::confirm::ConfirmKind;
 
@@ -349,6 +350,82 @@ fn support_is_sent_with_the_open_job_and_start_navigates_to_the_first_job() {
     let effects = s.update(AppEvent::Upload { epoch, event: upload_queue::Event::StartSucceeded { first_job: JobId(77) } }, NOW);
     assert_eq!(navigations(&effects), vec![("/home/77".to_string(), false)]);
     assert!(effects.contains(&AppEffect::LoadJob { epoch, job: JobId(77) }));
+}
+
+fn polls(effects: &[AppEffect]) -> usize {
+    effects.iter().filter(|e| matches!(e, AppEffect::Jobs { effect: job_list::Effect::PollPage { .. }, .. })).count()
+}
+
+fn poll_timer(effects: &[AppEffect]) -> Option<(Timer, u64)> {
+    effects.iter().find_map(|e| match e {
+        AppEffect::Timer { timer: timer @ Timer::JobsPoll { .. }, after_ms, .. } => Some((*timer, *after_ms)),
+        _ => None,
+    })
+}
+
+fn rows(s: &AppState) -> Vec<JobId> {
+    let AppVm::SignedIn(vm) = s.view(NOW) else { panic!("signed in") };
+    vm.jobs.recent.iter().map(|r| r.id).collect()
+}
+
+// REPAIR-P5-8, P5 D11: a started job appears in Recent without a reload. The start answer
+// asks for one first-page poll, merged by id, and the fast cadence follows while it runs.
+#[test]
+fn a_started_job_appears_in_recent_without_reload() {
+    let (mut s, _) = signed_in("/home", desktop());
+    let epoch = s.epoch();
+    let loaded = s.update(AppEvent::Jobs { epoch, event: job_list::Event::PageLoaded { jobs: vec![fixtures::job(5, JobStatus::Completed, "old.mp3")], next_cursor: None, replace: true } }, NOW);
+    assert_eq!(poll_timer(&loaded).map(|(_, ms)| ms), Some(JOBS_IDLE_POLL_MS), "nothing in progress: the slow cadence");
+    let started = s.update(AppEvent::Upload { epoch, event: upload_queue::Event::StartSucceeded { first_job: JobId(77) } }, NOW);
+    assert_eq!(polls(&started), 1, "one list refresh on start");
+    assert!(started.contains(&AppEffect::Jobs { epoch, effect: job_list::Effect::PollPage { through: Some(JobId(5)) } }));
+    let answered = s.update(AppEvent::Jobs { epoch, event: job_list::Event::Polled { jobs: vec![fixtures::job(77, JobStatus::Running, "new.mp3"), fixtures::job(5, JobStatus::Completed, "old.mp3")] } }, NOW);
+    assert_eq!(rows(&s), vec![JobId(77), JobId(5)]);
+    assert_eq!(poll_timer(&answered), None, "the earlier timer is still pending: one chain only");
+    // The pending idle timer fires, polls, and the answer schedules the fast cadence.
+    let (timer, _) = poll_timer(&loaded).unwrap();
+    assert_eq!(polls(&s.update(AppEvent::Timer { epoch, timer }, NOW)), 1);
+    let next = s.update(AppEvent::Jobs { epoch, event: job_list::Event::Polled { jobs: vec![fixtures::job(77, JobStatus::Running, "new.mp3"), fixtures::job(5, JobStatus::Completed, "old.mp3")] } }, NOW);
+    assert_eq!(poll_timer(&next).map(|(_, ms)| ms), Some(transcript::RUNNING_POLL_MS));
+}
+
+// D11: older pages, the cursor and loading state survive a poll (no reset to the first page).
+#[test]
+fn older_pages_survive_a_poll() {
+    let (mut s, _) = signed_in("/home", desktop());
+    let epoch = s.epoch();
+    let page = |range: std::ops::RangeInclusive<i64>| range.rev().map(|i| fixtures::job(i, JobStatus::Completed, "a.mp3")).collect::<Vec<_>>();
+    s.update(AppEvent::Jobs { epoch, event: job_list::Event::PageLoaded { jobs: page(21..=40), next_cursor: Some(JobId(21)), replace: true } }, NOW);
+    s.update(AppEvent::User(AppIntent::Jobs(JobsIntent::LoadMore)), NOW);
+    s.update(AppEvent::Jobs { epoch, event: job_list::Event::PageLoaded { jobs: page(1..=20), next_cursor: Some(JobId(1)), replace: false } }, NOW);
+    let polled: Vec<Job> = std::iter::once(fixtures::job(41, JobStatus::Running, "n.mp3")).chain(page(1..=39)).collect();
+    s.update(AppEvent::Jobs { epoch, event: job_list::Event::Polled { jobs: polled } }, NOW);
+    let AppVm::SignedIn(vm) = s.view(NOW) else { panic!("signed in") };
+    let listed: Vec<i64> = vm.jobs.rows.iter().map(|r| r.id.0).collect();
+    assert_eq!(listed, std::iter::once(41).chain((1..=39).rev()).collect::<Vec<_>>(), "40 left the list; 1..=20 kept");
+    assert!(vm.jobs.can_load_more && !vm.jobs.initial_loading, "the second page's cursor survives");
+    let more = s.update(AppEvent::User(AppIntent::Jobs(JobsIntent::LoadMore)), NOW);
+    assert!(more.contains(&AppEffect::Jobs { epoch, effect: job_list::Effect::LoadPage { before: Some(JobId(1)) } }));
+}
+
+// D11: polling runs only while the tab is visible and signed in. Hiding cancels the pending
+// timer (its sequence is stale); showing again polls at once; a sign-out ends the chain.
+#[test]
+fn the_list_polls_only_while_visible_and_signed_in() {
+    let (mut s, _) = signed_in("/home", desktop());
+    let epoch = s.epoch();
+    let loaded = s.update(AppEvent::Jobs { epoch, event: job_list::Event::PageLoaded { jobs: vec![], next_cursor: None, replace: true } }, NOW);
+    let (timer, _) = poll_timer(&loaded).expect("armed after the first page");
+    assert!(s.update(AppEvent::User(AppIntent::VisibilityChanged { visible: false }), NOW).is_empty());
+    assert!(s.update(AppEvent::Timer { epoch, timer }, NOW).is_empty(), "the hidden tab's timer is cancelled");
+    let shown = s.update(AppEvent::User(AppIntent::VisibilityChanged { visible: true }), NOW);
+    assert_eq!(polls(&shown), 1, "visible again: one poll at once");
+    assert!(s.update(AppEvent::User(AppIntent::VisibilityChanged { visible: true }), NOW).is_empty(), "no duplicate chain");
+    s.update(AppEvent::User(AppIntent::SignOutRequested), NOW);
+    s.update(AppEvent::Auth { epoch, event: AuthEvent::SignedOut }, NOW);
+    let after = s.update(AppEvent::Jobs { epoch, event: job_list::Event::Polled { jobs: vec![] } }, NOW);
+    assert!(after.is_empty(), "a late answer of the old session schedules nothing");
+    assert!(s.update(AppEvent::User(AppIntent::VisibilityChanged { visible: true }), NOW).is_empty());
 }
 
 #[test]
