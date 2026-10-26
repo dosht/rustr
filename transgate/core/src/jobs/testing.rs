@@ -92,6 +92,10 @@ pub struct AiData {
     pub summary_requests: Vec<SummaryRequest>,
     /// Makes the next purge fail (storage error).
     pub fail_purge: bool,
+    /// While set, every quota-counter read and write fails (storage error).
+    pub fail_counters: bool,
+    /// While set, the billing plan (package) lookup fails (storage error).
+    pub fail_packages: bool,
     /// Payload-free LLM dispatch intents; untouched by purges and hard deletes.
     pub dispatches: Vec<LlmDispatch>,
 }
@@ -352,9 +356,15 @@ impl AiTx for MemUow {
         ok(self.data.ai.generations.iter().rev().find(|g| g.account == account && g.job == job && g.kind == GenerationKind::Analysis).cloned())
     }
     fn lock_counter(&mut self, key: CounterKey) -> StoreResult<'_, Option<QuotaCounter>> {
+        if self.data.ai.fail_counters {
+            return Box::pin(async { Err(StoreError::Unavailable("quota store unavailable".into())) });
+        }
         ok(self.data.ai.counters.iter().find(|c| c.key == key).copied())
     }
     fn save_counter<'a>(&'a mut self, counter: &'a QuotaCounter) -> StoreResult<'a, ()> {
+        if self.data.ai.fail_counters {
+            return Box::pin(async { Err(StoreError::Unavailable("quota store unavailable".into())) });
+        }
         match self.data.ai.counters.iter_mut().find(|c| c.key == counter.key) {
             Some(row) => *row = *counter,
             None => self.data.ai.counters.push(*counter),
@@ -362,6 +372,9 @@ impl AiTx for MemUow {
         ok(())
     }
     fn counters(&mut self, account: AccountId, job: Option<JobId>) -> StoreResult<'_, Vec<QuotaCounter>> {
+        if self.data.ai.fail_counters {
+            return Box::pin(async { Err(StoreError::Unavailable("quota store unavailable".into())) });
+        }
         ok(self
             .data
             .ai
@@ -518,6 +531,9 @@ macro_rules! billing_tx {
                 done(Ok(exists.then_some(Micros(0))))
             }
             fn packages(&mut self, account: AccountId) -> BillingResult<'_, Vec<PackageBalance>> {
+                if self.d().ai.fail_packages {
+                    return done(Err(StoreError::Unavailable("plan lookup failed".into())));
+                }
                 let b = balances(self.d(), account);
                 done(Ok(b))
             }

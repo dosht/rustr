@@ -1,17 +1,23 @@
 //! A test-only `JobStore` around the real `PgJobStore`. Every call passes through
-//! unchanged, except one commit: the first transaction that holds the armed
-//! generation's chat pair (its completing transaction) is committed for real, or
-//! rolled back, and then reported to the caller as a failed COMMIT, as when the
-//! database answer is lost. No production code knows about it.
+//! unchanged, except two armed faults, neither known to production code:
+//! - the first transaction that holds the armed generation's chat pair (its
+//!   completing transaction) is committed for real, or rolled back, and then
+//!   reported to the caller as a failed COMMIT, as when the database answer is lost;
+//! - while `QuotaFault` is poisoned, every quota-counter operation of `AiTx`
+//!   (`lock_counter`, `save_counter`, `counters`) fails with `StoreError::Unavailable`
+//!   and is counted, so a test can also prove that a path never touched the store.
 
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
 use billing_core::ports::{BillingTx, StoreError};
 use media_ports::ObjectRef;
 use transgate_core::account::ports::AccountTx;
 use transgate_core::ai::GenerationId;
-use transgate_core::ai::ports::AiTx;
+use transgate_core::ai::ports::{
+    AiTx, ChatMessage, CompletionSummary, ConsentRecord, CounterKey, DispatchDisposition, Generation, GenerationKind, LlmDispatch,
+    QuotaCounter, SummaryRequest,
+};
 use transgate_core::ids::{AccountId, AttemptId, ErasureId, InboxId, JobId, LineId, Micros};
 use transgate_core::jobs::domain::{Attempt, Job, NewJob};
 use transgate_core::jobs::events::JobEvent;
@@ -45,10 +51,30 @@ impl Arm {
     }
 }
 
+/// Switch for the quota-store fault: while `poisoned`, counter operations fail.
+/// `attempts` counts every counter operation tried, failed or not.
+#[derive(Default)]
+pub struct QuotaFault {
+    pub poisoned: AtomicBool,
+    pub attempts: AtomicUsize,
+}
+
+impl QuotaFault {
+    fn hit(&self) -> bool {
+        self.attempts.fetch_add(1, Ordering::SeqCst);
+        self.poisoned.load(Ordering::SeqCst)
+    }
+}
+
+fn unavailable<'a, T: Send + 'a>() -> StoreResult<'a, T> {
+    Box::pin(async { Err(StoreError::Unavailable("the quota store is unavailable".into())) })
+}
+
 #[derive(Clone)]
 pub struct UncertainStore {
     pub inner: PgJobStore,
     pub arm: Arc<Arm>,
+    pub quota: Arc<QuotaFault>,
 }
 
 impl JobQueries for UncertainStore {
@@ -106,7 +132,7 @@ impl JobStore for UncertainStore {
     fn begin(&self) -> StoreResult<'_, Box<dyn JobUow>> {
         Box::pin(async move {
             let inner = self.inner.begin().await?;
-            Ok(Box::new(UncertainUow { inner, arm: self.arm.clone() }) as Box<dyn JobUow>)
+            Ok(Box::new(UncertainUow { inner, arm: self.arm.clone(), quota: self.quota.clone() }) as Box<dyn JobUow>)
         })
     }
 }
@@ -114,11 +140,12 @@ impl JobStore for UncertainStore {
 pub struct UncertainUow {
     inner: Box<dyn JobUow>,
     arm: Arc<Arm>,
+    quota: Arc<QuotaFault>,
 }
 
 impl JobUow for UncertainUow {
     fn ai(&mut self) -> &mut dyn AiTx {
-        self.inner.ai()
+        self
     }
     fn account(&mut self) -> &mut dyn AccountTx {
         self.inner.account()
@@ -281,7 +308,7 @@ impl JobUow for UncertainUow {
     }
 
     fn commit(self: Box<Self>) -> BoxFuture<'static, Result<(), StoreError>> {
-        let UncertainUow { mut inner, arm } = *self;
+        let UncertainUow { mut inner, arm, .. } = *self;
         Box::pin(async move {
             let target = *arm.generation.lock().unwrap();
             let completing = match target {
@@ -298,5 +325,107 @@ impl JobUow for UncertainUow {
             }
             Err(StoreError::Unavailable("the COMMIT answer was lost".into()))
         })
+    }
+}
+
+impl AiTx for UncertainUow {
+    fn consent(&mut self, account: AccountId) -> StoreResult<'_, Option<ConsentRecord>> {
+        self.inner.ai().consent(account)
+    }
+    fn save_consent<'a>(&'a mut self, record: &'a ConsentRecord) -> StoreResult<'a, ()> {
+        self.inner.ai().save_consent(record)
+    }
+    fn source_revision(&mut self, job: JobId) -> StoreResult<'_, i64> {
+        self.inner.ai().source_revision(job)
+    }
+    fn bump_source_revision(&mut self, job: JobId) -> StoreResult<'_, i64> {
+        self.inner.ai().bump_source_revision(job)
+    }
+    fn bump_source_revisions<'a>(&'a mut self, jobs: &'a [JobId]) -> StoreResult<'a, ()> {
+        self.inner.ai().bump_source_revisions(jobs)
+    }
+    fn generation_by_request(&mut self, account: AccountId, request_key: uuid::Uuid) -> StoreResult<'_, Option<Generation>> {
+        self.inner.ai().generation_by_request(account, request_key)
+    }
+    fn active_metered(&mut self, account: AccountId) -> StoreResult<'_, Option<Generation>> {
+        self.inner.ai().active_metered(account)
+    }
+    fn active_for_job(&mut self, account: AccountId, job: JobId, kind: GenerationKind) -> StoreResult<'_, Option<Generation>> {
+        self.inner.ai().active_for_job(account, job, kind)
+    }
+    fn insert_generation<'a>(&'a mut self, generation: &'a Generation) -> StoreResult<'a, ()> {
+        self.inner.ai().insert_generation(generation)
+    }
+    fn lock_generation(&mut self, id: GenerationId) -> StoreResult<'_, Option<Generation>> {
+        self.inner.ai().lock_generation(id)
+    }
+    fn save_generation<'a>(&'a mut self, generation: &'a Generation) -> StoreResult<'a, ()> {
+        self.inner.ai().save_generation(generation)
+    }
+    fn generation(&mut self, id: GenerationId) -> StoreResult<'_, Option<Generation>> {
+        self.inner.ai().generation(id)
+    }
+    fn latest_analysis(&mut self, account: AccountId, job: JobId) -> StoreResult<'_, Option<Generation>> {
+        self.inner.ai().latest_analysis(account, job)
+    }
+    fn lock_counter(&mut self, key: CounterKey) -> StoreResult<'_, Option<QuotaCounter>> {
+        if self.quota.hit() {
+            return unavailable();
+        }
+        self.inner.ai().lock_counter(key)
+    }
+    fn save_counter<'a>(&'a mut self, counter: &'a QuotaCounter) -> StoreResult<'a, ()> {
+        if self.quota.hit() {
+            return unavailable();
+        }
+        self.inner.ai().save_counter(counter)
+    }
+    fn counters(&mut self, account: AccountId, job: Option<JobId>) -> StoreResult<'_, Vec<QuotaCounter>> {
+        if self.quota.hit() {
+            return unavailable();
+        }
+        self.inner.ai().counters(account, job)
+    }
+    fn append_chat_pair<'a>(&'a mut self, question: &'a ChatMessage, answer: &'a ChatMessage) -> StoreResult<'a, [ChatMessage; 2]> {
+        self.inner.ai().append_chat_pair(question, answer)
+    }
+    fn chat_pair(&mut self, generation: GenerationId) -> StoreResult<'_, Option<[ChatMessage; 2]>> {
+        self.inner.ai().chat_pair(generation)
+    }
+    fn chat_history(&mut self, account: AccountId, job: JobId) -> StoreResult<'_, Vec<ChatMessage>> {
+        self.inner.ai().chat_history(account, job)
+    }
+    fn save_completion_summary<'a>(&'a mut self, summary: &'a CompletionSummary) -> StoreResult<'a, ()> {
+        self.inner.ai().save_completion_summary(summary)
+    }
+    fn completion_summary(&mut self, account: AccountId, job: JobId) -> StoreResult<'_, Option<CompletionSummary>> {
+        self.inner.ai().completion_summary(account, job)
+    }
+    fn request_summary<'a>(&'a mut self, request: &'a SummaryRequest) -> StoreResult<'a, ()> {
+        self.inner.ai().request_summary(request)
+    }
+    fn lock_summary_request(&mut self, job: JobId, source_revision: i64) -> StoreResult<'_, Option<SummaryRequest>> {
+        self.inner.ai().lock_summary_request(job, source_revision)
+    }
+    fn save_summary_request<'a>(&'a mut self, request: &'a SummaryRequest) -> StoreResult<'a, ()> {
+        self.inner.ai().save_summary_request(request)
+    }
+    fn summary_request(&mut self, job: JobId) -> StoreResult<'_, Option<SummaryRequest>> {
+        self.inner.ai().summary_request(job)
+    }
+    fn purge_ai_artifacts(&mut self, account: AccountId, cutoff: i64) -> StoreResult<'_, u64> {
+        self.inner.ai().purge_ai_artifacts(account, cutoff)
+    }
+    fn record_dispatch<'a>(&'a mut self, dispatch: &'a LlmDispatch) -> StoreResult<'a, ()> {
+        self.inner.ai().record_dispatch(dispatch)
+    }
+    fn settle_dispatch<'a>(
+        &'a mut self,
+        account: AccountId,
+        generation: GenerationId,
+        disposition: DispatchDisposition,
+        observed: Option<&'a str>,
+    ) -> StoreResult<'a, bool> {
+        self.inner.ai().settle_dispatch(account, generation, disposition, observed)
     }
 }

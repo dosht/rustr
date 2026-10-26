@@ -984,7 +984,7 @@ async fn ai_completes_once_when_the_completing_commit_answer_is_lost() {
         let clock = Arc::new(SharedClock(std::sync::atomic::AtomicI64::new(NOW.0)));
         let arm = Arm::new(mode);
         let llm = Arc::new(CountingLlm { inner: AnsweringLlm("Friday."), opened: Default::default() });
-        let uncertain: Arc<dyn JobStore> = Arc::new(UncertainStore { inner: store.clone(), arm: arm.clone() });
+        let uncertain: Arc<dyn JobStore> = Arc::new(UncertainStore { inner: store.clone(), arm: arm.clone(), quota: Default::default() });
         let ai = ai_app_on(uncertain, clock.clone(), llm.clone());
         ai.record_consent(account, true).await.unwrap();
         let ask = transgate_core::ai::ChatRequest { message: "When?".into(), history: vec![] };
@@ -1016,4 +1016,144 @@ async fn ai_completes_once_when_the_completing_commit_answer_is_lost() {
         assert_eq!(count(&owner, "SELECT count(*) FROM transgate_jobs.chat_messages WHERE account_id = $1", account).await, 2);
         assert_eq!(user_counts(&owner, account).await, settled);
     }
+}
+
+/// An app over a store whose quota counters can be poisoned (see `uncertain_commit::QuotaFault`).
+struct Poisonable {
+    ai: transgate_core::ai::Ai,
+    fault: std::sync::Arc<uncertain_commit::QuotaFault>,
+    llm: std::sync::Arc<CountingLlm>,
+    clock: std::sync::Arc<SharedClock>,
+}
+
+fn poisonable(store: &PgJobStore, answer: &'static str) -> Poisonable {
+    use std::sync::Arc;
+    use uncertain_commit::{Arm, LostCommit, UncertainStore};
+    let fault = Arc::new(uncertain_commit::QuotaFault::default());
+    let llm = Arc::new(CountingLlm { inner: AnsweringLlm(answer), opened: Default::default() });
+    // An unarmed arm: no generation is named, so no COMMIT is ever lost.
+    let faulty: Arc<dyn JobStore> = Arc::new(UncertainStore { inner: store.clone(), arm: Arm::new(LostCommit::Committed), quota: fault.clone() });
+    let clock = Arc::new(SharedClock(std::sync::atomic::AtomicI64::new(NOW.0)));
+    Poisonable { ai: ai_app_on(faulty, clock.clone(), llm.clone()), fault, llm, clock }
+}
+
+impl Poisonable {
+    fn poison(&self, on: bool) {
+        self.fault.poisoned.store(on, std::sync::atomic::Ordering::SeqCst);
+    }
+    fn counter_attempts(&self) -> usize {
+        self.fault.attempts.load(std::sync::atomic::Ordering::SeqCst)
+    }
+    fn provider_calls(&self) -> usize {
+        self.llm.opened.load(std::sync::atomic::Ordering::SeqCst)
+    }
+}
+
+fn ask(message: &str) -> transgate_core::ai::ChatRequest {
+    transgate_core::ai::ChatRequest { message: message.into(), history: vec![] }
+}
+
+// AI-019 corrected (D2): quota storage that cannot be read is a refusal, never the legacy
+// fail-open. A freemium chat start with a failing counter store is Unavailable before anything
+// is durable: no generation, no counter, no provider call, no stuck reservation; the same
+// request succeeds once the store is back. A limits read fails the same way.
+#[tokio::test]
+#[ignore = "needs TRANSGATE_JOBS_TEST_DATABASE_URL"]
+async fn a_failing_quota_store_refuses_freemium_chat_admission_before_anything_is_durable() {
+    use transgate_core::ai::AiError;
+    let owner = owner().await;
+    let store = store().await;
+    let (account, job) = chat_ready_job(&store).await;
+    let app = poisonable(&store, "Friday.");
+    app.ai.record_consent(account, true).await.unwrap();
+
+    app.poison(true);
+    let key = Uuid::new_v4();
+    let refused = app.ai.start_chat(account, job, key, ask("When?")).await;
+    assert!(matches!(refused, Err(AiError::Unavailable(_))), "{refused:?}");
+    assert!(app.counter_attempts() > 0, "the freemium path really consulted the counters");
+    assert_eq!(count(&owner, "SELECT count(*) FROM transgate_jobs.generations WHERE account_id = $1", account).await, 0, "no generation row");
+    assert_eq!(user_counts(&owner, account).await, vec![], "no counter created or changed");
+    assert_eq!(app.provider_calls(), 0, "no provider call");
+    let limits = app.ai.limits(account, job).await;
+    assert!(matches!(limits, Err(AiError::Unavailable(_))), "a limits read does not fail open: {limits:?}");
+
+    app.poison(false);
+    let started = app.ai.start_chat(account, job, key, ask("When?")).await.unwrap();
+    assert!(started.created, "the refused request left nothing behind: the same key is a fresh start");
+    assert_eq!(user_counts(&owner, account).await.len(), 2, "reserved exactly once now");
+    assert_eq!(app.provider_calls(), 0, "starting alone calls nothing");
+}
+
+// AI-014, AI-019: a paid caller never reads, resets, reserves or settles a counter, so a store
+// that fails every counter operation does not touch its answer: created, run, saved, one call.
+#[tokio::test]
+#[ignore = "needs TRANSGATE_JOBS_TEST_DATABASE_URL"]
+async fn a_paid_caller_never_touches_a_poisoned_quota_store() {
+    let owner = owner().await;
+    let store = store().await;
+    let (account, job) = chat_ready_job(&store).await;
+    sqlx::query(
+        "INSERT INTO billing.packages (account_id, name, minutes_included, created, start_at, end_at)
+         VALUES ($1, 'PREMIUM', 100, now(), now() - interval '1 day', now() + interval '3650 days')",
+    )
+    .bind(account.0)
+    .execute(&owner)
+    .await
+    .unwrap();
+    let app = poisonable(&store, "Friday.");
+    app.ai.record_consent(account, true).await.unwrap();
+    app.poison(true);
+
+    let started = app.ai.start_chat(account, job, Uuid::new_v4(), ask("When?")).await.unwrap();
+    assert!(started.created);
+    let done = app.ai.run(started.generation.id).await.unwrap();
+    assert_eq!(done.status, GenerationStatus::Completed);
+    assert_eq!(app.counter_attempts(), 0, "not one counter operation was attempted, so none could fail");
+    assert_eq!(user_counts(&owner, account).await, vec![], "a paid answer creates no counter");
+    let held: Option<serde_json::Value> = sqlx::query_scalar("SELECT quota FROM transgate_jobs.generations WHERE id = $1")
+        .bind(started.generation.id.0)
+        .fetch_one(&owner)
+        .await
+        .unwrap();
+    assert_eq!(held, None, "a paid generation holds no reservation");
+    assert_eq!(count(&owner, "SELECT count(*) FROM transgate_jobs.chat_messages WHERE account_id = $1", account).await, 2);
+    assert_eq!(app.provider_calls(), 1);
+}
+
+// D2: the counter store failing while the answer is being settled leaves the provider's answer
+// durably staged, and a later run of the same generation finishes it locally: one pair, one
+// settlement of the original reservation, and still exactly one provider call.
+#[tokio::test]
+#[ignore = "needs TRANSGATE_JOBS_TEST_DATABASE_URL"]
+async fn a_quota_store_failing_at_settlement_is_reconciled_locally_without_a_second_provider_call() {
+    use transgate_core::ai::quota::estimate_tokens;
+    let owner = owner().await;
+    let store = store().await;
+    let (account, job) = chat_ready_job(&store).await;
+    let app = poisonable(&store, "Friday.");
+    app.ai.record_consent(account, true).await.unwrap();
+    let started = app.ai.start_chat(account, job, Uuid::new_v4(), ask("When?")).await.unwrap();
+    let id = started.generation.id;
+    assert_eq!(user_counts(&owner, account).await, vec![("questions".into(), 1), ("tokens".into(), estimate_tokens("When?"))]);
+
+    app.poison(true);
+    let first = app.ai.run(id).await;
+    assert_eq!(app.provider_calls(), 1, "the answer was produced once");
+    assert!(matches!(first, Err(transgate_core::ai::AiError::Unavailable(_))), "the worker reports the store failure: {first:?}");
+    assert_eq!(count(&owner, "SELECT count(*) FROM transgate_jobs.chat_messages WHERE account_id = $1", account).await, 0, "no pair without its settlement");
+    assert_eq!(user_counts(&owner, account).await, vec![("questions".into(), 1), ("tokens".into(), estimate_tokens("When?"))], "the reservation is still held, unchanged");
+
+    app.poison(false);
+    // The failed worker still holds its lease; the stored answer is finished by recovery once it expires.
+    app.clock.0.fetch_add(2 * MICROS_PER_MINUTE, std::sync::atomic::Ordering::SeqCst);
+    let done = app.ai.run(id).await.unwrap();
+    assert_eq!(done.status, GenerationStatus::Completed, "finished from the stored answer");
+    assert_eq!(app.provider_calls(), 1, "no provider replay");
+    assert_eq!(count(&owner, "SELECT count(*) FROM transgate_jobs.chat_messages WHERE account_id = $1", account).await, 2, "exactly one pair");
+    assert_eq!(
+        user_counts(&owner, account).await,
+        vec![("questions".into(), 1), ("tokens".into(), estimate_tokens("When?Friday."))],
+        "the reservation settled exactly once"
+    );
 }

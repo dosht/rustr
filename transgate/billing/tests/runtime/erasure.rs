@@ -5,7 +5,10 @@ use std::sync::atomic::{AtomicBool, Ordering};
 
 use billing_core::types::{AccountId, BoxFuture};
 use billing_postgres::PgBillingStore;
-use media_ports::{CaptionDocument, CaptionError, ObjectInventory, ObjectRef, PublicCaptions, StoreKind, TransportError};
+use media_ports::{
+    CaptionDocument, CaptionError, DeleteOutcome, ObjectInventory, ObjectMetadata, ObjectRef, ObjectStore, PublicCaptions, PutObject,
+    StoreKind, TemporaryAccess, TransportError,
+};
 use transgate_core::jobs::app::{Jobs, JobsConfig, JobsServices};
 use transgate_core::jobs::domain::StorageProvider;
 use transgate_core::jobs::ports::{IdentityAdmin, IdentityOutcome, JobStore, Locks, RateLimiter, Sleeper};
@@ -68,6 +71,11 @@ impl PublicCaptions for NoPublicCaptions {
 /// Mount the real jobs/privacy routes alongside the composed billing routes on this fixture's DB.
 /// No upload is issued: this scenario can close after legacy inventory and identity are confirmed.
 async fn app_with_privacy(clock: Arc<dyn Clock>, legacy: Arc<LegacyInventory>, identity: Arc<IdentityDeletion>) -> App {
+    app_with_objects(clock, legacy, identity, vec![]).await
+}
+
+/// `objects` are the configured object stores (jobs and privacy share them); none by default.
+async fn app_with_objects(clock: Arc<dyn Clock>, legacy: Arc<LegacyInventory>, identity: Arc<IdentityDeletion>, objects: Vec<Arc<dyn ObjectStore>>) -> App {
     let mut app = start_in(clock.clone(), runtime_fixture().await).await;
     transgate_jobs_postgres::migrate(&app.owner).await.unwrap();
     transgate_jobs_postgres::verify_runtime(&app.transgate.pool).await.unwrap();
@@ -77,7 +85,7 @@ async fn app_with_privacy(clock: Arc<dyn Clock>, legacy: Arc<LegacyInventory>, i
     let limiter: Arc<dyn RateLimiter> = Arc::new(PgRateLimiter::new(pool.clone()));
     let jobs = Arc::new(Jobs::new(
         JobsServices {
-            store: store.clone(), clock: clock.clone(), objects: vec![], transcribers: vec![],
+            store: store.clone(), clock: clock.clone(), objects: objects.clone(), transcribers: vec![],
             stager: None, sleeper: Arc::new(RuntimeSleeper), rate_limiter: limiter.clone(),
             paid_captions: None, video_metadata: None,
         },
@@ -92,7 +100,7 @@ async fn app_with_privacy(clock: Arc<dyn Clock>, legacy: Arc<LegacyInventory>, i
         },
     ));
     let privacy = Arc::new(Privacy::new(PrivacyServices {
-        store: store.clone(), clock: clock.clone(), locks, objects: vec![], inventories: vec![legacy],
+        store: store.clone(), clock: clock.clone(), locks, objects, inventories: vec![legacy],
         transcribers: vec![], identity, billing: Arc::new(PgBillingStore::new(pool.clone())),
         terminators: vec![], exceptions: ExceptionPolicy::default(),
     }));
@@ -253,6 +261,135 @@ async fn exception_approval_requires_an_unbarred_admin_before_touching_core_and_
     assert_eq!(approved["state"], "approved_exception");
     assert_eq!(approved["approved_by"], ADMIN);
     assert_eq!(approved["reason"], "operator accepts the explicitly documented outstanding PUT risk");
+}
+
+/// The `uploads` bucket as erasure sees it: keys that exist, and every HEAD and DELETE it received.
+#[derive(Default)]
+struct UploadBucket {
+    present: Mutex<std::collections::BTreeSet<String>>,
+    heads: Mutex<Vec<String>>,
+    deletes: Mutex<Vec<String>>,
+}
+
+impl ObjectStore for UploadBucket {
+    fn kind(&self) -> StoreKind { StoreKind::Gcs }
+    fn bucket(&self) -> &str { "uploads" }
+    fn sign<'a>(&'a self, _: &'a ObjectRef, _: media_ports::AccessMethod, _: media_ports::Micros, _: u32) -> BoxFuture<'a, Result<TemporaryAccess, TransportError>> {
+        Box::pin(async { Err(TransportError::Unsupported("this scenario issues no capability".into())) })
+    }
+    fn head<'a>(&'a self, object: &'a ObjectRef) -> BoxFuture<'a, Result<Option<ObjectMetadata>, TransportError>> {
+        Box::pin(async move {
+            self.heads.lock().unwrap().push(object.key.clone());
+            let found = self.present.lock().unwrap().contains(&object.key);
+            Ok(found.then(|| ObjectMetadata { object: object.clone(), size: 1, content_type: None, etag: None }))
+        })
+    }
+    fn put(&self, _: PutObject) -> BoxFuture<'_, Result<ObjectMetadata, TransportError>> {
+        Box::pin(async { Err(TransportError::Unsupported("this scenario writes nothing".into())) })
+    }
+    fn delete<'a>(&'a self, object: &'a ObjectRef) -> BoxFuture<'a, Result<DeleteOutcome, TransportError>> {
+        Box::pin(async move {
+            self.deletes.lock().unwrap().push(object.key.clone());
+            let removed = self.present.lock().unwrap().remove(&object.key);
+            Ok(if removed { DeleteOutcome::Deleted } else { DeleteOutcome::Absent })
+        })
+    }
+}
+
+async fn item_states(app: &App, erasure: Uuid) -> Vec<(String, String)> {
+    sqlx::query_as("SELECT target->>'kind', state->>'state' FROM transgate_jobs.erasure_items WHERE erasure_id = $1 ORDER BY target->>'kind'")
+        .bind(erasure).fetch_all(&app.owner).await.unwrap()
+}
+
+// P3 D13/D15, deterministic form of the real 16.5-minute capability-wait smoke: an upload
+// capability that has really expired on the clock the saga uses (PostgreSQL rows, the real
+// HTTP routes, no product clock hook). Expiry is neither proof nor closure: the known key is
+// swept at the signed expiry, a late landed PUT is deleted and swept again, a clean HEAD still
+// leaves the item unresolved, and only an unbarred admin's explicit approval lets the saga
+// close, as `erased_with_exceptions`, never `fully_erased`.
+#[tokio::test]
+#[ignore = "needs BILLING_TEST_DATABASE_URL"]
+async fn an_expired_upload_capability_closes_the_erasure_only_with_an_explicit_operator_exception() {
+    let clock = Arc::new(OffsetClock::default());
+    let bucket = Arc::new(UploadBucket::default());
+    let app = app_with_objects(clock.clone(), Arc::new(LegacyInventory::default()), Arc::new(IdentityDeletion::default()), vec![bucket.clone()]).await;
+    let (owner, admin_id) = (user(), Uuid::new_v4());
+    let admin = User { id: admin_id, email: ADMIN.into(), jwt: token(&admin_id, ADMIN, 3600) };
+    register_auth(&app, &owner);
+    register_auth(&app, &admin);
+    assert_eq!(app.call("GET", "/api/billing/overview", Some(&owner.jwt), None).await.0, 200);
+    // One capability signed for the owner, valid for one more hour on the saga's clock.
+    let key = format!("{}/late-upload.mp3", owner.id);
+    sqlx::query(
+        "INSERT INTO transgate_jobs.issued_uploads (job_id, account_id, object, expires_at)
+         VALUES (1, $1, $2, now() + interval '1 hour')",
+    )
+    .bind(owner.id)
+    .bind(sqlx::types::Json(json!({"store":"gcs","bucket":"uploads","key":key,"version":null})))
+    .execute(&app.owner)
+    .await
+    .unwrap();
+
+    let (status, view) = app.call("DELETE", "/api/delete-account", Some(&owner.jwt), None).await;
+    assert_eq!(status, 202, "{view}");
+    assert_ne!(view["status"], "fully_erased", "{view}");
+    let erasure: Uuid = sqlx::query_scalar("SELECT id FROM transgate_jobs.erasures WHERE account_id = $1")
+        .bind(owner.id).fetch_one(&app.owner).await.unwrap();
+    let swept = |bucket: &UploadBucket| bucket.heads.lock().unwrap().iter().filter(|k| **k == key).count();
+    assert_eq!(swept(&bucket), 0, "a capability that is still valid is not swept early");
+    let states = item_states(&app, erasure).await;
+    assert!(states.contains(&("upload_resweep".into(), "blocked_until".into())), "{states:?}");
+
+    // The signed URL expires. Each owner request advances the saga by one phase.
+    clock.advance(2 * 3600);
+    let mut states = vec![];
+    for _ in 0..8 {
+        let (status, view) = app.call("DELETE", "/api/delete-account", Some(&owner.jwt), None).await;
+        assert!(status == 200 || status == 202, "{status} {view}");
+        assert_ne!(view["status"], "fully_erased", "an expired capability proves nothing: {view}");
+        states = item_states(&app, erasure).await;
+        if states.contains(&("upload_resweep".into(), "unresolved".into())) { break; }
+        clock.advance(900);
+    }
+    assert!(states.contains(&("upload_resweep".into(), "unresolved".into())), "a clean HEAD at expiry stays unresolved: {states:?}");
+    assert!(swept(&bucket) >= 1, "the exact owned key was checked once the capability expired");
+
+    // A write accepted before expiry lands late; the next sweep deletes it and still resolves nothing.
+    bucket.present.lock().unwrap().insert(key.clone());
+    for _ in 0..4 {
+        clock.advance(7 * 24 * 3600);
+        let (_, view) = app.call("DELETE", "/api/delete-account", Some(&owner.jwt), None).await;
+        assert_ne!(view["status"], "fully_erased", "{view}");
+        if !bucket.present.lock().unwrap().contains(&key) { break; }
+    }
+    assert!(bucket.deletes.lock().unwrap().contains(&key), "the late write was deleted");
+    assert!(!bucket.present.lock().unwrap().contains(&key));
+    let states = item_states(&app, erasure).await;
+    assert!(states.contains(&("upload_resweep".into(), "unresolved".into())), "found-and-deleted still resolves nothing: {states:?}");
+
+    // An ordinary account cannot approve; the admin can, with the verified operator recorded.
+    let item: Uuid = sqlx::query_scalar("SELECT id FROM transgate_jobs.erasure_items WHERE erasure_id = $1 AND target->>'kind' = 'upload_resweep'")
+        .bind(erasure).fetch_one(&app.owner).await.unwrap();
+    let path = format!("/api/admin/erasures/{erasure}/items/{item}/exception");
+    let ordinary = user();
+    register_auth(&app, &ordinary);
+    assert_eq!(app.call("POST", &path, Some(&ordinary.jwt), Some(json!({"rationale":"not allowed"}))).await.0, 403);
+    assert_eq!(app.call("POST", &path, Some(&admin.jwt), Some(json!({"rationale":"operator accepts the unobservable accepted-PUT risk after review"}))).await.0, 200);
+    let approved: Value = sqlx::query_scalar("SELECT state FROM transgate_jobs.erasure_items WHERE id = $1").bind(item).fetch_one(&app.owner).await.unwrap();
+    assert_eq!((approved["state"].clone(), approved["approved_by"].clone()), (json!("approved_exception"), json!(ADMIN)));
+
+    // The owner's next request finishes the remaining phases; the approval closes it with exceptions.
+    let mut status_text = String::new();
+    for _ in 0..4 {
+        let (_, view) = app.call("DELETE", "/api/delete-account", Some(&owner.jwt), None).await;
+        status_text = view["status"].as_str().unwrap_or_default().to_string();
+        assert_ne!(status_text, "fully_erased", "an approved exception must never read as fully erased: {view}");
+        if status_text == "erased_with_exceptions" { break; }
+        clock.advance(900);
+    }
+    assert_eq!(status_text, "erased_with_exceptions");
+    let stored: String = sqlx::query_scalar("SELECT state FROM transgate_jobs.erasures WHERE id = $1").bind(erasure).fetch_one(&app.owner).await.unwrap();
+    assert_eq!(stored, "erased_with_exceptions");
 }
 
 #[path = "account.rs"]

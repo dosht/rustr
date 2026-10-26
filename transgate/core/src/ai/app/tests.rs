@@ -351,6 +351,74 @@ fn paid_callers_bypass_the_quota_lane() {
     assert!(w.generation(a.generation.id).quota.is_none());
 }
 
+// AI-019 corrected (D2, P4-GAPS): a failing quota store fails a freemium question closed. The
+// admission rolls back: no generation, no counter, no dispatch intent, no provider call. Limits
+// reads fail the same way rather than inventing zero usage.
+#[test]
+fn a_failing_quota_store_refuses_freemium_admission_before_anything_is_dispatched() {
+    let w = World::new();
+    let ai = w.ai();
+    granted(&ai);
+    w.store.with(|d| d.ai.fail_counters = true);
+    match run(ai.start_chat(account(), JobId(1), key(1), ask("When?"))) {
+        Err(e @ AiError::Unavailable(_)) => assert_eq!(e.http_status(), 503),
+        other => panic!("{other:?}"),
+    }
+    assert!(w.store.with(|d| d.ai.generations.is_empty() && d.ai.counters.is_empty() && d.ai.dispatches.is_empty() && d.ai.chat.is_empty()));
+    assert_eq!(w.llm.opened(), 0);
+    assert!(matches!(run(ai.limits(account(), JobId(1))), Err(AiError::Unavailable(_))));
+    w.store.with(|d| d.ai.fail_counters = false);
+    assert!(run(ai.start_chat(account(), JobId(1), key(1), ask("When?"))).unwrap().created, "the same key is admitted once storage recovers");
+}
+
+// AI-014 with a failing quota store: a paid caller never touches the counters, so it is admitted,
+// answered and unmetered; its limits read needs no counters either. A failed plan lookup counts
+// as freemium (source), so the same caller is then metered, and fails closed with the store down.
+#[test]
+fn paid_callers_bypass_a_failing_quota_store_but_a_failed_plan_lookup_is_freemium() {
+    let w = World::new();
+    w.paid();
+    let ai = w.ai();
+    granted(&ai);
+    w.store.with(|d| d.ai.fail_counters = true);
+    w.llm.script(answer("Friday."));
+    let paid = run(ai.start_chat(account(), JobId(1), key(1), ask("When?"))).unwrap();
+    assert!(paid.created && w.generation(paid.generation.id).quota.is_none());
+    assert_eq!(run(ai.run(paid.generation.id)).unwrap().status, GenerationStatus::Completed);
+    assert!(!run(ai.limits(account(), JobId(1))).unwrap().has_limits);
+
+    w.store.with(|d| d.ai.fail_packages = true);
+    assert!(matches!(run(ai.start_chat(account(), JobId(1), key(2), ask("Who?"))), Err(AiError::Unavailable(_))));
+    w.store.with(|d| d.ai.fail_counters = false);
+    let metered = run(ai.start_chat(account(), JobId(1), key(2), ask("Who?"))).unwrap();
+    assert!(w.generation(metered.generation.id).quota.is_some(), "a failed plan lookup is treated as freemium");
+    assert_eq!(w.counter(CounterScope::Transcript(JobId(1)), CounterKind::Questions), Some(1));
+    assert_eq!(w.llm.opened(), 1);
+}
+
+// D2 settlement: a quota store failing after the provider finished keeps the staged final; the
+// answer is never re-requested, and recovery saves the pair and settles exactly once.
+#[test]
+fn a_failing_quota_store_at_settlement_keeps_the_final_for_one_local_completion() {
+    let w = World::new();
+    let ai = w.ai();
+    granted(&ai);
+    w.llm.script(answer("Friday."));
+    let started = run(ai.start_chat(account(), JobId(1), key(1), ask("When?"))).unwrap();
+    w.store.with(|d| d.ai.fail_counters = true);
+    assert!(run(ai.run(started.generation.id)).is_err());
+    let g = w.generation(started.generation.id);
+    assert!(g.staged.is_some() && !g.status.is_terminal(), "the final is durable, not completed");
+    assert!(w.store.with(|d| d.ai.chat.is_empty()));
+    w.store.with(|d| d.ai.fail_counters = false);
+    w.clock.advance_minutes(2);
+    assert_eq!(run(ai.run_pass()).unwrap().completed, 1);
+    assert_eq!(w.llm.opened(), 1, "never re-requested");
+    assert_eq!(w.store.with(|d| d.ai.chat.len()), 2);
+    assert_eq!(w.counter(CounterScope::Transcript(JobId(1)), CounterKind::Tokens), Some(quota::estimate_tokens("When?Friday.")));
+    assert_eq!(w.counter(CounterScope::Transcript(JobId(1)), CounterKind::Questions), Some(1));
+}
+
 // AI-015, D2: a freemium question at the stored cap is refused before anything is admitted; a
 // second metered question while one is active is busy, not queued.
 #[test]

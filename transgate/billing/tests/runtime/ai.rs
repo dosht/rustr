@@ -47,6 +47,10 @@ async fn provider(State(s): State<Arc<HeldProvider>>, request: Request) -> Respo
 struct Fixture { app: App, other: String, ai: Arc<Ai>, provider: Arc<HeldProvider>, store: PgJobStore, clock: Arc<dyn Clock> }
 impl Drop for Fixture { fn drop(&mut self) { self.provider.finish.notify_waiters(); } }
 async fn fixture() -> Fixture {
+    fixture_with(ChatLimits::default()).await
+}
+/// `limits` are the host's configured chat caps; the default configures none, so no quota counter exists.
+async fn fixture_with(limits: ChatLimits) -> Fixture {
     let clock: Arc<dyn Clock> = Arc::new(transgate_billing::SystemClock);
     let mut app = start_in(clock.clone(), runtime_fixture().await).await;
     transgate_jobs_postgres::migrate(&app.owner).await.unwrap();
@@ -59,7 +63,7 @@ async fn fixture() -> Fixture {
         store: Arc::new(store.clone()), clock: clock.clone(), llm: Some(llm.clone()),
         sleeper: Arc::new(super::erasure::RuntimeSleeper), live: Arc::new(LiveHub::new(64 * 1024, 1024 * 1024)),
     }, AiConfig { features_enabled: true, chat_enabled: true, chat_validation: true,
-        limits: ChatLimits::default(), model: ModelSettings::source(), bounds: Bounds::default() }));
+        limits, model: ModelSettings::source(), bounds: Bounds::default() }));
     let ai = make();
     let first = serve(app.transgate.router.clone().merge(transgate_http::ai::router(Arc::new(AiHttp { ai: ai.clone(), identity: app.transgate.identity.clone() })))).await;
     let other = serve(transgate_http::ai::router(Arc::new(AiHttp { ai: make(), identity: app.transgate.identity.clone() }))).await;
@@ -257,6 +261,47 @@ async fn ai_http_chat_history_reports_the_held_answer_to_a_second_replica_and_on
     assert_eq!(done["messages"][0]["content"], "  What was decided?  ");
     assert_eq!(done["messages"][1]["content"], "Hello world");
     assert_eq!(f.provider.calls.load(Ordering::SeqCst), 1);
+}
+
+// AI-019 corrected: a quota store that fails (a real PostgreSQL error on the account's counter
+// row, injected as a trigger scoped to this account) is a 503 `unavailable` on the real route,
+// with the private database detail kept out of the body. Admission is refused before anything is
+// durable: no generation, no provider call, no counter. With the fault removed the same caller
+// starts normally.
+#[tokio::test]
+#[ignore = "needs BILLING_TEST_DATABASE_URL"]
+async fn ai_http_chat_start_is_503_when_the_quota_store_fails_and_dispatches_nothing() {
+    let f = fixture_with(ChatLimits {
+        questions_per_transcript: Some(50), questions_per_user: Some(500),
+        tokens_per_transcript: Some(20_000), tokens_per_user: Some(50_000),
+        reset_period: transgate_core::ai::ports::Period::Daily,
+    }).await;
+    let person = user();
+    let job = completed(&f, &person).await;
+    assert_eq!(f.app.call("POST", "/api/ai/consent", Some(&person.jwt), Some(json!({"hasConsented":true}))).await.0, 200);
+    let tag = person.id.simple().to_string();
+    for statement in [
+        format!("CREATE FUNCTION public.p1t_quota_fault_{tag}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'p1t-quota-fault-secret-detail'; END $$"),
+        format!("CREATE TRIGGER p1t_quota_fault BEFORE INSERT OR UPDATE ON transgate_jobs.quota_counters FOR EACH ROW WHEN (NEW.account_id = '{}') EXECUTE FUNCTION public.p1t_quota_fault_{tag}()", person.id),
+    ] {
+        sqlx::query(sqlx::AssertSqlSafe(statement)).execute(&f.app.owner).await.unwrap();
+    }
+    let key = Uuid::new_v4();
+    let (status, body) = f.app.call("POST", "/api/v1/ai/chat", Some(&person.jwt),
+        Some(json!({"jobId":job.0,"requestId":key,"message":"What was decided?","history":[]}))).await;
+    assert_eq!(status, 503);
+    assert_eq!(body["code"], "unavailable");
+    assert_eq!(body["error"], "AI storage is unavailable");
+    assert!(!body.to_string().contains("p1t-quota-fault-secret-detail"), "the database detail stays in the server log: {body}");
+    assert_eq!(f.provider.calls.load(Ordering::SeqCst), 0, "no provider call");
+    let mut uow = f.store.begin().await.unwrap();
+    assert!(uow.ai().generation_by_request(AccountId(person.id), key).await.unwrap().is_none(), "no generation was admitted");
+    assert!(uow.ai().counters(AccountId(person.id), None).await.unwrap().is_empty(), "no counter was created");
+    uow.rollback().await.unwrap();
+
+    sqlx::query("DROP TRIGGER p1t_quota_fault ON transgate_jobs.quota_counters").execute(&f.app.owner).await.unwrap();
+    let id = start_chat(&f, &person, job, key).await;
+    assert!(!id.is_empty(), "the refused request left nothing behind: the same key starts once the store is back");
 }
 
 #[tokio::test]

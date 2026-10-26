@@ -167,3 +167,14 @@ Candidate6 original tab: start 200, one watch, provider finished, but no questio
 Fix (`presentation/ai/chat.rs`): as in the source (`DesktopChatView.tsx:142,307`, phone `MobileChatInput.tsx:73-109`), send and retry are refused and `can_send` is false while history loads; nothing is queued. History loads only on `Selected` (which resets requests) or a consent grant (after the refusal's reset), so a load never lands over a pending question, and a late duplicate is ignored once loaded.
 
 Real-AppState regressions: `the_own_tab_question_keeps_its_lines_through_history_and_stream` (red first: the early send started), `history_landing_while_a_question_is_pending_keeps_both_lines` (late duplicate and own `in_flight`: no effects, lines kept, completes in place; already green before the fix through the loading guard, kept as the invariant), and the REPAIR-P5-5 second-tab test (still exactly one watch). Full `transgate-core --features ts --lib`: 396 passed. Generated change: `ChatPanelVm.loading_history.can_send = false`. p22's client regression `a_slow_history_never_erases_a_question_sent_after_it` encodes the same contract.
+
+## P4-GAPS: quota-store failure (AI-014, AI-019)
+
+Behavior was already correct; the new tests document it (no source fix). Mapping agreed with p1T: a counter-store failure during chat admission is `StoreError::Unavailable` → `AiError::Unavailable` → HTTP 503, code `unavailable`, body `AI storage is unavailable`; the admission transaction rolls back. AI-019's legacy fail-open is the D2 explicit correction (fail closed).
+
+- Fake injection (`jobs/testing.rs`): `AiData::fail_counters` fails `lock_counter`/`save_counter`/`counters`; `AiData::fail_packages` fails the billing plan lookup.
+- `a_failing_quota_store_refuses_freemium_admission_before_anything_is_dispatched`: 503, no generation, counter, dispatch intent, pair or provider call; `limits()` is 503 too; the same key admits once storage recovers.
+- `paid_callers_bypass_a_failing_quota_store_but_a_failed_plan_lookup_is_freemium` (AI-014): a paid caller is admitted, answered and unmetered with the store down, and its limits read is `has_limits: false`; a failed plan lookup is treated as freemium, so it is then metered (fails closed while counters are down, reserves once they recover).
+- `a_failing_quota_store_at_settlement_keeps_the_final_for_one_local_completion`: a counter failure in the completing transaction leaves the generation running with its durable staged final; after the worker lease expires, recovery (`run_pass` or `run(id)`) saves the pair and settles once, with exactly one provider call.
+
+Full `cargo test --locked -p transgate-core --lib`: 395 passed. Real-PG and HTTP 503 evidence is p1T's.
