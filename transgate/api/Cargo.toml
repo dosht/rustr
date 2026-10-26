@@ -10,3 +10,4 @@ transgate-core = { path = "../core" }
 serde.workspace = true
 serde_json.workspace = true
 uuid = { version = "1", default-features = false, features = ["serde", "v4"] }
+schemars = { version = "1.2.3", default-features = false, features = ["derive", "std"] }

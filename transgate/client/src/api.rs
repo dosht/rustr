@@ -134,6 +134,37 @@ pub struct HttpApi {
 /// simply keep their last state until the next full load.
 const POLL_PAGE_LIMIT: usize = 25;
 
+/// The `{ status, jobId, error? }` answer of `/api/youtube/resolve`
+/// (`transgate_api::resolve_response`): camelCase, the failure detail nested.
+#[derive(serde::Deserialize)]
+#[serde(tag = "status", rename_all = "snake_case")]
+enum ResolveWire {
+    Completed {
+        #[serde(rename = "jobId")]
+        job_id: JobId,
+    },
+    Failed {
+        #[serde(rename = "jobId")]
+        job_id: JobId,
+        error: ResolveFailure,
+    },
+}
+
+#[derive(serde::Deserialize)]
+struct ResolveFailure {
+    code: String,
+    message: String,
+}
+
+impl From<ResolveWire> for ResolveAnswer {
+    fn from(wire: ResolveWire) -> Self {
+        match wire {
+            ResolveWire::Completed { job_id } => ResolveAnswer::Completed { job_id },
+            ResolveWire::Failed { job_id, error } => ResolveAnswer::Failed { job_id, code: error.code, message: error.message },
+        }
+    }
+}
+
 impl HttpApi {
     /// `base` is the API root, e.g. `https://app.example/api`.
     pub fn new(base: impl Into<String>, auth: Arc<GoTrue>) -> Self {
@@ -291,8 +322,12 @@ impl HttpApi {
         Ok((job, metadata))
     }
 
+    /// `POST /api/youtube/resolve`: the host's `{status, jobId, error?}` envelope,
+    /// decoded through its typed wire shape (`ResolveWire`), never core's own serde
+    /// shape of `ResolveAnswer`.
     pub async fn youtube_resolve(&self, user: Uuid, job: JobId) -> Result<ResolveAnswer, ApiError> {
-        self.json(user, Method::POST, "/youtube/resolve", Some(&json!({ "jobId": job.0 }))).await
+        let wire: ResolveWire = self.json(user, Method::POST, "/youtube/resolve", Some(&json!({ "jobId": job.0 }))).await?;
+        Ok(ResolveAnswer::from(wire))
     }
 
     pub async fn language_usage(&self, user: Uuid) -> Result<LanguageUsage, ApiError> {

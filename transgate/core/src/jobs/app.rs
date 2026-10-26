@@ -43,6 +43,7 @@ use crate::languages::Language;
 use crate::privacy::erasure::{ErasureItem, ErasureState, ItemState, ItemTarget};
 use crate::privacy::settings::UserSettings;
 use crate::sources::{self, UrlCheck, UrlKind};
+use crate::api::idempotency::{self, IdempotencyClaim, IdempotencyRecord, Lookup};
 use crate::transcript::{Line, LineEdit, NewLine, TranslationStatus, captions};
 
 /// Errors a shell maps to HTTP. `http_status` is the intended mapping.
@@ -75,6 +76,8 @@ pub enum JobsError {
     Failed(String),
     /// 410: the account is being or was erased (C-11 barrier).
     ErasureInProgress,
+    /// 409 `request_conflict`: an `Idempotency-Key` reused for another request (P7 D4).
+    RequestConflict,
     /// 503: a required adapter is not configured.
     NotConfigured(String),
     Store(StoreError),
@@ -87,7 +90,7 @@ impl JobsError {
             JobsError::InvalidRequest(_) | JobsError::NoDraftJobs | JobsError::NoJobsUpdated => 400,
             JobsError::InsufficientBalance(_) => 402,
             JobsError::Blocked => 403,
-            JobsError::WrongState(_) => 409,
+            JobsError::WrongState(_) | JobsError::RequestConflict => 409,
             JobsError::ErasureInProgress => 410,
             JobsError::Unprocessable(_) => 422,
             JobsError::RateLimited(_) => 429,
@@ -107,6 +110,7 @@ impl JobsError {
             JobsError::Blocked => "account_suspended",
             JobsError::RateLimited(_) => "rate_limited",
             JobsError::WrongState(_) => "conflict",
+            JobsError::RequestConflict => "request_conflict",
             JobsError::Unprocessable(_) => "unprocessable",
             JobsError::AudioUnavailable => "audio_unavailable",
             JobsError::VideoNotFound => "video_not_found",
@@ -137,6 +141,7 @@ impl JobsError {
             JobsError::AudioUnavailable => "Audio file not available".into(),
             JobsError::VideoNotFound => "Video not found or is private".into(),
             JobsError::ErasureInProgress => "Account deletion in progress".into(),
+            JobsError::RequestConflict => "This Idempotency-Key was already used for a different request".into(),
             JobsError::Store(e) => e.to_string(),
         }
     }
@@ -259,6 +264,60 @@ pub struct UrlRequest {
     pub preferences: Preferences,
     /// API Whisper options, kept opaque (TRX-022).
     pub whisper_params: Option<Value>,
+}
+
+/// The two public start shapes (API-007): exactly one of `jobIds` and `audioUrls`.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub enum PublicStart {
+    Jobs(StartRequest),
+    Urls(UrlRequest),
+}
+
+impl PublicStart {
+    /// `StartMeta::request_type`.
+    pub fn kind(&self) -> &'static str {
+        match self {
+            PublicStart::Jobs(_) => "jobIds",
+            PublicStart::Urls(_) => "audioUrls",
+        }
+    }
+
+    fn preferences(&self) -> Preferences {
+        match self {
+            PublicStart::Jobs(r) => r.preferences,
+            PublicStart::Urls(r) => r.preferences,
+        }
+    }
+
+    /// API-007/009: nonempty, and every source and callback URL passes the URL rules.
+    fn validate(&self, ssrf_protection: bool) -> Result<(), JobsError> {
+        let empty = || JobsError::InvalidRequest("Either jobIds or audioUrls must be provided".into());
+        match self {
+            PublicStart::Jobs(r) if r.job_ids.is_empty() => Err(empty()),
+            PublicStart::Jobs(_) => Ok(()),
+            PublicStart::Urls(r) if r.items.is_empty() => Err(empty()),
+            PublicStart::Urls(r) => {
+                for item in &r.items {
+                    if let UrlCheck::Invalid(m) = sources::check_url(&item.audio_url, UrlKind::Audio, ssrf_protection) {
+                        return Err(JobsError::InvalidRequest(m));
+                    }
+                    if let Some(cb) = &item.callback_url
+                        && let UrlCheck::Invalid(m) = sources::check_url(cb, UrlKind::Callback, ssrf_protection)
+                    {
+                        return Err(JobsError::InvalidRequest(m));
+                    }
+                }
+                Ok(())
+            }
+        }
+    }
+}
+
+/// A public start's answer; `replayed` is a D4 replay that created and charged nothing.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct PublicAnswer {
+    pub answer: StartAnswer,
+    pub replayed: bool,
 }
 
 /// One job's result in the start answer (JOB-011).
@@ -595,52 +654,96 @@ impl Jobs {
     /// every draft to `not_started` together. Dispatch follows after commit, one
     /// job after another; a failure of one job is that job's result.
     pub async fn start(&self, account: AccountId, request: StartRequest) -> Result<StartAnswer, JobsError> {
-        self.guard(account).await?;
-        if request.job_ids.is_empty() {
-            return Err(JobsError::InvalidRequest("Either jobIds or audioUrls must be provided".into()));
+        Ok(self.start_public(account, PublicStart::Jobs(request), None).await?.answer)
+    }
+
+    /// The body of a `jobIds` start inside its transaction, after the account lock.
+    async fn start_drafts(&self, uow: &mut dyn JobUow, account: AccountId, request: &StartRequest, now: Micros) -> Result<Vec<Job>, JobsError> {
+        let packages = {
+            let mut billing = uow.billing().await?;
+            billing.lock_account(account).await?;
+            billing.packages(account).await?
+        };
+        let mut drafts: Vec<Job> = uow.lock_jobs(account, &request.job_ids).await?.into_iter().filter(|j| j.status == JobStatus::Draft).collect();
+        if drafts.is_empty() {
+            return Err(JobsError::NoDraftJobs);
         }
+        // JOB-006, BIL-039: below zero refuses; zero is the charge's decision.
+        let open = open_at(&packages, now);
+        if !billing_core::charge::web_precheck(balance(&open)) {
+            return Err(JobsError::InsufficientBalance("Not enough balance".into()));
+        }
+        // FRE (app definition 1) web guard over the drafts in ascending id.
+        let all: Vec<billing_core::ledger::Package> = packages.iter().map(|p| p.package.clone()).collect();
+        if is_freemium_app1(&all) {
+            let guard_drafts: Vec<Draft> = drafts
+                .iter()
+                .map(|j| Draft {
+                    id: j.id.0,
+                    duration: j.duration_minutes.map(i64::from),
+                    language: j.language.map(|l| l.name().to_string()),
+                    first_translation_target: j.translation_target().map(|l| l.name().to_string()),
+                })
+                .collect();
+            if let Err(refusal) = web_guard(&guard_drafts, request.locale.as_deref().unwrap_or(""), &self.config.freemium_lists) {
+                return Err(JobsError::InsufficientBalance(refusal.message().into()));
+            }
+        }
+        self.charge_and_start(uow, account, &mut drafts, now).await?;
+        Ok(drafts)
+    }
+
+    /// P7 public start (`POST /api/v1/transcriptions`) with an optional
+    /// `Idempotency-Key` (D4): the record is read after the billing account
+    /// lock and written in the same transaction as the charge, so a replay of
+    /// the same request answers again without creating or charging anything,
+    /// and the same key with another request is `RequestConflict`.
+    pub async fn start_public(&self, account: AccountId, request: PublicStart, claim: Option<IdempotencyClaim>) -> Result<PublicAnswer, JobsError> {
+        self.guard(account).await?;
+        request.validate(self.config.ssrf_protection)?;
         let now = self.now();
+        let expired_before = idempotency::expired_before(now);
         let mut uow = self.s.store.begin().await?;
         let started = async {
-            let packages = {
-                let mut billing = uow.billing().await?;
-                billing.lock_account(account).await?;
-                billing.packages(account).await?
-            };
-            let mut drafts: Vec<Job> =
-                uow.lock_jobs(account, &request.job_ids).await?.into_iter().filter(|j| j.status == JobStatus::Draft).collect();
-            if drafts.is_empty() {
-                return Err(JobsError::NoDraftJobs);
-            }
-            // JOB-006, BIL-039: below zero refuses; zero is the charge's decision.
-            let open = open_at(&packages, now);
-            if !billing_core::charge::web_precheck(balance(&open)) {
-                return Err(JobsError::InsufficientBalance("Not enough balance".into()));
-            }
-            // FRE (app definition 1) web guard over the drafts in ascending id.
-            let all: Vec<billing_core::ledger::Package> = packages.iter().map(|p| p.package.clone()).collect();
-            if is_freemium_app1(&all) {
-                let guard_drafts: Vec<Draft> = drafts
-                    .iter()
-                    .map(|j| Draft {
-                        id: j.id.0,
-                        duration: j.duration_minutes.map(i64::from),
-                        language: j.language.map(|l| l.name().to_string()),
-                        first_translation_target: j.translation_target().map(|l| l.name().to_string()),
-                    })
-                    .collect();
-                if let Err(refusal) = web_guard(&guard_drafts, request.locale.as_deref().unwrap_or(""), &self.config.freemium_lists) {
-                    return Err(JobsError::InsufficientBalance(refusal.message().into()));
+            if let Some(claim) = &claim {
+                uow.billing().await?.lock_account(account).await?;
+                let stored = uow.api().idempotency(account, &claim.key, expired_before).await?;
+                match idempotency::lookup(stored, claim) {
+                    Lookup::Replay(record) => return Ok(Err(*record)),
+                    Lookup::Conflict => return Err(JobsError::RequestConflict),
+                    Lookup::New => {}
                 }
             }
-            self.charge_and_start(uow.as_mut(), account, &mut drafts, now).await?;
-            Ok::<_, JobsError>(drafts)
+            let drafts = match &request {
+                PublicStart::Jobs(r) => self.start_drafts(uow.as_mut(), account, r, now).await?,
+                PublicStart::Urls(r) => self.url_drafts(uow.as_mut(), account, r, now).await?,
+            };
+            if let Some(claim) = &claim {
+                let record = IdempotencyRecord {
+                    account,
+                    key: claim.key.clone(),
+                    request_digest: claim.request_digest.clone(),
+                    request_type: request.kind().into(),
+                    jobs: drafts.iter().map(|j| j.id).collect(),
+                    answer: None,
+                    created_at: now,
+                };
+                uow.api().insert_idempotency(&record, expired_before).await.map_err(|e| match e {
+                    StoreError::Conflict(_) => JobsError::RequestConflict,
+                    other => other.into(),
+                })?;
+            }
+            Ok::<_, JobsError>(Ok(drafts))
         }
         .await;
         let drafts = match started {
-            Ok(d) => {
+            Ok(Ok(drafts)) => {
                 uow.commit().await?;
-                d
+                drafts
+            }
+            Ok(Err(record)) => {
+                Self::rollback(uow).await;
+                return Ok(PublicAnswer { answer: self.replayed(account, record).await?, replayed: true });
             }
             Err(e) => {
                 Self::rollback(uow).await;
@@ -649,9 +752,35 @@ impl Jobs {
         };
         let mut results = Vec::new();
         for job in drafts {
-            results.push(self.dispatch_reporting(job.id, request.preferences).await);
+            results.push(self.dispatch_reporting(job.id, request.preferences()).await);
         }
-        self.answer(account, results, "jobIds").await
+        let answer = self.answer(account, results, request.kind()).await?;
+        if let Some(claim) = &claim {
+            // Best effort: without it a replay rebuilds the answer from the same jobs.
+            if let Ok(mut uow) = self.s.store.begin().await {
+                match uow.api().save_idempotency_answer(account, &claim.key, &answer).await {
+                    Ok(()) => {
+                        let _ = uow.commit().await;
+                    }
+                    Err(_) => Self::rollback(uow).await,
+                }
+            }
+        }
+        Ok(PublicAnswer { answer, replayed: false })
+    }
+
+    /// The first answer of a recorded start, or the same jobs' current state.
+    async fn replayed(&self, account: AccountId, record: IdempotencyRecord) -> Result<StartAnswer, JobsError> {
+        if let Some(answer) = record.answer {
+            return Ok(answer);
+        }
+        let mut results = Vec::with_capacity(record.jobs.len());
+        for id in record.jobs {
+            let status = self.s.store.owned_job(account, id).await?.map_or(JobStatus::Failed, |j| j.status);
+            results.push(JobResult { job_id: id, status, estimated_completion: None, error: None });
+        }
+        let kind = if record.request_type == "audioUrls" { "audioUrls" } else { "jobIds" };
+        self.answer(account, results, kind).await
     }
 
     /// The billable move of every draft, all or nothing (BIL-025..033).
@@ -715,73 +844,45 @@ impl Jobs {
     /// then starts with an unknown duration (deferred charge) after the
     /// above-zero balance check. The HTTP route mounts with P7's API-key principal.
     pub async fn submit_urls(&self, account: AccountId, request: UrlRequest) -> Result<StartAnswer, JobsError> {
-        self.guard(account).await?;
-        if request.items.is_empty() {
-            return Err(JobsError::InvalidRequest("Either jobIds or audioUrls must be provided".into()));
-        }
-        for item in &request.items {
-            if let UrlCheck::Invalid(m) = sources::check_url(&item.audio_url, UrlKind::Audio, self.config.ssrf_protection) {
-                return Err(JobsError::InvalidRequest(m));
-            }
-            if let Some(cb) = &item.callback_url && let UrlCheck::Invalid(m) = sources::check_url(cb, UrlKind::Callback, self.config.ssrf_protection) {
-                return Err(JobsError::InvalidRequest(m));
-            }
-        }
-        let now = self.now();
+        Ok(self.start_public(account, PublicStart::Urls(request), None).await?.answer)
+    }
+
+    /// The body of an `audioUrls` start inside its transaction, after the account lock.
+    async fn url_drafts(&self, uow: &mut dyn JobUow, account: AccountId, request: &UrlRequest, now: Micros) -> Result<Vec<Job>, JobsError> {
         let english = Language::from_name("English").expect("English");
-        let mut uow = self.s.store.begin().await?;
-        let started = async {
-            let packages = {
-                let mut billing = uow.billing().await?;
-                billing.lock_account(account).await?;
-                billing.packages(account).await?
-            };
-            let mut drafts = Vec::new();
-            for item in &request.items {
-                let language = match &item.language {
-                    None => english,
-                    Some(name) => Language::from_name(name)
-                        .ok_or_else(|| JobsError::InvalidRequest(format!("Unsupported language: {name}")))?,
-                };
-                let new = NewJob {
-                    account,
-                    status: JobStatus::Draft,
-                    name: Some(sources::API_JOB_NAME.into()),
-                    source: JobSource::ExternalUrl { file_path: Some(item.audio_url.clone()), staged: None },
-                    language: Some(language),
-                    translate_to: vec![],
-                    speakers: true,
-                    fix_grammer: Some(true),
-                    duration_minutes: None,
-                    size_bytes: None,
-                    callback_url: item.callback_url.clone(),
-                    whisper_params: request.whisper_params.clone(),
-                    created_at: now,
-                };
-                drafts.push(uow.insert_job(&new).await?);
-            }
-            if !billing_core::charge::api_precheck(balance(&open_at(&packages, now))) {
-                return Err(JobsError::InsufficientBalance("Insufficient balance".into()));
-            }
-            self.charge_and_start(uow.as_mut(), account, &mut drafts, now).await?;
-            Ok::<_, JobsError>(drafts)
-        }
-        .await;
-        let drafts = match started {
-            Ok(d) => {
-                uow.commit().await?;
-                d
-            }
-            Err(e) => {
-                Self::rollback(uow).await;
-                return Err(e);
-            }
+        let packages = {
+            let mut billing = uow.billing().await?;
+            billing.lock_account(account).await?;
+            billing.packages(account).await?
         };
-        let mut results = Vec::new();
-        for job in drafts {
-            results.push(self.dispatch_reporting(job.id, request.preferences).await);
+        let mut drafts = Vec::new();
+        for item in &request.items {
+            let language = match &item.language {
+                None => english,
+                Some(name) => Language::from_name(name).ok_or_else(|| JobsError::InvalidRequest(format!("Unsupported language: {name}")))?,
+            };
+            let new = NewJob {
+                account,
+                status: JobStatus::Draft,
+                name: Some(sources::API_JOB_NAME.into()),
+                source: JobSource::ExternalUrl { file_path: Some(item.audio_url.clone()), staged: None },
+                language: Some(language),
+                translate_to: vec![],
+                speakers: true,
+                fix_grammer: Some(true),
+                duration_minutes: None,
+                size_bytes: None,
+                callback_url: item.callback_url.clone(),
+                whisper_params: request.whisper_params.clone(),
+                created_at: now,
+            };
+            drafts.push(uow.insert_job(&new).await?);
         }
-        self.answer(account, results, "audioUrls").await
+        if !billing_core::charge::api_precheck(balance(&open_at(&packages, now))) {
+            return Err(JobsError::InsufficientBalance("Insufficient balance".into()));
+        }
+        self.charge_and_start(uow, account, &mut drafts, now).await?;
+        Ok(drafts)
     }
 
     // ---- dispatch: claim, call, acknowledge ------------------------------------
@@ -1121,6 +1222,17 @@ impl Jobs {
             }),
             JobSource::YouTube { .. } => None,
         }
+    }
+
+    /// API-015, D10: the callback's `audio_url`, signed at send for the stored
+    /// object only (nothing is fetched or staged for a callback). `None` when
+    /// the job has no stored audio; the source sent the body without it then.
+    pub async fn callback_audio_url(&self, job: &Job) -> Option<String> {
+        let object = self.audio_object(job)?;
+        let store = self.object_store_for(&object)?;
+        store.head(&object).await.ok()??;
+        let access = store.sign(&object, AccessMethod::Get, to_media(self.now()), sources::PROVIDER_URL_TTL_SECONDS).await.ok()?;
+        Some(access.url.expose().to_string())
     }
 
     /// JOB-043: a fresh 3600-second GET for the provider. External URLs are

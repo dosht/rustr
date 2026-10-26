@@ -144,6 +144,9 @@ pub struct UncertainUow {
 }
 
 impl JobUow for UncertainUow {
+    fn api(&mut self) -> &mut dyn transgate_core::api::ports::ApiTx {
+        self.inner.api()
+    }
     fn ai(&mut self) -> &mut dyn AiTx {
         self
     }

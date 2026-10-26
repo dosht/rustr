@@ -466,7 +466,8 @@ pub trait AiTx: Send {
     /// summaries. Imported legacy summaries/highlights (P9) and stored
     /// callback copies (P7) join this purge when those phases add them.
     /// Quota counters and summary requests (content-free) stay. Returns the
-    /// rows removed.
+    /// rows removed. Also clears every stored callback payload of the account
+    /// (P7 D10: a body may carry the summary); those are not counted.
     fn purge_ai_artifacts(&mut self, account: AccountId, cutoff: i64) -> StoreResult<'_, u64>;
 
     // ---- LLM dispatch intents (D3, D9) --------------------------------------

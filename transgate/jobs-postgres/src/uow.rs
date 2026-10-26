@@ -111,6 +111,10 @@ impl PgJobUow {
 }
 
 impl JobUow for PgJobUow {
+    fn api(&mut self) -> &mut dyn transgate_core::api::ports::ApiTx {
+        self
+    }
+
     fn ai(&mut self) -> &mut dyn transgate_core::ai::ports::AiTx {
         self
     }
@@ -700,6 +704,13 @@ impl JobUow for PgJobUow {
                 .execute(self.conn())
                 .await
                 .map_err(db)?;
+            // P7 D10: a stored callback body copied these lines; it goes with them. The
+            // dispatcher rebuilds the body from current content on every attempt.
+            sqlx::query("UPDATE transgate_api.callback_deliveries SET payload = NULL WHERE job_id = ANY($1) AND payload IS NOT NULL")
+                .bind(&ids)
+                .execute(self.conn())
+                .await
+                .map_err(db)?;
             Ok(done.rows_affected())
         })
     }
@@ -1035,6 +1046,13 @@ impl JobUow for PgJobUow {
                 "DELETE FROM transgate_jobs.job_feedback WHERE account_id = $1",
                 // Undelivered support requests and their messages (P5 D7).
                 "DELETE FROM transgate_jobs.support_requests WHERE account_id = $1",
+                // P7 (D10): keys with their audit rows and rate windows, idempotency records,
+                // deliveries with their attempts and stored payloads, and the signing secret.
+                "DELETE FROM transgate_api.callback_deliveries WHERE account_id = $1",
+                "DELETE FROM transgate_api.idempotency WHERE account_id = $1",
+                "DELETE FROM transgate_api.signing_secrets WHERE account_id = $1",
+                "DELETE FROM transgate_api.key_uses WHERE account_id = $1",
+                "DELETE FROM transgate_api.api_keys WHERE account_id = $1",
             ] {
                 sqlx::query(statement).bind(account.0).execute(self.conn()).await.map_err(db)?;
             }

@@ -819,6 +819,13 @@ impl AiTx for PgJobUow {
                     .map_err(db)?
                     .rows_affected();
             }
+            // P7 D10: a stored callback body may carry the consent-gated summary. Deliveries have
+            // no consent epoch, so every stored body of the account is cleared.
+            sqlx::query("UPDATE transgate_api.callback_deliveries SET payload = NULL WHERE account_id = $1 AND payload IS NOT NULL")
+                .bind(account.0)
+                .execute(self.conn())
+                .await
+                .map_err(db)?;
             Ok(removed)
         })
     }

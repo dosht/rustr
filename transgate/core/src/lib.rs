@@ -9,6 +9,7 @@
 
 pub mod account;
 pub mod ai;
+pub mod api;
 pub mod documents;
 pub mod export;
 pub mod flags;

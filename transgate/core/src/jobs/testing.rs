@@ -67,6 +67,20 @@ pub struct Data {
     pub feedback: Vec<JobFeedback>,
     /// The support outbox, oldest first.
     pub support: Vec<SupportRow>,
+    pub api: ApiData,
+}
+
+/// The P7 API rows of the in-memory store.
+#[derive(Clone, Default)]
+pub struct ApiData {
+    pub keys: Vec<crate::api::keys::ApiKey>,
+    pub uses: Vec<crate::api::ports::KeyUse>,
+    pub idempotency: Vec<crate::api::idempotency::IdempotencyRecord>,
+    pub deliveries: Vec<crate::api::callbacks::CallbackDelivery>,
+    /// Delivery leases: claim token and lease end.
+    pub leases: BTreeMap<crate::api::callbacks::DeliveryId, (uuid::Uuid, Micros)>,
+    pub attempts: Vec<crate::api::ports::CallbackAttempt>,
+    pub secrets: BTreeMap<AccountId, String>,
 }
 
 /// One undelivered support request and its delivery bookkeeping.
@@ -260,6 +274,171 @@ impl AccountTx for MemUow {
     }
 }
 
+impl crate::api::ports::ApiTx for MemUow {
+    fn insert_key<'a>(&'a mut self, key: &'a crate::api::keys::ApiKey) -> StoreResult<'a, ()> {
+        if self.data.api.keys.iter().any(|k| k.id == key.id || (key.digest.is_some() && k.digest == key.digest)) {
+            return conflict("api_keys");
+        }
+        self.data.api.keys.push(key.clone());
+        ok(())
+    }
+    fn lock_key(&mut self, id: crate::api::KeyId) -> StoreResult<'_, Option<crate::api::keys::ApiKey>> {
+        ok(self.data.api.keys.iter().find(|k| k.id == id).cloned())
+    }
+    fn save_key<'a>(&'a mut self, key: &'a crate::api::keys::ApiKey) -> StoreResult<'a, ()> {
+        match self.data.api.keys.iter_mut().find(|k| k.id == key.id) {
+            Some(row) => {
+                *row = key.clone();
+                ok(())
+            }
+            None => conflict("api_keys"),
+        }
+    }
+    fn key_by_digest<'a>(&'a mut self, digest: &'a str) -> StoreResult<'a, Option<crate::api::keys::ApiKey>> {
+        ok(self.data.api.keys.iter().find(|k| k.digest.as_deref() == Some(digest)).cloned())
+    }
+    fn legacy_candidates(&mut self, now: Micros) -> StoreResult<'_, Vec<crate::api::keys::ApiKey>> {
+        ok(self
+            .data
+            .api
+            .keys
+            .iter()
+            .filter(|k| k.active && k.digest.is_none() && k.legacy_bcrypt.is_some() && k.expires_at.is_none_or(|e| e >= now))
+            .cloned()
+            .collect())
+    }
+    fn list_keys(&mut self, account: AccountId) -> StoreResult<'_, Vec<crate::api::keys::ApiKey>> {
+        let mut keys: Vec<_> = self.data.api.keys.iter().filter(|k| k.account == account).cloned().collect();
+        keys.sort_by_key(|k| std::cmp::Reverse(k.created_at));
+        ok(keys)
+    }
+    fn record_use<'a>(&'a mut self, usage: &'a crate::api::ports::KeyUse) -> StoreResult<'a, ()> {
+        self.data.api.uses.push(usage.clone());
+        ok(())
+    }
+    fn idempotency<'a>(&'a mut self, account: AccountId, key: &'a str, expired_before: Micros) -> StoreResult<'a, Option<crate::api::idempotency::IdempotencyRecord>> {
+        ok(self.data.api.idempotency.iter().find(|r| r.account == account && r.key == key && r.created_at > expired_before).cloned())
+    }
+    fn insert_idempotency<'a>(&'a mut self, record: &'a crate::api::idempotency::IdempotencyRecord, expired_before: Micros) -> StoreResult<'a, ()> {
+        let rows = &mut self.data.api.idempotency;
+        if rows.iter().any(|r| r.account == record.account && r.key == record.key && r.created_at > expired_before) {
+            return conflict("idempotency_keys");
+        }
+        rows.retain(|r| !(r.account == record.account && r.key == record.key));
+        rows.push(record.clone());
+        ok(())
+    }
+    fn save_idempotency_answer<'a>(&'a mut self, account: AccountId, key: &'a str, answer: &'a crate::jobs::app::StartAnswer) -> StoreResult<'a, ()> {
+        if let Some(r) = self.data.api.idempotency.iter_mut().find(|r| r.account == account && r.key == key) {
+            r.answer = Some(answer.clone());
+        }
+        ok(())
+    }
+    fn insert_delivery<'a>(&'a mut self, delivery: &'a crate::api::callbacks::CallbackDelivery) -> StoreResult<'a, bool> {
+        if self.data.api.deliveries.iter().any(|d| d.event_id == delivery.event_id) {
+            return ok(false);
+        }
+        self.data.api.deliveries.push(delivery.clone());
+        ok(true)
+    }
+}
+
+impl crate::api::ports::CallbackOutbox for MemStore {
+    fn claim_deliveries(&self, limit: u32, lease_seconds: i64, now: Micros) -> StoreResult<'_, Vec<crate::api::ports::ClaimedDelivery>> {
+        use crate::api::callbacks::DeliveryState;
+        ok(self.with(|d| {
+            let api = &mut d.api;
+            let mut due: Vec<_> = api
+                .deliveries
+                .iter()
+                .filter(|x| x.state == DeliveryState::Pending && x.next_attempt_at <= now && api.leases.get(&x.id).is_none_or(|(_, until)| *until <= now))
+                .cloned()
+                .collect();
+            due.sort_by_key(|x| (x.next_attempt_at, x.created_at));
+            due.truncate(limit as usize);
+            due.into_iter()
+                .map(|delivery| {
+                    let token = uuid::Uuid::new_v4();
+                    api.leases.insert(delivery.id, (token, Micros(now.0 + lease_seconds * 1_000_000)));
+                    crate::api::ports::ClaimedDelivery { delivery, token }
+                })
+                .collect()
+        }))
+    }
+    fn postpone<'a>(&'a self, claim: &'a crate::api::ports::ClaimedDelivery, until: Micros) -> StoreResult<'a, bool> {
+        ok(self.with(|d| {
+            let api = &mut d.api;
+            if api.leases.get(&claim.delivery.id).map(|(t, _)| *t) != Some(claim.token) {
+                return false;
+            }
+            api.leases.remove(&claim.delivery.id);
+            if let Some(x) = api.deliveries.iter_mut().find(|x| x.id == claim.delivery.id) {
+                x.next_attempt_at = until;
+            }
+            true
+        }))
+    }
+    fn begin_attempt<'a>(
+        &'a self,
+        claim: &'a crate::api::ports::ClaimedDelivery,
+        attempt: &'a crate::api::ports::CallbackAttempt,
+        payload: &'a serde_json::Value,
+    ) -> StoreResult<'a, bool> {
+        ok(self.with(|d| {
+            let api = &mut d.api;
+            if api.leases.get(&claim.delivery.id).map(|(t, _)| *t) != Some(claim.token) {
+                return false;
+            }
+            let Some(x) = api.deliveries.iter_mut().find(|x| x.id == claim.delivery.id) else { return false };
+            x.attempts = attempt.n;
+            x.payload = Some(payload.clone());
+            api.attempts.push(attempt.clone());
+            true
+        }))
+    }
+    fn finish_attempt<'a>(
+        &'a self,
+        claim: &'a crate::api::ports::ClaimedDelivery,
+        attempt: &'a crate::api::ports::CallbackAttempt,
+        settlement: &'a crate::api::callbacks::Settlement,
+    ) -> StoreResult<'a, bool> {
+        ok(self.with(|d| {
+            let api = &mut d.api;
+            if api.leases.get(&claim.delivery.id).map(|(t, _)| *t) != Some(claim.token) {
+                return false;
+            }
+            api.leases.remove(&claim.delivery.id);
+            if let Some(a) = api.attempts.iter_mut().find(|a| a.delivery == attempt.delivery && a.n == attempt.n) {
+                *a = attempt.clone();
+            }
+            if let Some(x) = api.deliveries.iter_mut().find(|x| x.id == claim.delivery.id) {
+                x.state = settlement.state;
+                x.delivered_at = settlement.delivered_at;
+                if let Some(next) = settlement.next_attempt_at {
+                    x.next_attempt_at = next;
+                }
+            }
+            true
+        }))
+    }
+    fn abandon<'a>(&'a self, claim: &'a crate::api::ports::ClaimedDelivery, _reason: &'a str, _now: Micros) -> StoreResult<'a, bool> {
+        ok(self.with(|d| {
+            let api = &mut d.api;
+            if api.leases.get(&claim.delivery.id).map(|(t, _)| *t) != Some(claim.token) {
+                return false;
+            }
+            api.leases.remove(&claim.delivery.id);
+            if let Some(x) = api.deliveries.iter_mut().find(|x| x.id == claim.delivery.id) {
+                x.state = crate::api::callbacks::DeliveryState::Abandoned;
+            }
+            true
+        }))
+    }
+    fn signing_secret<'a>(&'a self, account: AccountId, candidate: &'a str) -> StoreResult<'a, String> {
+        ok(self.with(|d| d.api.secrets.entry(account).or_insert_with(|| candidate.to_string()).clone()))
+    }
+}
+
 impl SupportOutbox for MemStore {
     fn claim_support(&self, limit: u32, lease_seconds: i64, now: Micros) -> StoreResult<'_, Vec<ClaimedSupport>> {
         ok(self.with(|d| {
@@ -443,7 +622,10 @@ impl AiTx for MemUow {
         ai.generations.retain(|g| !(g.account == account && g.consent_epoch <= cutoff));
         ai.chat.retain(|m| !(m.account == account && m.consent_epoch <= cutoff));
         ai.summaries.retain(|s| !(s.account == account && s.consent_epoch <= cutoff));
-        ok((before - ai.generations.len() - ai.chat.len() - ai.summaries.len()) as u64)
+        let removed = (before - ai.generations.len() - ai.chat.len() - ai.summaries.len()) as u64;
+        // P7 D10: a stored callback body may carry the consent-gated summary.
+        self.data.api.deliveries.iter_mut().filter(|d| d.account == account).for_each(|d| d.payload = None);
+        ok(removed)
     }
     fn record_dispatch<'a>(&'a mut self, d: &'a LlmDispatch) -> StoreResult<'a, ()> {
         match self.data.ai.dispatches.iter().find(|x| x.generation == d.generation) {
@@ -764,6 +946,9 @@ impl JobUow for MemUow {
     fn account(&mut self) -> &mut dyn AccountTx {
         self
     }
+    fn api(&mut self) -> &mut dyn crate::api::ports::ApiTx {
+        self
+    }
     fn billing(&mut self) -> BoxFuture<'_, Result<Box<dyn BillingTx + '_>, StoreError>> {
         let b: Box<dyn BillingTx + '_> = Box::new(MemBilling(&mut self.data));
         Box::pin(async move { Ok(b) })
@@ -1006,6 +1191,8 @@ impl JobUow for MemUow {
     fn delete_lines_of<'a>(&'a mut self, jobs: &'a [JobId]) -> StoreResult<'a, u64> {
         let before = self.data.lines.len();
         self.data.lines.retain(|l| !jobs.contains(&l.job));
+        // P7 D10: callback bodies copied the lines.
+        self.data.api.deliveries.iter_mut().filter(|d| jobs.contains(&d.job)).for_each(|d| d.payload = None);
         ok((before - self.data.lines.len()) as u64)
     }
     fn opted_out_count(&mut self, cutoff: Micros) -> StoreResult<'_, u64> {
@@ -1132,6 +1319,11 @@ impl JobUow for MemUow {
         ai.dispatches.retain(|x| x.account != account);
         self.data.feedback.retain(|f| f.account != account);
         self.data.support.retain(|s| s.request.account != account);
+        let api = &mut self.data.api;
+        api.keys.retain(|k| k.account != account);
+        api.uses.retain(|u| u.account != account);
+        api.idempotency.retain(|r| r.account != account);
+        api.deliveries.retain(|d| d.account != account);
         ok(())
     }
     fn savepoint<'a>(&'a mut self, name: &'a str) -> StoreResult<'a, ()> {

@@ -22,6 +22,10 @@ Base: the Opus proposal, with the corrections below. Both advisors agree there i
 | D12 | Keep the thin v1-beta compatibility shim with the source sunset headers (API-013) and the unified 301. Retire it only after both live API owners confirm. | `production-facts.md:9-11`: two live owners, version unknown. Both advisors converged here. |
 | D13 | Parity rows WEB-045/046 (key screens) close jointly with P5 views. API-F06 gets a `dropped` record (replaced by P5 D5 `/api/jobs/start`). No new billing metering: usage visibility is `last_used_at`, audit rows and job history. DEF-017 (job completes despite a failed deferred charge) is ported as is and stays mu's open decision. | |
 
+**Implementation notes (lead, 2026-10-26):** neither `bcrypt` nor `schemars` was in the lock or local registry. p1T is authorized for one networked lock refresh adding exactly those two direct dependencies (latest stable, minimal features), with versions, new transitive packages and lock hashes recorded in `hosts.md`, and a real-PG test proving the chosen `bcrypt` verifies pgcrypto `$2a$` hashes. The `transgate_api` schema extends the existing `jobs-postgres` runtime-verification pattern (grants to `billing_runtime`).
+
+Outcome (p1T): `bcrypt` 0.19.3 (std) in `transgate-server` and `schemars` 1.2.3 (derive, std) in `transgate-api`, 10 new packages; a real-PG test verifies pgcrypto `$2a$` hashes at costs 4, 6 and 10. Lead also approved listing the already-locked `sha2`, `hmac` and `base64` in `transgate-server` (no new packages) so key digests and callback signatures use real HMAC/SHA-256, never hand-rolled code. Lock sha256 `6ff619f4...` to `4a5170bc...`. Migration `0008_api.sql`, `PgApiTx`, the Postgres rate limiter and callback outbox are in with 11 real-PG tests; routes, worker, transport and OpenAPI wait for p1X's use cases.
+
 ## Waiting for mu
 
 - **Shim retirement (D12):** contact the two live API owners, or confirm we keep the shim indefinitely.

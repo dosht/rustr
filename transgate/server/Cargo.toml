@@ -29,6 +29,10 @@ transgate-core = { path = "../core" }
 transgate-http = { path = "../http" }
 transgate-jobs-postgres = { path = "../jobs-postgres" }
 url = "2"
+bcrypt = { version = "0.19.3", default-features = false, features = ["std"] }
+sha2 = "0.10"
+hmac = "0.12"
+base64 = "0.22"
 
 [dev-dependencies]
 uuid = { version = "1", features = ["v4"] }

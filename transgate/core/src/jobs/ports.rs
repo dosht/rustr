@@ -134,6 +134,8 @@ pub trait JobUow: Send {
     fn ai(&mut self) -> &mut dyn AiTx;
     /// The account rows (feedback, support) of this same transaction (no allocation).
     fn account(&mut self) -> &mut dyn AccountTx;
+    /// The API rows (P7 keys, idempotency, callback fan-out) of this same transaction.
+    fn api(&mut self) -> &mut dyn crate::api::ports::ApiTx;
     /// Billing joined to this transaction (P2 `PgBillingTx::attach` seam). Drop
     /// it before the next job call; it borrows the same connection.
     fn billing(&mut self) -> BoxFuture<'_, Result<Box<dyn BillingTx + '_>, StoreError>>;
@@ -207,7 +209,8 @@ pub trait JobUow: Send {
     /// Locks the owners' settings rows in ascending account order, then the
     /// candidate jobs in ascending id, and rereads the same predicate.
     fn lock_retention_set<'a>(&'a mut self, candidates: &'a [RetentionCandidate], cutoff: Micros) -> StoreResult<'a, Vec<RetentionCandidate>>;
-    /// Deletes the lines of these jobs; returns the deleted row count.
+    /// Deletes the lines of these jobs; returns the deleted row count. Also
+    /// clears the stored callback payloads of these jobs (P7 D10).
     fn delete_lines_of<'a>(&'a mut self, jobs: &'a [JobId]) -> StoreResult<'a, u64>;
     /// Accounts that would have had lines deleted but opted out (PRV-022).
     fn opted_out_count(&mut self, cutoff: Micros) -> StoreResult<'_, u64>;
