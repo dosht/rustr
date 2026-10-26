@@ -2,6 +2,12 @@
 node_modules/
 apps/web/dist/
 apps/web/src/lib/core/pkg/
+transgate/web/dist/
+transgate/web/src/lib/core/pkg/
+apps/web/p4-playwright-report/
+test-results/
+__pycache__/
+*.pyc
 apps/android/.gradle/
 apps/android/build/
 apps/android/app/build/
