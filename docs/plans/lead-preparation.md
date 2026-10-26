@@ -232,3 +232,13 @@ REPAIR-P5-7b p1T source-ready: checkout `img-src` is now `'self' https: data:` p
 ### NEXT-P5-C7 released (2026-10-26)
 
 Candidate7 adds REPAIR-P5-5b (chat send refused while history loads), 6 (signed-in new-password page), 7 and 7b (local badge, unhashed no-cache, CSP `'self'`). Committed as product and harness commits. Y reruns: AppState, transgate-client and core AI/presentation suites, P4 Transgate scenarios, wasm release; C1 only for stories whose files changed (App root, checkout-adjacent views) plus the new `ChatPanelVm` fixtures; C2 in full, including the own-tab chat, the second-tab reattach (partial shown, exactly one extra watch, no second start, provider calls 1) and password recovery reaching the form and saving a new password; C3 on the new image including the badge served from `/_app` as `image/svg+xml`, `no-cache`, and no request to `cpp.iyzipay.com`. Same rules.
+
+**Candidate7 accepted: C1, C2 and C3 PASS** (`s1-20261026215323`, `report.json`). Suites, builds and P4 Transgate PASS. C1 targeted 93 stories / 1116 cases, all audited, 0 axe violations. C2: PKCE, own-tab chat, second-tab reattach (partial shown, one extra watch, no second start, provider calls 1), recovery to the new-password form and sign-in with the new password, phone deep link, 32/32 locales, short refusal, Iyzico handoff and HTML confirm, magic link, rotation, invalid code, support, feedback, erasure. C3: image `sha256:1efb4e84821a...` non-root read-only, 0/6 canaries, badge served from `/_app` and loaded, 0 requests to `iyzipay.com`, 0 non-loopback requests, packaged flows PASS. This is checkpoint acceptance, not the P5 phase gate: the gate is every applicable WEB parity row green on both projects.
+
+### Parallel batch (mu: parallelize, Claude only, medium effort), 2026-10-26
+
+- **P5-CLOSE (Y):** row-by-row disposition of WEB, WEB-BIL, WEB-IDN, WEB-PRV and LOC rows against the accepted evidence (proven, other phase, or gap) in `docs/plans/p5-web/implementation/parity-disposition.md`, then a proposed minimal gap run.
+- **P7 design (p10 Opus, p27 Fable):** independent proposals per `docs/plans/p7-api/brief.md`; Codex/Sol is unavailable, so Fable replaces Sol as the second advisor. Cross-critique only on dispatch.
+- **P4-GAPS (p1T):** read-only diagnosis of capability-wait closure and PG-only quota reconciliation, the two unexercised P4 paths.
+- **Held:** P6 S0 needs Y after P5-CLOSE (independent test owner); P6 implementation stays undispatched.
+- All active Claude workers were relaunched at medium effort with the Claude usage gate (`--extension .../claude-usage-gate.ts`).
