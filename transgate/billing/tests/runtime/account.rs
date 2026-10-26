@@ -133,3 +133,29 @@ async fn feedback_is_owned_and_exactly_persisted_while_support_acceptance_is_dur
     assert_eq!(persisted, (owner.id, Some(job), "  Help with Unicode: ç ☕  ".into()));
     assert!(app.mail.0.lock().unwrap().sent.is_empty(), "202 means queued; no fictional synchronous mail claim");
 }
+
+// REPAIR-P4-8: a valid signed-in user whose billing account does not exist owns no jobs, so
+// every owned-job route answers the same 404 not_found as for a job that is not theirs, never a
+// 500, and no request provisions the account as a side effect.
+#[tokio::test]
+#[ignore = "needs BILLING_TEST_DATABASE_URL"]
+async fn a_user_without_a_billing_account_owns_no_jobs_and_every_owned_job_route_is_not_found() {
+    let app = app_with_privacy(Arc::new(OffsetClock::default()), Arc::new(LegacyInventory::default()), Arc::new(IdentityDeletion::default())).await;
+    let stranger = user();
+    register_auth(&app, &stranger);
+    let missing = i64::MAX;
+    for (method, path, body) in [
+        ("POST", format!("/api/jobs/{missing}/feedback"), Some(json!({"rating":0,"feedback":"x"}))),
+        ("PATCH", "/api/jobs/lines".to_string(), Some(json!({"kind":"text","line":1,"text":"x"}))),
+        ("PATCH", "/api/jobs/options".to_string(), Some(json!({"jobIds":[missing]}))),
+        ("DELETE", format!("/api/jobs/{missing}/draft"), None),
+        ("DELETE", format!("/api/jobs/{missing}"), None),
+        ("POST", "/api/jobs/start".to_string(), Some(json!({"jobIds":[missing]}))),
+    ] {
+        let (status, body) = app.call(method, &path, Some(&stranger.jwt), body).await;
+        assert_eq!((status, body["code"].clone()), (404, json!("not_found")), "{method} {path}: {body}");
+    }
+    let provisioned: i64 = sqlx::query_scalar("SELECT count(*) FROM billing.accounts WHERE account_id = $1")
+        .bind(stranger.id).fetch_one(&app.owner).await.unwrap();
+    assert_eq!(provisioned, 0, "answering 404 must not create the billing account");
+}

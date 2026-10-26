@@ -62,3 +62,21 @@ fn a_download_name_keeps_its_exact_utf8_form_beside_a_safe_ascii_fallback() {
     assert!(tricky.contains("filename*=UTF-8''R%C3%B6portaj%20%221%22%3B%20x%25.zip"), "{tricky}");
     assert!(!tricky.contains('\n') && !tricky.contains('\r'));
 }
+
+struct FixedClock;
+impl Clock for FixedClock {
+    fn now(&self) -> Micros { Micros(0) }
+}
+
+#[test]
+fn only_a_missing_billing_account_becomes_not_found_and_genuine_storage_errors_stay_failures() {
+    use billing_core::ports::StoreError;
+    let account = AccountId(uuid::Uuid::nil());
+    let status = |e: JobsError| owned_error_at(&FixedClock, e).status();
+    assert_eq!(status(JobsError::Store(StoreError::AccountMissing(account))), StatusCode::NOT_FOUND);
+    assert_eq!(status(JobsError::Store(StoreError::Unavailable("pool closed".into()))), StatusCode::INTERNAL_SERVER_ERROR);
+    assert_eq!(status(JobsError::Store(StoreError::Conflict("moved".into()))), StatusCode::CONFLICT);
+    assert_eq!(status(JobsError::NotFound), StatusCode::NOT_FOUND);
+    // The route that is not about an owned job keeps the plain mapping.
+    assert_eq!(jobs_error_at(&FixedClock, JobsError::Store(StoreError::AccountMissing(account))).status(), StatusCode::INTERNAL_SERVER_ERROR);
+}

@@ -61,6 +61,11 @@ impl AccountHttp {
     fn failure(&self, error: JobsError) -> Response {
         super::jobs_error_at(self.clock.as_ref(), error)
     }
+
+    /// An owned-job route (feedback): a missing billing account owns no jobs, so it is `not_found`.
+    fn owned_failure(&self, error: JobsError) -> Response {
+        super::owned_error_at(self.clock.as_ref(), error)
+    }
 }
 
 #[derive(Deserialize)]
@@ -86,7 +91,7 @@ async fn feedback(State(state): State<Arc<AccountHttp>>, headers: HeaderMap, Pat
     };
     match state.account.submit_feedback(caller.account, transgate_core::JobId(id), request.rating, request.comment).await {
         Ok(feedback) => super::ok_json(StatusCode::CREATED, &feedback),
-        Err(error) => state.failure(error),
+        Err(error) => state.owned_failure(error),
     }
 }
 

@@ -146,8 +146,19 @@ fn rate_headers(response: &mut Response, decision: &RateDecision, now: Micros, w
 }
 
 /// A use case's failure. Storage details never reach the client: they are printed, not sent.
+/// A billing account that does not exist owns no jobs: for these owned-job routes that is the
+/// same `NotFound` as a job that is not the caller's. Nothing is provisioned to say so, and
+/// every other storage failure stays a 500.
 fn jobs_error(state: &TransgateHttp, e: JobsError) -> Response {
-    jobs_error_at(state.clock.as_ref(), e)
+    owned_error_at(state.clock.as_ref(), e)
+}
+
+fn owned_error_at(clock: &dyn Clock, e: JobsError) -> Response {
+    let e = match e {
+        JobsError::Store(billing_core::ports::StoreError::AccountMissing(_)) => JobsError::NotFound,
+        other => other,
+    };
+    jobs_error_at(clock, e)
 }
 
 fn jobs_error_at(clock: &dyn Clock, e: JobsError) -> Response {
