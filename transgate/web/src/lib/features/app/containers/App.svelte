@@ -100,9 +100,14 @@
         </Alert>
       </div>
     {/if}
-    {#key vm.profile?.account}
-      <SignedInFrame {vm} {dispatch} {media} {theme} previewUrl={preview.url} oncopy={(text) => copy(text, null)} />
-    {/key}
+    {#if vm.route.page === "new_password"}
+      <!-- Recovery link: core signs the user in and routes here; the source page is standalone, without the app frame. -->
+      <NewPasswordView vm={vm.new_password} onintent={(intent) => dispatch({ type: "new_password", intent })} />
+    {:else}
+      {#key vm.profile?.account}
+        <SignedInFrame {vm} {dispatch} {media} {theme} previewUrl={preview.url} oncopy={(text) => copy(text, null)} />
+      {/key}
+    {/if}
   {:else if vm.state === "checkout_confirm"}
     <ConfirmPage messages={vm.messages} />
   {:else}

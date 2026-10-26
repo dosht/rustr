@@ -116,6 +116,10 @@ async fn app_assets_keep_range_mime_and_immutable_cache_while_theme_is_no_cache(
     assert_eq!(range.headers()[header::CONTENT_RANGE], "bytes 0-3/11");
     assert_eq!(to_bytes(range.into_body(), 100).await.unwrap(), Bytes::from_static(b"\0asm"));
     assert_eq!(send(&app, "GET", "/_app/theme-init.js").await.headers()[header::CACHE_CONTROL], "no-cache");
+    tokio::fs::write(fixture.directory.join("_app/iyzico-secure-payment.svg"), b"<svg xmlns='http://www.w3.org/2000/svg'/>").await.unwrap();
+    let badge = send(&app, "GET", "/_app/iyzico-secure-payment.svg").await;
+    assert_eq!(badge.headers()[header::CONTENT_TYPE], "image/svg+xml");
+    assert_eq!(badge.headers()[header::CACHE_CONTROL], "no-cache", "an unhashed name can change in place, so it is never immutable");
     assert_eq!(send(&app, "POST", "/_app/player-Ab12Cd34.wasm").await.status(), StatusCode::METHOD_NOT_ALLOWED);
     for (name, mime) in [("font-Ab12Cd34.ttf", "font/ttf"), ("font-Ab12Cd34.otf", "font/otf"), ("font-OFL-Ab12Cd34.txt", "text/plain; charset=utf-8"), ("rating-Ab12Cd34.svg", "image/svg+xml"), ("logo-Ab12Cd34.jpg", "image/jpeg")] {
         tokio::fs::write(fixture.directory.join("_app").join(name), b"asset fixture").await.unwrap();

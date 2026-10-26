@@ -158,7 +158,7 @@ impl Renderer {
         format!(
             "default-src 'none'; script-src 'nonce-{nonce}' 'strict-dynamic'; \
              style-src https: 'unsafe-inline'{fixture}; font-src https: data:{fixture}; \
-             img-src https: data:{fixture}; connect-src https:{fixture}; frame-src https:{fixture}; \
+             img-src 'self' https: data:{fixture}; connect-src https:{fixture}; frame-src https:{fixture}; \
              form-action https:{fixture}; base-uri 'none'; object-src 'none'; frame-ancestors 'none'"
         )
     }

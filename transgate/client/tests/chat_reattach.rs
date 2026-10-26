@@ -8,6 +8,7 @@ use std::sync::{Arc, Mutex};
 use axum::extract::Path;
 use axum::routing::get;
 use axum::{Json, Router};
+use llm_core::{ApplicationFrame, Persistence, StreamIdentity, StreamStatus, TextEvent};
 use serde_json::{Value, json};
 use transgate_client::api::HttpApi;
 use transgate_client::auth::{AuthPorts, AuthStorage, Clock, GoTrue, GoTrueConfig, LockGuard, OsRandom, SESSION_KEY, SessionLock};
@@ -64,6 +65,11 @@ async fn host() -> String {
                 in_flight: Some(InFlightChat { question: "When is it due?".into(), generation: view(GenerationStatus::Running, "Hel") }),
             })
             .unwrap(),
+            // A slow answer: the user can type before it lands.
+            3 => {
+                tokio::time::sleep(std::time::Duration::from_millis(400)).await;
+                json!({"messages": [], "in_flight": null})
+            }
             _ => json!({"messages": [], "in_flight": null}),
         };
         Json(body)
@@ -110,4 +116,56 @@ async fn a_history_without_an_in_flight_answer_opens_no_watch() {
     assert!(history.in_flight.is_none());
     let mut chat = loading(JobId(2));
     assert_eq!(chat.update(Event::HistoryLoaded { job: JobId(2), result: Ok(history) }), vec![]);
+}
+
+fn frame(text: &str, status: StreamStatus, seq: u64) -> ApplicationFrame {
+    let identity = StreamIdentity { generation: RUNNING.to_string(), content_revision: 1, consent_epoch: 1, execution: "e".into() };
+    // The host marks the completed answer as saved; a provisional snapshot is never terminal.
+    let persistence = if status == StreamStatus::Completed { Persistence::Saved } else { Persistence::Provisional };
+    ApplicationFrame { identity, seq, event: TextEvent::Snapshot { text: text.into(), status, persistence } }
+}
+
+/// The own-tab race behind the candidate6 blank chat: a slow history response must
+/// never wipe a question this tab sent, and a question typed before history landed
+/// is refused rather than lost. After history, the send keeps its question and
+/// streams its answer through to done.
+#[tokio::test]
+async fn a_slow_history_never_erases_a_question_sent_after_it() {
+    let api = Arc::new(api(&host().await));
+    let job = JobId(3);
+    let mut chat = loading(job);
+    let key = Uuid::from_u128(9);
+
+    let history = tokio::spawn({
+        let api = api.clone();
+        async move { api.chat_history(USER, job).await }
+    });
+    // Typed while the history GET is still in flight.
+    let early = chat.update(Event::SendRequested { text: "When is it due?".into(), key });
+    assert_eq!(early, vec![], "no question starts before the history is known");
+    assert!(chat.view(Micros(0)).lines.is_empty());
+
+    let loaded = chat.update(Event::HistoryLoaded { job, result: Ok(history.await.unwrap().unwrap()) });
+    assert_eq!(loaded, vec![]);
+
+    let sent = chat.update(Event::SendRequested { text: "When is it due?".into(), key });
+    assert!(matches!(sent.as_slice(), [Effect::StartChat { job: j, .. }] if *j == job), "{sent:?}");
+    assert_eq!(
+        chat.update(Event::StartAccepted { key, generation: RUNNING }),
+        vec![Effect::Watch { generation: RUNNING, kind: WatchKind::Text, after: None }]
+    );
+    chat.update(Event::WatchFrame { generation: RUNNING, frame: frame("Fri", StreamStatus::Streaming, 1) });
+    let mid = chat.view(Micros(0));
+    assert_eq!(
+        mid.lines.iter().map(|l| (l.role, l.content.as_str(), l.streaming)).collect::<Vec<_>>(),
+        vec![(ChatRole::User, "When is it due?", false), (ChatRole::Assistant, "Fri", true)]
+    );
+    let done = chat.update(Event::WatchFrame { generation: RUNNING, frame: frame("Friday.", StreamStatus::Completed, 2) });
+    assert_eq!(done, vec![Effect::LoadLimits { job }]);
+    let end = chat.view(Micros(0));
+    assert_eq!(
+        end.lines.iter().map(|l| (l.role, l.content.as_str())).collect::<Vec<_>>(),
+        vec![(ChatRole::User, "When is it due?"), (ChatRole::Assistant, "Friday.")]
+    );
+    assert!(end.can_send);
 }

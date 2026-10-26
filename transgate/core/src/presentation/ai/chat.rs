@@ -409,7 +409,8 @@ impl ChatPanelState {
             show_history_header: !self.lines.is_empty(),
             show_welcome: self.history_loaded && !self.lines.iter().any(|l| l.role == ChatRole::User),
             typing: sending && self.lines.last().is_none_or(|l| l.role != ChatRole::Assistant),
-            can_send: !sending,
+            // The source sends nothing while history loads (`DesktopChatView.tsx:142,307`).
+            can_send: !sending && !self.loading_history,
             limits: self.limits.as_ref().filter(|l| l.has_limits).and_then(|l| limits_vm(l, now)),
             error: self.error.clone(),
             sync_warning: self.sync_warning.then(|| app("This answer could not be saved. It may disappear after refresh.")),
@@ -417,6 +418,10 @@ impl ChatPanelState {
         }
     }
 
+    /// History loads only on `Selected` (which resets any request) and on a
+    /// consent grant (which follows the reset of a refusal), and nothing is sent
+    /// while it loads: a history answer never lands over a pending question
+    /// (REPAIR-P5-5b), and a late duplicate is ignored once loaded.
     fn load(&mut self) -> Vec<Effect> {
         let Some(job) = self.job.filter(|_| self.consent) else { return vec![] };
         self.loading_history = true;
@@ -424,7 +429,7 @@ impl ChatPanelState {
     }
 
     fn send(&mut self, text: String, key: RequestKey) -> Vec<Effect> {
-        if text.trim().is_empty() || self.pending.is_some() || !self.consent {
+        if text.trim().is_empty() || self.pending.is_some() || self.loading_history || !self.consent {
             return vec![];
         }
         let Some(_) = self.job else { return vec![] };
@@ -439,7 +444,7 @@ impl ChatPanelState {
     }
 
     fn retry(&mut self, index: usize, key: RequestKey) -> Vec<Effect> {
-        if self.pending.is_some() || !self.consent || index == 0 {
+        if self.pending.is_some() || self.loading_history || !self.consent || index == 0 {
             return vec![];
         }
         let Some(of) = self.lines.get(index).filter(|l| l.role == ChatRole::Assistant).and_then(|l| l.generation) else { return vec![] };

@@ -36,3 +36,14 @@ it("blocks the mounted app in phone landscape until rotation back, not Escape", 
   expect(background).toHaveProperty("inert", false);
   expect(screen.getByLabelText("Email address")).toBe(email);
 });
+
+it.each(["desktop", "phone"] as const)("renders the recovery password form, not the frame, for a signed-in new_password route (%s)", async (layout) => {
+  const base = fixture("AppVm", "billing_owner");
+  if (base.state !== "signed_in") throw new Error("billing fixture must be signed in");
+  const vm = { ...base, route: { page: "new_password" as const }, layouts: { ...base.layouts, frame: layout } };
+  const core: TransgateCore = { current: () => vm, dispatch: vi.fn(() => vm), subscribe: vi.fn(() => () => {}), dispose: vi.fn() };
+  render(App, { core, media: createMediaPlatform(), theme: new ThemeStore(),
+    telemetry: new Telemetry({ posthog: null, sentry: null }, () => "en"), captcha: null, preview: new InvoicePreview(), copy: vi.fn().mockResolvedValue(true) });
+  expect(await screen.findByLabelText("New Password")).toHaveAttribute("type", "password");
+  expect(screen.queryByRole("navigation")).toBeNull();
+});

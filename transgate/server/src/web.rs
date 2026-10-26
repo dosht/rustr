@@ -257,6 +257,11 @@ async fn app_document(State(web): State<Arc<WebHost>>, request: Request) -> Resp
     web.document(request.method() == Method::HEAD)
 }
 
+/// The only app files whose names carry no content hash (copied from
+/// `transgate/web/public/_app` unchanged), so they can change in place and must
+/// be revalidated. Every other `/_app/*` file is a hashed Vite output (D20).
+const UNHASHED_ASSETS: [&str; 2] = ["/_app/theme-init.js", "/_app/iyzico-secure-payment.svg"];
+
 async fn asset(State(web): State<Arc<WebHost>>, request: Request) -> Response {
     let path = request.uri().path();
     let Ok(decoded) = percent_decode_str(path).decode_utf8() else { return StatusCode::NOT_FOUND.into_response(); };
@@ -281,11 +286,11 @@ async fn asset(State(web): State<Arc<WebHost>>, request: Request) -> Response {
         Some("jpg" | "jpeg") => Some("image/jpeg"),
         _ => None,
     };
-    let theme = path == "/_app/theme-init.js";
+    let revalidate = UNHASHED_ASSETS.contains(&path);
     let response = ServeDir::new(&web.root).append_index_html_on_directories(false).oneshot(request).await;
     let mut response = match response { Ok(response) => response.into_response(), Err(never) => match never {} };
     if response.status().is_success() || response.status() == StatusCode::NOT_MODIFIED {
-        response.headers_mut().insert(header::CACHE_CONTROL, HeaderValue::from_static(if theme { "no-cache" } else { "public, max-age=31536000, immutable" }));
+        response.headers_mut().insert(header::CACHE_CONTROL, HeaderValue::from_static(if revalidate { "no-cache" } else { "public, max-age=31536000, immutable" }));
         if let Some(content_type) = content_type { response.headers_mut().insert(header::CONTENT_TYPE, HeaderValue::from_static(content_type)); }
     }
     response

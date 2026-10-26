@@ -84,7 +84,7 @@ fn checkout_policy_is_enforced_https_scheme_trust_with_only_exact_fixture_except
     for (name, expected) in [
         ("default-src", "default-src 'none'"),
         ("font-src", "font-src https: data:"),
-        ("img-src", "img-src https: data:"),
+        ("img-src", "img-src 'self' https: data:"),
         ("connect-src", "connect-src https:"),
         ("frame-src", "frame-src https:"),
         ("form-action", "form-action https:"),

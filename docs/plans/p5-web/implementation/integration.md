@@ -393,6 +393,8 @@ Candidate4 is `/home/mu/.cache/rustr-integration/s1-20261026195749`, source-mani
 
 The actual C2 Mailpit link exposed a runtime configuration defect: GoTrue resolved `/verify` against the origin, dropping the proxy prefix. The working runtime now sets `GOTRUE_MAILER_URLPATHS_CONFIRMATION`, `_INVITE`, `_RECOVERY`, and `_EMAIL_CHANGE` to `/auth/v1/verify`. A separately recorded runtime copy proved the actual delivered link used that path without spec rewriting. P9 production/staging GoTrue must carry equivalent deployment settings. Candidate4 source was not edited.
 
+Candidate5 recovery hit GoTrue's per-address mail frequency limit after the magic-link step. The loopback runtime now sets `GOTRUE_SMTP_MAX_FREQUENCY=1s` with `GOTRUE_RATE_LIMIT_EMAIL_SENT=1000`. This applies to the test runtime only; P9 production/staging must keep real throttles.
+
 The positive AI fixture must provide at least 50 UTF-16 units of canonical transcript content on the next authorized candidate. Candidate4's saved 33-unit line was correctly refused before provider dispatch; the generic NoTranscript wording is independently owned by the core repair. Preserve a separate short-input case, not a weakened minimum. Erasure's initiating tab reaches the public root, currently 404 until P6; that is a P6 dependency, not a P5 defect.
 
 ## 7. Candidate5 Iyzico loopback fixture contract (source-only)

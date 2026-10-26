@@ -188,6 +188,89 @@ fn a_second_tab_reattaches_a_running_chat_answer_without_starting_one() {
     assert!(!chat.can_send);
 }
 
+// REPAIR-P5-5b: the tab's own question is never replaced by its history load. As in the source
+// (`DesktopChatView.tsx:142,307`), nothing is sent while history is loading; afterwards the own
+// question streams in place with one watch, never treated as a reattach.
+#[test]
+fn the_own_tab_question_keeps_its_lines_through_history_and_stream() {
+    use crate::ai::{ChatHistory, ChatRole, GenerationId};
+    use crate::presentation::ai::WatchKind;
+    use llm_core::{ApplicationFrame, Persistence, StreamIdentity, StreamStatus, TextEvent};
+    let (mut s, _) = signed_in("/home/42", desktop());
+    let epoch = s.epoch();
+    s.update(AppEvent::Consent { epoch, event: consent::Event::Loaded { result: Ok(consent_view(true)) } }, NOW);
+    let ai = s.ai_epoch();
+    let job = JobId(42);
+    let chat_vm = |s: &AppState| match s.view(NOW) {
+        AppVm::SignedIn(vm) => vm.chat.expect("chat on a job route"),
+        _ => panic!("signed in"),
+    };
+    let send = AppIntent::Chat(ChatIntent::SendRequested { text: "What did the team agree to review?".into() });
+    assert!(!chat_vm(&s).can_send, "history is still loading");
+    let early = s.update(AppEvent::User(send.clone()), NOW);
+    assert!(!early.iter().any(|e| matches!(e, AppEffect::Chat { effect: chat::Effect::StartChat { .. }, .. })), "{early:?}");
+
+    s.update(AppEvent::Chat { epoch: ai, job, event: chat::Event::HistoryLoaded { job, result: Ok(ChatHistory { messages: vec![], in_flight: None }) } }, NOW);
+    let started = s.update(AppEvent::User(send), NOW);
+    let key = started.iter().find_map(|e| match e {
+        AppEffect::Chat { effect: chat::Effect::StartChat { key, .. }, .. } => Some(*key),
+        _ => None,
+    }).expect("the question is sent once history arrived");
+    let g = GenerationId(Uuid::from_u128(88));
+    let watched = s.update(AppEvent::Chat { epoch: ai, job, event: chat::Event::StartAccepted { key, generation: g } }, NOW);
+    assert_eq!(watched, vec![AppEffect::Chat { epoch: ai, job, effect: chat::Effect::Watch { generation: g, kind: WatchKind::Text, after: None } }]);
+    let identity = StreamIdentity { generation: g.to_string(), content_revision: 1, consent_epoch: 1, execution: "e".into() };
+    let frame = |seq, event| AppEvent::Chat { epoch: ai, job, event: chat::Event::WatchFrame { generation: g, frame: ApplicationFrame { identity: identity.clone(), seq, event } } };
+    s.update(frame(1, TextEvent::Snapshot { text: "The team".into(), status: StreamStatus::Streaming, persistence: Persistence::Provisional }), NOW);
+    let vm = chat_vm(&s);
+    let shown: Vec<_> = vm.lines.iter().map(|l| (l.role, l.content.as_str(), l.streaming)).collect();
+    assert_eq!(shown, vec![(ChatRole::User, "What did the team agree to review?", false), (ChatRole::Assistant, "The team", true)]);
+    s.update(frame(2, TextEvent::Final { text: "The team reviewed accessibility.".into(), persistence: Persistence::Saved }), NOW);
+    let vm = chat_vm(&s);
+    let shown: Vec<_> = vm.lines.iter().map(|l| (l.role, l.content.as_str(), l.streaming)).collect();
+    assert_eq!(shown, vec![(ChatRole::User, "What did the team agree to review?", false), (ChatRole::Assistant, "The team reviewed accessibility.", false)]);
+    assert!(vm.can_send);
+}
+
+// REPAIR-P5-5b invariant: a history answer landing while this tab's own question is pending (a
+// late duplicate, or an answer reporting this same generation in flight) keeps the question and
+// the streaming answer, adds no watch, and the answer still completes in place.
+#[test]
+fn history_landing_while_a_question_is_pending_keeps_both_lines() {
+    use crate::ai::{ChatHistory, ChatRole, Draft, GenerationId, GenerationKind, GenerationStatus, GenerationView, InFlightChat};
+    use llm_core::{ApplicationFrame, Persistence, StreamIdentity, StreamStatus, TextEvent};
+    let (mut s, _) = signed_in("/home/42", desktop());
+    let epoch = s.epoch();
+    s.update(AppEvent::Consent { epoch, event: consent::Event::Loaded { result: Ok(consent_view(true)) } }, NOW);
+    let ai = s.ai_epoch();
+    let job = JobId(42);
+    let history = |in_flight| AppEvent::Chat { epoch: ai, job, event: chat::Event::HistoryLoaded { job, result: Ok(ChatHistory { messages: vec![], in_flight }) } };
+    s.update(history(None), NOW);
+    let started = s.update(AppEvent::User(AppIntent::Chat(ChatIntent::SendRequested { text: "Q".into() })), NOW);
+    let Some(AppEffect::Chat { effect: chat::Effect::StartChat { key, .. }, .. }) = started.first() else { panic!("{started:?}") };
+    let g = GenerationId(Uuid::from_u128(99));
+    s.update(AppEvent::Chat { epoch: ai, job, event: chat::Event::StartAccepted { key: *key, generation: g } }, NOW);
+    let identity = StreamIdentity { generation: g.to_string(), content_revision: 1, consent_epoch: 1, execution: "e".into() };
+    let frame = |seq, event| AppEvent::Chat { epoch: ai, job, event: chat::Event::WatchFrame { generation: g, frame: ApplicationFrame { identity: identity.clone(), seq, event } } };
+    s.update(frame(1, TextEvent::Snapshot { text: "Partial".into(), status: StreamStatus::Streaming, persistence: Persistence::Provisional }), NOW);
+
+    let own = GenerationView {
+        id: g, job, kind: GenerationKind::Chat, status: GenerationStatus::Running, sequence: 1, source_revision: 1, consent_epoch: 1,
+        draft: Draft::Text { text: "Partial".into() }, final_content: None, durable: true, remote_outcome_unknown: false,
+        execution: None, tokens_used: None, interruption: None, created_at: NOW, finished_at: None,
+    };
+    for late in [history(None), history(Some(InFlightChat { question: "Q".into(), generation: own }))] {
+        assert!(s.update(late, NOW).is_empty(), "no reattach or second watch for the tab's own question");
+    }
+    let lines = |s: &AppState| match s.view(NOW) {
+        AppVm::SignedIn(vm) => vm.chat.unwrap().lines.into_iter().map(|l| (l.role, l.content, l.streaming)).collect::<Vec<_>>(),
+        _ => panic!("signed in"),
+    };
+    assert_eq!(lines(&s), vec![(ChatRole::User, "Q".into(), false), (ChatRole::Assistant, "Partial".into(), true)]);
+    s.update(frame(2, TextEvent::Final { text: "Done.".into(), persistence: Persistence::Saved }), NOW);
+    assert_eq!(lines(&s), vec![(ChatRole::User, "Q".into(), false), (ChatRole::Assistant, "Done.".into(), false)]);
+}
+
 // MOBL-116: a phone landing on /home is replaced by the new-transcript view.
 #[test]
 fn a_phone_on_home_is_sent_to_the_new_transcript_view() {

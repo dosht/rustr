@@ -11094,7 +11094,7 @@ export const fixtures: FixtureFile = {
       "typing": false
     },
     "loading_history": {
-      "can_send": true,
+      "can_send": false,
       "enabled": true,
       "error": null,
       "limits": null,
