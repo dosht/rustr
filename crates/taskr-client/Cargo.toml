@@ -8,9 +8,16 @@ license.workspace = true
 [dependencies]
 taskr-core.workspace = true
 taskr-api.workspace = true
+llm-core = { path = "../llm-core" }
+llm-http = { path = "../llm-http" }
+futures-util = "0.3"
 serde.workspace = true
 serde_json.workspace = true
-reqwest = { version = "0.13", default-features = false, features = ["json"] }
+reqwest = { version = "0.13", default-features = false, features = ["json", "stream"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }
+
+[dev-dependencies]
+axum = "0.8"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "sync"] }

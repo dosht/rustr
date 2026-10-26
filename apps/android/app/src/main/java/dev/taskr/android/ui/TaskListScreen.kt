@@ -220,14 +220,14 @@ private val sampleRows = listOf(
 
 @Preview(showBackground = true)
 @Composable
-private fun SamplePreview() = MaterialTheme { TaskListScreen(previewView(sampleRows)) {} }
+private fun SamplePreview() = TaskrTheme { TaskListScreen(previewView(sampleRows)) {} }
 
 @Preview(showBackground = true)
 @Composable
-private fun EmptyPreview() = MaterialTheme { TaskListScreen(previewView(emptyList())) {} }
+private fun EmptyPreview() = TaskrTheme { TaskListScreen(previewView(emptyList())) {} }
 
 @Preview(showBackground = true)
 @Composable
-private fun ErrorPreview() = MaterialTheme {
+private fun ErrorPreview() = TaskrTheme {
     TaskListScreen(previewView(sampleRows, error = "There is already an open task with that title.")) {}
 }

@@ -2,6 +2,7 @@
 //! in the browser (wasm32, where reqwest uses `fetch`).
 
 pub mod auth;
+pub mod audio_summary;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod config;
 

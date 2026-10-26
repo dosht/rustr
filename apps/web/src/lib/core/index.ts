@@ -1,12 +1,14 @@
 // The web shell's only door into the Rust core. Components depend on the
 // `TaskCore` and `AppCore` interfaces, so stories and tests can pass a fake
 // instead of wasm. Every dispatch is async because the core's ports are.
-import init, { AppPresenter, TaskListPresenter, appPreviewScreens, previewScreens } from "./pkg/taskr_wasm.js";
+import init, { AppPresenter, AudioSummaryPresenter, TaskListPresenter, appPreviewScreens, previewScreens } from "./pkg/taskr_wasm.js";
 import type { AppIntentDto } from "./types/AppIntentDto";
 import type { AppView } from "./types/AppView";
 import type { PreviewScreen } from "./types/PreviewScreen";
 import type { TaskIntent } from "./types/TaskIntent";
 import type { TaskListView } from "./types/TaskListView";
+import type { AudioSummaryIntent } from "./types/AudioSummaryIntent";
+import type { AudioSummaryView } from "./types/AudioSummaryView";
 
 export type { AppIntentDto } from "./types/AppIntentDto";
 export type { AppScreen } from "./types/AppScreen";
@@ -25,6 +27,15 @@ export type { TaskListView } from "./types/TaskListView";
 export type { TaskRowView } from "./types/TaskRowView";
 export type { TaskScope } from "./types/TaskScope";
 export type { WorkspaceNavView } from "./types/WorkspaceNavView";
+export type { AudioSummaryIntent } from "./types/AudioSummaryIntent";
+export type { AudioSummaryView } from "./types/AudioSummaryView";
+export type { AudioWorkRowView } from "./types/AudioWorkRowView";
+
+export interface AudioSummaryCore {
+  dispatch(intent: AudioSummaryIntent, onView?: (view: AudioSummaryView) => void): Promise<AudioSummaryView>;
+  current(): AudioSummaryView;
+  dispose(): void;
+}
 
 export interface TaskCore {
   dispatch(intent: TaskIntent): Promise<TaskListView>;
@@ -67,6 +78,16 @@ export async function loadApp(config: AppConfig): Promise<AppCore> {
   return {
     dispatch: (intent, onView) => presenter.dispatch(intent, onView) as Promise<AppView>,
     current: () => presenter.current() as AppView,
+  };
+}
+
+export async function loadAudioSummary(apiUrl: string): Promise<AudioSummaryCore> {
+  await loadWasm();
+  const presenter = new AudioSummaryPresenter(apiUrl);
+  return {
+    dispatch: (intent, onView) => presenter.dispatch(intent, onView) as Promise<AudioSummaryView>,
+    current: () => presenter.current() as AudioSummaryView,
+    dispose: () => { presenter.dispose(); },
   };
 }
 

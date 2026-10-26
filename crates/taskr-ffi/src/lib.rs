@@ -20,8 +20,10 @@ use taskr_infra::clock::SystemClock;
 use taskr_infra::json_file::JsonFileTaskListRepository;
 
 mod app;
+mod summary;
 
 pub use app::*;
+pub use summary::*;
 
 uniffi::setup_scaffolding!();
 

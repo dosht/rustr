@@ -28,7 +28,7 @@
   {#await app}
     <p class="boot">Loading…</p>
   {:then model}
-    <AppContainer {model} mobile={viewport.mobile} devSignIn={!config?.authUrl} />
+    <AppContainer {model} mobile={viewport.mobile} devSignIn={!config?.authUrl} apiUrl={config?.apiUrl} />
   {:catch error}
     <p class="boot">Could not start: {error.message}</p>
   {/await}

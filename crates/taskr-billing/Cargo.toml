@@ -1,0 +1,22 @@
+[package]
+name = "taskr-billing"
+description = "taskr's billing sample: 10 free credits, one metered sample operation, one LemonSqueezy pack. Additive; ordinary tasks are never metered."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+billing-core = { path = "../../modules/billing/core" }
+billing-postgres = { path = "../../modules/billing/postgres" }
+billing-http = { path = "../../modules/billing/http" }
+billing-lemonsqueezy = { path = "../../modules/billing/gateways/lemonsqueezy" }
+taskr-core.workspace = true
+axum = "0.8"
+serde.workspace = true
+serde_json.workspace = true
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "migrate", "macros", "json", "uuid"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"] }
+uuid = { version = "1", features = ["v4", "v5"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "sync"] }

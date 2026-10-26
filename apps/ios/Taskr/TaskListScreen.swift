@@ -16,6 +16,7 @@ struct TaskListScreen: View {
             }
             .navigationTitle("taskr")
         }
+        .modifier(TaskrTheme())
     }
 }
 
@@ -45,24 +46,26 @@ struct TaskListContent: View {
                     }
                 } else {
                     Text("You can view this list. Ask an owner for editor access to change it.")
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(DesignTokens.current.muted)
                 }
             }
+            .listRowBackground(DesignTokens.current.surface)
 
             if let message = view.error ?? view.notice {
                 Section {
                     HStack {
                         Text(message)
-                            .foregroundStyle(view.error != nil ? Color.red : Color.secondary)
+                            .foregroundStyle(view.error != nil ? DesignTokens.current.error : DesignTokens.current.fg)
                         Spacer()
                         Button("Dismiss") { onIntent(.messageDismissed) }
                     }
                 }
+                .listRowBackground(view.error != nil ? DesignTokens.current.errorBg : DesignTokens.current.noticeBg)
             }
 
             Section {
                 if let empty = view.emptyMessage {
-                    Text(empty).foregroundStyle(.secondary)
+                    Text(empty).foregroundStyle(DesignTokens.current.muted)
                 }
                 ForEach(view.rows, id: \.id) { row in
                     TaskRowCell(row: row, columns: view.columns) {
@@ -71,7 +74,10 @@ struct TaskListContent: View {
                     .disabled(!view.canChange)
                 }
             }
+            .listRowBackground(DesignTokens.current.surface)
         }
+        .scrollContentBackground(.hidden)
+        .background(DesignTokens.current.bg)
         .searchable(text: filterBinding(view), prompt: "Filter")
     }
 
@@ -105,13 +111,13 @@ private struct TaskRowCell: View {
         Button(action: onToggle) {
             HStack {
                 Image(systemName: row.done ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(row.done ? Color.green : Color.secondary)
+                    .foregroundStyle(row.done ? DesignTokens.current.accent : DesignTokens.current.muted)
                 Text(row.title)
                     .strikethrough(row.done)
-                    .foregroundStyle(row.done ? Color.secondary : Color.primary)
+                    .foregroundStyle(row.done ? DesignTokens.current.muted : DesignTokens.current.fg)
                 Spacer()
                 ForEach(trailing, id: \.self) { i in
-                    Text(row.cells[i]).font(.caption).foregroundStyle(.secondary)
+                    Text(row.cells[i]).font(.caption).foregroundStyle(DesignTokens.current.muted)
                 }
             }
         }

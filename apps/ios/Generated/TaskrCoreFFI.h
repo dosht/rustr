@@ -278,6 +278,13 @@ typedef void (*UniffiCallbackInterfaceSessionVaultMethod2)(uint64_t, void* _Nonn
     );
 
 #endif
+#ifndef UNIFFI_FFIDEF_CALLBACK_INTERFACE_AUDIO_SUMMARY_LISTENER_METHOD0
+#define UNIFFI_FFIDEF_CALLBACK_INTERFACE_AUDIO_SUMMARY_LISTENER_METHOD0
+typedef void (*UniffiCallbackInterfaceAudioSummaryListenerMethod0)(uint64_t, RustBuffer, void* _Nonnull, 
+        RustCallStatus *_Nonnull uniffiCallStatus
+    );
+
+#endif
 #ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_LOG_SINK
 #define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_LOG_SINK
 typedef struct UniffiVTableCallbackInterfaceLogSink {
@@ -305,6 +312,15 @@ typedef struct UniffiVTableCallbackInterfaceSessionVault {
     UniffiCallbackInterfaceSessionVaultMethod1 _Nonnull save;
     UniffiCallbackInterfaceSessionVaultMethod2 _Nonnull clear;
 } UniffiVTableCallbackInterfaceSessionVault;
+
+#endif
+#ifndef UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_AUDIO_SUMMARY_LISTENER
+#define UNIFFI_FFIDEF_V_TABLE_CALLBACK_INTERFACE_AUDIO_SUMMARY_LISTENER
+typedef struct UniffiVTableCallbackInterfaceAudioSummaryListener {
+    UniffiCallbackInterfaceFree _Nonnull uniffiFree;
+    UniffiCallbackInterfaceClone _Nonnull uniffiClone;
+    UniffiCallbackInterfaceAudioSummaryListenerMethod0 _Nonnull onView;
+} UniffiVTableCallbackInterfaceAudioSummaryListener;
 
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_CLONE_TASKLISTPRESENTER
@@ -362,6 +378,61 @@ RustBuffer uniffi_taskr_ffi_fn_method_apppresenter_dispatch(uint64_t ptr, RustBu
 RustBuffer uniffi_taskr_ffi_fn_method_apppresenter_dispatch_with(uint64_t ptr, RustBuffer intent, uint64_t listener, RustCallStatus *_Nonnull out_status
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_CLONE_AUDIOSUMMARYPRESENTER
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_CLONE_AUDIOSUMMARYPRESENTER
+uint64_t uniffi_taskr_ffi_fn_clone_audiosummarypresenter(uint64_t handle, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_FREE_AUDIOSUMMARYPRESENTER
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_FREE_AUDIOSUMMARYPRESENTER
+void uniffi_taskr_ffi_fn_free_audiosummarypresenter(uint64_t handle, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_CONSTRUCTOR_AUDIOSUMMARYPRESENTER_NEW
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_CONSTRUCTOR_AUDIOSUMMARYPRESENTER_NEW
+uint64_t uniffi_taskr_ffi_fn_constructor_audiosummarypresenter_new(RustBuffer api_url, uint64_t vault, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_CANCEL
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_CANCEL
+RustBuffer uniffi_taskr_ffi_fn_method_audiosummarypresenter_cancel(uint64_t ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_CURRENT
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_CURRENT
+RustBuffer uniffi_taskr_ffi_fn_method_audiosummarypresenter_current(uint64_t ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_DISPOSE
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_DISPOSE
+void uniffi_taskr_ffi_fn_method_audiosummarypresenter_dispose(uint64_t ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_REFRESH
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_REFRESH
+RustBuffer uniffi_taskr_ffi_fn_method_audiosummarypresenter_refresh(uint64_t ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_SELECT
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_SELECT
+RustBuffer uniffi_taskr_ffi_fn_method_audiosummarypresenter_select(uint64_t ptr, RustBuffer work_id, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_START
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_START
+RustBuffer uniffi_taskr_ffi_fn_method_audiosummarypresenter_start(uint64_t ptr, RustBuffer request_id, int8_t accepted, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_SUSPEND
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_SUSPEND
+RustBuffer uniffi_taskr_ffi_fn_method_audiosummarypresenter_suspend(uint64_t ptr, RustCallStatus *_Nonnull out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_WATCH
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_METHOD_AUDIOSUMMARYPRESENTER_WATCH
+RustBuffer uniffi_taskr_ffi_fn_method_audiosummarypresenter_watch(uint64_t ptr, uint64_t listener, RustCallStatus *_Nonnull out_status
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_LOGSINK
 #define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_LOGSINK
 void uniffi_taskr_ffi_fn_init_callback_vtable_logsink(const UniffiVTableCallbackInterfaceLogSink* _Nonnull vtable
@@ -375,6 +446,11 @@ void uniffi_taskr_ffi_fn_init_callback_vtable_appviewlistener(const UniffiVTable
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_SESSIONVAULT
 #define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_SESSIONVAULT
 void uniffi_taskr_ffi_fn_init_callback_vtable_sessionvault(const UniffiVTableCallbackInterfaceSessionVault* _Nonnull vtable
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_AUDIOSUMMARYLISTENER
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_INIT_CALLBACK_VTABLE_AUDIOSUMMARYLISTENER
+void uniffi_taskr_ffi_fn_init_callback_vtable_audiosummarylistener(const UniffiVTableCallbackInterfaceAudioSummaryListener* _Nonnull vtable
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_FN_FUNC_PREVIEW_SCREENS
@@ -691,6 +767,54 @@ uint16_t uniffi_taskr_ffi_checksum_method_apppresenter_dispatch_with(void
     
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_CANCEL
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_CANCEL
+uint16_t uniffi_taskr_ffi_checksum_method_audiosummarypresenter_cancel(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_CURRENT
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_CURRENT
+uint16_t uniffi_taskr_ffi_checksum_method_audiosummarypresenter_current(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_DISPOSE
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_DISPOSE
+uint16_t uniffi_taskr_ffi_checksum_method_audiosummarypresenter_dispose(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_REFRESH
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_REFRESH
+uint16_t uniffi_taskr_ffi_checksum_method_audiosummarypresenter_refresh(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_SELECT
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_SELECT
+uint16_t uniffi_taskr_ffi_checksum_method_audiosummarypresenter_select(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_START
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_START
+uint16_t uniffi_taskr_ffi_checksum_method_audiosummarypresenter_start(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_SUSPEND
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_SUSPEND
+uint16_t uniffi_taskr_ffi_checksum_method_audiosummarypresenter_suspend(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_WATCH
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYPRESENTER_WATCH
+uint16_t uniffi_taskr_ffi_checksum_method_audiosummarypresenter_watch(void
+    
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_CONSTRUCTOR_TASKLISTPRESENTER_NEW
 #define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_CONSTRUCTOR_TASKLISTPRESENTER_NEW
 uint16_t uniffi_taskr_ffi_checksum_constructor_tasklistpresenter_new(void
@@ -700,6 +824,12 @@ uint16_t uniffi_taskr_ffi_checksum_constructor_tasklistpresenter_new(void
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_CONSTRUCTOR_APPPRESENTER_NEW
 #define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_CONSTRUCTOR_APPPRESENTER_NEW
 uint16_t uniffi_taskr_ffi_checksum_constructor_apppresenter_new(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_CONSTRUCTOR_AUDIOSUMMARYPRESENTER_NEW
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_CONSTRUCTOR_AUDIOSUMMARYPRESENTER_NEW
+uint16_t uniffi_taskr_ffi_checksum_constructor_audiosummarypresenter_new(void
     
 );
 #endif
@@ -730,6 +860,12 @@ uint16_t uniffi_taskr_ffi_checksum_method_sessionvault_save(void
 #ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_SESSIONVAULT_CLEAR
 #define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_SESSIONVAULT_CLEAR
 uint16_t uniffi_taskr_ffi_checksum_method_sessionvault_clear(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYLISTENER_ON_VIEW
+#define UNIFFI_FFIDEF_UNIFFI_TASKR_FFI_CHECKSUM_METHOD_AUDIOSUMMARYLISTENER_ON_VIEW
+uint16_t uniffi_taskr_ffi_checksum_method_audiosummarylistener_on_view(void
     
 );
 #endif

@@ -28,8 +28,8 @@ if [[ "${TASKR_WASM_BUILD_STD:-}" == "1" ]]; then
   build_std=(-Zbuild-std=std,panic_abort)
 fi
 
-cargo test -q -p taskr-wasm >/dev/null
-cargo build "${build_std[@]}" -p taskr-wasm --target wasm32-unknown-unknown --profile "$profile"
+cargo test --locked -q -p taskr-wasm >/dev/null
+cargo build --locked "${build_std[@]}" -p taskr-wasm --target wasm32-unknown-unknown --profile "$profile"
 
 target_dir="${CARGO_TARGET_DIR:-target}"
 profile_dir="$profile"

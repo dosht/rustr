@@ -1,0 +1,12 @@
+import type { Meta, StoryObj } from "@storybook/svelte";
+import { fn } from "storybook/test";
+import { summaryScreen } from "../../../core/fixtures";
+import AudioSummaryMobile from "./AudioSummaryMobile.svelte";
+const meta = { title: "Features/AudioSummary/MobileViews/Summary", component: AudioSummaryMobile, args: { onIntent: fn() } } satisfies Meta<typeof AudioSummaryMobile>;
+export default meta;
+type Story = StoryObj<typeof meta>;
+export const Ready: Story = { args: { view: summaryScreen("ready") } };
+export const Provisional: Story = { args: { view: summaryScreen("provisional") } };
+export const Detached: Story = { args: { view: summaryScreen("detached") } };
+export const Saved: Story = { args: { view: summaryScreen("saved") } };
+export const Interrupted: Story = { args: { view: summaryScreen("interrupted") } };

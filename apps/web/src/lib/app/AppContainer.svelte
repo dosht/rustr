@@ -5,14 +5,16 @@
   import DesktopFrame from "./views/desktop/DesktopFrame.svelte";
   import MobileFrame from "./views/mobile/MobileFrame.svelte";
   import SignInView from "./views/SignInView.svelte";
+  import SignedInShell from "./SignedInShell.svelte";
 
   interface Props {
     model: AppModel;
     mobile: boolean;
     devSignIn: boolean;
+    apiUrl?: string;
   }
 
-  let { model, mobile, devSignIn }: Props = $props();
+  let { model, mobile, devSignIn, apiUrl }: Props = $props();
 
   const view = $derived(model.view);
 
@@ -25,6 +27,10 @@
   <p class="boot">Loading…</p>
 {:else if view.state === "signedOut"}
   <SignInView view={view.view} onIntent={model.send} {devSignIn} />
+{:else if apiUrl}
+  {#key view.view.email}
+    <SignedInShell view={view.view} {mobile} {apiUrl} onIntent={model.send} />
+  {/key}
 {:else if mobile}
   <MobileFrame view={view.view} onIntent={model.send} />
 {:else}

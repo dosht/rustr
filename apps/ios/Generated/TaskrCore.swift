@@ -716,6 +716,221 @@ public func FfiConverterTypeAppPresenter_lower(_ value: AppPresenter) -> UInt64 
 
 
 
+public protocol AudioSummaryPresenterProtocol: AnyObject, Sendable {
+    
+    func cancel()  -> AudioSummaryView
+    
+    func current()  -> AudioSummaryView
+    
+    func dispose() 
+    
+    func refresh()  -> AudioSummaryView
+    
+    func select(workId: String)  -> AudioSummaryView
+    
+    /**
+     * Start returns the durable generation identity; watch never starts work.
+     * The caller retains request_id when retrying a lost start response.
+     */
+    func start(requestId: String, accepted: Bool)  -> AudioSummaryView
+    
+    func suspend()  -> AudioSummaryView
+    
+    func watch(listener: AudioSummaryListener)  -> AudioSummaryView
+    
+}
+open class AudioSummaryPresenter: AudioSummaryPresenterProtocol, @unchecked Sendable {
+    fileprivate let handle: UInt64
+
+    /// Used to instantiate a [FFIObject] without an actual handle, for fakes in tests, mostly.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public struct NoHandle {
+        public init() {}
+    }
+
+    // TODO: We'd like this to be `private` but for Swifty reasons,
+    // we can't implement `FfiConverter` without making this `required` and we can't
+    // make it `required` without making it `public`.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    required public init(unsafeFromHandle handle: UInt64) {
+        self.handle = handle
+    }
+
+    // This constructor can be used to instantiate a fake object.
+    // - Parameter noHandle: Placeholder value so we can have a constructor separate from the default empty one that may be implemented for classes extending [FFIObject].
+    //
+    // - Warning:
+    //     Any object instantiated with this constructor cannot be passed to an actual Rust-backed object. Since there isn't a backing handle the FFI lower functions will crash.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public init(noHandle: NoHandle) {
+        self.handle = 0
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public func uniffiCloneHandle() -> UInt64 {
+        return try! rustCall { uniffi_taskr_ffi_fn_clone_audiosummarypresenter(self.handle, $0) }
+    }
+public convenience init(apiUrl: String, vault: SessionVault) {
+    let handle =
+        try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_constructor_audiosummarypresenter_new(
+        FfiConverterString.lower(apiUrl),
+        FfiConverterCallbackInterfaceSessionVault_lower(vault),uniffiCallStatus
+    )
+}
+    self.init(unsafeFromHandle: handle)
+}
+
+    deinit {
+        if handle == 0 {
+            // Mock objects have handle=0 don't try to free them
+            return
+        }
+
+        try! rustCall { uniffi_taskr_ffi_fn_free_audiosummarypresenter(handle, $0) }
+    }
+
+    
+
+    
+open func cancel() -> AudioSummaryView  {
+    return try!  FfiConverterTypeAudioSummaryView_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_method_audiosummarypresenter_cancel(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+})
+}
+    
+open func current() -> AudioSummaryView  {
+    return try!  FfiConverterTypeAudioSummaryView_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_method_audiosummarypresenter_current(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+})
+}
+    
+open func dispose()  {try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_method_audiosummarypresenter_dispose(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+}
+}
+    
+open func refresh() -> AudioSummaryView  {
+    return try!  FfiConverterTypeAudioSummaryView_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_method_audiosummarypresenter_refresh(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+})
+}
+    
+open func select(workId: String) -> AudioSummaryView  {
+    return try!  FfiConverterTypeAudioSummaryView_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_method_audiosummarypresenter_select(
+            self.uniffiCloneHandle(),
+        FfiConverterString.lower(workId),uniffiCallStatus
+    )
+})
+}
+    
+    /**
+     * Start returns the durable generation identity; watch never starts work.
+     * The caller retains request_id when retrying a lost start response.
+     */
+open func start(requestId: String, accepted: Bool) -> AudioSummaryView  {
+    return try!  FfiConverterTypeAudioSummaryView_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_method_audiosummarypresenter_start(
+            self.uniffiCloneHandle(),
+        FfiConverterString.lower(requestId),
+        FfiConverterBool.lower(accepted),uniffiCallStatus
+    )
+})
+}
+    
+open func suspend() -> AudioSummaryView  {
+    return try!  FfiConverterTypeAudioSummaryView_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_method_audiosummarypresenter_suspend(
+            self.uniffiCloneHandle(),uniffiCallStatus
+    )
+})
+}
+    
+open func watch(listener: AudioSummaryListener) -> AudioSummaryView  {
+    return try!  FfiConverterTypeAudioSummaryView_lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_taskr_ffi_fn_method_audiosummarypresenter_watch(
+            self.uniffiCloneHandle(),
+        FfiConverterCallbackInterfaceAudioSummaryListener_lower(listener),uniffiCallStatus
+    )
+})
+}
+    
+
+    
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeAudioSummaryPresenter: FfiConverter {
+    typealias FfiType = UInt64
+    typealias SwiftType = AudioSummaryPresenter
+
+    public static func lift(_ handle: UInt64) throws -> AudioSummaryPresenter {
+        return AudioSummaryPresenter(unsafeFromHandle: handle)
+    }
+
+    public static func lower(_ value: AudioSummaryPresenter) -> UInt64 {
+        return value.uniffiCloneHandle()
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> AudioSummaryPresenter {
+        let handle: UInt64 = try readInt(&buf)
+        return try lift(handle)
+    }
+
+    public static func write(_ value: AudioSummaryPresenter, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(value))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAudioSummaryPresenter_lift(_ handle: UInt64) throws -> AudioSummaryPresenter {
+    return try FfiConverterTypeAudioSummaryPresenter.lift(handle)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAudioSummaryPresenter_lower(_ value: AudioSummaryPresenter) -> UInt64 {
+    return FfiConverterTypeAudioSummaryPresenter.lower(value)
+}
+
+
+
+
+
+
 public protocol TaskListPresenterProtocol: AnyObject, Sendable {
     
     func current()  -> TaskListView
@@ -978,6 +1193,174 @@ public func FfiConverterTypeAppPreviewScreen_lift(_ buf: RustBuffer) throws -> A
 #endif
 public func FfiConverterTypeAppPreviewScreen_lower(_ value: AppPreviewScreen) -> RustBuffer {
     return FfiConverterTypeAppPreviewScreen.lower(value)
+}
+
+
+public struct AudioSummaryView: Equatable, Hashable {
+    public var works: [AudioWorkRowView]
+    public var selectedId: String?
+    public var generationId: String?
+    public var title: String
+    public var text: String
+    public var statusLabel: String
+    public var disclosure: String
+    public var isLoading: Bool
+    public var canStart: Bool
+    public var canCancel: Bool
+    public var canSuspend: Bool
+    public var canResume: Bool
+    public var durable: Bool
+    public var remoteOutcomeUnknown: Bool
+    public var error: String?
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(works: [AudioWorkRowView], selectedId: String?, generationId: String?, title: String, text: String, statusLabel: String, disclosure: String, isLoading: Bool, canStart: Bool, canCancel: Bool, canSuspend: Bool, canResume: Bool, durable: Bool, remoteOutcomeUnknown: Bool, error: String?) {
+        self.works = works
+        self.selectedId = selectedId
+        self.generationId = generationId
+        self.title = title
+        self.text = text
+        self.statusLabel = statusLabel
+        self.disclosure = disclosure
+        self.isLoading = isLoading
+        self.canStart = canStart
+        self.canCancel = canCancel
+        self.canSuspend = canSuspend
+        self.canResume = canResume
+        self.durable = durable
+        self.remoteOutcomeUnknown = remoteOutcomeUnknown
+        self.error = error
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension AudioSummaryView: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeAudioSummaryView: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> AudioSummaryView {
+        return
+            try AudioSummaryView(
+                works: FfiConverterSequenceTypeAudioWorkRowView.read(from: &buf), 
+                selectedId: FfiConverterOptionString.read(from: &buf), 
+                generationId: FfiConverterOptionString.read(from: &buf), 
+                title: FfiConverterString.read(from: &buf), 
+                text: FfiConverterString.read(from: &buf), 
+                statusLabel: FfiConverterString.read(from: &buf), 
+                disclosure: FfiConverterString.read(from: &buf), 
+                isLoading: FfiConverterBool.read(from: &buf), 
+                canStart: FfiConverterBool.read(from: &buf), 
+                canCancel: FfiConverterBool.read(from: &buf), 
+                canSuspend: FfiConverterBool.read(from: &buf), 
+                canResume: FfiConverterBool.read(from: &buf), 
+                durable: FfiConverterBool.read(from: &buf), 
+                remoteOutcomeUnknown: FfiConverterBool.read(from: &buf), 
+                error: FfiConverterOptionString.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: AudioSummaryView, into buf: inout [UInt8]) {
+        FfiConverterSequenceTypeAudioWorkRowView.write(value.works, into: &buf)
+        FfiConverterOptionString.write(value.selectedId, into: &buf)
+        FfiConverterOptionString.write(value.generationId, into: &buf)
+        FfiConverterString.write(value.title, into: &buf)
+        FfiConverterString.write(value.text, into: &buf)
+        FfiConverterString.write(value.statusLabel, into: &buf)
+        FfiConverterString.write(value.disclosure, into: &buf)
+        FfiConverterBool.write(value.isLoading, into: &buf)
+        FfiConverterBool.write(value.canStart, into: &buf)
+        FfiConverterBool.write(value.canCancel, into: &buf)
+        FfiConverterBool.write(value.canSuspend, into: &buf)
+        FfiConverterBool.write(value.canResume, into: &buf)
+        FfiConverterBool.write(value.durable, into: &buf)
+        FfiConverterBool.write(value.remoteOutcomeUnknown, into: &buf)
+        FfiConverterOptionString.write(value.error, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAudioSummaryView_lift(_ buf: RustBuffer) throws -> AudioSummaryView {
+    return try FfiConverterTypeAudioSummaryView.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAudioSummaryView_lower(_ value: AudioSummaryView) -> RustBuffer {
+    return FfiConverterTypeAudioSummaryView.lower(value)
+}
+
+
+public struct AudioWorkRowView: Equatable, Hashable {
+    public var id: String
+    public var name: String
+    public var status: String
+    public var selected: Bool
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(id: String, name: String, status: String, selected: Bool) {
+        self.id = id
+        self.name = name
+        self.status = status
+        self.selected = selected
+    }
+
+    
+
+    
+}
+
+#if compiler(>=6)
+extension AudioWorkRowView: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeAudioWorkRowView: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> AudioWorkRowView {
+        return
+            try AudioWorkRowView(
+                id: FfiConverterString.read(from: &buf), 
+                name: FfiConverterString.read(from: &buf), 
+                status: FfiConverterString.read(from: &buf), 
+                selected: FfiConverterBool.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: AudioWorkRowView, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.id, into: &buf)
+        FfiConverterString.write(value.name, into: &buf)
+        FfiConverterString.write(value.status, into: &buf)
+        FfiConverterBool.write(value.selected, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAudioWorkRowView_lift(_ buf: RustBuffer) throws -> AudioWorkRowView {
+    return try FfiConverterTypeAudioWorkRowView.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAudioWorkRowView_lower(_ value: AudioWorkRowView) -> RustBuffer {
+    return FfiConverterTypeAudioWorkRowView.lower(value)
 }
 
 
@@ -2804,6 +3187,141 @@ public func FfiConverterCallbackInterfaceAppViewListener_lower(_ v: AppViewListe
 
 
 
+public protocol AudioSummaryListener: AnyObject, Sendable {
+    
+    func onView(view: AudioSummaryView) 
+    
+}
+
+
+// Put the implementation in a struct so we don't pollute the top-level namespace
+fileprivate struct UniffiCallbackInterfaceAudioSummaryListener {
+
+    // Create the VTable using a series of closures.
+    // Swift automatically converts these into C callback functions.
+    //
+    // Store the vtable directly.
+    static let vtable: UniffiVTableCallbackInterfaceAudioSummaryListener = UniffiVTableCallbackInterfaceAudioSummaryListener(
+        uniffiFree: { (uniffiHandle: UInt64) -> () in
+            do {
+                try FfiConverterCallbackInterfaceAudioSummaryListener.handleMap.remove(handle: uniffiHandle)
+            } catch {
+                print("Uniffi callback interface AudioSummaryListener: handle missing in uniffiFree")
+            }
+        },
+        uniffiClone: { (uniffiHandle: UInt64) -> UInt64 in
+            do {
+                return try FfiConverterCallbackInterfaceAudioSummaryListener.handleMap.clone(handle: uniffiHandle)
+            } catch {
+                fatalError("Uniffi callback interface AudioSummaryListener: handle missing in uniffiClone")
+            }
+        },
+        onView: { (
+            uniffiHandle: UInt64,
+            view: RustBuffer,
+            uniffiOutReturn: UnsafeMutableRawPointer,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> () in
+                guard let uniffiObj = try? FfiConverterCallbackInterfaceAudioSummaryListener.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return uniffiObj.onView(
+                     view: try FfiConverterTypeAudioSummaryView_lift(view)
+                )
+            }
+
+            
+            let writeReturn = { () }
+            uniffiTraitInterfaceCall(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn
+            )
+        }
+    )
+
+    // Rust stores this pointer for future callback invocations, so it must live
+    // for the process lifetime (not just for the init function call).
+    //
+    // `nonisolated(unsafe)` is needed under Swift 6 strict concurrency.
+    // This is safe because the pointee is initialized once during static init
+    // and never mutated by either side of the FFI.  Its fields are C function pointers.
+    nonisolated(unsafe) static let vtablePtr: UnsafePointer<UniffiVTableCallbackInterfaceAudioSummaryListener> = {
+        let ptr = UnsafeMutablePointer<UniffiVTableCallbackInterfaceAudioSummaryListener>.allocate(capacity: 1)
+        ptr.initialize(to: vtable)
+        return UnsafePointer(ptr)
+    }()
+}
+
+private func uniffiCallbackInitAudioSummaryListener() {
+    uniffi_taskr_ffi_fn_init_callback_vtable_audiosummarylistener(UniffiCallbackInterfaceAudioSummaryListener.vtablePtr)
+}
+
+// FfiConverter protocol for callback interfaces
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterCallbackInterfaceAudioSummaryListener {
+    fileprivate static let handleMap = UniffiHandleMap<AudioSummaryListener>()
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+extension FfiConverterCallbackInterfaceAudioSummaryListener : FfiConverter {
+    typealias SwiftType = AudioSummaryListener
+    typealias FfiType = UInt64
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lift(_ handle: UInt64) throws -> SwiftType {
+        try handleMap.get(handle: handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        let handle: UInt64 = try readInt(&buf)
+        return try lift(handle)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func lower(_ v: SwiftType) -> UInt64 {
+        return handleMap.insert(obj: v)
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public static func write(_ v: SwiftType, into buf: inout [UInt8]) {
+        writeInt(&buf, lower(v))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfaceAudioSummaryListener_lift(_ handle: UInt64) throws -> AudioSummaryListener {
+    return try FfiConverterCallbackInterfaceAudioSummaryListener.lift(handle)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterCallbackInterfaceAudioSummaryListener_lower(_ v: AudioSummaryListener) -> UInt64 {
+    return FfiConverterCallbackInterfaceAudioSummaryListener.lower(v)
+}
+
+
+
+
 /**
  * Implemented in Kotlin (logcat) and Swift (os_log): the telemetry port,
  * fulfilled by the platform.
@@ -3208,6 +3726,31 @@ fileprivate struct FfiConverterSequenceTypeAppPreviewScreen: FfiConverterRustBuf
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterSequenceTypeAudioWorkRowView: FfiConverterRustBuffer {
+    typealias SwiftType = [AudioWorkRowView]
+
+    public static func write(_ value: [AudioWorkRowView], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for item in value {
+            FfiConverterTypeAudioWorkRowView.write(item, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [AudioWorkRowView] {
+        let len: Int32 = try readInt(&buf)
+        var seq = [AudioWorkRowView]()
+        seq.reserveCapacity(Int(len))
+        for _ in 0 ..< len {
+            seq.append(try FfiConverterTypeAudioWorkRowView.read(from: &buf))
+        }
+        return seq
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterSequenceTypeColumnView: FfiConverterRustBuffer {
     typealias SwiftType = [ColumnView]
 
@@ -3486,10 +4029,37 @@ private let initializationResult: InitializationResult = {
     if (uniffi_taskr_ffi_checksum_method_apppresenter_dispatch_with() != 2182) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_taskr_ffi_checksum_method_audiosummarypresenter_cancel() != 3290) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_audiosummarypresenter_current() != 42684) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_audiosummarypresenter_dispose() != 42517) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_audiosummarypresenter_refresh() != 8993) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_audiosummarypresenter_select() != 51624) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_audiosummarypresenter_start() != 49691) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_audiosummarypresenter_suspend() != 28501) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_method_audiosummarypresenter_watch() != 3039) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_taskr_ffi_checksum_constructor_tasklistpresenter_new() != 5340) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_taskr_ffi_checksum_constructor_apppresenter_new() != 28040) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_taskr_ffi_checksum_constructor_audiosummarypresenter_new() != 21624) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_taskr_ffi_checksum_method_logsink_log() != 58403) {
@@ -3507,8 +4077,12 @@ private let initializationResult: InitializationResult = {
     if (uniffi_taskr_ffi_checksum_method_sessionvault_clear() != 46996) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_taskr_ffi_checksum_method_audiosummarylistener_on_view() != 2439) {
+        return InitializationResult.apiChecksumMismatch
+    }
 
     uniffiCallbackInitAppViewListener()
+    uniffiCallbackInitAudioSummaryListener()
     uniffiCallbackInitLogSink()
     uniffiCallbackInitSessionVault()
     return InitializationResult.ok

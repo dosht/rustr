@@ -11,6 +11,8 @@
 mod adapters;
 mod app_dto;
 mod dto;
+mod summary;
+mod summary_dto;
 
 use std::rc::Rc;
 use std::sync::Arc;
@@ -181,7 +183,11 @@ mod export_fixtures {
             .into_iter()
             .map(|(name, view)| (name, serde_json::to_value(view).unwrap()))
             .collect();
-        let json = serde_json::json!({ "tasks": tasks, "app": app });
+        let summary: serde_json::Map<String, serde_json::Value> = taskr_client::audio_summary::fixtures::all()
+            .into_iter()
+            .map(|(name, view)| (name, serde_json::to_value(summary_dto::AudioSummaryView::from(view)).unwrap()))
+            .collect();
+        let json = serde_json::json!({ "tasks": tasks, "app": app, "summary": summary });
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../../apps/web/src/lib/core/fixtures.json");
         std::fs::write(&path, serde_json::to_string_pretty(&json).unwrap() + "\n").unwrap();

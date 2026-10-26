@@ -1,0 +1,33 @@
+# Media transport provenance
+
+All test responses are synthetic, served by local Axum HTTP servers. No customer data, provider credentials, authenticated provider requests, sandbox requests or production API requests were used. These tests exercise real reqwest transports and local signing, not live service acceptance. Execution belongs to the integration lead; this owner did not run builds, tests or formatters.
+
+## Wire sources
+
+| Transport | Public protocol and captured source |
+|---|---|
+| Soniox | [Create](https://soniox.com/docs/api-reference/stt/transcriptions/create_transcription), [transcript](https://soniox.com/docs/api-reference/stt/transcriptions/get_transcription_transcript), [listing/cursor](https://soniox.com/docs/api-reference/stt/transcriptions/get_transcriptions), [webhooks](https://soniox.com/docs/stt/async/webhooks), [models](https://soniox.com/docs/stt/models). Captured Transgate `src/services/unified-transcription/providers/soniox.ts:123-186`, `src/utils/soniox.ts:137-172`. New requests explicitly require `stt-async-v5` (D11). |
+| Deepgram | [Callback and Basic authentication](https://developers.deepgram.com/docs/callback), [Whisper Cloud](https://developers.deepgram.com/docs/deepgram-whisper-cloud), [data handling](https://developers.deepgram.com/trust-security/your-data). Captured `src/utils/deepgram.ts:134-178`, `src/pages/api/deepgram/callback.ts:38-55`, offered code table `src/domain/languages.ts:65-126`. D3 adds `mip_opt_out=true`; D4 permits the global endpoint. |
+| GCS/R2 | [GCS signatures](https://cloud.google.com/storage/docs/authentication/signatures) expressly supports HMAC keys with AWS4-HMAC-SHA256, x-amz extensions and `s3/aws4_request` scope. [R2 presigned URLs](https://developers.cloudflare.com/r2/api/s3/presigned-urls/), [GCS retention](https://cloud.google.com/storage/docs/bucket-lock). `rusty-s3` 0.10 generates signatures; tests independently recompute HMAC/canonical requests rather than calling its signer as an oracle. |
+| Legacy Supabase | [Official storage-js transport](https://github.com/supabase/storage-js/blob/master/src/packages/StorageFileApi.ts): GET `/object/info/{bucket}/{path}`, POST `/object/list/{bucket}`, DELETE `/object/{bucket}` with `prefixes`. [InfoRenderer](https://github.com/supabase/storage/blob/master/src/storage/renderer/info.ts) supplies root `size`, `content_type` and `etag`; `metadata` is user metadata, never a storage-property fallback. Adapter fixes the bucket to `jobs`, with configured service authority, and does not implement new uploads or signed access. |
+| Paid captions | Captured `src/features/transcription/services/youtube/TranscriptApiService.ts:1-123`: GET `https://transcriptapi.com/api/v2/youtube/transcript`, Bearer key, `video_url`, JSON, timestamps, metadata. [Provider docs](https://transcriptapi.com/docs/api/). |
+| Public captions | Captured `PublicTranscriptService.ts:108-157` and installed MIT `youtube-transcript` **1.3.0** `dist/youtube-transcript.esm.js:30-63`: Android InnerTube player 20.10.38, then one watch-page discovery attempt when InnerTube has no tracks or fails (network, non-2xx, malformed JSON), then selected YouTube caption-track XML. [Upstream](https://github.com/Kakulukian/youtube-transcript). Final watch-page/track failures propagate; no endpoint retry loop or paid service fallback. XML schema determines milliseconds (`p/t/d`) versus seconds (`text/start/dur`), rather than guessing from cue duration. |
+| YouTube metadata | Captured `YouTubeMetadataService.ts:56-103`: Data API v3 `videos`, `part=snippet,contentDetails`, key, raw `defaultAudioLanguage` before `defaultLanguage`. Product language mapping/defaults remain core-owned. |
+
+## Security and operational boundaries
+
+- External audio is DNS-checked, socket-pinned, redirect-checked and spooled to an anonymous local file before a private storage PUT. Every resolved address must be globally routable; failures fail closed. No environment proxy, DNS-rebinding window, development bypass, embedded credentials or production private-IP exemption. The local DNS fixture override exists only under `cfg(test)`.
+- `ControlledFetcher::post_json` applies the same destination policy to customer callback delivery, but never follows redirects with a private payload. Delivery retry policy belongs to the host.
+- Provider/storage HTTP clients disable automatic redirects and retries. Connect/request/read deadlines and bounded JSON/XML bodies are operational limits, not new product audio-duration limits. Audio staging streams through disk with a definite PUT content length.
+- Callback verification authenticates before parsing. `CallbackBinding.expected_remote_id=None` admits an authenticated pre-ack remote identity for **core adoption**, not an adapter-side state mutation. Once bound, a different id is rejected. Duplicate auth headers are rejected.
+- Soniox webhook completion fetches **only the transcript endpoint**. The webhook's optional `audio_duration_ms` is retained unchanged; recovery-poll duration has its own origin. The provider transcript/token payload, Deepgram alternatives/words/paragraphs and unknown JSON fields remain available to pure product normalization.
+- `SecretString`, `SensitiveUrl` and raw provider-payload Debug output are redacted. Serialization intentionally retains payload/capability values for durable intake; never log serialized bodies, headers or `.expose()` values.
+- Host/core own authorization, D9 erasure barriers, manifest-before-I/O, TTL selection, public caption caching/rate limits, routing, retry, minute rounding and final erasure completion. A listing miss is not a nonacceptance proof.
+
+## Live acceptance not proved
+
+- Soniox account/model entitlement, production callback delivery and provider capacity behavior.
+- Global Deepgram Whisper acceptance of all 61 offered codes, especially `hy,is,mi,ne,ka,la,uz,lb`. The fixture proves serialization and opt-out/auth options only. No fake transcript fills that gap.
+- GCS HMAC credentials and deployed retention/soft-delete policies, R2 account/lifecycle settings, legacy Supabase deployed service authority, paid caption quota, and current public YouTube availability.
+- Deepgram has no per-transcript delete/recovery API in this contract. Opt-out is not proof that operational metadata/logs were erased: `Unsupported` is explicit, never `Deleted`.
+- GCS retention/hold refusal and Soniox processing-state refusal are `Retained`; permission/unavailable answers remain errors. Ordinary Iyzico cancellation remains the manual-support policy; the separate D10 erasure port is documented in the billing gateway's fixture provenance.

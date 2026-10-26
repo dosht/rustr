@@ -4,12 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.taskr.android.ui.AppScreen
 import dev.taskr.android.ui.TaskListScreen
+import dev.taskr.android.ui.TaskrTheme
 import dev.taskr.core.AppConfig
 import dev.taskr.core.AppPresenter
 import dev.taskr.core.TaskListPresenter
@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         val authUrl = BuildConfig.TASKR_AUTH_URL.ifEmpty { null }
         val authKey = BuildConfig.TASKR_AUTH_KEY.ifEmpty { null }
         setContent {
-            MaterialTheme {
+            TaskrTheme {
                 if (apiUrl.isNotEmpty()) {
                     val model: AppViewModel = viewModel {
                         val config = AppConfig(apiUrl, authUrl, authKey)

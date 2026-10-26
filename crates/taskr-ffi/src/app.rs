@@ -47,7 +47,7 @@ struct StoredSession {
     expires_at: Option<i64>,
 }
 
-struct VaultStore(Box<dyn SessionVault>);
+pub(crate) struct VaultStore(pub(crate) Box<dyn SessionVault>);
 
 impl SessionStore for VaultStore {
     fn load(&self) -> Option<Session> {

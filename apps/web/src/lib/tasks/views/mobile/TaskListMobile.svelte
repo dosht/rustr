@@ -153,7 +153,7 @@
     height: 24px;
     border: 2px solid var(--border);
     border-radius: 50%;
-    color: var(--bg);
+    color: var(--on-accent);
   }
   .card.done .check {
     background: var(--accent);

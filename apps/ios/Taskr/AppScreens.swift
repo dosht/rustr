@@ -8,14 +8,17 @@ struct AppRootView: View {
     let onIntent: (AppIntent) -> Void
 
     var body: some View {
-        switch view {
-        case .starting:
-            ProgressView()
-        case .signedOut(let signIn):
-            SignInScreen(view: signIn, devSignIn: devSignIn, onIntent: onIntent)
-        case .signedIn(let signedIn):
-            AppFrame(view: signedIn, onIntent: onIntent)
+        Group {
+            switch view {
+            case .starting:
+                ProgressView()
+            case .signedOut(let signIn):
+                SignInScreen(view: signIn, devSignIn: devSignIn, onIntent: onIntent)
+            case .signedIn(let signedIn):
+                AppFrame(view: signedIn, onIntent: onIntent)
+            }
         }
+        .modifier(TaskrTheme())
     }
 }
 
@@ -39,12 +42,14 @@ struct SignInScreen: View {
                         .textContentType(.password)
                 }
             } header: {
-                Text("taskr").font(.largeTitle.bold()).foregroundStyle(.green)
+                Text("taskr").font(.largeTitle.bold()).foregroundStyle(DesignTokens.current.accent)
             } footer: {
                 if devSignIn { Text("Dev sign-in: any email, no password.") }
             }
+            .listRowBackground(DesignTokens.current.surface)
             if let message = view.error ?? view.notice {
-                Text(message).foregroundStyle(view.error != nil ? Color.red : Color.secondary)
+                Text(message).foregroundStyle(view.error != nil ? DesignTokens.current.error : DesignTokens.current.fg)
+                    .listRowBackground(view.error != nil ? DesignTokens.current.errorBg : DesignTokens.current.noticeBg)
             }
             Section {
                 Button("Sign in") { onIntent(.signInSubmitted(email: email, password: password)) }
@@ -53,7 +58,10 @@ struct SignInScreen: View {
                 }
             }
             .disabled(view.busy)
+            .listRowBackground(DesignTokens.current.surface)
         }
+        .scrollContentBackground(.hidden)
+        .background(DesignTokens.current.bg)
     }
 }
 
@@ -72,11 +80,12 @@ struct AppFrame: View {
                             HStack {
                                 Text(w.name).fontWeight(w.selected ? .semibold : .regular)
                                 Spacer()
-                                Text(w.roleLabel).font(.caption).foregroundStyle(.secondary)
+                                Text(w.roleLabel).font(.caption).foregroundStyle(DesignTokens.current.muted)
                             }
                         }
                     }
                 }
+                .listRowBackground(DesignTokens.current.surface)
                 Section("Sections") {
                     ForEach(view.screens, id: \.label) { s in
                         Button {
@@ -86,20 +95,25 @@ struct AppFrame: View {
                         }
                     }
                 }
+                .listRowBackground(DesignTokens.current.surface)
                 Section(view.email) {
                     Button("Sign out", role: .destructive) { onIntent(.signOutRequested) }
                 }
+                .listRowBackground(DesignTokens.current.surface)
             }
+            .scrollContentBackground(.hidden)
+            .background(DesignTokens.current.bg)
             .navigationTitle("taskr")
         } detail: {
             VStack(spacing: 0) {
                 if let error = view.error {
                     HStack {
-                        Text(error).foregroundStyle(.red)
+                        Text(error).foregroundStyle(DesignTokens.current.error)
                         Spacer()
                         Button("Dismiss") { onIntent(.messageDismissed) }
                     }
                     .padding()
+                    .background(DesignTokens.current.errorBg)
                 }
                 switch view.screen {
                 case .loading:
@@ -140,13 +154,15 @@ struct MembersContent: View {
                         email = ""
                     }
                 }
+                .listRowBackground(DesignTokens.current.surface)
             }
             if let message = view.error ?? view.notice {
                 HStack {
-                    Text(message).foregroundStyle(view.error != nil ? Color.red : Color.secondary)
+                    Text(message).foregroundStyle(view.error != nil ? DesignTokens.current.error : DesignTokens.current.fg)
                     Spacer()
                     Button("Dismiss") { onIntent(.messageDismissed) }
                 }
+                .listRowBackground(view.error != nil ? DesignTokens.current.errorBg : DesignTokens.current.noticeBg)
             }
             Section("Members") {
                 ForEach(view.rows, id: \.email) { row in
@@ -163,7 +179,7 @@ struct MembersContent: View {
                             )
                             .labelsHidden()
                         } else {
-                            Text(row.roleLabel).foregroundStyle(.secondary)
+                            Text(row.roleLabel).foregroundStyle(DesignTokens.current.muted)
                         }
                     }
                     .swipeActions {
@@ -175,7 +191,10 @@ struct MembersContent: View {
                     }
                 }
             }
+            .listRowBackground(DesignTokens.current.surface)
         }
+        .scrollContentBackground(.hidden)
+        .background(DesignTokens.current.bg)
     }
 }
 

@@ -1,0 +1,9 @@
+[package]
+name = "llm-core"
+description = "Std-only completion ports and bounded text-stream presentation state"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+path = "src/lib.rs"

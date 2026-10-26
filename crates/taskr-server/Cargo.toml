@@ -15,6 +15,8 @@ taskr-core = { workspace = true, features = ["testing"] }
 taskr-api.workspace = true
 taskr-infra = { workspace = true, features = ["native"] }
 taskr-postgres.workspace = true
+taskr-billing = { path = "../taskr-billing" }
+taskr-work = { path = "../taskr-work" }
 serde.workspace = true
 serde_json.workspace = true
 axum = "0.8"
@@ -27,3 +29,6 @@ uuid = { version = "1", features = ["v4"] }
 [dev-dependencies]
 serde_json.workspace = true
 taskr-client.workspace = true
+billing-lemonsqueezy = { path = "../../modules/billing/gateways/lemonsqueezy" }
+billing-postgres = { path = "../../modules/billing/postgres" }
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "json", "uuid"] }

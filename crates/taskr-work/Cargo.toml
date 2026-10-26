@@ -1,0 +1,28 @@
+[package]
+name = "taskr-work"
+description = "taskr's explicit audio-work sample: an upload, two-provider fallback, lease recovery, retention and erasure over its own aggregate, in the billing sample's database so account erasure is one transaction. Not taskr-core and not Transgate."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+media-adapters = { path = "../media-adapters" }
+media-ports = { path = "../media-ports" }
+media-postgres = { path = "../media-postgres" }
+billing-core = { path = "../../modules/billing/core" }
+billing-http = { path = "../../modules/billing/http" }
+billing-postgres = { path = "../../modules/billing/postgres" }
+taskr-billing = { path = "../taskr-billing" }
+llm-core = { path = "../llm-core" }
+llm-http = { path = "../llm-http" }
+futures-util = "0.3"
+serde.workspace = true
+serde_json.workspace = true
+axum = "0.8"
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "migrate", "macros", "json", "uuid"] }
+sha2 = "0.10"
+tokio = { version = "1", features = ["rt", "time", "sync"] }
+uuid = { version = "1", features = ["serde", "v4"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"] }

@@ -7,15 +7,17 @@ use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, BorderType, Cell, Clear, Paragraph, Row, Table, TableState};
 use taskr_core::tasks::presentation::Align;
 
+use crate::design_tokens::DEFAULT_DARK as THEME;
 use crate::keymap::{Binding, INPUT_MODE_HELP, MEMBERS_KEYS, TASKS_KEYS, active, hint_bar};
 use crate::shell::{Mode, Screen, Shell};
 
-const ACCENT: Color = Color::Rgb(0x8e, 0xc0, 0x7c);
-const DIM: Color = Color::Rgb(0x6b, 0x70, 0x89);
-const KEY: Color = Color::Rgb(0xe5, 0xc0, 0x7b);
-const ERROR: Color = Color::Rgb(0xe0, 0x6c, 0x75);
+const ACCENT: Color = THEME.accent;
+const DIM: Color = THEME.muted;
+const KEY: Color = THEME.accent;
+const ERROR: Color = THEME.error;
 
 pub fn draw(f: &mut Frame, shell: &Shell) {
+    f.render_widget(Block::default().style(Style::new().fg(THEME.fg).bg(THEME.bg)), f.area());
     let [tabs, input, body, message, hints] = Layout::vertical([
         Constraint::Length(1),
         Constraint::Length(1),
@@ -47,7 +49,7 @@ fn keys_for(shell: &Shell) -> &'static [Binding] {
 }
 
 fn draw_tabs(f: &mut Frame, shell: &Shell, area: Rect) {
-    let mut spans = vec![Span::styled(" taskr ", Style::new().fg(Color::Black).bg(ACCENT).bold())];
+    let mut spans = vec![Span::styled(" taskr ", Style::new().fg(THEME.on_accent).bg(ACCENT).bold())];
     if let Some(title) = shell.title() {
         spans.push(Span::styled(format!(" {title} "), Style::new().fg(ACCENT).bold()));
     }
@@ -136,7 +138,7 @@ fn draw_table(f: &mut Frame, shell: &Shell, area: Rect) {
         .header(header)
         .block(block)
         .column_spacing(2)
-        .row_highlight_style(Style::new().fg(Color::Black).bg(ACCENT))
+        .row_highlight_style(Style::new().fg(THEME.on_accent).bg(ACCENT))
         .highlight_symbol("▌");
     let mut state = TableState::default().with_selected(Some(shell.cursor));
     f.render_stateful_widget(table, area, &mut state);
@@ -155,7 +157,7 @@ fn draw_members(f: &mut Frame, shell: &Shell, area: Rect) {
         .header(header)
         .block(block)
         .column_spacing(2)
-        .row_highlight_style(Style::new().fg(Color::Black).bg(ACCENT))
+        .row_highlight_style(Style::new().fg(THEME.on_accent).bg(ACCENT))
         .highlight_symbol("▌");
     let mut state = TableState::default().with_selected(Some(shell.member_cursor));
     f.render_stateful_widget(table, area, &mut state);
@@ -248,6 +250,7 @@ fn draw_help(f: &mut Frame, shell: &Shell) {
     f.render_widget(Clear, area);
     let block = Block::bordered()
         .border_type(BorderType::Rounded)
+        .style(Style::new().fg(THEME.fg).bg(THEME.surface))
         .border_style(Style::new().fg(ACCENT))
         .title(" Keys (any key closes) ");
     f.render_widget(Paragraph::new(lines).block(block), area);

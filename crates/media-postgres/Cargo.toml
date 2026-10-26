@@ -1,0 +1,13 @@
+[package]
+name = "media-postgres"
+description = "Shared PostgreSQL scheduling primitives for media work: dedicated-connection advisory locks and durable UTC schedule slots. No workflow engine."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "migrate", "macros", "uuid"] }
+uuid = { version = "1", features = ["v4", "v5"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }

@@ -1,6 +1,7 @@
 //! Composition root for the TUI: adapters in, event loop out. After
 //! `taskr login` (which saves the server and the session), it opens signed in.
 
+mod design_tokens;
 mod keymap;
 mod shell;
 mod view;
