@@ -1,0 +1,2 @@
+# Parser fixtures are byte-exact captures (some contain CRLF); never normalize line endings.
+transgate/core/src/ai/analysis/fixtures/** -text
