@@ -1,0 +1,8 @@
+# Explicit --config only. No model-role, memory, auth or persistent-setting changes.
+advisor:
+  enabled: false
+prewalk:
+  enabled: false
+  auto: "off"
+retry:
+  modelFallback: false
