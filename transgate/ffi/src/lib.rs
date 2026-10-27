@@ -18,7 +18,7 @@ uniffi::setup_scaffolding!();
 /// a missing key, argument or locale is an error, never a fallback (D3).
 #[uniffi::export]
 pub fn translate(locale: String, message: transgate_core::presentation::msg::Msg) -> Result<String, FfiError> {
-    transgate_i18n::translate(&locale, &message).map_err(|e| FfiError::Translate { message: e.to_string() })
+    transgate_i18n::translate(&locale, &message).map_err(|e| FfiError::Translate { reason: e.to_string() })
 }
 
 /// The UI locales, in catalog order.

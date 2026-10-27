@@ -8,6 +8,9 @@ license.workspace = true
 [lib]
 crate-type = ["lib", "cdylib", "staticlib"]
 name = "transgate_ffi"
+# rustdoc compiles the crate again and sees the remote declarations next to the
+# core types they repeat (E0255). There are no doctests to run.
+doctest = false
 
 [[bin]]
 name = "uniffi-bindgen"

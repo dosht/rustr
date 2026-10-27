@@ -46,15 +46,16 @@ pub struct PresenterConfig {
 pub enum FfiError {
     /// The presenter was disposed, or its thread ended.
     Disposed,
-    Start { message: String },
-    Translate { message: String },
+    /// `reason`, not `message`: a Kotlin `Throwable` already owns `message`.
+    Start { reason: String },
+    Translate { reason: String },
 }
 
 impl std::fmt::Display for FfiError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             FfiError::Disposed => write!(f, "the presenter is disposed"),
-            FfiError::Start { message } | FfiError::Translate { message } => write!(f, "{message}"),
+            FfiError::Start { reason } | FfiError::Translate { reason } => write!(f, "{reason}"),
         }
     }
 }
@@ -134,7 +135,7 @@ impl TransgatePresenter {
                     listener.view_changed(view);
                 }
             })
-            .map_err(|e| FfiError::Start { message: e.to_string() })?;
+            .map_err(|e| FfiError::Start { reason: e.to_string() })?;
 
         thread::Builder::new()
             .name("transgate-driver".into())
@@ -165,9 +166,9 @@ impl TransgatePresenter {
                     driver.dispose();
                 });
             })
-            .map_err(|e| FfiError::Start { message: e.to_string() })?;
+            .map_err(|e| FfiError::Start { reason: e.to_string() })?;
 
-        started.recv().map_err(|_| FfiError::Start { message: "the driver thread ended before it started".into() })?.map_err(|message| FfiError::Start { message })?;
+        started.recv().map_err(|_| FfiError::Start { reason: "the driver thread ended before it started".into() })?.map_err(|reason| FfiError::Start { reason })?;
         Ok(Arc::new(TransgatePresenter { commands: Mutex::new(Some(commands)) }))
     }
 
