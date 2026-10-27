@@ -148,8 +148,8 @@ private fun DrawerContent(vm: SignedInVm, send: (AppIntent) -> Unit, host: Shell
         }
         item { DrawerRow(tk(Ns.COMMON, "mobile.navigation.bottomSheet.title"), "nav-settings") { go(AppIntent.Settings(SettingsIntent.Opened)) } }
         item { DrawerRow(tk(Ns.COMMON, "mobile.navigation.bottomSheet.support"), "nav-support") { go(AppIntent.Support(SupportIntent.Opened)) } }
-        item { DrawerRow(tk(Ns.COMMON, "Billing History"), "nav-billing") { close(); host.openWeb("/billing") } }
-        item { DrawerRow(tk(Ns.COMMON, "API Keys"), "nav-api-keys") { close(); host.openWeb("/dashboard/api-keys") } }
+        item { DrawerRow(tk(Ns.COMMON, "Billing History"), "nav-billing") { close(); host.openWeb(Route.Billing, vm.locale) } }
+        item { DrawerRow(tk(Ns.COMMON, "API Keys"), "nav-api-keys") { close(); host.openWeb(Route.ApiKeys, vm.locale) } }
         item { DrawerRow(tk(Ns.COMMON, "mobile.navigation.bottomSheet.logout"), "nav-sign-out") { go(AppIntent.SignOutRequested) } }
     }
 }

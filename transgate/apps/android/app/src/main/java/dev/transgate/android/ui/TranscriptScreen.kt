@@ -160,7 +160,7 @@ private fun TranscriptHeader(vm: TranscriptVm) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 if (badge.spinning) CircularProgressIndicator(Modifier.size(12.dp), strokeWidth = 2.dp)
-                Text(badge.label.text(), style = MaterialTheme.typography.labelMedium, color = Tone.NEUTRAL.color())
+                Text(badge.label.text(), style = MaterialTheme.typography.labelMedium, color = badge.tone.color())
             }
         }
     }

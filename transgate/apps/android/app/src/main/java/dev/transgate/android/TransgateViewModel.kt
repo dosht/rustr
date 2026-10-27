@@ -60,7 +60,7 @@ class TransgateViewModel(app: Application) : AndroidViewModel(app) {
         player = player,
         files = files,
         openUrl = outputs::leave,
-        webUrl = BuildConfig.TRANSGATE_WEB_URL,
+        webOrigin = BuildConfig.TRANSGATE_WEB_URL,
     )
 
     init {

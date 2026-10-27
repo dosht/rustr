@@ -19,9 +19,8 @@
 - **Player:** `PlayerHost`, one `MediaPlayer`; reports `PlayerState` to core, serves the pause/resume/seek ports. D11: a YouTube transcript mounts no player; `seek` opens `watch?v=ID&t=Ns` in the YouTube app or browser.
 - **Output:** clipboard, save (MediaStore Downloads, API 29+), preview (FileProvider + `ACTION_VIEW`), share (chooser). Documents handed to other apps are staged under `cache/outgoing`.
 - **Assets (D10):** the fonts and invoice logo are read from `transgate/export/{fonts,assets}` as Gradle asset dirs (one copy, no duplicate); `provenance.json` is excluded, the OFL texts ship.
-- **D6:** balance is shown. There is no purchase button, no store link and no external purchase link. The 402 alert shows its text and OK only. Invoices and API keys are two drawer rows that open `webUrl/billing` and `webUrl/dashboard/api-keys` in a Custom Tab (`-Ptransgate.webUrl`).
 - **TLS (D9):** bundled roots, in `transgate-client`; the `.so` is the only thing the shell links.
-
+- **D6:** balance is shown. There is no purchase button, no store link and no external purchase link. The 402 alert shows its text and OK only. Invoices and API keys are two drawer rows that open core's `web_url(webOrigin, Route::Billing | Route::ApiKeys, locale)` in a Custom Tab; `webOrigin` is the https web origin (`-Ptransgate.webUrl`), never the auth-callback scheme, and the shell holds no path.
 ## Build
 
 ```sh
@@ -48,4 +47,4 @@ Account precondition: its newest job is COMPLETED with lines. Tests: sign in sho
 
 ## Not proven
 
-Nothing here has run on a device or emulator. Proven: Kotlin compiles, `assembleDebug` and `assembleDebugAndroidTest` link, the keycheck (every fixed label exists in all 16 catalogs) passes, bindings `--check` matched at the time of writing. Unproven: every runtime behavior (Keystore on Waydroid, Custom Tab return, signed PUT, MediaPlayer, layout of any screen, the UiAutomator run itself).
+Nothing here has run on a device or emulator. Proven: Kotlin compiles, `assembleDebug` and `assembleDebugAndroidTest` link, both `.so` ABIs (x86_64 and arm64-v8a) cross-compile, the keycheck (every fixed label exists in all 16 catalogs) passes, bindings `--check` matched at the time of writing. Unproven: every runtime behavior (Keystore on Waydroid, Custom Tab return, signed PUT, MediaPlayer, layout of any screen, the UiAutomator run itself).
