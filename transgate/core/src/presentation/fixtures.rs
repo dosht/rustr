@@ -47,6 +47,7 @@ pub fn job(id: i64, status: JobStatus, name: &str) -> Job {
         source: JobSource::Upload { storage: StorageProvider::Gcs, object: None },
         language: Language::from_name("English"),
         translate_to: vec![],
+        unmapped_translation_target: None,
         speakers: true,
         fix_grammer: None,
         duration_minutes: Some(12),

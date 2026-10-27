@@ -927,6 +927,16 @@ impl Jobs {
             if !matches!(job.status, JobStatus::NotStarted | JobStatus::Pending) {
                 return Ok(JobResult { job_id, status: job.status, estimated_completion: None, error: None });
             }
+            // TRX-023, LNG-013: a target without a code fails the job; no fallback.
+            if let Some(target) = &job.unmapped_translation_target {
+                let message = format!("Translation language mapping failed for job {}: Unsupported language \"{target}\"", job_id.0);
+                let failure = serde_json::json!({
+                    "message": message,
+                    "code": retry::ErrorType::InvalidRequest.as_str(),
+                    "provider": Provider::Soniox.as_str(),
+                });
+                return self.fail_job(job_id, failure).await;
+            }
             let availability = self.availability(&job).await?;
             let next = if tried.is_empty() {
                 match routing::first_choice(&job, &prefs, &availability, &self.config.routing) {

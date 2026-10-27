@@ -41,6 +41,12 @@ fn names(languages: &[transgate_core::languages::Language]) -> Vec<&'static str>
     languages.iter().map(|l| l.name()).collect()
 }
 
+/// The targets as stored: a name the language table has no code for (TRX-023) is kept, so saving a
+/// job that failed because of it does not erase the evidence.
+fn stored_targets(job: &Job) -> Vec<String> {
+    job.unmapped_translation_target.iter().cloned().chain(job.translate_to.iter().map(|l| l.name().to_string())).collect()
+}
+
 fn event_account(event: &JobEvent) -> AccountId {
     match event {
         JobEvent::Completed { account, .. } | JobEvent::Failed { account, .. } => *account,
@@ -253,7 +259,7 @@ impl JobUow for PgJobUow {
             .bind(&job.name)
             .bind(Json(&job.source))
             .bind(job.language.map(|l| l.name()))
-            .bind(names(&job.translate_to))
+            .bind(stored_targets(job))
             .bind(job.speakers)
             .bind(job.fix_grammer)
             .bind(job.duration_minutes)

@@ -496,6 +496,12 @@ async fn trx_023_lng_013_a_stored_target_without_a_code_fails_the_job_and_never_
     let message = error["message"].as_str().unwrap_or_default();
     assert!(message.starts_with("Translation language mapping failed") && message.contains("Klingon"), "{error}");
     assert_eq!(error["code"], "invalid_request");
-    let healthy_status: String = sqlx::query_scalar("SELECT status FROM transgate_jobs.jobs WHERE id = $1").bind(healthy.0).fetch_one(&w.owner).await.unwrap();
-    assert_ne!(healthy_status, "failed", "only the unmapped job fails: {healthy_status}");
+    let healthy_error: Option<serde_json::Value> = sqlx::query_scalar("SELECT error FROM transgate_jobs.jobs WHERE id = $1").bind(healthy.0).fetch_one(&w.owner).await.unwrap();
+    assert!(
+        !healthy_error.map(|e| e.to_string()).unwrap_or_default().contains("mapping failed"),
+        "only the unmapped job fails for its target; this world has no providers, so the other fails for that"
+    );
+    // The saved failed job still carries the stored name.
+    let stored: Vec<String> = sqlx::query_scalar("SELECT unnest(translate_to) FROM transgate_jobs.jobs WHERE id = $1").bind(broken.0).fetch_all(&w.owner).await.unwrap();
+    assert_eq!(stored, vec!["Klingon".to_string()], "saving the failed job keeps the stored target");
 }

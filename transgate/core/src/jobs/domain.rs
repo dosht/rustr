@@ -260,6 +260,11 @@ pub struct Job {
     pub language: Option<Language>,
     /// Only the first entry is ever sent (TRL-002).
     pub translate_to: Vec<Language>,
+    /// TRX-023, LNG-013: the stored first target when it has no ISO code (imported
+    /// or hand-written rows). Such a job fails at dispatch; `translate_to` then holds
+    /// only the mapped rest and is never sent.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unmapped_translation_target: Option<String>,
     pub speakers: bool,
     pub fix_grammer: Option<bool>,
     /// Billed whole minutes (`smallint`); `None` until known.
@@ -291,10 +296,14 @@ pub struct Job {
 
 impl Job {
     pub fn is_translation(&self) -> bool {
-        !self.translate_to.is_empty()
+        !self.translate_to.is_empty() || self.unmapped_translation_target.is_some()
     }
 
+    /// The one target sent (TRL-002); none when the stored first target has no code.
     pub fn translation_target(&self) -> Option<Language> {
+        if self.unmapped_translation_target.is_some() {
+            return None;
+        }
         self.translate_to.first().copied()
     }
 

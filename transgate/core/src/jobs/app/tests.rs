@@ -1049,3 +1049,27 @@ fn prv_034_every_list_request_applies_the_current_unlimited_history() {
     });
     assert_eq!(ids(run(jobs.list(fixtures::account(), None, calendar)).unwrap()), vec![2, 1], "the next request sees the change");
 }
+
+// TRX-023, LNG-013: a stored first translation target with no ISO code (an imported or
+// hand-written row) fails the job at dispatch with the source message; nothing is
+// submitted and nothing falls back. The row still reads (no store decode error).
+#[test]
+fn trx_023_lng_013_an_unmapped_stored_target_fails_the_job_at_dispatch() {
+    let w = World::new();
+    let jobs = w.jobs();
+    let job = w.draft(&jobs, Some(2), "English");
+    w.store.with(|d| {
+        let j = d.jobs.get_mut(&job.id.0).unwrap();
+        j.translate_to = Language::from_name("German").into_iter().collect();
+        j.unmapped_translation_target = Some("Klingon".into());
+    });
+    w.soniox.accept("tx-1");
+    let answer = start(&jobs, vec![job.id]).unwrap();
+    assert_eq!(answer.results[0].status, JobStatus::Failed);
+    let failed = w.job(job.id);
+    assert_eq!(failed.status, JobStatus::Failed);
+    let message = failed.error.as_ref().and_then(|e| e["message"].as_str()).unwrap_or_default().to_string();
+    assert!(message.starts_with("Translation language mapping failed"), "{message}");
+    assert!(message.contains("\"Klingon\""), "{message}");
+    assert!(w.soniox.submitted.lock().unwrap().is_empty() && w.deepgram.submitted.lock().unwrap().is_empty(), "no provider, no fallback");
+}

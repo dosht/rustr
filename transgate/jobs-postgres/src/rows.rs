@@ -106,10 +106,9 @@ pub(crate) fn job_from(row: &PgRow) -> Result<Job, StoreError> {
         name: get(row, "job_name")?,
         source: get::<Json<_>>(row, "source")?.0,
         language: language(get(row, "language")?)?,
-        translate_to: targets
-            .into_iter()
-            .map(|t| Language::from_name(&t).ok_or_else(|| corrupt("translation target", format!("unknown language {t:?}"))))
-            .collect::<Result<_, _>>()?,
+        // TRX-023: a stored target without a code is not a corrupt row; the job fails at dispatch.
+        translate_to: targets.iter().filter_map(|t| Language::from_name(t)).collect(),
+        unmapped_translation_target: targets.iter().find(|t| Language::from_name(t).is_none()).cloned(),
         speakers: get(row, "speakers")?,
         fix_grammer: get(row, "fix_grammer")?,
         duration_minutes: get(row, "duration_minutes")?,

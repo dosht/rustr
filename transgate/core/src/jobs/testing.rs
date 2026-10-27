@@ -1001,6 +1001,7 @@ impl JobUow for MemUow {
             source: new.source.clone(),
             language: new.language,
             translate_to: new.translate_to.clone(),
+            unmapped_translation_target: None,
             speakers: new.speakers,
             fix_grammer: new.fix_grammer,
             duration_minutes: new.duration_minutes,
