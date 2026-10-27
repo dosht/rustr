@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Documents handed to the viewer or the share sheet. -->
+    <cache-path name="outgoing" path="outgoing/" />
+</paths>

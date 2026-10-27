@@ -23,3 +23,11 @@ apps/ios/TaskrCore.xcframework/
 *.swp
 apps/ios/Taskr/Info.plist
 apps/android/local.properties
+
+# transgate android shell
+transgate/apps/android/.gradle/
+transgate/apps/android/.kotlin/
+transgate/apps/android/build/
+transgate/apps/android/app/build/
+transgate/apps/android/app/src/main/jniLibs/
+transgate/apps/android/local.properties
