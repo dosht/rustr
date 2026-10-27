@@ -97,6 +97,7 @@
   "p5.history.translation_job": "Задание перевода",
   "p5.player.pause": "Пауза",
   "p5.player.play": "Воспроизвести",
+  "p5.player.seek": "Перемотка",
   "p5.player.skip_back": "Назад на 10 секунд",
   "p5.player.skip_forward": "Вперёд на 10 секунд",
   "p5.player.speed": "Скорость воспроизведения",

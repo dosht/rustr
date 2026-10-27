@@ -1137,7 +1137,7 @@
   ],
   "translationInput": {
     "path": "scripts/p5-locales/translations.json",
-    "sha256": "53514a62351b7d540e2089049cf144942ad9053efc013700e2a5c917b76b1c07"
+    "sha256": "d5b0b6d74b9a6efb7b7cf962ae4d044d339a04bdc748b3f834777b0217744796"
   },
   "sourceEquivalentReuse": [
     {
@@ -3129,7 +3129,8 @@
     "S1 s1-20261026142204 failed with six invalid_value entries in pt/common (10,11,12,18,20,21). Original Portuguese source contains empty strings. Explicit pt/common overrides now supply the actual English meanings: Footer,09,10,Thank You,Confirm Checkout,Not Enough Balance; numeric keys are opaque IDs, not their displayed values.",
     "The six Portuguese corrections are authoritative regeneration inputs, mirrored in translatedSourceCorrections/resolutions and source_empty_value baseline/input evidence. Original source file hashes are retained. Validator and importer behavior are unchanged; no runtime fallback enabled.",
     "Working-source repair only: /home/mu/.cache/rustr-integration/s1-20261026142204 and its failed evidence remain immutable. No worker validation/import/capture/test rerun; passing a future fresh gate is not claimed.",
-    "Separate same-slice p1Z request: five actual source YouTube resize/corner control keys added in all16 app catalogs with source references; no aliases for prior machine keys."
+    "Separate same-slice p1Z request: five actual source YouTube resize/corner control keys added in all16 app catalogs with source references; no aliases for prior machine keys.",
+    "REPAIR-P5-11: new P5 key app:p5.player.seek (English \"Seek\", accessible name of the player seek slider, PlayerControls.svelte:36) added in all16 with authored translations. New approved key, not source-derived; no fallback-baseline entry (approved origin)."
   ],
   "resolutions": [
     {
@@ -22727,6 +22728,111 @@
       "key": "Move to bottom-right",
       "kind": "translated",
       "english": "Move to bottom-right"
+    },
+    {
+      "locale": "tr",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "pt",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "es",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "de",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "id",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "it",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "fr",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "el",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "ru",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "da",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "sv",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "no",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "fi",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "kk",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
+    },
+    {
+      "locale": "az",
+      "ns": "app",
+      "key": "p5.player.seek",
+      "kind": "translated",
+      "english": "Seek"
     }
   ]
 }

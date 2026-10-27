@@ -97,6 +97,7 @@
   "p5.history.translation_job": "Translation job",
   "p5.player.pause": "Pause",
   "p5.player.play": "Play",
+  "p5.player.seek": "Seek",
   "p5.player.skip_back": "Skip backward 10 seconds",
   "p5.player.skip_forward": "Skip forward 10 seconds",
   "p5.player.speed": "Playback Speed",

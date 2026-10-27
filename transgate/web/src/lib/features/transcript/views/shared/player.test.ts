@@ -20,6 +20,11 @@ for (const phone of [false, true]) describe(`${phone ? "phone" : "desktop"} play
     expect(screen.getByTestId("player-time")).toHaveTextContent("00:00:12 / 00:01:30");
   });
 });
+for (const phone of [false, true]) it(`${phone ? "phone" : "desktop"} seek slider has its own name, not the Show Time toggle's`, () => {
+  render(PlayerControls, { state: { playing: false, time: 5, duration: 90 }, title: "t", phone, ontoggle: vi.fn(), onseek: vi.fn(), onskip: vi.fn(), onrate: vi.fn() });
+  expect(screen.queryByRole("slider", { name: "Show Time" })).toBeNull();
+  expect(screen.getByRole("slider", { name: "Seek" })).toBeInTheDocument();
+});
 it("expansion retains the current playhead and exposes source skip and speed controls", async () => {
   const onskip = vi.fn(), onrate = vi.fn();
   render(PlayerControls, { state: { playing: true, time: 25, duration: 120 }, title: fixture("TranscriptVm", "completed").title, phone: true, expandedEnabled: true, ontoggle: vi.fn(), onseek: vi.fn(), onskip, onrate });

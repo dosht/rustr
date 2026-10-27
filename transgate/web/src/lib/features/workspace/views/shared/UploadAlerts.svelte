@@ -11,7 +11,7 @@
       {#if alert === "balance"}
         <h2 class="font-semibold">{i18n.tk("common", "Not enough balance.")}</h2>
         <p>{i18n.tk("common", "Your balance is not enough to run this job. Please top up your minutes and try again.")}</p>
-        <Button onclick={onpurchase}>{i18n.tk("common", "Add Balance")}</Button>
+        <Button onclick={onpurchase}>{i18n.tk("common", "Add minutes")}</Button>
       {:else if alert === "language"}
         <h2 class="font-semibold">{i18n.tk("common", "Language Selection Required")}</h2>
         <p>{i18n.tk("common", "Please select the audio language before starting transcription.")}</p>

@@ -33,7 +33,7 @@
       {#if full}<IconButton icon={SkipForward} label={i18n.tk("app", "p5.player.skip_forward")} {disabled} onclick={() => onskip(10)} />{/if}
       <div class="min-w-0 flex-1">
         <span data-testid="player-time" class="block text-xs tabular-nums text-muted">{clockTime(playback.time)} / {clockTime(playback.duration ?? 0)}</span>
-        <input type="range" min="0" max={playback.duration ?? 0} step="0.1" value={playback.time} disabled={disabled || playback.duration === null} aria-label={i18n.tk("app", "Show Time")} class="min-h-11 w-full accent-accent" oninput={(event) => onseek(Number(event.currentTarget.value))} />
+        <input type="range" min="0" max={playback.duration ?? 0} step="0.1" value={playback.time} disabled={disabled || playback.duration === null} aria-label={i18n.tk("app", "p5.player.seek")} class="min-h-11 w-full accent-accent" oninput={(event) => onseek(Number(event.currentTarget.value))} />
       </div>
     </div>
     {#if full}<Select label={i18n.tk("app", "p5.player.speed")} options={speeds} value={String(rate)} {disabled} onchange={(value) => onrate(Number(value))} />{/if}

@@ -4523,6 +4523,13 @@
         "sources": [
           "src/features/transcript-header/views/youtube-layouts/YouTubePlayerLayout.tsx:331-336"
         ]
+      },
+      "p5.player.seek": {
+        "english": "Seek",
+        "arguments": [],
+        "sources": [
+          "P5 D3/a11y: p1Z REPAIR-P5-11 new accessible name for the player seek slider (no source wording; new P5 key, not source-derived)"
+        ]
       }
     },
     "ai": {

@@ -4839,6 +4839,23 @@
       "fi": "Siirrä oikeaan alakulmaan",
       "kk": "Төменгі оң жақ бұрышқа жылжыту",
       "az": "Aşağı sağ küncə köçür"
+    },
+    "Seek": {
+      "tr": "Ara",
+      "pt": "Procurar",
+      "es": "Buscar",
+      "de": "Suchen",
+      "id": "Cari posisi",
+      "it": "Cerca",
+      "fr": "Rechercher",
+      "el": "Αναζήτηση",
+      "ru": "Перемотка",
+      "da": "Søg",
+      "sv": "Sök",
+      "no": "Søk",
+      "fi": "Siirry kohtaan",
+      "kk": "Іздеу",
+      "az": "Axtar"
     }
   },
   "pluralMessages": {

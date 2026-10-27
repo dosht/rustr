@@ -46,5 +46,12 @@ for (const [name, Component] of [["desktop", DesktopWorkspace], ["phone", Mobile
       if (name === "phone") expect(screen.queryByTestId("upload-start")).toBeNull();
       else expect(screen.getByTestId("upload-start")).toBeDisabled();
     });
+    it("labels the 402 balance action with the source wording", async () => {
+      const onpurchase = vi.fn();
+      render(Component, { vm: fixture("UploadQueueVm", "balance_alert"), youtube: true, fullName: "", onpick: vi.fn(), ondrop: vi.fn(), onIntent: vi.fn(), onpurchase });
+      expect(screen.queryByRole("button", { name: "Add Balance" })).toBeNull();
+      await userEvent.click(screen.getByRole("button", { name: "Add minutes" }));
+      expect(onpurchase).toHaveBeenCalled();
+    });
   });
 }

@@ -97,6 +97,7 @@
   "p5.history.translation_job": "Käännöstyö",
   "p5.player.pause": "Keskeytä",
   "p5.player.play": "Toista",
+  "p5.player.seek": "Siirry kohtaan",
   "p5.player.skip_back": "Siirry 10 sekuntia taaksepäin",
   "p5.player.skip_forward": "Siirry 10 sekuntia eteenpäin",
   "p5.player.speed": "Toistonopeus",
