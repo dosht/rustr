@@ -29,3 +29,5 @@ Candidates 3-7 found and fixed, each with a failing-first test: start-URL parsin
 - **LIVE-P9:** Google sign-in completion (WEB-001/002, WEB-IDN-007/008) and Turnstile (WEB-IDN-023/024).
 - Live providers, payment, mail and telemetry are proven only against loopback fixtures.
 - Earlier phases (P2-P4) keep their own whole-clause gates; P6 public root and P7 API rows are listed in the disposition.
+
+**Correction after closure (2026-10-27):** the five `transgate-export` document tests had failed since the first commit and were not part of any accepted run. Fixing the test reader exposed a real product bug, fixed in REPAIR-P5-13: analysis PDFs with a sentiment progression failed because no bundled font had the arrow (U+2192). Candidate8 contains that bug; the fix ships in the next candidate, which must include an analysis PDF export with sentiment.
