@@ -335,7 +335,7 @@ pub struct GoTrue {
 impl GoTrue {
     pub fn new(config: GoTrueConfig, ports: AuthPorts) -> Self {
         Self {
-            http: reqwest::Client::new(),
+            http: crate::http::http_client(),
             base: config.url.trim_end_matches('/').to_string(),
             api_key: config.api_key,
             storage: ports.storage,

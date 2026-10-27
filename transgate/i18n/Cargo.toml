@@ -1,0 +1,10 @@
+[package]
+name = "transgate-i18n"
+description = "Strict translation of core message keys over the web locale catalogs, for the native and terminal shells (P8 D3). No fallback language."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde_json.workspace = true
+transgate-core = { path = "../core" }

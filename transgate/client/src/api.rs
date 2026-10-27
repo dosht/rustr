@@ -168,7 +168,7 @@ impl From<ResolveWire> for ResolveAnswer {
 impl HttpApi {
     /// `base` is the API root, e.g. `https://app.example/api`.
     pub fn new(base: impl Into<String>, auth: Arc<GoTrue>) -> Self {
-        Self { http: reqwest::Client::new(), base: base.into().trim_end_matches('/').to_string(), auth }
+        Self { http: crate::http::http_client(), base: base.into().trim_end_matches('/').to_string(), auth }
     }
 
     pub fn auth(&self) -> &Arc<GoTrue> {

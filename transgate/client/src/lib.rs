@@ -14,4 +14,5 @@ pub mod driver;
 pub mod keys;
 pub mod export;
 pub mod future;
+pub mod http;
 pub mod location;

@@ -5086,6 +5086,7 @@ dependencies = [
  "llm-http",
  "media-ports",
  "reqwest",
+ "rustls",
  "serde",
  "serde_json",
  "sha2 0.10.9",
@@ -5095,6 +5096,7 @@ dependencies = [
  "transgate-export",
  "url",
  "uuid",
+ "webpki-roots",
 ]
 
 [[package]]
@@ -5153,6 +5155,14 @@ dependencies = [
  "transgate-core",
  "transgate-export",
  "uuid",
+]
+
+[[package]]
+name = "transgate-i18n"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "transgate-core",
 ]
 
 [[package]]

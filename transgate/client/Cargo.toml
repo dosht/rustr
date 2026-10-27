@@ -25,7 +25,14 @@ transgate-export = { path = "../export" }
 getrandom = "0.3"
 reqwest = { version = "0.13", default-features = false, features = ["json", "stream", "rustls"] }
 
+# P8 D9: Android bundles the Mozilla roots instead of the JNI-initialised platform verifier.
+[target.'cfg(target_os = "android")'.dependencies]
+rustls = { version = "0.23", default-features = false, features = ["aws-lc-rs", "std", "tls12"] }
+webpki-roots = "1"
+
 [dev-dependencies]
 axum = "0.8"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "sync", "time"] }
 transgate-api = { path = "../api" }
+rustls = { version = "0.23", default-features = false, features = ["aws-lc-rs", "std", "tls12"] }
+webpki-roots = "1"
