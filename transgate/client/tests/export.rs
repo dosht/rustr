@@ -346,7 +346,7 @@ async fn an_invoice_uses_the_session_fence_not_ai_consent() {
 /// Uses the ticket on the originating core effect, never a later state reread.
 fn invoice_work(presenter: &Presenter, event: AppEvent) -> (Epoch, u64, InvoicesEffect) {
     presenter.state.borrow_mut().update(event, NOW).into_iter().find_map(|effect| match effect {
-        AppEffect::Invoices { epoch, ticket, effect } => Some((epoch, ticket, effect)),
+        AppEffect::Invoices { epoch, ticket, effect } => Some((epoch, ticket, *effect)),
         _ => None,
     }).expect("invoice work emitted by core")
 }

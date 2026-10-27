@@ -34,8 +34,8 @@ pub enum InvoicesEffect {
     /// `POST /api/billing/admin/customer-invoices` with `{email}`.
     LookUp { email: String },
     /// Build the invoice document (`InvoiceDocument::capture(&facts, &bill_to, &temporary_bill_to)`)
-    /// and preview or save it.
-    Document { facts: InvoiceFacts, bill_to: BillTo, temporary_bill_to: String, purpose: DocumentPurpose },
+    /// and preview or save it. `facts` is boxed: it dwarfs the other variants.
+    Document { facts: Box<InvoiceFacts>, bill_to: BillTo, temporary_bill_to: String, purpose: DocumentPurpose },
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -137,7 +137,7 @@ impl InvoicesState {
         let Some(facts) = context.invoices.iter().find(|f| f.payment_id == payment_id) else { return vec![] };
         // Only an administrator's screen carries a temporary Bill To.
         let temporary_bill_to = if self.is_admin { self.temporary_bill_to.clone() } else { String::new() };
-        let effect = InvoicesEffect::Document { facts: facts.clone(), bill_to: context.bill_to.clone(), temporary_bill_to, purpose };
+        let effect = InvoicesEffect::Document { facts: Box::new(facts.clone()), bill_to: context.bill_to.clone(), temporary_bill_to, purpose };
         self.document_failure = None;
         vec![effect]
     }

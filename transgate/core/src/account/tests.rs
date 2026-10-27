@@ -142,8 +142,7 @@ fn erasure_removes_feedback_and_undelivered_support_and_a_hard_delete_removes_it
 fn the_session_profile_uses_the_confirmed_date_the_display_rule_and_effective_capabilities() {
     let confirmed = Micros(NOW.0 - 1_000);
     let profile = VerifiedProfile { account: fixtures::account(), email: "ada.l@example.test".into(), full_name: None, email_confirmed_at: Some(confirmed) };
-    let mut flags = FlagConfig::default();
-    flags.show_original_transcript = FlagRule { allowed_locales: vec!["tr".into()], ..FlagRule::off() };
+    let flags = FlagConfig { show_original_transcript: FlagRule { allowed_locales: vec!["tr".into()], ..FlagRule::off() }, ..FlagConfig::default() };
     let session = session_profile(&profile, &flags, Some("tr"), false);
     assert_eq!(session.display_name, "ada.l");
     assert_eq!(session.joined_on, Some(confirmed));

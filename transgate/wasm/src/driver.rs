@@ -144,7 +144,7 @@ pub(crate) fn run(inner: &Rc<Inner>, effect: AppEffect) {
         AppEffect::Chat { epoch, job, effect } => chat(inner, epoch, job, effect),
         AppEffect::Purchase { epoch, effect } => purchase(inner, epoch, effect),
         AppEffect::Subscription { epoch, effect } => subscription(inner, epoch, effect),
-        AppEffect::Invoices { epoch, ticket, effect } => invoices(inner, epoch, ticket, effect),
+        AppEffect::Invoices { epoch, ticket, effect } => invoices(inner, epoch, ticket, *effect),
         AppEffect::ReadConfirmation { epoch, sequence } => {
             if inner.is_current(epoch) {
                 inner.apply(AppEvent::ConfirmationLoaded { epoch, sequence, payload: browser::confirmation() });

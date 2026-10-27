@@ -33,7 +33,7 @@ fn the_owner_previews_and_downloads_their_own_invoice_facts() {
     assert_eq!(
         preview,
         vec![InvoicesEffect::Document {
-            facts: context.invoices[0].clone(),
+            facts: Box::new(context.invoices[0].clone()),
             bill_to: context.bill_to.clone(),
             temporary_bill_to: String::new(),
             purpose: DocumentPurpose::Preview
@@ -88,7 +88,7 @@ fn the_administrator_looks_up_a_customer_and_the_temporary_bill_to_reaches_only_
     assert_eq!(
         state.update(InvoicesEvent::Download { payment_id: 42 }),
         vec![InvoicesEffect::Document {
-            facts: reply.invoice_context.invoices[0].clone(),
+            facts: Box::new(reply.invoice_context.invoices[0].clone()),
             bill_to: reply.invoice_context.bill_to.clone(),
             temporary_bill_to: "Grace Ltd\nLondon".into(),
             purpose: DocumentPurpose::Download
