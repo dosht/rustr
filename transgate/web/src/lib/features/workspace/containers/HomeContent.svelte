@@ -25,7 +25,8 @@
   {#if vm.layouts.frame === "phone"}
     <MobileHistoryList vm={vm.jobs} onopen={open} onnew={create} ondelete={(job) => jobs({ type: "delete_requested", job })} onconfirmdelete={() => jobs({ type: "delete_confirmed" })} oncanceldelete={() => jobs({ type: "delete_canceled" })} onloadmore={() => jobs({ type: "load_more" })} onrefresh={() => jobs({ type: "refresh" })} />
   {:else}
-    <div class="p-4 md:p-8"><DesktopHistoryTable vm={vm.jobs} onopen={open} ondownload={(job) => jobs({ type: "download_requested", job })} onfeedback={(job) => dispatch({ type: "feedback", intent: { type: "opened", job } })} ondelete={(job) => jobs({ type: "delete_requested", job })} onconfirmdelete={() => jobs({ type: "delete_confirmed" })} oncanceldelete={() => jobs({ type: "delete_canceled" })} onloadmore={() => jobs({ type: "load_more" })} /></div>
+    <!-- MAIN is a bounded flex column; min-h-0 + flex-1 gives this wrapper the remaining height so it scrolls instead of growing past the frame. -->
+    <div class="min-h-0 flex-1 overflow-y-auto p-4 md:p-8"><DesktopHistoryTable vm={vm.jobs} onopen={open} ondownload={(job) => jobs({ type: "download_requested", job })} onfeedback={(job) => dispatch({ type: "feedback", intent: { type: "opened", job } })} ondelete={(job) => jobs({ type: "delete_requested", job })} onconfirmdelete={() => jobs({ type: "delete_confirmed" })} oncanceldelete={() => jobs({ type: "delete_canceled" })} onloadmore={() => jobs({ type: "load_more" })} /></div>
   {/if}
 {:else if vm.layouts.frame === "phone"}
   <MobileWorkspace vm={vm.queue} fullName={vm.profile?.full_name ?? ""} youtube={vm.capabilities.youtube} onpick={(selected) => files("picked", selected)} ondrop={(selected) => files("dropped", selected)} onIntent={upload} onpurchase={() => dispatch({ type: "purchase_opened" })} />
