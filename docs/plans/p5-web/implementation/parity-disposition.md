@@ -8,6 +8,7 @@ Owner: p1Y (independent tester). Row-by-row disposition of every WEB-*, WEB-BIL-
 |---|---|---|
 | c7 | candidate7 `/home/mu/.cache/rustr-integration/s1-20261026215323`, manifest `c3c3d5afbdeb…`, image `sha256:1efb4e84821a…` | `logs/next-p5-c/report.json`, `c2-action-receipts.json`, `c2-locale-final.json` |
 | gap | NEXT-P5-GAP on the same frozen c7 binaries and web build, owned loopback runtime | `logs/next-p5-gap/actions.json`, `network.json`, `external.json`, `fixture-setup.sql`, `host-env-*.json`, `runtime-*.py`, screenshots, parsed PDFs/ZIPs |
+| c8 | candidate8 `/home/mu/.cache/rustr-integration/s1-20261027073103` from commit `3e5f41d` (read-only git archive), image `sha256:3ba423f92231…` | `logs/next-p5-c/report.json`, `c2/actions.json`, `c1/report.json` |
 | c5 | candidate5 `/home/mu/.cache/rustr-integration/s1-20261026204512` | `logs/next-p5-c/c2-action-receipts.json` (only where the path is unchanged in c7) |
 
 Rules:
@@ -24,8 +25,8 @@ Test-only setup used by the gap run (owned files, recorded): coupon rows and blo
 
 | Disposition | Rows |
 |---|---|
-| PROVEN | 114 |
-| FAIL | 5 |
+| PROVEN | 119 |
+| FAIL | 0 |
 | LIVE-P9 | 6 |
 | P6 | 8 |
 | P6/P7 | 2 |
@@ -34,15 +35,11 @@ Test-only setup used by the gap run (owned files, recorded): coupon rows and blo
 | DROPPED | 2 |
 | **Total** | **167** |
 
-P5-owned rows: 125; proven 114, FAIL 5, LIVE-P9 6, open GAP 0. The P5 gate is not met until the FAIL rows are repaired and re-proven.
+P5-owned rows: 125; proven 119, LIVE-P9 6, FAIL 0, open GAP 0. All locally reachable P5 web parity clauses are proven on both Playwright projects; the remaining six rows need live Google OAuth or Turnstile (P9).
 
-| FAIL row | Routing |
-|---|---|
-| WEB-011/012 | YouTube resolve succeeds but UI shows an error and does not navigate (REPAIR-P5-10, p22) |
-| WEB-015 | desktop all-transcripts table cannot scroll; no load-more (REPAIR-P5-12, p1Z) |
-| WEB-BIL-024/025 | 402 alert button "Add Balance" vs source "Add minutes" (`NotEnoughBalanceAlert.tsx:34`), awaiting routing |
+Repairs proven on c8 (commit `3e5f41d`): REPAIR-P5-10 YouTube resolve, REPAIR-P5-12 desktop table scroll, REPAIR-P5-9 "Add minutes", REPAIR-P5-8 D11 list polling (new job in the other tab within one 30 s cadence without reload; zero list GETs while hidden), REPAIR-P5-11 seek slider named "Seek", phone chat input locked while an error shows. Regression on c8: own-tab chat, second-tab reattach (+1 watch, 0 extra start, 1 provider call), PKCE, recovery, checkout confirm; C3 packaged image subset.
 
-Other findings (not row failures): new job not shown in sidebar/all-transcripts until reload (no list polling, D11) — reported in the billing group; seek slider accessible name "Show Time" (REPAIR-P5-11). Live-only limits beyond the LIVE-P9 rows: invoice-preview pixels (headless), YouTube embed, physical-device landscape, live Iyzico.
+Live-only limits outside the LIVE-P9 rows: invoice-preview pixels (headless), YouTube embed, physical-device landscape, live Iyzico/SMTP/telemetry providers.
 
 ## Rows
 
@@ -58,11 +55,11 @@ Other findings (not row failures): new job not shown in sidebar/all-transcripts 
 | WEB-008 | web-phone | Upload files and start transcription (screen) | PROVEN | c7 `phone short refusal` flow: phone upload, Ready, language, Start, navigate `/home/2` |  |
 | WEB-009 | web-desktop | Restore drafts and preparation/error states (screen) | PROVEN | gap: draft restored after reload with language reset; 5-minute "Processing Timeout" alert for an unmeasurable file; 402 balance alert, both |  |
 | WEB-010 | web-phone | Restore drafts and preparation/error states (screen) | PROVEN | gap: draft restored after reload with language reset; 5-minute "Processing Timeout" alert for an unmeasurable file; 402 balance alert, both |  |
-| WEB-011 | web-desktop | Add YouTube and start (screen) | FAIL | gap: add/metadata/resolve 200, job completed, `/home/N` renders transcript | UI shows "An unexpected error occurred" and does not navigate (REPAIR-P5-10) |
-| WEB-012 | web-phone | Add YouTube and start (screen) | FAIL | gap: add/metadata/resolve 200, job completed, `/home/N` renders transcript | UI shows "An unexpected error occurred" and does not navigate (REPAIR-P5-10) |
+| WEB-011 | web-desktop | Add YouTube and start (screen) | PROVEN | c8: add/metadata/resolve 200, navigates to `/home/N`, transcript shown, no error (REPAIR-P5-10); C3 packaged repeat | YouTube embed itself is LIVE-P9 (iframe_api intercepted, D12) |
+| WEB-012 | web-phone | Add YouTube and start (screen) | PROVEN | c8 phone add/resolve navigates to `/home/N` with transcript (REPAIR-P5-10) | YouTube embed LIVE-P9 |
 | WEB-013 | web-desktop | Translate source to target (screen) | PROVEN | gap: EN→TR translation job, translation tab, original gated (show_original_transcript off), both |  |
 | WEB-014 | web-phone | Translate source to target (screen) | PROVEN | gap: EN→TR translation job, translation tab, original gated (show_original_transcript off), both |  |
-| WEB-015 | web-desktop | List, page, select, refresh and delete jobs (screen) | FAIL | gap: row download, delete confirm (204), view; sidebar paging | table cannot scroll past the fold, no load-more (REPAIR-P5-12) |
+| WEB-015 | web-desktop | List, page, select, refresh and delete jobs (screen) | PROVEN | c8: one scroll container (main 800/1678, document not scrolling), wheel reaches last row, load-more `?before=`; row download/delete/view from gap (REPAIR-P5-12) |  |
 | WEB-016 | web-phone | List, filter, select, refresh and delete jobs (screen) | PROVEN | gap: phone cards, touch swipe delete + confirm (204), infinite scroll `?before=` | no filter sheet / no all-transcripts pull-refresh per D9 and source `disablePullToRefresh` |
 | WEB-017 | web-desktop | View live transcript and playback (screen) | PROVEN | gap: play, timestamp seek (→12.5 s), pause; Show Time / Show Speaker toggles; speaker labels | YouTube player embed is LIVE-P9; seek slider name "Show Time" routed (REPAIR-P5-11) |
 | WEB-018 | web-phone | View live transcript and playback (screen) | PROVEN | gap: phone play/seek/pause, tabs, action sheet |  |
@@ -147,8 +144,8 @@ Other findings (not row failures): new job not shown in sidebar/all-transcripts 
 | WEB-BIL-021 | web-phone | View the current plan | PROVEN | gap: current plan (PREMIUM 1200 / BUSINESS 2400 min, valid until, next payment) desktop and phone |  |
 | WEB-BIL-022 | web-desktop | Cancel the subscription (confirm dialog, then the canceled message) | PROVEN | gap: cancel confirm → POST cancel 200 → "Your subscription is canceled…", Next Payment `--`, both |  |
 | WEB-BIL-023 | web-phone | Cancel the subscription | PROVEN | gap: cancel confirm → POST cancel 200 → "Your subscription is canceled…", Next Payment `--`, both |  |
-| WEB-BIL-024 | web-desktop | Not-enough-balance alert with an "Add minutes" button when a job is refused (HTTP 402) | FAIL | gap: 402 alert both projects ("Not enough balance." + text), action opens billing | button label "Add Balance" differs from source "Add minutes" (`NotEnoughBalanceAlert.tsx:34`); routed to lead |
-| WEB-BIL-025 | web-phone | Not-enough-balance alert | FAIL | gap: 402 alert both projects ("Not enough balance." + text), action opens billing | button label "Add Balance" differs from source "Add minutes" (`NotEnoughBalanceAlert.tsx:34`); routed to lead |
+| WEB-BIL-024 | web-desktop | Not-enough-balance alert with an "Add minutes" button when a job is refused (HTTP 402) | PROVEN | c8: 402 alert "Not enough balance." with "Add minutes" button opening billing (REPAIR-P5-9) |  |
+| WEB-BIL-025 | web-phone | Not-enough-balance alert | PROVEN | c8 phone: 402 alert with "Add minutes" opening billing (REPAIR-P5-9) |  |
 | WEB-BIL-026 | web-desktop | Freemium upgrade banner and cut transcript (22 minutes, fade on three lines) | PROVEN | gap `freemium 22-minute cut` both (tr UI, Turkish job, 25 min): lines after 1320 s hidden, upgrade banner |  |
 | WEB-BIL-027 | web-phone | Freemium upgrade banner and cut transcript | PROVEN | gap `freemium 22-minute cut` both (tr UI, Turkish job, 25 min): lines after 1320 s hidden, upgrade banner |  |
 | WEB-BIL-028 | web-desktop | Special client discount alert (inside the billing dialog and on transcript pages) | PROVEN | gap: special-client alert on home and in purchase dialog/sheet with copy code, both (TRANSGATE_SPECIAL_CLIENTS env) |  |
