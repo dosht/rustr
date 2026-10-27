@@ -19,6 +19,8 @@ After independent Opus (p10) and Fable (p27) proposals and cross-critiques. Both
 | D13 | Paths: `transgate/{ffi,tui,cli}` crates and `transgate/apps/{android,ios}`. CLI exit codes as proposed by Opus. | |
 | D14 | Acceptance (Y): bindings and tokens `--check`; Linux Swift signed-in smoke in the pinned `swift:6.2-noble` image; Waydroid UiAutomator signed-in flow including a line edit; CLI actual-process tests against the owned runtime; TUI render tests with `TestBackend` (no pty test). Native telemetry stays off. | PRD P8 done condition. |
 
+**D9 resolved (p22, 2026-10-27):** `reqwest` 0.13.5 with `rustls` uses `aws-lc-rs` and `rustls-platform-verifier` (OS roots), which on Android needs JNI initialization and panics at the first handshake without it. Lead decision: bundled roots. Build one shared `http_client()` in `transgate-client` that passes a `rustls::ClientConfig` with `webpki_roots::TLS_SERVER_ROOTS` through `ClientBuilder::tls_backend_preconfigured` on Android, replacing the separate `reqwest::Client::new()` calls. Cost accepted: no enterprise or user-installed CAs on Android.
+
 ## Order
 
 1. p22: D1 driver extraction, web and client suites green, D9 check.
