@@ -95,6 +95,9 @@ class P5Fixtures(p4.Fixtures):
         self.soniox_default = None
         self.callback_delay = 0.5
         self.iyzico = IyzicoFixture()
+        self.browser_telemetry = []
+        self.youtube = {}
+        self.youtube_calls = []
 
 
 class P5Handler(p4.FixtureHandler):
@@ -102,10 +105,15 @@ class P5Handler(p4.FixtureHandler):
         path = urllib.parse.urlsplit(self.path).path
         return path.count('/') >= 2 and path.split('/')[1] in self.fixture.buckets.values()
 
+    def telemetry_request(self):
+        path = urllib.parse.urlsplit(self.path).path
+        return path.startswith('/ph/') or path.startswith('/api/1/')
+
     def end_headers(self):
         # The bucket CORS rule: only the app origin, only on bucket objects (never the provider APIs).
+        # Browser telemetry (PostHog under /ph, Sentry envelope under /api/1) gets the same app-origin-only rule.
         origin = self.headers.get('Origin')
-        if origin and origin == self.fixture.app_origin and self.bucket_request():
+        if origin and origin == self.fixture.app_origin and (self.bucket_request() or self.telemetry_request()):
             self.send_header('Access-Control-Allow-Origin', origin)
             self.send_header('Access-Control-Expose-Headers', 'ETag, Content-Length, Content-Range, Accept-Ranges')
             self.send_header('Vary', 'Origin')
@@ -114,11 +122,13 @@ class P5Handler(p4.FixtureHandler):
     def do_OPTIONS(self):
         origin = self.headers.get('Origin')
         method = self.headers.get('Access-Control-Request-Method', '')
-        if not (self.bucket_request() and origin == self.fixture.app_origin and method in ('GET', 'PUT', 'HEAD')):
+        bucket = self.bucket_request() and method in ('GET', 'PUT', 'HEAD')
+        telemetry = self.telemetry_request() and method in ('GET', 'POST')
+        if not ((bucket or telemetry) and origin == self.fixture.app_origin):
             self.fixture.fail(f'unexpected preflight {method} {self.path.split("?")[0]} from {origin}')
             return self.reply(403)
         self.send_response(204)
-        self.send_header('Access-Control-Allow-Methods', 'GET, PUT, HEAD')
+        self.send_header('Access-Control-Allow-Methods', 'GET, PUT, HEAD' if bucket else 'GET, POST')
         self.send_header('Access-Control-Allow-Headers', self.headers.get('Access-Control-Request-Headers', ''))
         self.send_header('Access-Control-Max-Age', '600')
         self.send_header('Content-Length', '0')
@@ -133,11 +143,56 @@ class P5Handler(p4.FixtureHandler):
         if self.fixture.iyzico.handles(self.command, path):
             with self.fixture.lock:
                 return self.fixture.iyzico.handle(self, path, self.fixture.app_origin, p4.PUBLIC)
+        if self.telemetry_request():
+            return self.browser_telemetry(self.fixture, path)
+        if self.command == 'GET' and path == '/youtube/v3/videos':
+            return self.youtube_metadata(self.fixture)
+        if self.command == 'GET' and path == '/api/v2/youtube/transcript':
+            return self.youtube_transcript(self.fixture)
         if self.command == 'POST' and path == '/v1/transcriptions':
             return self.soniox_submit(self.fixture)
         if self.command == 'GET' and self.headers.get('Range') and self.bucket_request():
             return self.ranged(self.fixture, path)
         return super().handle_owned()
+
+    def browser_telemetry(self, f, path):
+        """Loopback stand-in for browser PostHog (/ph/*) and Sentry envelopes (/api/1/*): record, never forward."""
+        raw = self.body() if self.command == 'POST' else b''
+        with f.lock:
+            f.browser_telemetry.append({'at': time.time(), 'method': self.command, 'path': path, 'bytes': len(raw)})
+        if path.startswith('/ph/') and path.endswith('/config.js'):
+            # Remote-config script: empty but executable (JSON served as a script is refused by the browser).
+            return self.reply(200, b'', 'application/javascript')
+        if path.startswith('/ph/') and path.endswith('/config'):
+            return self.reply(200, {})
+        if path.startswith('/ph/flags'):
+            return self.reply(200, {'featureFlags': {}, 'featureFlagPayloads': {}, 'errorsWhileComputingFlags': False})
+        return self.reply(200, {'status': 1})
+
+    def youtube_metadata(self, f):
+        """Data API videos.list shape read by crates/media-adapters/src/captions.rs."""
+        query = urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
+        require(query.get('key') == ['p5-youtube-unused'], 'YouTube metadata key')
+        video = query['id'][0]
+        with f.lock:
+            f.youtube_calls.append(('metadata', video))
+            known = video in f.youtube
+        if not known:
+            return self.reply(200, {'items': []})
+        meta = f.youtube[video]
+        return self.reply(200, {'items': [{'id': video, 'snippet': {'title': meta['title'], 'defaultAudioLanguage': 'en'},
+                                           'contentDetails': {'duration': meta['duration']}}]})
+
+    def youtube_transcript(self, f):
+        """transcriptapi.com v2 transcript shape read by captions.rs."""
+        require(self.headers.get('Authorization') == 'Bearer p5-transcript-unused', 'transcript API key')
+        video = urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)['video_url'][0]
+        with f.lock:
+            f.youtube_calls.append(('transcript', video))
+            meta = f.youtube.get(video)
+        if meta is None:
+            return self.reply(404, {'error': 'not found'})
+        return self.reply(200, {'video_id': video, 'language': 'en', 'transcript': meta['cues']})
 
     def ranged(self, f, path):
         """Single `bytes=a-b` / `bytes=a-` range on a signed GET, as the media element asks for."""
@@ -222,11 +277,19 @@ class P5Handler(p4.FixtureHandler):
             event.set()
             return self.reply(200, {'ok': True})
         if self.command == 'POST' and path == '/__p5/soniox-default':
-            # {"text": str, "duration_ms": int}
+            # {"text": str, "duration_ms": int} or {"tokens": [{text,start_ms,end_ms,speaker[,language,translation_status]}], "duration_ms": int}
+            tokens = body.get('tokens') or [{'text': body['text'], 'start_ms': 0, 'end_ms': 1000, 'speaker': '1'}]
             with f.lock:
-                f.soniox_default = {'tokens': [{'text': body['text'], 'start_ms': 0, 'end_ms': 1000, 'speaker': '1'}],
-                                    'duration_ms': int(body.get('duration_ms', 60000))}
+                f.soniox_default = {'tokens': tokens, 'duration_ms': int(body.get('duration_ms', 60000))}
             return self.reply(200, {'ok': True})
+        if self.command == 'POST' and path == '/__p5/youtube':
+            # {"video": 11-char id, "title": str, "duration": ISO-8601, "cues": [{"text","start","duration"}]}
+            with f.lock:
+                f.youtube[body['video']] = {'title': body['title'], 'duration': body['duration'], 'cues': body['cues']}
+            return self.reply(200, {'ok': True})
+        if self.command == 'GET' and path == '/__p5/telemetry':
+            with f.lock:
+                return self.reply(200, {'browser': f.browser_telemetry, 'youtube': f.youtube_calls})
         raise AssertionError('unknown control request ' + path)
 
 

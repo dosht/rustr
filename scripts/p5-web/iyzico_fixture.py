@@ -31,8 +31,9 @@ class IyzicoFixture:
         self.calls = []
 
     def plan(self, body):
-        if set(body) != {'kind', 'outcome'} or body['kind'] not in ('payg', 'subscription') or body['outcome'] not in ('success', 'failure', 'unconfirmed'):
-            raise AssertionError('Iyzico plan requires kind payg|subscription and outcome success|failure|unconfirmed')
+        outcomes = ('success', 'failure', 'unconfirmed', 'init_rejected')
+        if set(body) != {'kind', 'outcome'} or body['kind'] not in ('payg', 'subscription') or body['outcome'] not in outcomes:
+            raise AssertionError('Iyzico plan requires kind payg|subscription and outcome ' + '|'.join(outcomes))
         self.plans.append(dict(body))
 
     def handles(self, method, path):
@@ -71,6 +72,10 @@ class IyzicoFixture:
                     raise AssertionError('unexpected checkout currency')
             elif not body.get('pricingPlanReferenceCode'):
                 raise AssertionError('subscription needs published pricing plan')
+            if plan['outcome'] == 'init_rejected':
+                # Documented failure envelope: the adapter reports Rejected and no form is rendered.
+                return handler.reply(200, {'status': 'failure', 'errorCode': 'p5_init_rejected',
+                                           'errorMessage': 'Fixture rejected checkout initialization'})
             token = 'p5-' + uuid.uuid4().hex
             record = {**plan, 'request': body, 'token': token, 'payment_id': 'p5-payment-' + uuid.uuid4().hex,
                       'subscription': 'p5-sub-' + uuid.uuid4().hex, 'customer': 'p5-customer-' + uuid.uuid4().hex}
