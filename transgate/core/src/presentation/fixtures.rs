@@ -436,6 +436,15 @@ pub fn manage_data_erasure_failed() -> DataManagementVm {
     s.view()
 }
 
+/// PRV-027: the cleanup switch write was refused; the switch shows the stored value again.
+pub fn manage_data_save_failed() -> DataManagementVm {
+    let mut s = manage_data();
+    s.update(data_management::Event::CleanupToggled { on: false });
+    s.update(data_management::Event::Confirmed);
+    s.update(data_management::Event::SaveFailed { failure: ApiFailure::http(503, None) });
+    s.view()
+}
+
 fn feedback_open() -> FeedbackState {
     let mut s = FeedbackState::default();
     s.update(feedback::Event::Opened { job: JobId(11) });
@@ -827,6 +836,7 @@ pub fn export() -> BTreeMap<&'static str, Named> {
                 ("confirm_delete_account", manage_data_confirm_delete_account()),
                 ("erasure_requested", manage_data_erasure_requested()),
                 ("erasure_failed", manage_data_erasure_failed()),
+                ("save_failed", manage_data_save_failed()),
             ]),
         ),
         (

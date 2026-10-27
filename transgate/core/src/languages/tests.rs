@@ -76,6 +76,17 @@ fn codes_map_back_to_stored_names() {
     assert!(Language::from_code("bn").is_none());
 }
 
+// TRX-023, LNG-013: one table maps names to codes and every translation target has a
+// non-empty lower case code, so a job cannot hold a target "without a code".
+#[test]
+fn trx_023_every_translation_target_has_a_code() {
+    for language in Language::all().filter(|l| l.translation_capable()) {
+        let code = language.code();
+        assert!(!code.is_empty() && code == code.to_lowercase(), "{}: {code:?}", language.name());
+        assert_eq!(Language::from_code(code), Some(language), "{code}");
+    }
+}
+
 // LNG-007: the RTL list compares case-insensitively and trims.
 #[test]
 fn rtl_detection_follows_the_source_list() {

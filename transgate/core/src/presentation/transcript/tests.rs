@@ -117,6 +117,57 @@ fn translation_page() {
     assert_eq!(s.update(Event::DownloadPressed { all_formats: false }), vec![Effect::Export { job: JobId(13), request }]);
 }
 
+// EDT-008, EDT-010: the speaker display matrix. Labels are hidden while the job has not
+// finished transcribing; speaker_labeling shows a pulsing placeholder for unlabeled lines;
+// a YouTube caption transcript and a job without speakers offer no speaker handling.
+#[test]
+fn edt_008_010_speaker_display_matrix() {
+    let lines = vec![line(1, 1, "00:00:00", "00:00:02", "a", Some("SPEAKER_00")), line(2, 1, "00:00:02", "00:00:04", "b", None)];
+    for status in [JobStatus::NotStarted, JobStatus::Pending, JobStatus::Running] {
+        let vm = loaded(fixtures::job(1, status, "a.mp3"), lines.clone()).view();
+        assert!(vm.rows.iter().all(|r| r.speaker.is_none() && !r.speaker_pending), "{status:?}");
+    }
+    let labeling = loaded(fixtures::job(1, JobStatus::SpeakerLabeling, "a.mp3"), lines.clone()).view();
+    assert_eq!(
+        labeling.rows.iter().map(|r| r.speaker_pending).collect::<Vec<_>>(),
+        vec![false, true],
+        "only the unlabeled line pulses"
+    );
+    let mut youtube = fixtures::job(1, JobStatus::Completed, "Talk");
+    youtube.speakers = true;
+    youtube.source = crate::jobs::domain::JobSource::YouTube { video_id: Some("abc".into()), youtube_url: None, transcript_source: Some("transcriptapi".into()) };
+    let vm = loaded(youtube, lines.clone()).view();
+    assert!(!vm.speaker_toggle && vm.rows.iter().all(|r| r.speaker.is_none()), "captions have no speakers");
+    let mut silent = fixtures::job(1, JobStatus::Completed, "a.mp3");
+    silent.speakers = false;
+    let vm = loaded(silent, lines).view();
+    assert!(!vm.speaker_toggle && !vm.phone_speaker_toggle && vm.time_toggle, "no speakers: only the time toggle");
+}
+
+// EDT-012, EDT-013, LNG-007: while a translation job streams, direction follows the job
+// language; once it completes and its lines load, the selected (translation) tab decides.
+#[test]
+fn edt_013_lng_007_direction_switches_when_a_streaming_job_completes() {
+    let mut j = fixtures::job(13, JobStatus::Running, "talk.mp3");
+    j.language = Language::from_name("Arabic");
+    j.translate_to = Language::from_name("English").into_iter().collect();
+    let mut s = loaded(j.clone(), vec![]);
+    assert!(s.view().rtl, "streaming: the Arabic job language");
+    j.status = JobStatus::Completed;
+    assert_eq!(s.update(Event::JobPolled { job: j }), vec![Effect::LoadLines { after_ms: COMPLETION_DELAY_MS }]);
+    let mut original = line(1, 13, "00:00:00", "00:00:03", "مرحبا", None);
+    original.language = Language::from_name("Arabic");
+    original.translation_status = Some(TranslationStatus::Original);
+    let mut translated = line(2, 13, "00:00:00", "00:00:03", "Hello", None);
+    translated.language = Language::from_name("English");
+    translated.translation_status = Some(TranslationStatus::Translation);
+    s.update(Event::LinesArrived { lines: vec![original, translated] });
+    let vm = s.view();
+    assert_eq!(vm.tabs.iter().map(|t| t.name.as_str()).collect::<Vec<_>>(), vec!["English"], "originals hidden without the flag");
+    assert!(!vm.rtl, "completed: the selected English translation tab");
+    assert_eq!(vm.rows.iter().map(|r| r.text.as_str()).collect::<Vec<_>>(), vec!["Hello"]);
+}
+
 // EXP-001: no download before completion.
 #[test]
 fn download_requires_completion() {

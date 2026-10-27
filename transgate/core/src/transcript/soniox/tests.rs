@@ -109,6 +109,97 @@ fn translation_pairs_share_windows() {
     assert_eq!(out[3].end_time, "00:00:04");
 }
 
+// TRX-024: the gap thresholds are strict ("over"): a clause mark splits at 301 ms, not at
+// exactly 300; any gap splits at 2001 ms, not at exactly 2000. One case per mark class.
+#[test]
+fn trx_024_gap_boundaries_and_every_punctuation_class() {
+    let pair = |first: &str, gap: f64| {
+        let t = [token(&format!("one two {first}"), 0.0, 1500.0, None), token(" four five six", 1500.0 + gap, 3500.0 + gap, None)];
+        lines(&t, false).len()
+    };
+    for clause in [",", ";", "،", "؛"] {
+        assert_eq!((pair(&format!("three{clause}"), 300.0), pair(&format!("three{clause}"), 301.0)), (1, 2), "{clause}");
+    }
+    for sentence in [".", "!", "?", "؟", "。", "！", "？"] {
+        assert_eq!(pair(&format!("three{sentence}"), 0.0), 2, "{sentence}");
+    }
+    assert_eq!((pair("three", 2000.0), pair("three", 2001.0)), (1, 2), "no punctuation: only a gap over two seconds");
+}
+
+fn seg(start_ms: f64, end_ms: f64, line: &str, language: Option<&str>, status: Option<TranslationStatus>) -> Segment {
+    segment(start_ms, end_ms, line.into(), None, false, language, status)
+}
+
+fn spans(segments: &[Segment]) -> Vec<(&str, &str, &str)> {
+    segments.iter().map(|s| (s.start_time.as_str(), s.end_time.as_str(), s.line.as_str())).collect()
+}
+
+// TRX-025: merging never crosses a language or translation status change, except that a
+// punctuation-only line still joins the previous line.
+#[test]
+fn trx_025_merges_stop_at_language_and_status_changes() {
+    let english = Some("en");
+    let original = Some(TranslationStatus::Original);
+    let short_other = merge_short(vec![
+        seg(0.0, 3000.0, "Hello there everyone", english, original),
+        seg(3000.0, 3400.0, "Hallo", Some("de"), Some(TranslationStatus::Translation)),
+    ]);
+    assert_eq!(short_other.len(), 2, "a short line in another language stays its own line");
+    let punctuation = merge_short(vec![seg(0.0, 3000.0, "Hello there everyone", english, original), seg(3000.0, 3400.0, ".", Some("fr"), original)]);
+    assert_eq!(spans(&punctuation), vec![("00:00:00", "00:00:03", "Hello there everyone.")]);
+}
+
+// TRX-025: a zero-length line left over takes its neighbour's edge: the first one ends at
+// the next line's start; a later one starts at the previous end and lasts at least a second.
+#[test]
+fn trx_025_zero_length_remainders_take_the_neighbour_edge() {
+    let de = Some("de");
+    let translation = Some(TranslationStatus::Translation);
+    let original = Some(TranslationStatus::Original);
+    let first = merge_short(vec![seg(0.0, 100.0, "Hello there friend", Some("en"), original), seg(4000.0, 7000.0, "Hallo da Freund jetzt", de, translation)]);
+    assert_eq!(spans(&first)[0], ("00:00:00", "00:00:04", "Hello there friend"));
+    let middle = merge_short(vec![
+        seg(0.0, 3000.0, "one two three four", Some("en"), original),
+        seg(5000.0, 5100.0, "Hallo da Freund", de, translation),
+        seg(8000.0, 11000.0, "five six seven eight", Some("en"), original),
+    ]);
+    assert_eq!(spans(&middle)[1], ("00:00:03", "00:00:05", "Hallo da Freund"));
+    let tight = merge_short(vec![
+        seg(0.0, 3000.0, "one two three four", Some("en"), original),
+        seg(3000.0, 3100.0, "Hallo da Freund", de, translation),
+        seg(8000.0, 11000.0, "five six seven eight", Some("en"), original),
+    ]);
+    assert_eq!(spans(&tight)[1], ("00:00:03", "00:00:04", "Hallo da Freund"), "at least one second after the previous end");
+}
+
+// TRX-028, TRL-004: originals with the same start share their window evenly; the last
+// window with no usable group end defaults to 2 s per group; each translation reuses its
+// original's range and sorts right after it.
+#[test]
+fn trx_028_trl_004_same_start_groups_split_a_default_two_second_window() {
+    let t = [
+        translated("First", 1000.0, 1500.0, "en", "original"),
+        translated("Erste", 0.0, 0.0, "de", "translation"),
+        translated(" Second", 1000.0, 0.0, "en", "original"),
+        translated("Zweite", 0.0, 0.0, "de", "translation"),
+    ];
+    let out: Vec<_> = normalize(&t, false)
+        .into_iter()
+        .map(|l| (l.start_time, l.end_time, l.line, l.translation_status))
+        .collect();
+    let o = Some(TranslationStatus::Original);
+    let tr = Some(TranslationStatus::Translation);
+    assert_eq!(
+        out,
+        vec![
+            ("00:00:01".into(), "00:00:03".into(), "First".into(), o),
+            ("00:00:01".into(), "00:00:03".into(), "Erste".into(), tr),
+            ("00:00:03".into(), "00:00:05".into(), "Second".into(), o),
+            ("00:00:03".into(), "00:00:05".into(), "Zweite".into(), tr),
+        ]
+    );
+}
+
 // TRX-029: plain transcription lines carry no language or translation status.
 #[test]
 fn plain_lines_have_no_language() {

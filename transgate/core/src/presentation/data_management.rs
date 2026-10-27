@@ -28,6 +28,8 @@ pub const ERASURE_LOCAL_DONE: Msg = app("p5.erasure.local_data_erased");
 pub const ERASURE_FULL: Msg = app("p5.erasure.fully_erased");
 pub const ERASURE_EXCEPTIONS: Msg = app("p5.erasure.erased_with_exceptions");
 pub const ERASURE_REQUEST_FAILED: Msg = app("p5.erasure.request_failed");
+/// UI-04 for the Manage Data switches (the source showed nothing; new `app` text).
+pub const SETTING_SAVE_FAILED: Msg = app("p5.manage_data.save_failed");
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "ts", derive(ts_rs::TS))]
@@ -98,6 +100,8 @@ pub enum Event {
     /// The honest erasure state from the server.
     ErasureState { view: ErasureView },
     ErasureFailed { failure: ApiFailure },
+    /// A settings write (`SetAutoDelete`, `SetDeletedMonthly`) was refused.
+    SaveFailed { failure: ApiFailure },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -114,9 +118,12 @@ pub enum Effect {
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct DataManagementState {
     pub settings: Option<UserSettings>,
+    /// The last value the server answered; a refused write returns to it.
+    stored: Option<UserSettings>,
     pub confirming: Option<Confirm>,
     pub erasure: Option<ErasureView>,
     pub failed: bool,
+    save_failed: bool,
     signed_out: bool,
 }
 
@@ -124,7 +131,15 @@ impl DataManagementState {
     pub fn update(&mut self, event: Event) -> Vec<Effect> {
         match event {
             Event::Loaded { settings } | Event::Saved { settings } => {
+                self.stored = Some(settings.clone());
                 self.settings = Some(settings);
+                self.save_failed = false;
+                vec![]
+            }
+            Event::SaveFailed { .. } => {
+                // UI-04: the source left the switch as it was and showed nothing.
+                self.settings = self.stored.clone();
+                self.save_failed = true;
                 vec![]
             }
             Event::CleanupToggled { on } => {
@@ -218,6 +233,7 @@ impl DataManagementState {
             }),
             erasure: self.erasure.as_ref().map(erasure_message),
             error: self.failed.then_some(ERASURE_REQUEST_FAILED),
+            save_error: self.save_failed.then_some(SETTING_SAVE_FAILED),
         }
     }
 }
@@ -244,6 +260,8 @@ pub struct DataManagementVm {
     /// The honest erasure state; never "fully erased" before the server says so.
     pub erasure: Option<Msg>,
     pub error: Option<Msg>,
+    /// A refused settings write; the switches show the stored values again.
+    pub save_error: Option<Msg>,
 }
 
 #[cfg(test)]
@@ -294,5 +312,43 @@ mod tests {
         assert_eq!(erasure_message(&ErasureView::ErasedWithExceptions { exceptions: vec!["x".into()] }), ERASURE_EXCEPTIONS);
         assert_eq!(erasure_message(&ErasureView::FullyErased), ERASURE_FULL);
         assert_ne!(erasure_message(&ErasureView::LocalDataErased { pending: 0, exceptions: vec![] }), ERASURE_FULL);
+    }
+
+    // PRV-027 (with P5 UI-04): a refused cleanup write puts the switch back to the stored
+    // value and says so; the next successful answer clears the notice.
+    #[test]
+    fn prv_027_a_failed_cleanup_write_reverts_the_switch_and_shows_an_error() {
+        let mut s = loaded();
+        s.update(Event::CleanupToggled { on: false });
+        assert_eq!(s.update(Event::Confirmed), vec![Effect::SetAutoDelete { value: false }]);
+        assert!(!s.view().cleanup_on, "optimistic while the write runs");
+        assert!(s.update(Event::SaveFailed { failure: ApiFailure::http(503, None) }).is_empty());
+        let vm = s.view();
+        assert_eq!((vm.cleanup_on, vm.save_error), (true, Some(SETTING_SAVE_FAILED)));
+        assert_eq!(s.update(Event::CleanupToggled { on: true }), vec![Effect::SetAutoDelete { value: true }]);
+        let mut stored = UserSettings::defaults(AccountId(uuid::Uuid::nil()));
+        stored.auto_delete_transcripts = true;
+        s.update(Event::Saved { settings: stored });
+        assert_eq!(s.view().save_error, None);
+    }
+
+    // PRV-036: the legacy "Delete my data automatically" switch asks first, confirming writes
+    // `deleted_monthly`, and a reload shows the stored value.
+    #[test]
+    fn prv_036_the_legacy_switch_is_persisted_and_reloaded() {
+        let mut stored = UserSettings::defaults(AccountId(uuid::Uuid::nil()));
+        stored.deleted_monthly = false;
+        let mut s = DataManagementState::default();
+        s.update(Event::Loaded { settings: stored.clone() });
+        assert!(!s.view().delete_monthly_on);
+        assert!(s.update(Event::DeleteMonthlyToggled { on: true }).is_empty());
+        assert_eq!(s.view().confirm.unwrap().kind, Confirm::DeleteMonthly);
+        assert_eq!(s.update(Event::Confirmed), vec![Effect::SetDeletedMonthly { value: true }]);
+        stored.deleted_monthly = true;
+        let mut reloaded = DataManagementState::default();
+        reloaded.update(Event::Loaded { settings: stored });
+        assert!(reloaded.view().delete_monthly_on, "the stored value survives a reload");
+        s.update(Event::SaveFailed { failure: ApiFailure::network() });
+        assert!(!s.view().delete_monthly_on, "a refused write goes back to the stored value");
     }
 }

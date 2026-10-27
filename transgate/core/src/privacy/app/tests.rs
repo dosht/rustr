@@ -391,6 +391,36 @@ fn retention_respects_the_preference() {
     });
 }
 
+// PRV-023: the dry run uses the sweep's predicate and cutoff: it estimates exactly what the
+// real run then deletes and counts the same opt-outs, and it writes nothing (no deletion,
+// no audit row).
+#[test]
+fn prv_023_the_retention_plan_matches_the_run_and_writes_nothing() {
+    let w = World::new();
+    w.seed(Provider::Soniox);
+    let other = crate::ids::AccountId(uuid::Uuid::from_u128(9));
+    w.store.with(|d| {
+        let mut job = fixtures::job(2, JobStatus::Completed, "b.mp3");
+        job.account = other;
+        job.created_at = Micros(NOW.0 - 40 * MICROS_PER_DAY);
+        d.jobs.insert(2, job);
+        let mut line = fixtures::line(2, 2, "00:00:00", "00:00:01", "kept", None);
+        line.account = other;
+        d.lines.push(line);
+        d.accounts.insert(other);
+        let mut s = UserSettings::defaults(other);
+        s.auto_delete_transcripts = false;
+        d.settings.insert(other, s);
+    });
+    let p = w.privacy(ExceptionPolicy::default());
+    let before = w.store.with(|d| (d.lines.len(), d.runs.len()));
+    let plan = run(p.retention_plan(RetentionDays::SCHEDULED)).unwrap();
+    assert_eq!((plan.cutoff, plan.estimated_deletions, plan.users_opted_out, plan.would_exceed_threshold), (RetentionDays::SCHEDULED.cutoff(NOW), 1, 1, false));
+    assert_eq!(w.store.with(|d| (d.lines.len(), d.runs.len())), before, "the dry run deletes nothing and records no run");
+    let outcome = run(p.retention_run(RetentionDays::SCHEDULED, "cron")).unwrap();
+    assert_eq!(outcome, RetentionOutcome::Success { rows_deleted: plan.estimated_deletions, users_opted_out: plan.users_opted_out });
+}
+
 // PRV-020: a concurrent run is recorded as skipped and deletes nothing.
 #[test]
 fn retention_skips_while_locked() {

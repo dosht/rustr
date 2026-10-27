@@ -589,7 +589,7 @@ impl Jobs {
         let access = store
             .sign(&object, AccessMethod::Put, to_media(now), sources::UPLOAD_URL_TTL_SECONDS)
             .await
-            .map_err(|e| JobsError::Upstream(format!("An error occurred: {e}")))?;
+            .map_err(|e| JobsError::Failed(format!("An error occurred: {e}")))?;
         let mut uow = self.s.store.begin().await?;
         let result = async {
             uow.billing().await?.lock_account(account).await?;
@@ -654,11 +654,11 @@ impl Jobs {
     /// every draft to `not_started` together. Dispatch follows after commit, one
     /// job after another; a failure of one job is that job's result.
     pub async fn start(&self, account: AccountId, request: StartRequest) -> Result<StartAnswer, JobsError> {
-        Ok(self.start_public(account, PublicStart::Jobs(request), None).await?.answer)
+        Ok(self.start_with(account, PublicStart::Jobs(request), None, false).await?.answer)
     }
 
     /// The body of a `jobIds` start inside its transaction, after the account lock.
-    async fn start_drafts(&self, uow: &mut dyn JobUow, account: AccountId, request: &StartRequest, now: Micros) -> Result<Vec<Job>, JobsError> {
+    async fn start_drafts(&self, uow: &mut dyn JobUow, account: AccountId, request: &StartRequest, now: Micros, api_balance: bool) -> Result<Vec<Job>, JobsError> {
         let packages = {
             let mut billing = uow.billing().await?;
             billing.lock_account(account).await?;
@@ -668,9 +668,11 @@ impl Jobs {
         if drafts.is_empty() {
             return Err(JobsError::NoDraftJobs);
         }
-        // JOB-006, BIL-039: below zero refuses; zero is the charge's decision.
+        // JOB-006, BIL-039: the web refuses below zero and leaves zero to the charge; the public API
+        // refuses zero too (API-BIL-012).
         let open = open_at(&packages, now);
-        if !billing_core::charge::web_precheck(balance(&open)) {
+        let allowed = if api_balance { billing_core::charge::api_precheck(balance(&open)) } else { billing_core::charge::web_precheck(balance(&open)) };
+        if !allowed {
             return Err(JobsError::InsufficientBalance("Not enough balance".into()));
         }
         // FRE (app definition 1) web guard over the drafts in ascending id.
@@ -699,6 +701,12 @@ impl Jobs {
     /// the same request answers again without creating or charging anything,
     /// and the same key with another request is `RequestConflict`.
     pub async fn start_public(&self, account: AccountId, request: PublicStart, claim: Option<IdempotencyClaim>) -> Result<PublicAnswer, JobsError> {
+        self.start_with(account, request, claim, true).await
+    }
+
+    /// `api_balance`: the public API refuses a balance of zero or less (API-BIL-012); the web start
+    /// refuses only below zero and leaves zero to the charge.
+    async fn start_with(&self, account: AccountId, request: PublicStart, claim: Option<IdempotencyClaim>, api_balance: bool) -> Result<PublicAnswer, JobsError> {
         self.guard(account).await?;
         request.validate(self.config.ssrf_protection)?;
         let now = self.now();
@@ -715,7 +723,7 @@ impl Jobs {
                 }
             }
             let drafts = match &request {
-                PublicStart::Jobs(r) => self.start_drafts(uow.as_mut(), account, r, now).await?,
+                PublicStart::Jobs(r) => self.start_drafts(uow.as_mut(), account, r, now, api_balance).await?,
                 PublicStart::Urls(r) => self.url_drafts(uow.as_mut(), account, r, now).await?,
             };
             if let Some(claim) = &claim {

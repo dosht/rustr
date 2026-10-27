@@ -29,12 +29,24 @@ impl VideoMetadataSource for Metadata {
     }
 }
 
+struct Captions {
+    answer: Mutex<Result<media_ports::CaptionDocument, media_ports::CaptionError>>,
+}
+
+impl media_ports::PaidCaptions for Captions {
+    fn fetch<'a>(&'a self, _video_id: &'a str) -> BoxFuture<'a, Result<media_ports::CaptionDocument, media_ports::CaptionError>> {
+        let v = self.answer.lock().unwrap().clone();
+        Box::pin(async move { v })
+    }
+}
+
 struct World {
     store: MemStore,
     soniox: Arc<FakeTranscriber>,
     deepgram: Arc<FakeTranscriber>,
     objects: Arc<FakeObjects>,
     metadata: Arc<Metadata>,
+    captions: Arc<Captions>,
     clock: Arc<TestClock>,
 }
 
@@ -46,6 +58,7 @@ impl World {
             deepgram: Arc::new(FakeTranscriber::new(media_ports::Provider::Deepgram)),
             objects: Arc::new(FakeObjects::default()),
             metadata: Arc::new(Metadata { answer: Mutex::new(Err(media_ports::CaptionError::VideoUnavailable)) }),
+            captions: Arc::new(Captions { answer: Mutex::new(Err(media_ports::CaptionError::NoCaptions)) }),
             clock: Arc::new(TestClock(Mutex::new(NOW))),
         };
         w.store.with(|d| {
@@ -97,7 +110,7 @@ impl World {
                 stager: None,
                 sleeper: Arc::new(NoSleep),
                 rate_limiter: Arc::new(CountingLimiter { hits: Mutex::new(BTreeMap::new()) }),
-                paid_captions: None,
+                paid_captions: Some(self.captions.clone()),
                 video_metadata: Some(self.metadata.clone()),
             },
             config,
@@ -415,6 +428,93 @@ fn youtube_metadata_limits_and_errors() {
     assert_eq!(run(jobs.youtube_metadata(fixtures::account(), "dQw4w9WgXcQ")).err(), Some(JobsError::Failed("Failed to fetch metadata".into())));
 }
 
+fn youtube_draft(w: &World, jobs: &Jobs) -> Job {
+    *w.metadata.answer.lock().unwrap() = Ok(VideoMetadata {
+        video_id: "dQw4w9WgXcQ".into(),
+        title: "Talk".into(),
+        duration_seconds: Some(3_700.0),
+        language: Some("en".into()),
+        raw: serde_json::Value::Null,
+    });
+    run(jobs.youtube_add(fixtures::account(), "https://youtu.be/dQw4w9WgXcQ", None)).unwrap().0
+}
+
+fn balance(w: &World) -> (i64, usize) {
+    w.store.with(|d| (d.usage.iter().map(|u| u.minutes).sum(), d.usage.len()))
+}
+
+// JOB-035: a YouTube draft goes straight to completed (or failed) in the resolve request,
+// never passes not_started and is never billed, however long the video.
+#[test]
+fn job_035_a_youtube_resolve_never_touches_the_balance() {
+    let w = World::new();
+    let jobs = w.jobs();
+    let done = youtube_draft(&w, &jobs);
+    let before = balance(&w);
+    *w.captions.answer.lock().unwrap() = Ok(media_ports::CaptionDocument {
+        video_id: "dQw4w9WgXcQ".into(),
+        language: Some("en".into()),
+        cues: vec![media_ports::CaptionCue { text: "Hello".into(), start: 0.0, duration: 2.0 }],
+        metadata: serde_json::Value::Null,
+    });
+    assert_eq!(run(jobs.youtube_resolve(fixtures::account(), done.id)).unwrap(), ResolveAnswer::Completed { job_id: done.id });
+    assert_eq!((w.job(done.id).status, balance(&w)), (JobStatus::Completed, before));
+
+    let failed = youtube_draft(&w, &jobs);
+    *w.captions.answer.lock().unwrap() = Err(media_ports::CaptionError::NoCaptions);
+    assert!(matches!(run(jobs.youtube_resolve(fixtures::account(), failed.id)).unwrap(), ResolveAnswer::Failed { ref code, .. } if code == "no_captions"));
+    assert_eq!((w.job(failed.id).status, balance(&w)), (JobStatus::Failed, before));
+    assert!(w.store.with(|d| d.attempts.values().all(|a| a.job != done.id && a.job != failed.id)), "no provider attempt either");
+}
+
+// TRX-038: every cue field lands on its saved line through `youtube_resolve`: start and
+// start + duration floored to HH:MM:SS, the text, and no speaker, language or translation status.
+#[test]
+fn trx_038_each_caption_cue_becomes_one_saved_line() {
+    let w = World::new();
+    let jobs = w.jobs();
+    let draft = youtube_draft(&w, &jobs);
+    *w.captions.answer.lock().unwrap() = Ok(media_ports::CaptionDocument {
+        video_id: "dQw4w9WgXcQ".into(),
+        language: Some("en".into()),
+        cues: vec![
+            media_ports::CaptionCue { text: "Hello there".into(), start: 1.9, duration: 2.3 },
+            media_ports::CaptionCue { text: "An hour in".into(), start: 3_599.5, duration: 0.6 },
+        ],
+        metadata: serde_json::Value::Null,
+    });
+    run(jobs.youtube_resolve(fixtures::account(), draft.id)).unwrap();
+    let lines: Vec<_> = w.store.with(|d| d.lines.iter().filter(|l| l.job == draft.id).cloned().collect());
+    let shape: Vec<_> = lines
+        .iter()
+        .map(|l| (l.start_time.as_str(), l.end_time.as_str(), l.line.as_str(), l.speaker.clone(), l.language, l.translation_status))
+        .collect();
+    assert_eq!(
+        shape,
+        vec![
+            ("00:00:01", "00:00:04", "Hello there", None, None, None),
+            ("00:59:59", "01:00:00", "An hour in", None, None, None),
+        ]
+    );
+}
+
+// TRX-023, LNG-013: a translation job sends one target only, `translate_to[0]`, as its lower
+// case ISO code. Every translation target has a code, so "a target without a code" cannot be
+// stored through core (see `languages::tests::trx_023_every_translation_target_has_a_code`).
+#[test]
+fn trx_023_lng_013_only_the_first_target_is_sent_as_its_code() {
+    let w = World::new();
+    let jobs = w.jobs();
+    let job = w.draft(&jobs, Some(2), "English");
+    w.store.with(|d| {
+        d.jobs.get_mut(&job.id.0).unwrap().translate_to = ["German", "French"].iter().filter_map(|n| Language::from_name(n)).collect();
+    });
+    w.soniox.accept("tx-1");
+    start(&jobs, vec![job.id]).unwrap();
+    let request = w.soniox.submitted.lock().unwrap()[0].clone();
+    assert_eq!(request.translation_target.as_deref(), Some("de"));
+}
+
 // UPL-024: the YouTube draft takes the title, ceil-free rounded minutes and the declared language.
 #[test]
 fn youtube_add_creates_the_draft() {
@@ -664,4 +764,288 @@ fn a_deepgram_submission_without_answer_is_redispatched_once_without_a_second_ch
     let late = w.store.with(|d| d.attempts[&first.id].clone());
     assert_eq!((late.remote_id.as_deref(), late.remote_cleanup), (Some("dg-1"), RemoteCleanup::Pending));
     assert_eq!((w.job(job.id).provider, w.attempt_of(job.id).id), (Some(Provider::Deepgram), second.id), "the job keeps the second");
+}
+
+// ---- P3 closing tests: queue passes and stuck recovery -----------------------------------------
+
+/// Records the pauses the dispatcher asks for, in milliseconds.
+#[derive(Default)]
+struct Spacing(Mutex<Vec<u64>>);
+
+impl crate::jobs::ports::Sleeper for Spacing {
+    fn sleep(&self, millis: u64) -> BoxFuture<'_, ()> {
+        self.0.lock().unwrap().push(millis);
+        Box::pin(async {})
+    }
+}
+
+/// The world's jobs service with a recording sleeper.
+fn spaced(w: &World, sleeps: Arc<Spacing>) -> Jobs {
+    Jobs::new(
+        JobsServices {
+            store: Arc::new(w.store.clone()),
+            clock: w.clock.clone(),
+            objects: vec![w.objects.clone() as Arc<dyn ObjectStore>],
+            transcribers: vec![w.soniox.clone(), w.deepgram.clone()],
+            stager: None,
+            sleeper: sleeps,
+            rate_limiter: Arc::new(CountingLimiter { hits: Mutex::new(BTreeMap::new()) }),
+            paid_captions: Some(w.captions.clone()),
+            video_metadata: Some(w.metadata.clone()),
+        },
+        JobsConfig {
+            routing: RoutingConfig { soniox_max_duration_minutes: 200 },
+            models: ModelConfig {
+                soniox: "stt-async-v5".into(),
+                soniox_v5: "stt-async-v5".into(),
+                deepgram: "whisper-large".into(),
+                deepgram_account_overrides: vec![],
+            },
+            upload_storage: StorageProvider::Gcs,
+            upload_bucket: "bucket".into(),
+            archive_store: StoreKind::Gcs,
+            archive_bucket: "bucket".into(),
+            staging_store: StoreKind::Gcs,
+            staging_bucket: "bucket".into(),
+            callback_base_url: "https://transgate.test/".into(),
+            soniox_auto_delete: false,
+            ssrf_protection: true,
+            freemium_lists: FreemiumLists::default(),
+        },
+    )
+}
+
+/// A queued job routed to Deepgram (audio over the Soniox limit), created `age` minutes before `NOW`.
+fn queued(w: &World, id: i64, status: JobStatus, age: i64) {
+    let mut job = crate::presentation::fixtures::job(id, status, "long.mp3");
+    job.duration_minutes = Some(300);
+    job.created_at = Micros(NOW.0 - age * crate::ids::MICROS_PER_MINUTE);
+    w.store.with(|d| {
+        d.jobs.insert(id, job);
+    });
+}
+
+fn submitted_order(w: &World) -> Vec<String> {
+    w.deepgram.submitted.lock().unwrap().iter().map(|r| r.client_reference.clone()).collect()
+}
+
+// JOB-018: Deepgram holds five concurrent jobs and the queue keeps one slot free, so a pass submits at
+// most `5 - 1 - running` jobs (never more than five), pending before not_started and oldest first, one
+// second apart, and stops at its first rate limit.
+#[test]
+fn job_018_a_deepgram_pass_keeps_one_slot_free_orders_the_queue_spaces_submissions_and_stops_at_a_429() {
+    // Seven queued: three pending (ids 3, 4, 5 oldest first), the not_started orphan 9 is older than all.
+    let w = World::new();
+    let sleeps = Arc::new(Spacing::default());
+    let jobs = spaced(&w, sleeps.clone());
+    queued(&w, 9, JobStatus::NotStarted, 500);
+    queued(&w, 5, JobStatus::Pending, 10);
+    queued(&w, 3, JobStatus::Pending, 30);
+    queued(&w, 4, JobStatus::Pending, 20);
+    queued(&w, 6, JobStatus::Pending, 5);
+    queued(&w, 7, JobStatus::Pending, 4);
+    for n in 0..8 {
+        w.deepgram.accept(&format!("dg-{n}"));
+    }
+    let report = run(jobs.dispatch_pass()).unwrap();
+    assert_eq!(report.submitted, 4, "5 - 1 - 0 running leaves four submissions in a pass: {report:?}");
+    assert_eq!(submitted_order(&w), ["job_3", "job_4", "job_5", "job_6"], "pending first, oldest first; the older not_started orphan waits its turn");
+    assert_eq!(*sleeps.0.lock().unwrap(), vec![1_000; 3], "one second between consecutive submissions");
+    assert_eq!(report.waiting, 2, "the rest wait for the next pass");
+    assert_eq!(w.job(JobId(7)).status, JobStatus::Pending);
+    assert_eq!(w.job(JobId(9)).status, JobStatus::NotStarted);
+
+    // Running Deepgram jobs take slots: with three running only one submission fits.
+    let w = World::new();
+    let jobs = spaced(&w, Arc::new(Spacing::default()));
+    for _ in 0..3 {
+        running_deepgram(&w, &jobs);
+    }
+    let already = w.deepgram.submitted.lock().unwrap().len();
+    for id in 10..13 {
+        queued(&w, id, JobStatus::Pending, 100 - id);
+    }
+    for n in 0..4 {
+        w.deepgram.accept(&format!("dg-{n}"));
+    }
+    assert_eq!(run(jobs.dispatch_pass()).unwrap().submitted, 1, "5 - 1 - 3 running = 1");
+    assert_eq!(submitted_order(&w)[already..], ["job_10"]);
+
+    // A rate limit ends the pass for Deepgram: nothing after it is submitted.
+    let w = World::new();
+    let jobs = spaced(&w, Arc::new(Spacing::default()));
+    for id in 1..=4 {
+        queued(&w, id, JobStatus::Pending, 100 - id);
+    }
+    let limited = || Ok(Submission::Rejected { status: Some(429), code: "Too Many Requests".into() });
+    w.deepgram.accept("dg-0");
+    for _ in 0..4 {
+        w.deepgram.answer(limited());
+        w.soniox.answer(limited());
+    }
+    let report = run(jobs.dispatch_pass()).unwrap();
+    assert_eq!((report.submitted, report.rate_limited), (1, 1), "{report:?}");
+    let tried = submitted_order(&w);
+    assert!(!tried.iter().any(|r| r == "job_3" || r == "job_4"), "the pass stopped at the first 429; jobs 3 and 4 were not tried: {tried:?}");
+}
+
+fn running_deepgram(w: &World, jobs: &Jobs) -> Job {
+    let job = w.draft(jobs, Some(5), "English");
+    w.soniox.answer(Ok(Submission::Rejected { status: Some(429), code: "Too Many Requests".into() }));
+    w.deepgram.accept("dg-0");
+    start(jobs, vec![job.id]).unwrap();
+    assert_eq!(w.job(job.id).provider, Some(Provider::Deepgram));
+    w.job(job.id)
+}
+
+// JOB-020, JOB-021: a job is stuck when it has been `running` for more than 30 minutes; a stuck Deepgram
+// job is reset to pending with the retry count up by one and the recovery error, on every pass without
+// any maximum, and is never charged a second time.
+#[test]
+fn job_020_021_a_stuck_deepgram_job_is_reset_every_time_without_a_limit_and_never_charged_again() {
+    let w = World::new();
+    let jobs = w.jobs();
+    let job = running_deepgram(&w, &jobs);
+    let charged = w.usage();
+    let base = job.retry_count;
+    assert_eq!(charged, 5);
+
+    w.clock.advance_minutes(30);
+    assert_eq!(run(jobs.stuck_pass()).unwrap().recovered, 0, "exactly 30 minutes is not yet stuck");
+    assert_eq!(w.job(job.id).status, JobStatus::Running);
+    for round in 1..=7 {
+        w.clock.advance_minutes(1);
+        assert_eq!(run(jobs.stuck_pass()).unwrap().recovered, 1, "round {round}");
+        let reset = w.job(job.id);
+        assert_eq!((reset.status, reset.retry_count), (JobStatus::Pending, base + round), "round {round}");
+        let error = reset.error.clone().unwrap();
+        assert_eq!(error["stuck_recovery"], true);
+        assert!(error["message"].as_str().is_some() && error["stuck_at"].as_str().is_some(), "{error}");
+        // Submitted again by a later queue run, then stuck again 31 minutes later.
+        w.soniox.answer(Ok(Submission::Rejected { status: Some(429), code: "Too Many Requests".into() }));
+        w.deepgram.accept(&format!("dg-{round}"));
+        assert_eq!(run(jobs.dispatch_pass()).unwrap().submitted, 1, "round {round}");
+        assert_eq!(w.job(job.id).status, JobStatus::Running);
+        w.clock.advance_minutes(30);
+    }
+    assert_eq!(w.usage(), charged, "a reset and resubmission never charges again");
+}
+
+fn stuck_soniox(w: &World, jobs: &Jobs) -> Job {
+    let job = accepted_soniox_job(w, jobs, Some(12));
+    w.clock.advance_minutes(31);
+    job
+}
+
+fn soniox_status(w: &World, status: &str) {
+    *w.soniox.status.lock().unwrap() = Some(testing::soniox("tx-1", ObservationOrigin::RecoveryPoll, status, None, None));
+}
+
+// JOB-022, JOB-023, JOB-024: a stuck Soniox job is never resubmitted. The sweep fails it at once at three
+// recovery attempts or without a stored id; otherwise it claims the job (compare-and-swap on the attempt
+// count) and asks Soniox: still working or a failed status call gives the claim back, a terminal answer
+// is ingested like a webhook and a failed ingest keeps the increment.
+#[test]
+fn job_022_023_024_soniox_recovery_polls_claims_and_gives_up_by_the_rule() {
+    // Working: nothing changes, the claim is given back, the job is not resubmitted.
+    let w = World::new();
+    let jobs = w.jobs();
+    let job = stuck_soniox(&w, &jobs);
+    soniox_status(&w, "processing");
+    let report = run(jobs.stuck_pass()).unwrap();
+    assert_eq!(report.recovered, 1, "{report:?}");
+    let after = w.job(job.id);
+    assert_eq!((after.status, after.recovery_attempts), (JobStatus::Running, 0), "still working: the claim is given back (JOB-024)");
+    assert_eq!(w.soniox.submitted.lock().unwrap().len(), 1, "never resubmitted (JOB-022)");
+
+    // The status call itself fails: the claim is given back and the pass reports the error.
+    *w.soniox.status.lock().unwrap() = None;
+    let report = run(jobs.stuck_pass()).unwrap();
+    assert_eq!(report.errors, 1, "{report:?}");
+    assert_eq!(w.job(job.id).recovery_attempts, 0, "a failed status call gives the claim back");
+
+    // Completed: ingested through the webhook path; the job completes and the claim stays counted.
+    soniox_status(&w, "completed");
+    *w.soniox.result.lock().unwrap() = Some(testing::soniox(
+        "tx-1",
+        ObservationOrigin::RecoveryPoll,
+        "completed",
+        Some(300_000.0),
+        Some(vec![testing::token("Hello there everyone.", 0.0, 2000.0, None)]),
+    ));
+    assert_eq!(run(jobs.stuck_pass()).unwrap().recovered, 1);
+    let done = w.job(job.id);
+    assert_eq!((done.status, done.recovery_attempts), (JobStatus::Completed, 1));
+    assert_eq!(w.store.with(|d| d.lines.len()), 1);
+
+    // A terminal status whose result cannot be fetched fails the ingest and keeps the increment, until
+    // the third attempt is spent: the next pass fails the job without asking Soniox (JOB-023).
+    let w = World::new();
+    let jobs = w.jobs();
+    let job = stuck_soniox(&w, &jobs);
+    soniox_status(&w, "completed");
+    for attempt in 1..=3 {
+        let report = run(jobs.stuck_pass()).unwrap();
+        assert_eq!(report.errors, 1, "attempt {attempt}: {report:?}");
+        assert_eq!((w.job(job.id).status, w.job(job.id).recovery_attempts), (JobStatus::Running, attempt), "a failed ingest keeps the increment");
+    }
+    let report = run(jobs.stuck_pass()).unwrap();
+    assert_eq!(report.recovered, 1, "{report:?}");
+    let failed = w.job(job.id);
+    assert_eq!(failed.status, JobStatus::Failed);
+    assert_eq!(failed.error.as_ref().unwrap()["code"], "recovery_attempts_exhausted");
+
+    // No Soniox id was stored: failed at once, `recovery_unavailable`, with no provider call.
+    let w = World::new();
+    let jobs = w.jobs();
+    let job = stuck_soniox(&w, &jobs);
+    w.store.with(|d| d.jobs.get_mut(&job.id.0).unwrap().soniox_transcription_id = None);
+    soniox_status(&w, "completed");
+    assert_eq!(run(jobs.stuck_pass()).unwrap().recovered, 1);
+    let failed = w.job(job.id);
+    assert_eq!((failed.status, failed.error.as_ref().unwrap()["code"].clone()), (JobStatus::Failed, serde_json::json!("recovery_unavailable")));
+}
+
+// JOB-024: the claim is a compare-and-swap on `recovery_attempts` (n to n+1). A sweep that
+// read n while another worker already claimed (stored n+1) gets no row back: it does not
+// claim, does not call Soniox and leaves the count alone. The winning claim proceeds.
+#[test]
+fn job_024_a_stale_recovery_claim_does_not_call_soniox() {
+    let w = World::new();
+    let jobs = w.jobs();
+    let job = stuck_soniox(&w, &jobs);
+    soniox_status(&w, "processing");
+    // Another worker's claim landed after this sweep read the candidate with count 0.
+    w.store.with(|d| d.jobs.get_mut(&job.id.0).unwrap().recovery_attempts = 1);
+    run(jobs.recover_soniox(job.id, 0, "tx-1")).unwrap();
+    assert_eq!(*w.soniox.status_calls.lock().unwrap(), 0, "a lost claim never asks Soniox");
+    assert_eq!((w.job(job.id).status, w.job(job.id).recovery_attempts), (JobStatus::Running, 1));
+    run(jobs.recover_soniox(job.id, 1, "tx-1")).unwrap();
+    assert_eq!(*w.soniox.status_calls.lock().unwrap(), 1, "the current count claims and asks once");
+    assert_eq!(w.job(job.id).recovery_attempts, 1, "still working: claimed 1 to 2, then given back");
+}
+
+// PRV-034: the source refetched the list once `unlimited_history` resolved in the browser.
+// Here every list request reads the stored value itself, so the first page is already
+// right and a later request (the D11 poll or a reload of the page) reflects a change.
+#[test]
+fn prv_034_every_list_request_applies_the_current_unlimited_history() {
+    let w = World::new();
+    let jobs = w.jobs();
+    w.store.with(|d| {
+        for (id, days_ago) in [(1_i64, 60_i64), (2, 2)] {
+            let mut j = fixtures::job(id, JobStatus::Completed, "a.mp3");
+            j.created_at = Micros(NOW.0 - days_ago * MICROS_PER_DAY);
+            d.jobs.insert(id, j);
+        }
+    });
+    let calendar = CalendarContext { offset_now_minutes: 0, offset_then_minutes: 0 };
+    let ids = |page: JobPage| page.jobs.iter().map(|j| j.id.0).collect::<Vec<_>>();
+    assert_eq!(ids(run(jobs.list(fixtures::account(), None, calendar)).unwrap()), vec![2], "one-month window");
+    w.store.with(|d| {
+        let mut s = UserSettings::defaults(fixtures::account());
+        s.unlimited_history = true;
+        d.settings.insert(fixtures::account(), s);
+    });
+    assert_eq!(ids(run(jobs.list(fixtures::account(), None, calendar)).unwrap()), vec![2, 1], "the next request sees the change");
 }

@@ -1798,7 +1798,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,
@@ -3470,7 +3471,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,
@@ -5080,7 +5082,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,
@@ -6782,7 +6785,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,
@@ -8411,7 +8415,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,
@@ -10171,7 +10176,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,
@@ -12474,7 +12480,8 @@ export const fixtures: FixtureFile = {
           "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
           "ns": "common"
         }
-      ]
+      ],
+      "save_error": null
     },
     "erasure_failed": {
       "cleanup_on": true,
@@ -12522,7 +12529,8 @@ export const fixtures: FixtureFile = {
           "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
           "ns": "common"
         }
-      ]
+      ],
+      "save_error": null
     },
     "erasure_requested": {
       "cleanup_on": true,
@@ -12570,7 +12578,8 @@ export const fixtures: FixtureFile = {
           "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
           "ns": "common"
         }
-      ]
+      ],
+      "save_error": null
     },
     "loaded": {
       "cleanup_on": true,
@@ -12614,7 +12623,57 @@ export const fixtures: FixtureFile = {
           "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
           "ns": "common"
         }
-      ]
+      ],
+      "save_error": null
+    },
+    "save_failed": {
+      "cleanup_on": true,
+      "cleanup_policy": {
+        "args": {},
+        "key": "Transcripts from jobs completed more than 30 days ago are automatically deleted to save storage space. Job metadata and settings are always preserved.",
+        "ns": "common"
+      },
+      "cleanup_warning": {
+        "args": {},
+        "key": "Deletion occurs daily at 2 AM UTC. Deleted transcripts cannot be recovered.",
+        "ns": "common"
+      },
+      "confirm": null,
+      "delete_monthly_on": true,
+      "erasure": null,
+      "error": null,
+      "files_gone_note": {
+        "args": {},
+        "key": "Please note that once files are deleted, they cannot be recovered.",
+        "ns": "common"
+      },
+      "privacy_info": [
+        {
+          "args": {},
+          "key": "Our system automatically deletes data every month.",
+          "ns": "common"
+        },
+        {
+          "args": {},
+          "key": "You have the authority to delete your transcripts anytime.",
+          "ns": "common"
+        },
+        {
+          "args": {},
+          "key": "You can delete all transcript files with one click.",
+          "ns": "common"
+        },
+        {
+          "args": {},
+          "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
+          "ns": "common"
+        }
+      ],
+      "save_error": {
+        "args": {},
+        "key": "p5.manage_data.save_failed",
+        "ns": "app"
+      }
     }
   },
   "FeedbackVm": {
@@ -15045,7 +15104,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,
@@ -16616,7 +16676,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,
@@ -18216,7 +18277,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,
@@ -19917,7 +19979,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,
@@ -21541,7 +21604,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,
@@ -23115,7 +23179,8 @@ export const fixtures: FixtureFile = {
             "key": "Transcript cleanup runs daily and removes transcripts older than 30 days.",
             "ns": "common"
           }
-        ]
+        ],
+        "save_error": null
       },
       "new_password": {
         "busy": false,

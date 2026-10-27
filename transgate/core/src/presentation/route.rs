@@ -194,5 +194,34 @@ pub fn public_root(locale: &str) -> String {
     }
 }
 
+/// LNG-003 (Next.js detection on `/`): a valid `NEXT_LOCALE` cookie, then the
+/// best `Accept-Language` match, then the default locale. Preferences are taken
+/// in `q` order (ties keep header order, `q=0` is refused); each matches an
+/// offered locale exactly, else by its primary subtag. The host applies it to
+/// the public root; the app never writes the cookie (LNG-002).
+pub fn first_visit_locale(cookie: Option<&str>, accept_language: Option<&str>) -> &'static str {
+    let offered = |tag: &str| UI_LOCALES.iter().find(|l| l.code.eq_ignore_ascii_case(tag)).map(|l| l.code);
+    if let Some(code) = cookie.and_then(|c| offered(c.trim())) {
+        return code;
+    }
+    let mut preferences: Vec<(&str, f64)> = accept_language
+        .unwrap_or("")
+        .split(',')
+        .filter_map(|part| {
+            let mut fields = part.split(';');
+            let tag = fields.next()?.trim();
+            let q = fields
+                .find_map(|f| f.trim().strip_prefix("q=").map(|v| v.trim().parse::<f64>().unwrap_or(0.0)))
+                .unwrap_or(1.0);
+            (!tag.is_empty() && q > 0.0).then_some((tag, q))
+        })
+        .collect();
+    preferences.sort_by(|a, b| b.1.total_cmp(&a.1));
+    preferences
+        .iter()
+        .find_map(|(tag, _)| offered(tag).or_else(|| offered(tag.split('-').next().unwrap_or(tag))))
+        .unwrap_or(default_ui_locale().code)
+}
+
 #[cfg(test)]
 mod tests;

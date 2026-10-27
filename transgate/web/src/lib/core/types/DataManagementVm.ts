@@ -6,4 +6,8 @@ export type DataManagementVm = { privacy_info: Array<Msg>, cleanup_policy: Msg, 
 /**
  * The honest erasure state; never "fully erased" before the server says so.
  */
-erasure: Msg | null, error: Msg | null, };
+erasure: Msg | null, error: Msg | null, 
+/**
+ * A refused settings write; the switches show the stored values again.
+ */
+save_error: Msg | null, };

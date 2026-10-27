@@ -43,6 +43,45 @@ fn public_api_asset_and_unknown_paths_are_not_app_routes() {
     assert!(is_app_path("/home/7?x=1") && is_app_path("/kk/new-password"));
 }
 
+// LNG-002: en has no prefix, every other UI locale is a path prefix; the switcher's target is
+// `/<code>/home` (a full page load, no cookie; see the app test of `LocaleChosen`).
+#[test]
+fn lng_002_only_non_default_locales_are_prefixes() {
+    for locale in UI_LOCALES {
+        let expected = if locale.default { "/home".to_string() } else { format!("/{}/home", locale.code) };
+        assert_eq!(href(Route::Home(HomeView::Default), locale.code), expected);
+        assert_eq!(parse(&expected).unwrap().locale, locale.code);
+    }
+}
+
+// LNG-003: the first visit picks a valid `NEXT_LOCALE` cookie, then the best Accept-Language
+// match (q order; an exact tag, then its primary subtag), then the default en.
+#[test]
+fn lng_003_first_visit_locale_is_cookie_then_accept_language_then_default() {
+    assert_eq!(first_visit_locale(Some("tr"), Some("de-DE,de;q=0.9")), "tr");
+    assert_eq!(first_visit_locale(Some("xx"), Some("de-DE,de;q=0.9")), "de", "an unknown cookie is ignored");
+    assert_eq!(first_visit_locale(None, Some("ja;q=0.9, fr-CA;q=0.8, it;q=0.95")), "it", "highest q among offered");
+    assert_eq!(first_visit_locale(None, Some("PT-br")), "pt");
+    assert_eq!(first_visit_locale(None, Some("ja, zh;q=0.5")), "en");
+    assert_eq!(first_visit_locale(None, None), "en");
+    assert_eq!(first_visit_locale(None, Some("fr;q=0, es")), "es", "q=0 means not acceptable");
+}
+
+// LNG-004: a signed-in visitor at the public root goes to the home of the request locale.
+#[test]
+fn lng_004_the_signed_in_root_target_is_the_locale_home() {
+    assert_eq!(href(Route::Home(HomeView::Default), first_visit_locale(None, Some("en-US"))), "/home");
+    assert_eq!(href(Route::Home(HomeView::Default), first_visit_locale(None, Some("tr-TR"))), "/tr/home");
+}
+
+// LNG-006: no UI locale is right to left, so `<html lang>` is the locale and no `dir` is set.
+#[test]
+fn lng_006_every_ui_locale_renders_left_to_right() {
+    for locale in UI_LOCALES {
+        assert!(!crate::languages::is_rtl(Some(locale.name)), "{}", locale.code);
+    }
+}
+
 #[test]
 fn a_callback_code_or_error_is_read_once_and_asks_for_a_clean_location() {
     let ok = parse("/home?code=ab%2Dcd+ef#frag").unwrap();

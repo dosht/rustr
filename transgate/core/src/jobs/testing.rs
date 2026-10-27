@@ -966,13 +966,16 @@ impl JobUow for MemUow {
         ok(())
     }
     fn inflight<'a>(&'a mut self, provider: media_ports::Provider, _project: &'a str, now: Micros) -> StoreResult<'a, u32> {
+        // JOB-018: the slot budget counts jobs, not attempts; a reset job's old attempt is not a second slot.
         let n = self
             .data
             .attempts
             .values()
             .filter(|a| a.provider.transport() == Some(provider) && a.is_live(now))
             .filter(|a| self.data.jobs.get(&a.job.0).is_some_and(|j| matches!(j.status, JobStatus::NotStarted | JobStatus::Pending | JobStatus::Running)))
-            .count() as u32;
+            .map(|a| a.job)
+            .collect::<std::collections::BTreeSet<_>>()
+            .len() as u32;
         ok(n)
     }
     fn lock_jobs<'a>(&'a mut self, account: AccountId, ids: &'a [JobId]) -> StoreResult<'a, Vec<Job>> {
@@ -1382,6 +1385,8 @@ pub struct FakeTranscriber {
     pub submissions: Mutex<VecDeque<Result<Submission, TransportError>>>,
     pub submitted: Mutex<Vec<TranscriptionRequest>>,
     pub status: Mutex<Option<ProviderObservation>>,
+    /// Every `status` call, answered or not (JOB-024 proves a lost claim makes none).
+    pub status_calls: Mutex<u32>,
     pub result: Mutex<Option<ProviderObservation>>,
     pub completed: Mutex<Option<ProviderObservation>>,
     pub records: Mutex<Vec<RemoteRecord>>,
@@ -1398,6 +1403,7 @@ impl FakeTranscriber {
             submissions: Mutex::new(VecDeque::new()),
             submitted: Mutex::new(vec![]),
             status: Mutex::new(None),
+            status_calls: Mutex::new(0),
             result: Mutex::new(None),
             completed: Mutex::new(None),
             records: Mutex::new(vec![]),
@@ -1431,6 +1437,7 @@ impl Transcriber for FakeTranscriber {
         Box::pin(async move { next })
     }
     fn status<'a>(&'a self, _r: &'a RemoteIdentity) -> BoxFuture<'a, Result<ProviderObservation, TransportError>> {
+        *self.status_calls.lock().unwrap() += 1;
         let v = self.status.lock().unwrap().clone().ok_or(TransportError::Unsupported("status".into()));
         Box::pin(async move { v })
     }
