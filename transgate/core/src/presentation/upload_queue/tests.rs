@@ -198,6 +198,97 @@ fn upl_002_the_picker_accept_list_follows_the_layout() {
     assert_eq!(s.view(Frame::Phone).picker_accept, "audio/mpeg,audio/mp4,audio/wav,audio/webm,.mp3,.m4a,.wav,.webm");
 }
 
+// JOB-003: every draft comes back as an uploaded file, even one whose upload had failed
+// (a draft row records no upload outcome); the language is not restored; the speaker
+// toggle is on only when every restored draft has speakers.
+#[test]
+fn job_003_restored_drafts_are_uploaded_without_language_and_aggregate_speakers() {
+    let mut failed_upload = draft(5, "broken.mp3");
+    failed_upload.language = Some(lang("Turkish"));
+    failed_upload.speakers = true;
+    let mut other = draft(6, "b.wav");
+    other.speakers = true;
+    let mut s = UploadQueueState::default();
+    s.update(Event::Restored { drafts: vec![failed_upload.clone(), other.clone()], preferred: vec![], preferred_targets: vec![] });
+    let vm = s.view(Frame::Desktop);
+    assert!(vm.rows.iter().all(|r| r.chip == Chip::Ready), "restored as uploaded");
+    assert_eq!((vm.language, vm.speakers), (None, true));
+
+    other.speakers = false;
+    let mut mixed = UploadQueueState::default();
+    mixed.update(Event::Restored { drafts: vec![failed_upload, other], preferred: vec![], preferred_targets: vec![] });
+    assert!(!mixed.view(Frame::Desktop).speakers, "on only when all drafts have speakers");
+}
+
+// UPL-015: removing a file hard deletes its draft and the entry; a later draft reload
+// that still lists it never brings it back.
+#[test]
+fn upl_015_a_removed_draft_leaves_the_queue_for_good() {
+    let mut s = UploadQueueState::default();
+    s.update(Event::Restored { drafts: vec![draft(5, "a.mp3"), draft(6, "b.mp3")], preferred: vec![], preferred_targets: vec![] });
+    assert_eq!(s.update(Event::Removed { file: 1 }), vec![Effect::DeleteDraft { job: JobId(5) }]);
+    s.update(Event::DraftsReloaded { drafts: vec![draft(5, "a.mp3"), draft(6, "b.mp3")], elapsed_ms: 0 });
+    let jobs: Vec<_> = s.view(Frame::Desktop).rows.iter().map(|r| r.id).collect();
+    assert_eq!(jobs, vec![2]);
+}
+
+// UPL-020, LNG-024: the speaker toggle writes every queued draft, is offered and sent for
+// every language, and new drafts are created with it.
+#[test]
+fn upl_020_lng_024_the_speaker_toggle_applies_to_every_draft_in_every_language() {
+    for language in ["Turkish", "Indonesian", "English", "Arabic"] {
+        let mut s = UploadQueueState::default();
+        s.update(Event::Restored { drafts: vec![draft(5, "a.mp3"), draft(6, "b.mp3")], preferred: vec![], preferred_targets: vec![] });
+        s.update(Event::LanguageChosen { choice: Some(Choice::Language(lang(language))) });
+        assert_eq!(
+            s.update(Event::SpeakersToggled { enabled: true }),
+            vec![Effect::SetOptions { jobs: vec![JobId(5), JobId(6)], language: None, translate_to: None, speakers: Some(true) }],
+            "{language}"
+        );
+        assert!(s.view(Frame::Desktop).speakers, "{language}: the toggle persists");
+        let a = picked("c.mp3");
+        s.update(desktop(vec![a]));
+        let created = s.update(Event::Measured { file: 3, seconds: Some(60.0) });
+        assert!(created.iter().any(|e| matches!(e, Effect::CreateDraft { speakers: true, .. })), "{language}: {created:?}");
+    }
+}
+
+// UPL-027: every caption failure code maps to its source message.
+#[test]
+fn upl_027_youtube_failure_codes_show_their_messages() {
+    let cases = [
+        (Some("no_captions"), "This video has no captions available. As this feature is still in beta, you can download the video and upload it here to transcribe and analyze it as audio or video."),
+        (Some("age_restricted"), "This video requires age verification and cannot be transcribed"),
+        (Some("rate_limited"), "Too many requests, please try again in a few minutes"),
+        // The displayed source text (`useTranscriptionViewModel.ts:943-947`); the ledger abbreviates it.
+        (Some("network_error"), "Network error fetching captions — please try again"),
+        (Some("unknown_error"), "Failed to transcribe this YouTube video. Please try again."),
+        (Some("something_new"), "Failed to transcribe this YouTube video. Please try again."),
+        (None, "Failed to transcribe this YouTube video. Please try again."),
+    ];
+    for (code, message) in cases {
+        assert_eq!(youtube_error_message(code), app(message), "{code:?}");
+    }
+}
+
+// UPL-028: a queue with a YouTube draft only resolves YouTube; its failure deletes that
+// draft alone, and the files of the same queue then start normally.
+#[test]
+fn upl_028_a_failed_youtube_draft_is_removed_and_the_files_proceed() {
+    let mut s = UploadQueueState::default();
+    s.update(Event::Restored { drafts: vec![draft(5, "a.mp3")], preferred: vec![], preferred_targets: vec![] });
+    let mut yt = draft(9, "Video");
+    yt.source = crate::jobs::domain::JobSource::YouTube { video_id: Some("x".into()), youtube_url: None, transcript_source: None };
+    s.update(Event::YouTubeAdded { job: yt, title: "Talk".into(), duration_seconds: 61.0, detected_language: Some("tr".into()) });
+    assert_eq!(work(s.update(Event::StartPressed)), vec![Effect::ResolveYouTube { job: JobId(9) }]);
+    assert_eq!(
+        s.update(Event::YouTubeResolved { job: JobId(9), completed: false, code: Some("no_captions".into()) }),
+        vec![Effect::DeleteDraft { job: JobId(9) }]
+    );
+    assert_eq!(s.view(Frame::Desktop).rows.len(), 1, "the file stays queued");
+    assert_eq!(work(s.update(Event::StartPressed)), vec![Effect::Start { jobs: vec![JobId(5)], language: Some(lang("Turkish")), translate_to: vec![] }]);
+}
+
 // ANLZ-1-03: one started event per queued file on Start, one failed event per file on failure.
 #[test]
 fn start_reports_one_analytics_event_per_file() {

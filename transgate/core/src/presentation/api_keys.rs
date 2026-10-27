@@ -503,7 +503,8 @@ impl ApiKeysState {
         ApiKeysVm {
             loading: self.loading,
             error: self.load_failed.then_some(LOAD_FAILED),
-            empty: !self.loading && !self.load_failed && rows.is_empty(),
+            // The source shows "No API keys found." for `keys == []` even after a failed load.
+            empty: !self.loading && rows.is_empty(),
             rows,
             form_toggle: common(if self.form_open { "Cancel" } else { "Generate New Key" }),
             form,

@@ -184,3 +184,14 @@ fn failures_show_without_losing_loaded_rows() {
     let vm = s.view(NOW);
     assert_eq!((vm.rows.len(), vm.error, vm.secret_error), (1, Some(LOAD_FAILED), Some(SECRET_FAILED)));
 }
+
+// WEB-045/046 (`api-keys.tsx`): a failed first load leaves `keys == []`, so the page
+// shows "No API keys found." next to the error, never an empty table.
+#[test]
+fn a_failed_first_load_shows_the_empty_state_with_the_error() {
+    let mut s = ApiKeysState::default();
+    s.update(Event::Opened);
+    s.update(Event::KeysLoaded { result: Err(ApiFailure::http(503, None)) });
+    let vm = s.view(NOW);
+    assert_eq!((vm.rows.len(), vm.empty, vm.error, vm.loading), (0, true, Some(LOAD_FAILED), false));
+}

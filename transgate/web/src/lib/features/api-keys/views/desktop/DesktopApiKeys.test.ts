@@ -47,6 +47,10 @@ describe("Desktop API keys", () => {
     expect(screen.queryByText(/sk_/)).toBeNull();
     expect(screen.getByText("Failed to load API keys.")).toBeInTheDocument();
     expect(screen.getByText("Failed to load the signing secret.")).toBeInTheDocument();
+    // Source parity: an empty list after a failed load shows the empty message, never a bare table or header.
+    expect(screen.getByText("No API keys found.")).toBeInTheDocument();
+    expect(screen.queryByRole("table")).toBeNull();
+    expect(screen.queryByRole("columnheader")).toBeNull();
   });
 
   it("renders loading and empty states from core's flags", async () => {

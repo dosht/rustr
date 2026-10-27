@@ -1215,7 +1215,7 @@ export const fixtures: FixtureFile = {
     "load_failed": {
       "confirm_revoke": null,
       "created_key": null,
-      "empty": false,
+      "empty": true,
       "error": {
         "args": {},
         "key": "p7.keys.load_failed",
