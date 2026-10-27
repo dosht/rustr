@@ -215,3 +215,89 @@ async fn eml_005_a_completion_with_an_error_mails_support_only_and_a_clean_compl
     assert_eq!(state.attempts.len(), 2);
     assert_eq!(state.attempts[0].key, state.attempts[1].key, "the resend keeps its per-target key");
 }
+
+async fn welcome_rows(pool: &PgPool) -> i64 {
+    sqlx::query_scalar("SELECT count(*) FROM transgate_billing.welcome_mails").fetch_one(pool).await.unwrap()
+}
+
+// EML-002: an account creation queues exactly one welcome mail, with the source subject and a greeting
+// by full name or "there"; a replay or a refresh of an existing customer queues none, and a record
+// without an address (malformed) queues none. A failed send is claimed again only after its lease, a sent
+// one never, and every try carries the account's stable key.
+#[tokio::test]
+#[ignore = "needs TRANSGATE_SERVER_TEST_DATABASE_URL"]
+async fn eml_002_an_account_creation_sends_exactly_one_welcome_and_a_replay_or_malformed_record_sends_none() {
+    use crate::mail::WELCOME_SUBJECT;
+    let (pool, _database) = isolated().await;
+    let f = fixture(&pool).await; // registers owner@example.test, "Directory Ada"
+    assert_eq!(welcome_rows(&pool).await, 1, "one creation, one queued welcome");
+
+    // Not an insert: the same customer registered again, and a contact refresh, queue nothing.
+    let directory = PgCustomerDirectory::new(pool.clone());
+    directory.register(&Customer { account: f.account, email: "owner@example.test".into(), full_name: Some("Directory Ada".into()), created_at: f.clock.now() }).await.unwrap();
+    sqlx::query("UPDATE transgate_billing.customers SET email = 'renamed@example.test' WHERE account_id = $1").bind(f.account.0).execute(&pool).await.unwrap();
+    assert_eq!(welcome_rows(&pool).await, 1, "a replay or an update is not a creation");
+    sqlx::query("UPDATE transgate_billing.customers SET email = 'owner@example.test' WHERE account_id = $1").bind(f.account.0).execute(&pool).await.unwrap();
+
+    // Malformed: a record with a blank address queues none.
+    sqlx::query("INSERT INTO transgate_billing.customers (account_id, email, full_name, created_at) VALUES ($1, '   ', NULL, now())").bind(Uuid::new_v4()).execute(&pool).await.unwrap();
+    assert_eq!(welcome_rows(&pool).await, 1);
+
+    // A second, unnamed customer is greeted as "there".
+    let unnamed = AccountId(Uuid::new_v4());
+    {
+        let store = PgJobStore::new(pool.clone());
+        let mut uow = store.begin().await.unwrap();
+        uow.billing().await.unwrap().create_account(unnamed, f.clock.now()).await.unwrap();
+        uow.commit().await.unwrap();
+    }
+    directory.register(&Customer { account: unnamed, email: "second@example.test".into(), full_name: None, created_at: f.clock.now() }).await.unwrap();
+    assert_eq!(welcome_rows(&pool).await, 2);
+
+    // The first try of the first customer fails; nothing is marked and the lease holds it back.
+    f.mail.0.lock().unwrap().fail_to = Some("owner@example.test".into());
+    assert_eq!(f.workers.deliver_welcome().await.unwrap(), 2);
+    assert_eq!(f.workers.deliver_welcome().await.unwrap(), 0, "both are leased: one is sent, one failed and waits");
+    f.clock.0.fetch_add(121 * SECOND, Ordering::SeqCst);
+    f.mail.0.lock().unwrap().fail_to = None;
+    assert_eq!(f.workers.deliver_welcome().await.unwrap(), 1, "only the failed one is claimed again after its lease");
+    assert_eq!(f.workers.deliver_welcome().await.unwrap(), 0, "sent is final");
+    f.clock.0.fetch_add(10_000 * SECOND, Ordering::SeqCst);
+    assert_eq!(f.workers.deliver_welcome().await.unwrap(), 0, "a sent welcome is never claimed again");
+
+    let state = f.mail.0.lock().unwrap();
+    let sent: Vec<(&str, &str)> = state.sent.iter().map(|d| (d.to.as_str(), d.subject.as_str())).collect();
+    assert_eq!(sent.len(), 2, "exactly one welcome each: {sent:?}");
+    assert!(sent.iter().all(|(_, subject)| *subject == WELCOME_SUBJECT));
+    assert_eq!(state.attempts.iter().filter(|d| d.to == "owner@example.test").map(|d| d.key.as_str()).collect::<HashSet<_>>().len(), 1, "every try of one welcome has the same key");
+    assert_eq!(state.attempts.iter().filter(|d| d.to == "owner@example.test").count(), 2, "the failed try and its retry");
+    drop(state);
+    let anonymous = crate::mail::welcome("second@example.test", None).unwrap();
+    assert!(anonymous.text.contains("Hello there,\n"));
+    let named = crate::mail::welcome("owner@example.test", Some("Directory Ada")).unwrap();
+    assert!(named.text.contains("Hello Directory Ada,\n") && named.text.contains("We're excited to welcome you to the Transgate community!"));
+    assert!(crate::mail::welcome("  ", Some("Ada")).is_none(), "no address, no welcome");
+}
+
+// EML-012: the shared chrome. Every user-facing template carries the logo link with the email UTM
+// parameters; the Get Started button is on by default (the welcome) and off where the template says so
+// (the failed-file and support acknowledgement); every template receives the name and no locale.
+#[test]
+fn eml_012_every_template_carries_the_chrome_with_the_homepage_utm_links_and_the_name() {
+    use transgate_core::jobs::events::JobMail;
+    let logo = "https://transgate.ai/?utm_medium=email&utm_content=logo";
+    let button = "Get Started: https://transgate.ai/?utm_medium=email&utm_content=get_started";
+    let welcome = crate::mail::welcome("ada@example.test", Some("Ada")).unwrap().text;
+    let failed = crate::mail::render(&JobMail::UserFailedFile, transgate_core::JobId(1), AccountId(Uuid::nil()), &crate::mail::Owner { email: Some("ada@example.test".into()), full_name: Some("Ada".into()) }).unwrap().text;
+    let acknowledgement = super::super::support::acknowledgement(Some("Ada"));
+    for (name, text, with_button) in [("welcome", &welcome, true), ("failed file", &failed, false), ("support acknowledgement", &acknowledgement, false)] {
+        assert!(text.contains(logo), "{name}: the logo link");
+        assert_eq!(text.contains(button), with_button, "{name}: the Get Started button follows the template's flag");
+        assert!(text.contains("Hello Ada,"), "{name}: the name");
+        assert!(text.trim_end().ends_with("Warmly,\nThe Transgate Team"), "{name}: the sign-off");
+        assert!(!text.contains("locale") && !text.contains("lang="), "{name}: templates get no locale");
+        assert!(text.matches("utm_medium=email").count() >= 1);
+    }
+    assert_eq!(crate::mail::chrome("body", true).matches("utm_content=").count(), 2, "logo and button");
+    assert_eq!(crate::mail::chrome("body", false).matches("utm_content=").count(), 1);
+}

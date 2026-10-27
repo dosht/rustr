@@ -56,14 +56,17 @@ impl Workers {
 }
 
 /// Plain-text rendering of the source SupportAutoReplyEmail, as for existing job mails.
-fn acknowledgement(full_name: Option<&str>) -> String {
+pub(super) fn acknowledgement(full_name: Option<&str>) -> String {
     let name = acknowledgement_name(full_name);
-    format!(
-        "Hello {name},\n\n\
-         Thank you for reaching out to us at Transgate!\n\n\
-         This is an automatic reply to let you know that we've received your message. \
-         One of our team members will review it and get back to you within the next 24 hours.\n\n\
-         In the meantime, you can check out our FAQ section for helpful information that might answer your question:\n\
-         https://transgate.ai/frequently-asked-questions\n"
+    crate::mail::chrome(
+        &format!(
+            "Hello {name},\n\n\
+             Thank you for reaching out to us at Transgate!\n\n\
+             This is an automatic reply to let you know that we've received your message. \
+             One of our team members will review it and get back to you within the next 24 hours.\n\n\
+             In the meantime, you can check out our FAQ section for helpful information that might answer your question:\n\
+             https://transgate.ai/frequently-asked-questions\n"
+        ),
+        false,
     )
 }

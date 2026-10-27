@@ -80,7 +80,49 @@ struct World {
     privacy: Arc<Privacy>,
     locks: Arc<PgLocks>,
     jobs: Arc<Jobs>,
+    soniox: Arc<Fetch>,
     _database: Database,
+}
+
+/// A Soniox transport whose transcript fetch (the only call these tests reach) is scripted.
+#[derive(Default)]
+struct Fetch {
+    answer: std::sync::Mutex<Option<Result<media_ports::ProviderObservation, media_ports::TransportError>>>,
+}
+impl Fetch {
+    fn answer(&self, answer: Result<media_ports::ProviderObservation, media_ports::TransportError>) {
+        *self.answer.lock().unwrap() = Some(answer);
+    }
+}
+impl media_ports::Transcriber for Fetch {
+    fn provider(&self) -> media_ports::Provider {
+        media_ports::Provider::Soniox
+    }
+    fn project(&self) -> &str {
+        "project"
+    }
+    fn submit<'a>(&'a self, _: &'a media_ports::TranscriptionRequest) -> BoxFuture<'a, Result<media_ports::Submission, media_ports::TransportError>> {
+        Box::pin(async { Err(media_ports::TransportError::Unsupported("not used".into())) })
+    }
+    fn status<'a>(&'a self, _: &'a media_ports::RemoteIdentity) -> BoxFuture<'a, Result<media_ports::ProviderObservation, media_ports::TransportError>> {
+        Box::pin(async { Err(media_ports::TransportError::Unsupported("not used".into())) })
+    }
+    fn result<'a>(&'a self, _: &'a media_ports::RemoteIdentity) -> BoxFuture<'a, Result<media_ports::ProviderObservation, media_ports::TransportError>> {
+        Box::pin(async { Err(media_ports::TransportError::Unsupported("not used".into())) })
+    }
+    fn delete_remote<'a>(&'a self, _: &'a media_ports::RemoteIdentity) -> BoxFuture<'a, Result<media_ports::DeleteOutcome, media_ports::TransportError>> {
+        Box::pin(async { Ok(media_ports::DeleteOutcome::Absent) })
+    }
+    fn find_by_reference<'a>(&'a self, _: &'a str) -> BoxFuture<'a, Result<Vec<media_ports::RemoteRecord>, media_ports::TransportError>> {
+        Box::pin(async { Ok(vec![]) })
+    }
+    fn verify_callback(&self, _: &media_ports::CallbackBinding, _: &media_ports::Headers, _: &[u8]) -> Result<media_ports::ProviderObservation, media_ports::CallbackError> {
+        Err(media_ports::CallbackError::Malformed)
+    }
+    fn complete_callback(&self, _: media_ports::ProviderObservation) -> BoxFuture<'_, Result<media_ports::ProviderObservation, media_ports::TransportError>> {
+        let answer = self.answer.lock().unwrap().clone().unwrap_or(Err(media_ports::TransportError::Unavailable { status: None, operation: "transcript".into() }));
+        Box::pin(async move { answer })
+    }
 }
 
 async fn world() -> World {
@@ -115,12 +157,13 @@ async fn world() -> World {
         terminators: vec![],
         exceptions: ExceptionPolicy::default(),
     }));
+    let soniox = Arc::new(Fetch::default());
     let jobs = Arc::new(Jobs::new(
         JobsServices {
             store: Arc::new(store.clone()),
             clock,
             objects: vec![],
-            transcribers: vec![],
+            transcribers: vec![soniox.clone()],
             stager: None,
             sleeper: Arc::new(NoSleep),
             rate_limiter: Arc::new(PgRateLimiter::new(pool)),
@@ -142,7 +185,7 @@ async fn world() -> World {
             freemium_lists: Default::default(),
         },
     ));
-    World { owner, store, privacy, locks, jobs, _database: database }
+    World { owner, store, privacy, locks, jobs, soniox, _database: database }
 }
 
 fn line(start: &str, text: &str, speaker: Option<&str>) -> NewLine {
@@ -504,4 +547,325 @@ async fn trx_023_lng_013_a_stored_target_without_a_code_fails_the_job_and_never_
     // The saved failed job still carries the stored name.
     let stored: Vec<String> = sqlx::query_scalar("SELECT unnest(translate_to) FROM transgate_jobs.jobs WHERE id = $1").bind(broken.0).fetch_all(&w.owner).await.unwrap();
     assert_eq!(stored, vec!["Klingon".to_string()], "saving the failed job keeps the stored target");
+}
+
+// ---- ingestion, edits and races ------------------------------------------------------------------
+
+use media_ports::{ObservationOrigin, ProviderObservation, ProviderPayload, RemoteIdentity, SecretString, SonioxReported, SonioxToken, SonioxTranscript};
+use transgate_core::ids::AttemptId;
+use transgate_core::jobs::app::IntakeAck;
+use transgate_core::jobs::domain::{Attempt, AttemptRequest, AttemptState, Provider, RemoteCleanup};
+use transgate_core::jobs::ingest;
+
+fn token(text: &str, start: f64, end: f64, speaker: Option<i64>, language: Option<&str>, status: Option<&str>) -> SonioxToken {
+    SonioxToken {
+        text: text.into(),
+        start_ms: Some(start),
+        end_ms: Some(end),
+        speaker: speaker.map(|s| serde_json::json!(s)),
+        language: language.map(str::to_string),
+        translation_status: status.map(str::to_string),
+        is_audio_event: None,
+        extra: Default::default(),
+    }
+}
+
+fn soniox_observation(remote: &str, tokens: Option<Vec<SonioxToken>>) -> ProviderObservation {
+    ProviderObservation {
+        remote: RemoteIdentity { provider: media_ports::Provider::Soniox, project: "project".into(), id: remote.into() },
+        origin: ObservationOrigin::Webhook,
+        payload: ProviderPayload::Soniox {
+            reported: SonioxReported { id: remote.into(), status: "completed".into(), audio_duration_ms: Some(120_000.0), error: None, error_type: None, error_message: None, extra: Default::default() },
+            transcript: tokens.map(|tokens| SonioxTranscript { id: remote.into(), tokens, text: None, metadata: serde_json::Value::Null, extra: Default::default() }),
+        },
+    }
+}
+
+fn deepgram_observation(request: &str, no_paragraphs: bool) -> ProviderObservation {
+    let paragraphs = if no_paragraphs {
+        vec![]
+    } else {
+        vec![media_ports::DeepgramParagraph {
+            sentences: vec![media_ports::DeepgramSentence { text: "Hello.".into(), start: 0.0, end: 1.0, extra: Default::default() }],
+            speaker: Some(0),
+            extra: Default::default(),
+        }]
+    };
+    ProviderObservation {
+        remote: RemoteIdentity { provider: media_ports::Provider::Deepgram, project: "project".into(), id: request.into() },
+        origin: ObservationOrigin::Webhook,
+        payload: ProviderPayload::Deepgram(media_ports::DeepgramTranscript {
+            metadata: media_ports::DeepgramMetadata { request_id: request.into(), duration: Some(60.0), extra: Default::default() },
+            results: media_ports::DeepgramResults {
+                channels: vec![media_ports::DeepgramChannel {
+                    alternatives: vec![media_ports::DeepgramAlternative {
+                        transcript: String::new(),
+                        words: vec![],
+                        paragraphs: Some(media_ports::DeepgramParagraphs { paragraphs, extra: Default::default() }),
+                        extra: Default::default(),
+                    }],
+                    extra: Default::default(),
+                }],
+                extra: Default::default(),
+            },
+            extra: Default::default(),
+        }),
+    }
+}
+
+/// A running job of `provider` with its one accepted attempt, waiting for a result.
+async fn running(w: &World, owner: &Owner, provider: Provider, speakers: bool, translate_to: &[&str], remote: &str) -> (JobId, Attempt) {
+    let mut uow = w.store.begin().await.unwrap();
+    let created = uow
+        .insert_job(&NewJob {
+            account: owner.account,
+            status: JobStatus::Running,
+            name: Some("call.mp3".into()),
+            source: JobSource::Upload { storage: StorageProvider::Gcs, object: None },
+            language: Language::from_code("en"),
+            translate_to: translate_to.iter().filter_map(|n| Language::from_name(n)).collect(),
+            speakers,
+            fix_grammer: None,
+            duration_minutes: Some(2),
+            size_bytes: Some(1),
+            callback_url: None,
+            whisper_params: None,
+            created_at: NOW,
+        })
+        .await
+        .unwrap();
+    let attempt = Attempt {
+        id: AttemptId::new(),
+        job: created.id,
+        account: owner.account,
+        number: 1,
+        provider,
+        project: "project".into(),
+        model: "m".into(),
+        state: AttemptState::Accepted,
+        claimed_at: NOW,
+        lease_until: Micros(NOW.0 + 120_000_000),
+        request: AttemptRequest {
+            language_code: Some("en".into()),
+            translation_target: None,
+            diarize: speakers,
+            audio: media_ports::ObjectRef { store: media_ports::StoreKind::Gcs, bucket: "uploads".into(), key: format!("{}/a.mp3", owner.account.0), version: None },
+            client_reference: format!("job_{}", created.id.0),
+        },
+        callback_secret: SecretString::new("secret"),
+        remote_id: Some(remote.into()),
+        accepted_at: Some(NOW),
+        last_error: None,
+        remote_cleanup: RemoteCleanup::NotRequested,
+    };
+    uow.insert_attempt(&attempt).await.unwrap();
+    let mut job = uow.lock_job(created.id).await.unwrap().unwrap();
+    job.current_attempt = Some(attempt.id);
+    job.provider = Some(provider);
+    job.started_at = Some(NOW);
+    if provider == Provider::Soniox {
+        job.soniox_transcription_id = Some(remote.into());
+    }
+    uow.save_job(&job, job.revision).await.unwrap();
+    uow.commit().await.unwrap();
+    (created.id, attempt)
+}
+
+async fn deliver(w: &World, attempt: &Attempt, observation: &ProviderObservation) -> transgate_core::ids::InboxId {
+    match w.jobs.intake(attempt, observation.clone(), ingest::fingerprint(observation)).await.unwrap() {
+        IntakeAck::Stored { inbox } => inbox,
+        other => panic!("{other:?}"),
+    }
+}
+
+async fn job_row(w: &World, job: JobId) -> (String, Option<serde_json::Value>) {
+    sqlx::query_as("SELECT status, error FROM transgate_jobs.jobs WHERE id = $1").bind(job.0).fetch_one(&w.owner).await.unwrap()
+}
+
+// TRX-029, TRX-031: through real ingestion every line keeps its normalized optional fields in the
+// database: the token language and translation status (null for a plain transcription), the speaker,
+// and `split_on_speaker_change` as a copy of the job's `speakers` setting. Nothing else (word times,
+// confidence, paragraphs) is stored on a line.
+#[tokio::test]
+#[ignore = "needs TRANSGATE_JOBS_TEST_DATABASE_URL"]
+async fn trx_029_031_every_optional_normalized_line_field_survives_the_database_round_trip() {
+    let w = world().await;
+    let person = account(&w, None).await;
+
+    // A translation job with speakers: originals and their translations, each with its language.
+    let (job, attempt) = running(&w, &person, Provider::Soniox, true, &["German"], "tx-translated").await;
+    let observation = soniox_observation("tx-translated", Some(vec![
+        token("Hello there.", 0.0, 1800.0, Some(1), Some("en"), Some("original")),
+        token("Hallo zusammen.", 0.0, 1800.0, Some(1), Some("de"), Some("translation")),
+    ]));
+    let inbox = deliver(&w, &attempt, &observation).await;
+    w.jobs.ingest(inbox).await.unwrap();
+    assert_eq!(job_row(&w, job).await.0, "completed");
+    type LineFields = (String, Option<String>, Option<String>, Option<bool>, Option<String>);
+    type LinePlain = (Option<String>, Option<String>, Option<bool>, Option<String>);
+    let rows: Vec<LineFields> = sqlx::query_as(
+        "SELECT line, language, translation_status, split_on_speaker_change, speaker FROM transgate_jobs.lines WHERE job_id = $1 ORDER BY id",
+    )
+    .bind(job.0)
+    .fetch_all(&w.owner)
+    .await
+    .unwrap();
+    assert_eq!(rows.len(), 2, "{rows:?}");
+    let by_status = |status: &str| rows.iter().find(|r| r.2.as_deref() == Some(status)).unwrap_or_else(|| panic!("no {status} line in {rows:?}")).clone();
+    let (original, translation) = (by_status("original"), by_status("translation"));
+    assert_eq!((original.1.as_deref(), translation.1.as_deref()), (Some("English"), Some("German")), "the token language, as the app's language name");
+    assert_eq!((original.3, translation.3), (Some(true), Some(true)), "TRX-031: a copy of jobs.speakers");
+    assert!(original.4.is_some(), "the speaker survives");
+
+    // A plain transcription without speakers: no language, no status, the copy is false.
+    let (plain, attempt) = running(&w, &person, Provider::Soniox, false, &[], "tx-plain").await;
+    let observation = soniox_observation("tx-plain", Some(vec![token("Just words.", 0.0, 1500.0, None, None, None)]));
+    let inbox = deliver(&w, &attempt, &observation).await;
+    w.jobs.ingest(inbox).await.unwrap();
+    let rows: Vec<LinePlain> = sqlx::query_as(
+        "SELECT language, translation_status, split_on_speaker_change, speaker FROM transgate_jobs.lines WHERE job_id = $1",
+    )
+    .bind(plain.0)
+    .fetch_all(&w.owner)
+    .await
+    .unwrap();
+    assert_eq!(rows, vec![(None, None, Some(false), None)], "TRX-029 null for plain transcription; TRX-031 the copy of speakers=false");
+
+    // And the store reads back exactly what it holds.
+    let read = w.store.lines(job).await.unwrap();
+    assert_eq!(read.iter().map(|l| (l.language.map(|l| l.name()), l.split_on_speaker_change)).collect::<Vec<_>>().len(), 2);
+}
+
+// TRX-040: a transcript with no speech fails the job (Soniox with code `no_speech_detected`, Deepgram
+// with "No transcription segments found") and writes one outbox event, once, however often the result
+// is ingested again.
+#[tokio::test]
+#[ignore = "needs TRANSGATE_JOBS_TEST_DATABASE_URL"]
+async fn trx_040_a_no_speech_result_fails_the_job_once_with_one_outbox_event() {
+    let w = world().await;
+    let person = account(&w, None).await;
+    let failed_events = |job: JobId| {
+        let pool = w.owner.clone();
+        async move {
+            sqlx::query_scalar::<_, i64>("SELECT count(*) FROM transgate_jobs.events WHERE event->>'type' = 'failed' AND (event->>'job')::bigint = $1").bind(job.0).fetch_one(&pool).await.unwrap()
+        }
+    };
+
+    let (soniox, attempt) = running(&w, &person, Provider::Soniox, false, &[], "tx-silent").await;
+    let observation = soniox_observation("tx-silent", Some(vec![]));
+    let inbox = deliver(&w, &attempt, &observation).await;
+    w.jobs.ingest(inbox).await.unwrap();
+    w.jobs.ingest(inbox).await.unwrap();
+    let (status, error) = job_row(&w, soniox).await;
+    assert_eq!(status, "failed");
+    let error = error.unwrap();
+    assert_eq!((error["message"].as_str(), error["code"].as_str()), (Some("No transcription segments found"), Some("no_speech_detected")), "{error}");
+    assert_eq!(failed_events(soniox).await, 1, "one outbox event for the failure");
+
+    let (deepgram, attempt) = running(&w, &person, Provider::Deepgram, false, &[], "dg-silent").await;
+    let observation = deepgram_observation("dg-silent", true);
+    let inbox = deliver(&w, &attempt, &observation).await;
+    w.jobs.ingest(inbox).await.unwrap();
+    w.jobs.ingest(inbox).await.unwrap();
+    let (status, error) = job_row(&w, deepgram).await;
+    assert_eq!(status, "failed");
+    assert_eq!(error.unwrap()["message"], "No transcription segments found");
+    assert_eq!(failed_events(deepgram).await, 1);
+    let lines: i64 = sqlx::query_scalar("SELECT count(*) FROM transgate_jobs.lines WHERE job_id = ANY($1)").bind(vec![soniox.0, deepgram.0]).fetch_one(&w.owner).await.unwrap();
+    assert_eq!(lines, 0);
+}
+
+// JOB-029: the Soniox webhook is stored before any work. A transcript fetch that is temporarily
+// unavailable leaves the entry pending and is retried by the ingest pass until it works; a fetch that is
+// definitely refused fails the job once with `callback_ingestion_error`, and ingesting it again changes nothing.
+#[tokio::test]
+#[ignore = "needs TRANSGATE_JOBS_TEST_DATABASE_URL"]
+async fn job_029_a_transient_fetch_error_is_retried_and_a_deterministic_one_fails_the_job_once() {
+    use media_ports::TransportError;
+    let w = world().await;
+    let person = account(&w, None).await;
+
+    // Transient: unavailable, then available.
+    let (job, attempt) = running(&w, &person, Provider::Soniox, false, &[], "tx-flaky").await;
+    let webhook = soniox_observation("tx-flaky", None);
+    let inbox = deliver(&w, &attempt, &webhook).await;
+    w.soniox.answer(Err(TransportError::Unavailable { status: Some(503), operation: "transcript".into() }));
+    w.jobs.ingest(inbox).await.unwrap();
+    let (state, failures): (String, i32) = sqlx::query_as("SELECT state, failures FROM transgate_jobs.inbox WHERE id = $1").bind(inbox.0).fetch_one(&w.owner).await.unwrap();
+    assert_eq!((state.as_str(), failures), ("pending", 1), "the entry is kept and the failure counted");
+    assert_eq!(job_row(&w, job).await.0, "running", "a transient error does not fail the job");
+    w.soniox.answer(Ok(soniox_observation("tx-flaky", Some(vec![token("It works now.", 0.0, 1500.0, None, None, None)]))));
+    let report = w.jobs.ingest_pass().await.unwrap();
+    assert_eq!(report.errors, 0, "{report:?}");
+    assert_eq!(job_row(&w, job).await.0, "completed", "the retry ingested the result");
+
+    // Deterministic: the fetch is refused for good.
+    let (job, attempt) = running(&w, &person, Provider::Soniox, false, &[], "tx-gone").await;
+    let inbox = deliver(&w, &attempt, &soniox_observation("tx-gone", None)).await;
+    w.soniox.answer(Err(TransportError::Rejected { status: Some(404), code: "not_found".into() }));
+    w.jobs.ingest(inbox).await.unwrap();
+    let (status, error) = job_row(&w, job).await;
+    assert_eq!(status, "failed");
+    assert_eq!(error.as_ref().unwrap()["code"], "callback_ingestion_error", "{error:?}");
+    let events = |job: JobId| {
+        let pool = w.owner.clone();
+        async move { sqlx::query_scalar::<_, i64>("SELECT count(*) FROM transgate_jobs.events WHERE event->>'type' = 'failed' AND (event->>'job')::bigint = $1").bind(job.0).fetch_one(&pool).await.unwrap() }
+    };
+    assert_eq!(events(job).await, 1);
+    w.jobs.ingest(inbox).await.unwrap();
+    w.jobs.ingest_pass().await.unwrap();
+    assert_eq!(events(job).await, 1, "failed once, never again");
+    let state: String = sqlx::query_scalar("SELECT state FROM transgate_jobs.inbox WHERE id = $1").bind(inbox.0).fetch_one(&w.owner).await.unwrap();
+    assert_eq!(state, "applied");
+}
+
+// EDT-002, EDT-003: a line edit writes only that line's text and never creates a row, so racing the
+// retention sweep or an erasure it can neither resurrect a deleted line nor lose a line that stays: after
+// every round the swept job has no lines, the kept job holds the edited text with `corrected_text`
+// untouched, and an erased account holds nothing.
+#[tokio::test]
+#[ignore = "needs TRANSGATE_JOBS_TEST_DATABASE_URL"]
+async fn edt_002_003_a_line_edit_racing_the_sweep_or_an_erasure_never_resurrects_or_loses_a_line() {
+    let w = world().await;
+    let person = account(&w, Some((true, false))).await;
+    for round in 0..6 {
+        let old = job(&w, &person, JobStatus::Completed, 40, round, 3).await;
+        let kept = job(&w, &person, JobStatus::Completed, 1, round, 3).await;
+        let first_line = |job: JobId| {
+            let pool = w.owner.clone();
+            async move { sqlx::query_scalar::<_, i64>("SELECT id FROM transgate_jobs.lines WHERE job_id = $1 ORDER BY id LIMIT 1").bind(job.0).fetch_one(&pool).await.unwrap() }
+        };
+        let (old_line, kept_line) = (first_line(old).await, first_line(kept).await);
+        let text = format!("edited in round {round}");
+        let (sweep, edit_old, edit_kept) = tokio::join!(
+            w.privacy.retention_run(thirty(), "test"),
+            w.jobs.edit(person.account, LineEdit::Text { line: LineId(old_line), text: text.clone() }),
+            w.jobs.edit(person.account, LineEdit::Text { line: LineId(kept_line), text: text.clone() }),
+        );
+        sweep.unwrap();
+        edit_kept.unwrap_or_else(|e| panic!("round {round}: the edit of a line that stays failed: {e:?}"));
+        let _ = edit_old; // either applied before the delete or found nothing; both are fine
+        assert_eq!(line_count(&w, old).await, 0, "round {round}: a swept line is never resurrected");
+        let (line, corrected): (String, Option<String>) =
+            sqlx::query_as("SELECT line, corrected_text FROM transgate_jobs.lines WHERE id = $1").bind(kept_line).fetch_one(&w.owner).await.unwrap();
+        assert_eq!((line.as_str(), corrected), (text.as_str(), None), "round {round}: the edit is kept and corrected_text is untouched");
+        assert_eq!(line_count(&w, kept).await, 3, "round {round}: no line of the kept job is lost or duplicated");
+    }
+
+    // Erasure: the edit and the request race; afterwards the account holds no lines and the edit never recreates one.
+    let erased = account(&w, None).await;
+    let target = job(&w, &erased, JobStatus::Completed, 1, 0, 3).await;
+    let line_id: i64 = sqlx::query_scalar("SELECT id FROM transgate_jobs.lines WHERE job_id = $1 ORDER BY id LIMIT 1").bind(target.0).fetch_one(&w.owner).await.unwrap();
+    let (request, edit) = tokio::join!(
+        w.privacy.request_erasure(erased.account),
+        w.jobs.edit(erased.account, LineEdit::Text { line: LineId(line_id), text: "late".into() }),
+    );
+    request.unwrap();
+    let _ = edit;
+    let left: i64 = sqlx::query_scalar("SELECT count(*) FROM transgate_jobs.lines WHERE account_id = $1").bind(erased.account.0).fetch_one(&w.owner).await.unwrap();
+    assert_eq!(left, 0, "an erased account holds no lines");
+    let after = w.jobs.edit(erased.account, LineEdit::Text { line: LineId(line_id), text: "after".into() }).await;
+    assert!(after.is_err(), "an edit after the erasure opened is refused: {after:?}");
+    let left: i64 = sqlx::query_scalar("SELECT count(*) FROM transgate_jobs.lines WHERE account_id = $1").bind(erased.account.0).fetch_one(&w.owner).await.unwrap();
+    assert_eq!(left, 0, "and creates nothing");
 }

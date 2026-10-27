@@ -22,6 +22,44 @@ pub fn idempotency_key(event: i64, mail: &JobMail) -> String {
     format!("job-event-{event}-{}", mail.target_key())
 }
 
+/// The shared email chrome (EML-012): the logo and homepage links carry the email UTM parameters, the
+/// Get Started button is on unless the template turns it off, and every mail closes with the team's
+/// sign-off. Templates receive the recipient's name and nothing about a locale.
+pub fn chrome(body: &str, show_button: bool) -> String {
+    let mut text = format!("TRANSGATE - voice to text technologies\n{}\n\n{}\n", home_link("logo"), body.trim_end());
+    if show_button {
+        text.push_str(&format!("\nGet Started: {}\n", home_link("get_started")));
+    }
+    text.push_str("\nWarmly,\nThe Transgate Team\n");
+    text
+}
+
+/// A link to the homepage from an email (`utm_medium=email`, the placement in `utm_content`).
+pub fn home_link(content: &str) -> String {
+    format!("https://transgate.ai/?utm_medium=email&utm_content={content}")
+}
+
+pub const WELCOME_SUBJECT: &str = "Welcome to the Transgate Family!";
+
+/// EML-002: the welcome mail of a new account; the greeting is the full name or "there".
+pub fn welcome(email: &str, full_name: Option<&str>) -> Option<MailMessage> {
+    let to = email.trim();
+    if to.is_empty() {
+        return None;
+    }
+    let name = full_name.map(str::trim).filter(|n| !n.is_empty()).unwrap_or("there");
+    let body = format!(
+        "Hello {name},\n\n\
+         We're excited to welcome you to the Transgate community! We're so glad you decided to join us on this journey.\n\n\
+         Whether you're looking for High Quality, or simply want a cost-effective tool, Transgate is here to help you to save time and increase your \
+         productivity. To get started, explore our user-friendly features and begin converting your audio files to text with our 98% accuracy rate. \
+         https://transgate.ai/\n\n\
+         If you have any questions at all, don't hesitate to reach out to our friendly support team. They're always happy to help! You can reply to this email or \
+         visit our help center: https://transgate.ai/contact We're excited to see how we can help you to speed up your tasks and what you achieve with Transgate!\n"
+    );
+    Some(MailMessage { to: to.to_string(), subject: WELCOME_SUBJECT.to_string(), text: chrome(&body, true) })
+}
+
 /// `None` when there is nobody to send to: the user mail of an owner without an address.
 pub fn render(mail: &JobMail, job: JobId, account: AccountId, owner: &Owner) -> Option<MailMessage> {
     let subject = mail.subject().to_string();
@@ -32,12 +70,15 @@ pub fn render(mail: &JobMail, job: JobId, account: AccountId, owner: &Owner) -> 
             Some(MailMessage {
                 to,
                 subject,
-                text: format!(
-                    "Hello {name},\n\n\
-                     We wanted to inform you that our system has detected an issue with one of your files. \
-                     We are currently working to fix it automatically and expect to resolve the issue within the next few hours.\n\n\
-                     If the problem continues, a member of our support team will contact you to provide further assistance.\n\n\
-                     We apologize for any inconvenience this may cause and appreciate your understanding.\n"
+                text: chrome(
+                    &format!(
+                        "Hello {name},\n\n\
+                         We wanted to inform you that our system has detected an issue with one of your files. \
+                         We are currently working to fix it automatically and expect to resolve the issue within the next few hours.\n\n\
+                         If the problem continues, a member of our support team will contact you to provide further assistance.\n\n\
+                         We apologize for any inconvenience this may cause and appreciate your understanding.\n"
+                    ),
+                    false,
                 ),
             })
         }
@@ -99,9 +140,9 @@ mod tests {
     fn the_user_mail_greets_by_name_or_there_and_is_skipped_without_an_address() {
         let named = render(&JobMail::UserFailedFile, JobId(9), ACCOUNT, &owner(Some("ada@example.test"), Some("Ada"))).unwrap();
         assert_eq!((named.to.as_str(), named.subject.as_str()), ("ada@example.test", "Failed File Detected"));
-        assert!(named.text.starts_with("Hello Ada,\n"));
+        assert!(named.text.contains("\nHello Ada,\n"));
         let anonymous = render(&JobMail::UserFailedFile, JobId(9), ACCOUNT, &owner(Some("ada@example.test"), None)).unwrap();
-        assert!(anonymous.text.starts_with("Hello there,\n"));
+        assert!(anonymous.text.contains("\nHello there,\n"));
         assert_eq!(render(&JobMail::UserFailedFile, JobId(9), ACCOUNT, &owner(None, Some("Ada"))), None);
         assert_eq!(render(&JobMail::UserFailedFile, JobId(9), ACCOUNT, &owner(Some("  "), None)), None, "a blank address is no address");
     }

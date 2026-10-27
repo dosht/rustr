@@ -182,18 +182,22 @@ impl IdentityAdmin for NoIdentity {
 
 /// One replica: its own core services, its own lock connections, the shared database, clock and transport.
 fn replica(pool: &PgPool, clock: Arc<dyn Clock>, transcriber: Arc<HeldListing>) -> Arc<Workers> {
+    replica_with(pool, clock, vec![transcriber], vec![])
+}
+
+/// A replica with the given providers (the process tests script their answers).
+fn replica_with(pool: &PgPool, clock: Arc<dyn Clock>, transcribers: Vec<Arc<dyn Transcriber>>, objects: Vec<Arc<dyn media_ports::ObjectStore>>) -> Arc<Workers> {
     let store = PgJobStore::new(pool.clone());
     let job_store: Arc<dyn JobStore> = Arc::new(store.clone());
     let locks: Arc<dyn Locks> = Arc::new(PgLocks::new(pool.clone()));
     let limiter: Arc<dyn RateLimiter> = Arc::new(PgRateLimiter::new(pool.clone()));
     let sleeper: Arc<dyn Sleeper> = Arc::new(TokioSleeper);
     let ai = crate::ai::compose(crate::ai::Settings::from_env(&|_| None).unwrap(), job_store.clone(), clock.clone(), sleeper.clone()).unwrap();
-    let transcribers: Vec<Arc<dyn Transcriber>> = vec![transcriber];
     let jobs = Arc::new(Jobs::new(
         JobsServices {
             store: job_store.clone(),
             clock: clock.clone(),
-            objects: vec![],
+            objects: objects.clone(),
             transcribers: transcribers.clone(),
             stager: None,
             sleeper,
@@ -220,7 +224,7 @@ fn replica(pool: &PgPool, clock: Arc<dyn Clock>, transcriber: Arc<HeldListing>) 
         store: job_store,
         clock: clock.clone(),
         locks: locks.clone(),
-        objects: vec![],
+        objects,
         inventories: vec![],
         transcribers,
         identity: Arc::new(NoIdentity),
@@ -352,3 +356,6 @@ mod callbacks;
 
 #[path = "pg_tests/schedule.rs"]
 mod schedule;
+
+#[path = "pg_tests/process.rs"]
+mod process;

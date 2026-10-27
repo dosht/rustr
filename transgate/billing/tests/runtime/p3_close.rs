@@ -558,3 +558,44 @@ async fn trx_014_a_definite_refusal_fails_over_and_an_uncertain_answer_never_doe
         assert_eq!((w.soniox.asked(), w.deepgram.asked()), case.asked, "{}: how many submissions each provider saw", case.name);
     }
 }
+
+async fn patch_settings(w: &World, person: &User, body: Value) -> (u16, Value) {
+    w.app.call("PATCH", "/api/settings", Some(&person.jwt), Some(body)).await
+}
+
+async fn stored_settings(w: &World, person: &User) -> (Option<bool>, bool, bool, bool) {
+    sqlx::query_as("SELECT blocked, unlimited_history, auto_delete_transcripts, deleted_monthly FROM transgate_jobs.settings WHERE account_id = $1")
+        .bind(person.id)
+        .fetch_one(&w.app.owner)
+        .await
+        .unwrap()
+}
+
+// PRV-052: the owner can change only `auto_delete_transcripts` and `deleted_monthly`. A body that names
+// only `blocked` or `unlimitedHistory` is refused (400), and in a mixed body those two are never read:
+// the stored `blocked` and `unlimited_history` do not move, and a blocked owner stays blocked.
+#[tokio::test]
+#[ignore = "needs BILLING_TEST_DATABASE_URL"]
+async fn prv_052_the_owner_changes_only_auto_delete_and_deleted_monthly() {
+    let w = world().await;
+    let person = signed_in(&w.app).await;
+    for body in [json!({"blocked": true}), json!({"blocked": false}), json!({"unlimitedHistory": true}), json!({"unlimited_history": true}), json!({"blocked": true, "unlimitedHistory": true})] {
+        assert_eq!(patch_settings(&w, &person, body.clone()).await.0, 400, "{body}");
+    }
+    // Both writable settings change.
+    let (status, _) = patch_settings(&w, &person, json!({"autoDelete": false, "deletedMonthly": false})).await;
+    assert_eq!(status, 200);
+    assert_eq!(stored_settings(&w, &person).await, (None, false, false, false));
+    // A mixed body: the writable one applies, the other two are not read.
+    let (status, _) = patch_settings(&w, &person, json!({"autoDelete": true, "blocked": true, "unlimitedHistory": true})).await;
+    assert_eq!(status, 200);
+    assert_eq!(stored_settings(&w, &person).await, (None, false, true, false), "only auto_delete changed");
+
+    // An operator-blocked owner cannot unblock themself, and stays refused where the flag is checked.
+    block(&w, &person).await;
+    for body in [json!({"blocked": false}), json!({"autoDelete": false, "blocked": false})] {
+        let _ = patch_settings(&w, &person, body).await;
+    }
+    assert_eq!(stored_settings(&w, &person).await.0, Some(true), "still blocked");
+    assert_eq!(post(&w.app, "/api/youtube/add", Some(&person), json!({"youtubeUrl": youtube_url(1)})).await.0, 403);
+}

@@ -79,6 +79,9 @@ impl Workers {
         if let Err(e) = self.deliver_events().await {
             errors.push(format!("event mail: {e}"));
         }
+        if let Err(e) = self.deliver_welcome().await {
+            errors.push(format!("welcome mail: {e}"));
+        }
         errors
     }
 
@@ -160,6 +163,25 @@ impl Workers {
             }
         }
         failures
+    }
+
+    /// EML-002: the welcome mail of each new account. The database queued one row per created
+    /// customer record; a claim is leased, the mail carries the account's stable key, and only a
+    /// sent mail is marked, so a failed or interrupted delivery is claimed again when its lease ends
+    /// and a delivered one never is.
+    pub async fn deliver_welcome(&self) -> Result<usize, String> {
+        let claims = transgate_billing::welcome::claim(&self.pool, EVENT_BATCH, EVENT_LEASE_SECONDS, self.clock.now()).await?;
+        let count = claims.len();
+        for welcome in claims {
+            let Some(message) = mail::welcome(&welcome.email, welcome.full_name.as_deref()) else { continue };
+            match self.mailer.send(&message, &transgate_billing::welcome::idempotency_key(welcome.account)).await {
+                Ok(()) => {
+                    transgate_billing::welcome::mark_sent(&self.pool, welcome.account, self.clock.now()).await?;
+                }
+                Err(e) => eprintln!("transgate: welcome mail for {}: {}", welcome.account.0, e.0),
+            }
+        }
+        Ok(count)
     }
 
     /// Sends the mails of each undelivered event. An event is acknowledged only when every mail it

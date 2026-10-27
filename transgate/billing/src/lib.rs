@@ -12,6 +12,7 @@ pub mod identity;
 pub mod mail;
 pub mod settings;
 pub mod session;
+pub mod welcome;
 
 use std::sync::Arc;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
