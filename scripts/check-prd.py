@@ -139,6 +139,27 @@ def playwright_evidence(references):
     return errors
 
 
+def playwright_specs(references):
+    """A browser-only rule names a committed Transgate spec and test title, as the
+    Playwright JSON report keys it: `playwright:<spec path under transgate/web>#<describe
+    titles and test title, space-joined>`. The file must exist and declare a test whose
+    title ends the reference; execution is checked separately."""
+    errors = []
+    for reference in sorted(references):
+        match = re.fullmatch(r"playwright:([^#]+\.spec\.ts)#(.+)", reference)
+        if not match:
+            errors.append(f"invalid Playwright reference: {reference}")
+            continue
+        spec = ROOT / "transgate/web" / match[1]
+        if not spec.is_file():
+            errors.append(f"Playwright spec is not committed: {reference}")
+            continue
+        declared = re.findall(r"""\btest(?:\.\w+)?\(\s*(["'`])(.+?)\1""", spec.read_text())
+        if not any(match[2] == title or match[2].endswith(" " + title) for _, title in declared):
+            errors.append(f"Playwright spec declares no test matching {match[2]!r}: {reference}")
+    return errors
+
+
 def coverage(kind):
     errors, rust, web = [], set(), set()
     count = 0
@@ -188,7 +209,7 @@ def coverage(kind):
             for test in reference.split("; "):
                 if test.startswith("cargo:"):
                     rust.add(test)
-                elif test.startswith("playwright:") and path.name == "parity.md":
+                elif test.startswith("playwright:"):
                     web.add(test)
                 else:
                     errors.append(f"{cells[0]}: missing or invalid executable test reference: {test}")
@@ -212,6 +233,7 @@ def coverage(kind):
     print(f"{kind}: {count} rows, {len(errors)} unmet requirements before executing named tests")
     errors += cargo_evidence(rust, include_ignored=True)
     if web:
+        errors += playwright_specs(web)
         errors += playwright_evidence(web)
     return errors
 

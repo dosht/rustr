@@ -190,10 +190,10 @@ Six proven P3 rows stay `ledger`, because the ledger accepts only cargo referenc
 
 | Rows | Executed evidence | What closes the ledger row | Owner |
 |---|---|---|---|
-| PRV-003 | Account deletion in a real browser (WEB-PRV-005/006) | Decision needed. Our app runs server erasure directly; the source's browser pre-step that soft-deletes every job is not implemented. Either record it as a P3 D9 correction (`changed`) or add the pre-step. | lead |
+| PRV-003 | Account deletion in a real browser (WEB-PRV-005/006) | **Done:** `changed` by lead decision 2026-10-27. There is no browser soft-delete pre-step; server-side deletion is authoritative. Cargo evidence cites the erasure barrier, manifest and cascade tests. | — |
 | PRV-036 | Legacy "Delete my data automatically" switch persisted (WEB-PRV-007/008) | A `presentation::data_management` test: confirming `DeleteMonthly` emits `SetDeletedMonthly`, and a reload reflects the stored value | p1X |
 | PRV-043 | Consent GET/POST/DELETE in a real browser (WEB-PRV-009/010) | An HTTP route test: a non-boolean `hasConsented` gets 400, no session gets 401 | p1T |
-| PRV-046..048 | Cookie group on both projects (WEB-PRV-011/012) | A cargo test of the core cookie-consent telemetry gate (send only after accept, never for `id`), or ledger support for `playwright:` references in `rules.md` | p1X (or lead, if it is a checker change) |
+| PRV-046..048 | Cookie group on both projects (WEB-PRV-011/012) | Lead decision 2026-10-27: browser-only rules cite committed Playwright specs. `check-prd.py` now accepts `playwright:<spec under transgate/web>#<title>` in `rules.md`. `playwright_specs` resolves the committed file and a matching `test(...)` title, then the existing `playwright_evidence` runs it on both projects; regression `test_a_browser_only_rule_resolves_its_playwright_spec_and_still_needs_a_passing_run`. **Still open:** no Transgate Playwright spec is committed yet; the C2 harness lives outside the repo. Mark the rows when Y commits the spec. | Y (spec), then p21 (ledger) |
 
 ## P3 missing entries by owner
 

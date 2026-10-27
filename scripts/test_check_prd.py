@@ -141,6 +141,43 @@ class GateTests(unittest.TestCase):
                 errors = coverage("transgate")
             self.assertEqual(sum("missing or invalid executable test reference" in error for error in errors), 2)
 
+    def test_a_browser_only_rule_resolves_its_playwright_spec_and_still_needs_a_passing_run(self):
+        coverage = GATE["coverage"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = root / "transgate/docs"
+            docs.mkdir(parents=True)
+            spec = root / "transgate/web/e2e/cookies.spec.ts"
+            spec.parent.mkdir(parents=True)
+            reference = "playwright:e2e/cookies.spec.ts#cookie consent rejecting sends nothing"
+            (docs / "rules.md").write_text(
+                "| ID | Rule | Source | Legacy test | Rust test | Status |\n|---|---|---|---|---|---|\n"
+                f"| PRV-046 | Cookie banner | source:1 | none | {reference} | tested |\n"
+            )
+            (docs / "parity.md").write_text("| ID | Flow | Surface | Today | Test | Status | Topic |\n|---|---|---|---|---|---|---|\n")
+            executed = []
+            run = lambda refs: executed.append(set(refs)) or []
+            with patch.dict(coverage.__globals__, ROOT=root, ledger_integrity=lambda: [], playwright_evidence=run):
+                errors = coverage("transgate")
+                self.assertTrue(any("not committed" in e for e in errors), errors)
+
+                spec.write_text('test.describe("cookie consent", () => {\n  test("accepting loads telemetry", async () => {});\n});\n')
+                errors = coverage("transgate")
+                self.assertTrue(any("declares no test matching" in e for e in errors), errors)
+
+                spec.write_text(spec.read_text() + 'test("rejecting sends nothing", async () => {});\n')
+                executed.clear()
+                errors = coverage("transgate")
+                self.assertFalse([e for e in errors if "PRV-046" in e or "Playwright" in e], errors)
+                self.assertEqual(executed, [{reference}], "a resolved reference is still executed")
+
+            (docs / "rules.md").write_text(
+                "| ID | Rule | Source | Legacy test | Rust test | Status |\n|---|---|---|---|---|---|\n"
+                "| PRV-046 | Cookie banner | source:1 | none | playwright:e2e/cookies.txt#x | tested |\n"
+            )
+            with patch.dict(coverage.__globals__, ROOT=root, ledger_integrity=lambda: [], playwright_evidence=lambda refs: []):
+                self.assertTrue(any("invalid Playwright reference" in e for e in coverage("transgate")))
+
 
 if __name__ == "__main__":
     unittest.main()
