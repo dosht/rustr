@@ -4,7 +4,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { ExtensionAPI, ExtensionContext } from '@oh-my-pi/pi-coding-agent';
-import claudeUsageGate, { probe, type Limit, type Probe } from './claude-usage-gate.ts';
+import claudeUsageGate, { decide, probe, type Limit, type Probe } from './claude-usage-gate.ts';
 
 const T0 = Date.parse('2026-10-26T18:00:00Z');
 const MIN = 60_000;
@@ -13,13 +13,11 @@ const session = (percent: number, reset = T0 + 60 * MIN): Limit => ({ label: 'Se
 const weekly = (percent: number): Limit => ({ label: 'Weekly (7-day)', percent, resetsAt: at(T0 + 3 * 24 * 60 * MIN) });
 const fable = (percent: number): Limit => ({ label: 'Fable Weekly', percent, resetsAt: at(T0 + 3 * 24 * 60 * MIN) });
 
-type Step = Probe | Error;
-
-function harness(steps: Step[], flags: Record<string, string> = {}) {
+function harness(steps: (Probe | Error)[], flags: Record<string, string> = {}) {
   let now = T0;
   const probes: boolean[] = [];
-  const slept: number[] = [];
   const notes: string[] = [];
+  let status: string | undefined;
   let handler: ((event: Record<string, unknown>, ctx: ExtensionContext) => Promise<unknown>) | undefined;
   const pi = {
     setLabel() {},
@@ -29,7 +27,6 @@ function harness(steps: Step[], flags: Record<string, string> = {}) {
   } as unknown as ExtensionAPI; // test double: only the members the extension uses
   claudeUsageGate(pi, {
     now: () => now,
-    async sleep(ms: number, signal?: AbortSignal) { if (!signal?.aborted) { slept.push(ms); now += ms; } },
     async probe(force: boolean) {
       probes.push(force);
       const step = steps.shift();
@@ -38,13 +35,15 @@ function harness(steps: Step[], flags: Record<string, string> = {}) {
       return step;
     },
   });
-  async function request(model: { provider: string; id: string }, signal?: AbortSignal) {
-    const ctx = { model, ui: { setStatus() {}, notify: (text: string) => { notes.push(text); } } } as unknown as ExtensionContext;
+  async function request(model: { provider: string; id: string }) {
+    const ui = { setStatus: (_k: string, text?: string) => { status = text; }, notify: (text: string) => { notes.push(text); } };
     const payload = { marker: 1 };
-    const result = await handler!({ payload, ...(signal ? { signal } : {}) }, ctx);
+    const started = Date.now();
+    const result = await handler!({ payload }, { model, ui } as unknown as ExtensionContext);
     assert.equal(result, payload, 'payload is returned unchanged');
+    assert.ok(Date.now() - started < 1000, 'the monitor never holds a request');
   }
-  return { request, probes, slept, notes, advance: (ms: number) => { now += ms; }, now: () => now };
+  return { request, probes, notes, status: () => status, advance: (ms: number) => { now += ms; } };
 }
 
 const opus = { provider: 'anthropic', id: 'claude-opus-5-5' };
@@ -55,72 +54,50 @@ test('non-Anthropic requests never query usage', async () => {
   assert.deepEqual(h.probes, []);
 });
 
-test('below the limit with a fresh fetch passes immediately', async () => {
+test('below the limit clears the status and does not warn', async () => {
   const h = harness([{ limits: [session(0.5), weekly(0.3)], fetchedAt: T0 - MIN }]);
   await h.request(opus);
-  assert.deepEqual(h.slept, []);
+  assert.equal(h.status(), undefined);
+  assert.deepEqual(h.notes, []);
 });
 
-test('a full session window holds until its reset, then a forced fetch releases it', async () => {
-  const reset = T0 + 90 * MIN;
-  const h = harness([
-    { limits: [session(1, reset), weekly(0.4)], fetchedAt: T0 - MIN },
-    { limits: [session(0, reset + 5 * 60 * MIN), weekly(0.4)], fetchedAt: reset + MIN },
-  ]);
+test('a full window shows its reset time and warns once without holding the request', async () => {
+  const h = harness([{ limits: [session(1, T0 + 90 * MIN), weekly(0.4)], fetchedAt: T0 - MIN }]);
   await h.request(opus);
-  assert.equal(h.slept.reduce((a, b) => a + b, 0), 90 * MIN, 'slept exactly to the reset');
-  assert.deepEqual(h.probes, [false, true], 'post-reset release needs a forced fetch');
-  assert.match(h.notes.join('\n'), /Session \(5-hour\) 100% used; waiting until 2026-10-26 19:30Z/);
+  await h.request(opus); // cached observation, same state
+  assert.match(h.status() ?? '', /Session \(5-hour\) 100% used; resets 2026-10-26 19:30Z/);
+  assert.equal(h.notes.length, 1, 'one warning per state');
+  assert.match(h.notes[0], /retry\.waitForUsageReset/);
+  assert.deepEqual(h.probes, [false], 'usage is polled at most once a minute');
 });
 
-test('threshold flag holds before 100%', async () => {
-  const h = harness([
-    { limits: [session(0.9)], fetchedAt: T0 },
-    { limits: [session(0.1)], fetchedAt: T0 + 61 * MIN },
-  ], { 'claude-usage-threshold': '0.85' });
+test('the threshold flag warns before 100%', async () => {
+  const h = harness([{ limits: [session(0.9)], fetchedAt: T0 }], { 'claude-usage-threshold': '0.85' });
   await h.request(opus);
-  assert.equal(h.slept.reduce((a, b) => a + b, 0), 60 * MIN);
+  assert.match(h.status() ?? '', /90% used/);
 });
 
-test('the Fable weekly window gates Fable only', async () => {
-  const h = harness([{ limits: [session(0.2), fable(1)], fetchedAt: T0 }]);
-  await h.request(opus);
-  assert.deepEqual(h.slept, [], 'Opus is not held by Fable usage');
-  h.advance(2 * MIN); // past the poll cache
-  const f = harness([{ limits: [session(0.2), fable(1)], fetchedAt: T0 }, { limits: [session(0.2), fable(0)], fetchedAt: T0 + 4 * 24 * 60 * MIN }]);
-  await f.request({ provider: 'anthropic', id: 'claude-fable-5-1' });
-  assert.ok(f.slept.length > 0, 'Fable is held');
+test('the Fable weekly window applies to Fable only', () => {
+  const limits = [session(0.2), fable(1)];
+  assert.equal(decide(limits, T0, T0, 'claude-opus-5-5', 0.98).kind, 'allow');
+  assert.equal(decide(limits, T0, T0, 'claude-fable-5-1', 0.98).kind, 'wait');
 });
 
-test('stale or unreadable usage does not block an idle session', async () => {
+test('a full window past its reset is still reported until a fresh fetch shows it below the limit', () => {
+  const reset = T0 - 10 * MIN;
+  const stale = decide([session(1, reset)], T0 - 20 * MIN, T0, 'claude-opus-5-5', 0.98);
+  assert.equal(stale.kind, 'wait');
+  const fresh = decide([session(0.02, T0 + 300 * MIN)], T0, T0, 'claude-opus-5-5', 0.98);
+  assert.equal(fresh.kind, 'allow');
+});
+
+test('stale or unreadable usage is shown as unknown', async () => {
   const stale = harness([{ limits: [session(0.1)], fetchedAt: T0 - 60 * MIN }]);
   await stale.request(opus);
-  assert.deepEqual(stale.slept, []);
-  assert.match(stale.notes.join('\n'), /stale; not blocking/);
+  assert.match(stale.status() ?? '', /unknown \(usage observation is stale\)/);
   const broken = harness([new Error('omarchy failed')]);
   await broken.request(opus);
-  assert.deepEqual(broken.slept, []);
-});
-
-test('an expired full window stays held while the post-reset fetch fails or is stale', async () => {
-  const reset = T0 + 10 * MIN;
-  const h = harness([
-    { limits: [session(1, reset)], fetchedAt: T0 },
-    new Error('fetch failed'), // forced fetch fails: cached full reading, past reset -> recheck
-    { limits: [session(0)], fetchedAt: T0 - 120 * MIN }, // stale zero is not a confirmed refill
-    { limits: [session(0, reset + 300 * MIN)], fetchedAt: reset + 11 * MIN },
-  ]);
-  await h.request(opus);
-  assert.deepEqual(h.probes, [false, true, true, true]);
-  assert.ok(h.now() >= reset + 10 * MIN, 'kept holding past the reset until a fresh fetch');
-});
-
-test('aborting the turn releases a hold', async () => {
-  const controller = new AbortController();
-  const h = harness([{ limits: [session(1, T0 + 300 * MIN)], fetchedAt: T0 }]);
-  controller.abort();
-  await h.request(opus, controller.signal);
-  assert.deepEqual(h.slept, []);
+  assert.match(broken.status() ?? '', /unknown \(usage command failed\)/);
 });
 
 test('probe reads limits from the command and freshness from the cache file', async t => {

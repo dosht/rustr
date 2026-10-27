@@ -4,11 +4,13 @@ import { readFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-// Holds Anthropic provider requests while an observed Claude usage window is at its limit,
-// then sleeps until that window resets. Usage comes from `omarchy agent usage claude`.
-// Freshness is the limits cache's `fetchedAtMs`, not the record's `updatedAt`: an expired
-// window that the collector reports as empty is not proof of a refill until a fetch newer
-// than the reset confirms it. Unknown or stale usage never blocks (fail open, with a warning).
+// Claude usage monitor. Before each Anthropic request it reads `omarchy agent usage claude`
+// (at most once a minute) and shows the most constraining window in the status line, warning
+// once when a window reaches the threshold. It does not hold requests: OMP gives extension
+// handlers a 30-second budget, so blocking until a reset is done by the built-in
+// `retry.waitForUsageReset: true` (set in lead-session.yml and worker-session.yml), which waits
+// for the provider's authoritative reset time and stays abortable.
+// Freshness is the limits cache's `fetchedAtMs`, not the record's `updatedAt`.
 
 export interface Limit { label: string; percent: number; resetsAt: string }
 export type Decision =
@@ -21,7 +23,6 @@ const CACHE = join(homedir(), '.cache/omarchy/agent-usage/claude-limits.json');
 const POLL_MS = 60_000;
 const STALE_MS = 15 * 60_000;
 const RECHECK_MS = 5 * 60_000;
-const SLICE_MS = 30_000;
 
 /** Which windows constrain a model: the shared session and weekly windows always, Fable's own weekly window only for Fable. */
 export function applies(label: string, modelId: string): boolean {
@@ -72,29 +73,20 @@ export async function probe(force: boolean, exec = run, cache = CACHE): Promise<
   return { limits, fetchedAt };
 }
 
-function sleep(ms: number, signal?: AbortSignal): Promise<void> {
-  const { promise, resolve } = Promise.withResolvers<void>();
-  if (signal?.aborted) return Promise.resolve();
-  const done = () => { clearTimeout(timer); signal?.removeEventListener('abort', done); resolve(); };
-  const timer = setTimeout(done, ms);
-  signal?.addEventListener('abort', done, { once: true });
-  return promise;
-}
-
-export default function claudeUsageGate(pi: ExtensionAPI, deps = { probe, now: () => Date.now(), sleep }): void {
+export default function claudeUsageGate(pi: ExtensionAPI, deps = { probe, now: () => Date.now() }): void {
   pi.setLabel('Claude usage gate');
   pi.registerFlag('claude-usage-threshold', {
-    type: 'string', description: 'Consumed fraction (0-1] at which Anthropic requests wait for the window reset; default 0.98',
+    type: 'string', description: 'Consumed fraction (0-1] at which the Claude usage monitor warns; default 0.98',
   });
 
   let last: { at: number; result: Probe } | undefined;
   let warned = '';
 
-  async function observe(force: boolean): Promise<Probe | undefined> {
+  async function observe(): Promise<Probe | undefined> {
     const now = deps.now();
-    if (!force && last && now - last.at < POLL_MS) return last.result;
+    if (last && now - last.at < POLL_MS) return last.result;
     try {
-      last = { at: now, result: await deps.probe(force) };
+      last = { at: now, result: await deps.probe(false) };
       return last.result;
     } catch {
       return last?.result;
@@ -107,34 +99,23 @@ export default function claudeUsageGate(pi: ExtensionAPI, deps = { probe, now: (
     const flag = Number(pi.getFlag('claude-usage-threshold') ?? '0.98');
     const threshold = Number.isFinite(flag) && flag > 0 && flag <= 1 ? flag : 0.98;
 
-    const signal = 'signal' in event && event.signal instanceof AbortSignal ? event.signal : undefined;
-    let force = false;
-    for (;;) {
-      if (signal?.aborted) break;
-      const observation = await observe(force);
-      const decision = observation
-        ? decide(observation.limits, observation.fetchedAt, deps.now(), model.id, threshold)
-        : { kind: 'unknown' as const, reason: 'usage command failed' };
-      if (decision.kind === 'allow') { ctx.ui.setStatus(STATUS, undefined); break; }
-      if (decision.kind === 'unknown') {
-        if (force) {
-          // Already holding: an unreadable usage record after a reset is not a confirmed refill.
-          ctx.ui.setStatus(STATUS, `claude usage gate: reset unconfirmed (${decision.reason}); rechecking`);
-          await deps.sleep(RECHECK_MS, signal);
-          continue;
-        }
-        if (warned !== decision.reason) ctx.ui.notify(`Claude usage gate: ${decision.reason}; not blocking.`, 'warning');
-        warned = decision.reason;
-        ctx.ui.setStatus(STATUS, `claude usage: unknown (${decision.reason})`);
-        break;
-      }
+    const observation = await observe();
+    const decision = observation
+      ? decide(observation.limits, observation.fetchedAt, deps.now(), model.id, threshold)
+      : { kind: 'unknown' as const, reason: 'usage command failed' };
+    if (decision.kind === 'allow') {
+      ctx.ui.setStatus(STATUS, undefined);
       warned = '';
+    } else if (decision.kind === 'unknown') {
+      ctx.ui.setStatus(STATUS, `claude usage: unknown (${decision.reason})`);
+      if (warned !== decision.reason) ctx.ui.notify(`Claude usage monitor: ${decision.reason}.`, 'warning');
+      warned = decision.reason;
+    } else {
       const until = new Date(decision.until).toISOString().slice(0, 16).replace('T', ' ') + 'Z';
-      const text = `${decision.label} ${Math.round(decision.percent * 100)}% used; waiting until ${until}`;
-      ctx.ui.setStatus(STATUS, `claude usage gate: ${text}`);
-      ctx.ui.notify(`Claude usage gate: ${text}.${signal ? ' Esc cancels the turn.' : ''}`, 'warning');
-      while (!signal?.aborted && deps.now() < decision.until) await deps.sleep(Math.min(SLICE_MS, decision.until - deps.now()), signal);
-      force = true; // after a reset, only a fresh fetch may release the hold
+      const text = `${decision.label} ${Math.round(decision.percent * 100)}% used; resets ${until}`;
+      ctx.ui.setStatus(STATUS, `claude usage: ${text}`);
+      if (warned !== text) ctx.ui.notify(`Claude usage: ${text}. Requests wait for the reset (retry.waitForUsageReset).`, 'warning');
+      warned = text;
     }
     return event.payload;
   });

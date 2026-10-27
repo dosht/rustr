@@ -6,6 +6,8 @@ prewalk:
   auto: "off"
 retry:
   modelFallback: false
-# Holds Anthropic requests at an observed Claude usage limit until the window resets.
+  # Wait for the provider's authoritative usage reset instead of failing the turn.
+  waitForUsageReset: true
+# Shows Claude usage in the status line and warns at the limit.
 extensions:
   - /home/mu/src/rustr/scripts/lead-workflow/claude-usage-gate.ts
