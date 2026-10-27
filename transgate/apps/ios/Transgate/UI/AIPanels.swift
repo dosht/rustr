@@ -10,11 +10,11 @@ struct AIPanels: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            if vm.consent.gate == .required {
+            if vm.capabilities.ai && vm.consent.gate == .required {
                 ConsentCard(vm: vm.consent, copy: copy, send: send)
             }
-            if let analysis = vm.analysis { AnalysisCard(vm: analysis, copy: copy, send: send) }
-            if let chat = vm.chat { ChatCard(vm: chat, copy: copy, send: send) }
+            if vm.capabilities.ai, let analysis = vm.analysis { AnalysisCard(vm: analysis, copy: copy, send: send) }
+            if vm.capabilities.aiChat, let chat = vm.chat { ChatCard(vm: chat, copy: copy, send: send) }
         }
     }
 }
@@ -82,11 +82,7 @@ struct AnalysisCard: View {
                 }
             case .ready:
                 if vm.noTranscript { Text(copy.text(Labels.noTranscriptContent)).foregroundStyle(tokens.muted) }
-                if let summary = vm.summary { Text(summary) }
-                if case .generic(let generic)? = vm.analysis, let highlights = generic.highlights, !highlights.isEmpty {
-                    Text(copy.text(Labels.keyHighlights)).font(.subheadline.weight(.semibold))
-                    ForEach(highlights, id: \.self) { Text("• \($0)") }
-                }
+                AnalysisContent(summary: vm.summary, analysis: vm.analysis, copy: copy, send: send)
             case .interrupted, .cancelled, .error:
                 Text(copy.text(Labels.analysisIncomplete)).font(.subheadline.weight(.semibold))
                 if let hint = copy.text(vm.errorHint) { Text(hint).foregroundStyle(tokens.muted) }
@@ -129,6 +125,7 @@ struct ChatCard: View {
             }
             ForEach(Array(vm.lines.enumerated()), id: \.offset) { index, line in message(UInt64(index), line) }
             if vm.typing { Text(copy.text(Labels.chatThinking)).font(.caption).foregroundStyle(tokens.muted) }
+            if let limits = vm.limits { ChatLimitsCard(limits: limits, copy: copy) }
             if let error = vm.error {
                 Banner(text: [copy.text(error.message) ?? copy.text(Labels.chatFailed), error.detail].compactMap { $0 }.joined(separator: "\n"), kind: .error,
                        dismissLabel: copy.text(Labels.dismiss), dismiss: { act(.errorDismissed) })

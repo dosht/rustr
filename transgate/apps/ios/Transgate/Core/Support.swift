@@ -14,13 +14,13 @@ struct AppSettings: Equatable, Sendable {
     var captcha = false
     /// The web app's https origin, for the browser handoffs (D6): billing history and API keys.
     /// `nil` hides them.
-    var webUrl: String? = nil
+    var webOrigin: String? = nil
 
-    /// A page of the web app, for the system browser. The two paths are the web app's
-    /// public routes; the app never renders those screens (D6).
-    func webPage(_ handoff: WebHandoff) -> URL? {
-        guard let base = webUrl, let root = URL(string: base) else { return nil }
-        return URL(string: handoff.path, relativeTo: root)?.absoluteURL
+    /// A page of the web app for the system browser (D6): the address is core's `web_url` over
+    /// the https web origin (never the auth-callback scheme), in the current locale.
+    func webPage(_ route: Route, locale: String) -> URL? {
+        guard let base = webOrigin else { return nil }
+        return URL(string: webUrl(siteUrl: base, route: route, locale: locale))
     }
 
     /// The scheme the authentication session returns through.
@@ -38,20 +38,7 @@ struct AppSettings: Equatable, Sendable {
             return text?.isEmpty == false ? text : nil
         }
         guard let api = value("TransgateApiUrl"), let auth = value("TransgateAuthUrl"), let site = value("TransgateSiteUrl") else { return nil }
-        return AppSettings(apiUrl: api, authUrl: auth, authKey: value("TransgateAuthKey"), siteUrl: site, webUrl: value("TransgateWebUrl"))
-    }
-}
-
-/// The web pages the app hands off to instead of rendering them (D6, D5 rows WEB-071/072/075/076).
-enum WebHandoff: Sendable {
-    case billing
-    case apiKeys
-
-    var path: String {
-        switch self {
-        case .billing: return "/billing"
-        case .apiKeys: return "/dashboard/api-keys"
-        }
+        return AppSettings(apiUrl: api, authUrl: auth, authKey: value("TransgateAuthKey"), siteUrl: site, webOrigin: value("TransgateWebUrl"))
     }
 }
 

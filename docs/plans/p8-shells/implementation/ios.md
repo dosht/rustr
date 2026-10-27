@@ -24,3 +24,9 @@ SwiftUI and the Apple adaptors have not been compiled, run or reviewed visually 
 2. `/billing` and `/dashboard/api-keys` are constants in the shell (`WebHandoff`). If core should own those paths, expose them.
 3. Gaps listed in the README limits (per-type analysis cards, active-line highlight, chat limits, special offer).
 4. `gate-transgate.sh` line "Linux Swift bindings and views compile" can now call the script; Y owns D14 execution (set `SWIFT_IMAGE`/`TRANSGATE_FFI_LIB_DIR` for an immutable library if desired).
+
+## Follow-up (2026-10-27)
+
+Drawn from the existing view models: per-type analysis sections (meeting, lecture, sales, support, interview; section copy through `copy_section_requested`), the playing-line highlight (player snapshots plus `Formatting.activeLine`, the web's rule, unit-tested on Linux), chat usage limits, the special offer, and the web's capability gating of the AI panels. All new labels are in `Labels.analysisAll` and translated in 16 locales by the smoke; `UiContract.swift` now names every analysis field. `check-swift.sh` exit 0 (adds `formatting-and-active-line`). Pending on other owners: status tone (core has it; ffi `remote.rs` and the bindings do not yet) and the handoff paths over the FFI.
+
+Status tone/icon and handoff paths (2026-10-28): the transcript header badge draws core's `StatusBadge.tone`/`icon` (web `TranscriptHeader.svelte` likewise, with a Vitest regression; `npm run build` 0 errors); `WebHandoff` constants are gone, `AppSettings.webPage(route, locale)` calls the FFI `webUrl` over the https web origin, checked on Linux (`web-handoff-from-core`).

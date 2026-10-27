@@ -12,6 +12,7 @@ struct TranscriptScreen: View {
     let openURL: (URL) -> Void
 
     @State private var draft = ""
+    @State private var snapshot = PlayerSnapshot(time: 0, playing: false)
     @State private var renaming: String?
     @State private var newName = ""
 
@@ -46,10 +47,7 @@ struct TranscriptScreen: View {
             Text(transcript.title).font(.title3.weight(.semibold))
             HStack(spacing: 8) {
                 if let minutes = transcript.durationMinutes { Text("\(minutes) \(copy.text(transcript.minutesUnit))").font(.caption).foregroundStyle(tokens.muted) }
-                if let badge = transcript.statusBadge {
-                    // Core's badge carries no tone; mapping a status to a color here would be a shell rule.
-                    ToneBadge(text: copy.text(badge.label), tone: .neutral, spinner: badge.spinning)
-                }
+                if let badge = transcript.statusBadge { ToneBadge(text: copy.text(badge.label), tone: badge.tone, spinner: badge.spinning, icon: badge.icon) }
             }
             HStack(spacing: 4) {
                 if transcript.canCopy {
@@ -78,7 +76,7 @@ struct TranscriptScreen: View {
         case .audio(let url, let loading, let unavailable):
             if loading { ProgressView().accessibilityLabel(copy.text(Labels.loading)) }
             else if unavailable || url == nil { Banner(text: copy.text(Labels.audioUnavailable)) }
-            else if let url, let source = URL(string: url) { PlayerBar(source: source, player: player, playLabel: copy.text(Labels.play), pauseLabel: copy.text(Labels.pause), onState: { act(.playerState(playing: $0)) }) }
+            else if let url, let source = URL(string: url) { PlayerBar(source: source, player: player, playLabel: copy.text(Labels.play), pauseLabel: copy.text(Labels.pause), snapshot: $snapshot, onState: { act(.playerState(playing: $0)) }) }
         case .youTube(let videoId):
             // D11: no SDK; the video opens in the YouTube app or the browser.
             Button { openURL(youTubeURL(videoId, seconds: 0)) } label: { Image(systemName: "play.rectangle.fill").font(.title2).frame(minWidth: 44, minHeight: 44) }
@@ -117,16 +115,17 @@ struct TranscriptScreen: View {
             Text(empty).foregroundStyle(tokens.muted)
         } else {
             let fades = Dictionary(uniqueKeysWithValues: transcript.fades.map { (Int($0.row), Double($0.opacityPercent) / 100) })
+            let activeIndex = Formatting.activeLine(ends: transcript.rows.map(\.endSeconds), time: snapshot.time)
             VStack(alignment: .leading, spacing: 10) {
                 ForEach(Array(transcript.rows.enumerated()), id: \.element.id) { index, row in
-                    line(row).opacity(fades[index] ?? 1)
+                    line(row, active: index == activeIndex).opacity(fades[index] ?? 1)
                 }
             }
             .environment(\.layoutDirection, transcript.rtl ? .rightToLeft : .leftToRight)
         }
     }
 
-    @ViewBuilder private func line(_ row: LineRow) -> some View {
+    @ViewBuilder private func line(_ row: LineRow, active: Bool) -> some View {
         if row.editing {
             VStack(alignment: .leading, spacing: 8) {
                 TextField(copy.text(Labels.editLine), text: $draft, axis: .vertical)
@@ -151,7 +150,10 @@ struct TranscriptScreen: View {
                     .contentShape(Rectangle())
                     .onTapGesture { tapped(row) }
             }
+            .padding(6)
+            .background(active ? tokens.cursorBg : Color.clear, in: RoundedRectangle(cornerRadius: 8))
             .accessibilityElement(children: .contain)
+            .accessibilityAddTraits(active ? .isSelected : [])
         }
     }
 
@@ -200,28 +202,37 @@ private func youTubeURL(_ id: String, seconds: Int) -> URL {
     return components.url!
 }
 
-/// The mounted audio player. What plays and when it pauses or seeks is core's (through
-/// the player port); the play button reports its state as an intent.
+/// The mounted audio player. What plays and when it pauses or seeks is core's (through the
+/// player port); the player's clock and play state are reported up, the intent only on a change.
 struct PlayerBar: View {
     let source: URL
     let player: AVPlayerControl
     let playLabel: String
     let pauseLabel: String
+    @Binding var snapshot: PlayerSnapshot
     let onState: (Bool) -> Void
-    @State private var playing = false
 
     var body: some View {
         HStack {
-            Button {
-                playing.toggle()
-                if playing { player.play() } else { _ = player.pause() }
-                onState(playing)
-            } label: { Image(systemName: playing ? "pause.circle.fill" : "play.circle.fill").font(.largeTitle).frame(minWidth: 44, minHeight: 44) }
-            .accessibilityLabel(playing ? pauseLabel : playLabel)
+            Button { player.toggle() } label: {
+                Image(systemName: snapshot.playing ? "pause.circle.fill" : "play.circle.fill").font(.largeTitle).frame(minWidth: 44, minHeight: 44)
+            }
+            .accessibilityLabel(snapshot.playing ? pauseLabel : playLabel)
+            Text(Formatting.clockTime(snapshot.time)).font(.body.monospacedDigit()).foregroundStyle(tokens.muted)
             Spacer()
         }
-        .onAppear { player.mount(source) }
-        .onChange(of: source) { _, new in player.mount(new); playing = false }
-        .onDisappear { player.mount(nil) }
+        .onAppear { mount(source) }
+        .onChange(of: source) { _, new in mount(new) }
+        .onDisappear { player.mount(nil); snapshot = PlayerSnapshot(time: 0, playing: false) }
+    }
+
+    private func mount(_ url: URL) {
+        player.mount(url) { next in
+            Task { @MainActor in
+                let wasPlaying = snapshot.playing
+                snapshot = next
+                if next.playing != wasPlaying { onState(next.playing) }
+            }
+        }
     }
 }

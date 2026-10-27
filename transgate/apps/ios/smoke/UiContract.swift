@@ -37,6 +37,7 @@ func everyIntentTheUiSends() -> [AppIntent] {
         .consent(.enableRequested), .consent(.declineRequested), .consent(.disableConfirmed), .consent(.errorDismissed),
         .analysis(.shown), .analysis(.hidden), .analysis(.retryRequested), .analysis(.copyRequested),
         .analysis(.exportRequested(format: .pdf)), .analysis(.exportErrorDismissed),
+        .analysis(.copySectionRequested(section: .actionItems)),
         .chat(.sendRequested(text: "q")), .chat(.retryRequested(index: 0)), .chat(.copyMessageRequested(index: 0)),
         .chat(.rateRequested(index: 0, rating: .like)), .chat(.copyChatRequested), .chat(.downloadRequested),
         .chat(.errorDismissed), .chat(.noticeDismissed),
@@ -89,11 +90,11 @@ func everyFieldTheUiReads(_ app: AppVm, _ vm: SignedInVm, _ out: SignedOutVm) ->
         count += t.tabs.count + t.rtl.hashValue + t.showTime.hashValue + t.showSpeakers.hashValue + t.timeToggle.hashValue
         count += t.phoneSpeakerToggle.hashValue + t.speakerOptions.count + (t.freemium?.percent == nil ? 0 : 1) + (t.job == nil ? 0 : 1)
         count += (t.selected == nil ? 0 : 1) + (t.translationFlag?.count ?? 0) + (t.loadErrorDetail?.count ?? 0)
-        count += (t.statusBadge?.spinning == true ? 1 : 0) + t.fades.reduce(0) { $0 + Int($1.row) + Int($1.opacityPercent) }
+        count += (t.statusBadge?.spinning == true ? 1 : 0) + (t.statusBadge?.tone.hashValue ?? 0) + (t.statusBadge?.icon == .check ? 1 : 0) + t.fades.reduce(0) { $0 + Int($1.row) + Int($1.opacityPercent) }
         for option in t.tabs { count += option.name.count + option.flag.count + (option.tab == t.selected ? 1 : 0) }
         for option in t.speakerOptions { count += option.value.count; _ = option.label }
         for row in t.rows {
-            count += row.id.hashValue + row.timeText.count + row.text.count + Int(row.startSeconds) + (row.speakerValue?.count ?? 0)
+            count += row.id.hashValue + row.timeText.count + row.text.count + Int(row.startSeconds) + Int(row.endSeconds) + (row.speakerValue?.count ?? 0)
             count += row.speakerPending.hashValue + row.editing.hashValue
             switch row.speaker {
             case .numbered(let number)?: count += Int(number)
@@ -119,6 +120,8 @@ func everyFieldTheUiReads(_ app: AppVm, _ vm: SignedInVm, _ out: SignedOutVm) ->
         count += chat.typing.hashValue + chat.canSend.hashValue + (chat.error?.detail?.count ?? 0)
         for line in chat.lines { count += (line.role == .user ? 1 : 0) + line.content.count + line.showActions.hashValue + line.streaming.hashValue }
     }
+    count += analysisFields(vm.analysis?.analysis) + (vm.specialClientAlert.map { $0.code.count + $0.message.count + Int($0.percent) } ?? 0)
+    count += vm.chat?.limits.map(limitFields) ?? 0
     switch vm.route {
     case .home(.allTranscripts), .home(.job), .home(.new), .home(.default), .newPassword, .billing, .apiKeys, .signIn, .checkoutConfirm: break
     }
@@ -134,4 +137,119 @@ func uiContract() {
     let intents = everyIntentTheUiSends()
     check(intents.count > 70, "the UI sends \(intents.count) intents")
     pass("ui-contract-intents-and-fields-compile")
+}
+
+func limitFields(_ limits: LimitsVm) -> Int {
+    var count = 0
+    for usage in [limits.questions, limits.tokens].compactMap({ $0 }) { count += Int(usage.current) + Int(usage.max) + Int(usage.widthPercent) + usage.tone.hashValue }
+    switch limits.reset {
+    case nil: break
+    case .lessThanHour?: count += 1
+    case .inHours(let hours)?: count += Int(hours)
+    case .inDays(let days)?: count += Int(days)
+    case .on(let at)?: count += Int(at)
+    }
+    return count
+}
+
+private func size<T>(_ list: [T]?) -> Int { list?.count ?? 0 }
+private func size(_ text: String?) -> Int { text?.count ?? 0 }
+private func whole(_ number: Double?) -> Int { Int(number ?? 0) }
+
+/// Every analysis field the per-type sections read (one term per statement: the type checker
+/// gives up on long sums).
+func analysisFields(_ analysis: Analysis?) -> Int {
+    var count = 0
+    switch analysis {
+    case nil: break
+    case .generic(let data)?: count += size(data.highlights)
+    case .meeting(let data)?:
+        for item in data.actionItems ?? [] {
+            count += item.task.count
+            count += size(item.owner)
+            count += size(item.deadline)
+            count += item.status == .done ? 1 : item.status == .inProgress ? 2 : 3
+        }
+        for item in data.decisions ?? [] {
+            count += item.decision.count
+            count += size(item.participants)
+            count += whole(item.timestamp)
+        }
+        count += size(data.discussionPoints)
+        count += size(data.nextSteps)
+    case .lecture(let data)?:
+        for topic in data.topics ?? [] {
+            count += topic.title.count
+            count += whole(topic.timestamp)
+            count += whole(topic.duration)
+        }
+        for concept in data.concepts ?? [] {
+            count += concept.concept.count
+            count += concept.explanation.count
+            count += size(concept.examples)
+        }
+        count += size(data.reviewQuestions)
+        count += size(data.studyGuide)
+    case .sales(let data)?:
+        if let metrics = data.callMetrics {
+            count += size(metrics.talkListenRatio)
+            count += whole(metrics.questionsAsked)
+            count += whole(metrics.objectionsHandled)
+            count += metrics.nextStepsConfirmed == true ? 1 : 0
+        }
+        for tip in data.coachingTips ?? [] {
+            count += tip.tip.count
+            count += tip.category == .strength ? 1 : 2
+        }
+        if let insights = data.customerInsights {
+            count += size(insights.painPoints)
+            count += size(insights.budgetSignals)
+            count += size(insights.objections)
+            count += size(insights.buyingSignals)
+        }
+        count += size(data.nextSteps)
+    case .support(let data)?:
+        if let issue = data.issueResolution {
+            count += issue.problem.count
+            count += size(issue.rootCause)
+            count += size(issue.resolution)
+            count += whole(issue.resolutionTimeMinutes)
+            count += String(describing: issue.status).count
+        }
+        if let sentiment = data.sentiment {
+            count += sentiment.initial.count
+            count += sentiment.final.count
+            for moment in sentiment.keyMoments ?? [] {
+                count += Int(moment.timestamp)
+                count += size(moment.reason)
+                count += String(describing: moment.sentiment).count
+            }
+        }
+        count += size(data.insights?.strengths)
+        count += size(data.insights?.improvements)
+        count += size(data.kbUpdates)
+        count += size(data.followUpActions)
+    case .interview(let data)?:
+        if let assessment = data.assessment {
+            count += size(assessment.position)
+            count += whole(assessment.overallRating)
+            count += size(assessment.strengths)
+            count += size(assessment.concerns)
+        }
+        for skill in data.skillsAssessment ?? [] {
+            count += skill.skill.count
+            count += Int(skill.rating)
+            count += String(describing: skill.level).count
+        }
+        for response in data.notableResponses ?? [] {
+            count += response.question.count
+            count += response.answer.count
+            count += response.assessment == .positive ? 1 : response.assessment == .negative ? 2 : 3
+        }
+        for step in data.nextSteps ?? [] {
+            count += step.action.count
+            count += step.priority == .high ? 1 : step.priority == .medium ? 2 : 3
+        }
+    }
+    return count
 }

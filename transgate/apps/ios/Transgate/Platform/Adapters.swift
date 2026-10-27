@@ -29,24 +29,51 @@ private final class DurationBox: @unchecked Sendable {
     var seconds: Double?
 }
 
-/// The one mounted player (core's `PlayerControl`): an AVPlayer over the file or URL
-/// the transcript screen set. Core decides when to pause, resume and seek.
+/// The one mounted player (core's `PlayerControl`): an AVPlayer over the URL the transcript
+/// screen mounted. Core decides when to pause, resume and seek; the shell reports the player's
+/// clock and play state back (`PlayerSnapshot`), because only the player knows them.
 final class AVPlayerControl: PlayerControl, @unchecked Sendable {
     private let lock = NSLock()
     private var player: AVPlayer?
+    private var clock: Any?
+    private var status: NSKeyValueObservation?
 
-    /// The transcript screen mounts or unmounts the player.
-    func mount(_ url: URL?) {
-        lock.withLock { player = url.map { AVPlayer(url: $0) } }
+    /// The transcript screen mounts a source (or `nil` to unmount). Call on the main thread.
+    func mount(_ url: URL?, onSnapshot: (@Sendable (PlayerSnapshot) -> Void)? = nil) {
+        lock.withLock {
+            unmountLocked()
+            guard let url else { return }
+            let next = AVPlayer(url: url)
+            player = next
+            clock = next.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.25, preferredTimescale: 600), queue: .main) { [weak next] time in
+                guard let next else { return }
+                onSnapshot?(PlayerSnapshot(time: time.seconds, playing: next.timeControlStatus != .paused))
+            }
+            status = next.observe(\.timeControlStatus, options: [.new]) { observed, _ in
+                onSnapshot?(PlayerSnapshot(time: observed.currentTime().seconds, playing: observed.timeControlStatus != .paused))
+            }
+        }
     }
 
-    func play() { onMain { $0.play() } }
-    func current() -> Double { lock.withLock { player?.currentTime().seconds ?? 0 } }
+    private func unmountLocked() {
+        if let player, let clock { player.removeTimeObserver(clock) }
+        status?.invalidate()
+        status = nil
+        clock = nil
+        player?.pause()
+        player = nil
+    }
+
+    /// The play button.
+    func toggle() {
+        guard let player = lock.withLock({ self.player }) else { return }
+        DispatchQueue.main.async { if player.timeControlStatus == .paused { player.play() } else { player.pause() } }
+    }
 
     func pause() -> Bool {
         let player = lock.withLock { self.player }
         guard let player else { return false }
-        let wasPlaying = player.rate != 0
+        let wasPlaying = player.timeControlStatus != .paused
         DispatchQueue.main.async { player.pause() }
         return wasPlaying
     }

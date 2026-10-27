@@ -14,6 +14,7 @@ struct SignedInFrame: View {
 
     @State private var recent = false
     @State private var account = false
+    @State private var offerDismissed = false
 
     private var copy: Copy { model.copy }
     private func send(_ intent: AppIntent) { model.send(intent) }
@@ -25,6 +26,7 @@ struct SignedInFrame: View {
                 Banner(text: error, kind: .error).padding(8)
                 SecondaryButton(title: copy.text(Labels.tryAgain)) { send(.sessionRetried) }.padding(.horizontal, 8)
             }
+            if let offer = vm.specialClientAlert, !offerDismissed { SpecialOfferCard(offer: offer, copy: copy) { offerDismissed = true }.padding(8) }
             content.frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .screenBackground()
@@ -62,11 +64,11 @@ struct SignedInFrame: View {
         case .newPassword:
             NewPasswordScreen(vm: vm.newPassword, copy: copy, send: send)
         case .billing:
-            HandoffScreen(title: copy.text(Labels.billingHistory), button: copy.text(Labels.billingHistory), url: settings.webPage(.billing), copy: copy, openURL: openURL) {
+            HandoffScreen(title: copy.text(Labels.billingHistory), button: copy.text(Labels.billingHistory), url: settings.webPage(.billing, locale: vm.locale), copy: copy, openURL: openURL) {
                 send(.navigate(route: vm.newTranscriptRoute))
             }
         case .apiKeys:
-            HandoffScreen(title: copy.text(Labels.apiKeys), button: copy.text(Labels.apiKeys), url: settings.webPage(.apiKeys), copy: copy, openURL: openURL) {
+            HandoffScreen(title: copy.text(Labels.apiKeys), button: copy.text(Labels.apiKeys), url: settings.webPage(.apiKeys, locale: vm.locale), copy: copy, openURL: openURL) {
                 send(.navigate(route: vm.newTranscriptRoute))
             }
         default:
@@ -88,10 +90,10 @@ struct SignedInFrame: View {
                 Section {
                     Button(copy.text(Labels.support)) { account = false; send(.support(.opened)) }
                     Button(copy.text(Labels.settings)) { account = false; send(.settings(.opened)) }
-                    if let url = settings.webPage(.billing), vm.capabilities.billingHistory {
+                    if let url = settings.webPage(.billing, locale: vm.locale), vm.capabilities.billingHistory {
                         Button(copy.text(Labels.billingHistory)) { account = false; openURL(url) }
                     }
-                    if let url = settings.webPage(.apiKeys) { Button(copy.text(Labels.apiKeys)) { account = false; openURL(url) } }
+                    if let url = settings.webPage(.apiKeys, locale: vm.locale) { Button(copy.text(Labels.apiKeys)) { account = false; openURL(url) } }
                 }
                 Section {
                     Button(copy.text(Labels.logout), role: .destructive) { account = false; send(.signOutRequested) }.disabled(vm.signingOut)
@@ -171,7 +173,7 @@ struct SettingsSheet: View {
                     Text(plan.name).font(.headline)
                     Text(copy.text(Labels.minutes(plan.minutesIncluded))).foregroundStyle(tokens.muted)
                 }
-                if let url = handoffs.webPage(.billing) { SecondaryButton(title: copy.text(Labels.billingHistory)) { openURL(url) } }
+                if let url = handoffs.webPage(.billing, locale: frame.locale) { SecondaryButton(title: copy.text(Labels.billingHistory)) { openURL(url) } }
             }.frame(maxWidth: .infinity, alignment: .leading)
         case .manageData:
             ManageDataPanel(vm: frame.manageData, copy: copy, send: send)
@@ -307,5 +309,33 @@ struct SupportSheet: View {
             .screenBackground()
         }
         .presentationDetents([.medium, .large])
+    }
+}
+
+/// The configured special offer (source SpecialOffer): message and code are host data shown
+/// as given. Dismissal is local to the frame; copying the code is the system clipboard.
+struct SpecialOfferCard: View {
+    let offer: SpecialClientAlert
+    let copy: Copy
+    let dismiss: () -> Void
+    @State private var copied = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(copy.text(Labels.specialOffer)).font(.headline)
+                Spacer()
+                Button(action: dismiss) { Image(systemName: "xmark").frame(minWidth: 44, minHeight: 44) }.accessibilityLabel(copy.text(Labels.close))
+            }
+            Text(offer.message)
+            HStack {
+                Text(offer.code).font(.body.monospaced()).textSelection(.enabled).padding(8).overlay(RoundedRectangle(cornerRadius: 6).stroke(tokens.border))
+                Button(copy.text(copied ? Labels.copied : Labels.copyCode)) { UIPasteboard.general.string = offer.code; copied = true }.buttonStyle(.bordered)
+            }
+            Text(copy.text(Labels.useCode)).font(.caption).foregroundStyle(tokens.muted)
+        }
+        .padding(12)
+        .background(tokens.noticeBg, in: RoundedRectangle(cornerRadius: 10))
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(tokens.border))
     }
 }

@@ -69,10 +69,20 @@ struct ToneBadge: View {
     let text: String
     let tone: Tone
     var spinner = false
+    /// Core's glyph for the badge (`BadgeIcon`); the shell only picks a symbol for it.
+    var icon: BadgeIcon? = nil
 
     var body: some View {
         HStack(spacing: 4) {
             if spinner { ProgressView().scaleEffect(0.6) }
+            else if let icon {
+                switch icon {
+                case .dot: Circle().frame(width: 6, height: 6)
+                case .upload: Image(systemName: "arrow.up").font(.caption2)
+                case .check: Image(systemName: "checkmark").font(.caption2)
+                case .cross: Image(systemName: "xmark").font(.caption2)
+                }
+            }
             Text(text).font(.caption.weight(.semibold))
         }
         .padding(.horizontal, 8).padding(.vertical, 3)

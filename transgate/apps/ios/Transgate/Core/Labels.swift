@@ -230,6 +230,6 @@ enum Labels {
                    manualActions, deleteAllFiles, deleteAll, deleteAccountTitle, deleteAccount, feedbackTitle, feedbackPrompt,
                    feedbackPlaceholder, feedbackThanksTitle, feedbackThanks, submit, submitting, supportTitle, supportMessage,
                    supportPlaceholder, send, speaker, notAvailableShort, minShort, play, pause, copyMessage, helpful, notHelpful, configUnavailable]
-        return labels
+        return labels + analysisAll
     }
 }

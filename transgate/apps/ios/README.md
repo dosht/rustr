@@ -26,7 +26,7 @@ settings, retention, consent and account deletion (WEB-074); feedback and suppor
 
 **Balance only, no purchases (D6).** The account sheet shows the balance as text. The app never
 sends `purchase_opened`; billing history and API key administration are rows that open the web
-app in the system browser (`TransgateWebUrl`). If core ever routes to billing or API keys inside
+app in the system browser: the address is core's `web_url(TransgateWebUrl, route, locale)` (the https web origin, never the auth-callback scheme). If core ever routes to billing or API keys inside
 the app, a screen offers the same browser handoff.
 
 **YouTube (D11).** No SDK: tapping the video or a line opens the video at that time in the
@@ -76,8 +76,4 @@ guesses a host. The simulator reaches a Mac host at `localhost`.
 ## Limits
 
 - SwiftUI and the Apple adaptors are syntax-checked on Linux (`swiftc -parse`) but have not been compiled, run or visually reviewed; that needs Xcode and a device or simulator.
-- `TranscriptVm.status_badge` carries no tone, so the transcript header badge is neutral; the web maps a color from the status in its view (`TranscriptHeader.svelte:17`). Core should add the tone.
-- The active-line highlight while audio plays is not drawn (it needs a periodic player clock).
-- Typed analyses (lecture, meeting, sales, support, interview) show only the summary; the generic highlights are drawn. The per-type sections need their own cards.
-- Chat usage limits (`ChatPanelVm.limits`) and the special-client offer are not drawn.
-- Billing and API-key web paths (`/billing`, `/dashboard/api-keys`) are constants in `WebHandoff`.
+- Drawn from the existing view models (not yet seen on a device): the five per-type analysis sections with their copy buttons (`AnalysisSections.swift`), the playing-line highlight (the player's clock via `AVPlayerControl` snapshots and `Formatting.activeLine`, the web rule), chat usage limits, and the special offer (message and code, no purchase link; D6).

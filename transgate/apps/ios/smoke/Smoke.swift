@@ -153,6 +153,24 @@ func purePieces() {
     let accept = PickerAccept("audio/mpeg,audio/mp4,.mp3,.m4a")
     check(accept.mimeTypes == ["audio/mpeg", "audio/mp4"] && accept.extensions == ["mp3", "m4a"], "accept: \(accept)")
     pass("auth-return-and-picker-accept")
+
+    // Handoff pages come from core's web_url over the https web origin, in the current locale.
+    var web = unreachable
+    web.webOrigin = "https://app.example.test"
+    check(web.webPage(.billing, locale: "en")?.absoluteString == "https://app.example.test/billing", "billing handoff \(String(describing: web.webPage(.billing, locale: "en")))")
+    check(web.webPage(.apiKeys, locale: "tr")?.absoluteString == "https://app.example.test/tr/dashboard/api-keys", "api keys handoff \(String(describing: web.webPage(.apiKeys, locale: "tr")))")
+    check(unreachable.webPage(.billing, locale: "en") == nil, "no web origin, no handoff")
+    pass("web-handoff-from-core")
+
+    // The web's display formatting and the player's active-line rule, unchanged.
+    check(Formatting.clock(0) == "0:00" && Formatting.clock(75.9) == "1:15" && Formatting.clock(-3) == "0:00", "clock")
+    check(Formatting.duration(42) == "42s" && Formatting.duration(150) == "2 min", "duration")
+    check(Formatting.clockTime(3_725.9) == "01:02:05" && Formatting.clockTime(.nan) == "00:00:00", "clockTime")
+    check(Formatting.activeLine(ends: [2, 5, 9], time: 0) == -1 && Formatting.activeLine(ends: [2, 5, 9], time: 2) == 0
+          && Formatting.activeLine(ends: [2, 5, 9], time: 2.1) == 1 && Formatting.activeLine(ends: [2, 5, 9], time: 10) == -1, "activeLine")
+    let date = Formatting.localDate(micros: 1_766_361_600_000_000, locale: "en_US")
+    check(date.contains("12") && date.contains("22"), "localDate \(date)")
+    pass("formatting-and-active-line")
 }
 
 // MARK: - Vault
