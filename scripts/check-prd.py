@@ -160,8 +160,67 @@ def playwright_specs(references):
     return errors
 
 
+VITEST_REFERENCE = re.compile(r"vitest:([^#]+\.test\.ts)#(.+)")
+
+
+def vitest_specs(references):
+    """A browser-capability rule names a committed Vitest file and test, as the Vitest
+    JSON report keys it: `vitest:<path under transgate/web>#<describe titles and test
+    title, space-joined>`. The file must exist and declare a test whose title ends the
+    reference; execution is checked separately."""
+    errors = []
+    for reference in sorted(references):
+        match = VITEST_REFERENCE.fullmatch(reference)
+        if not match:
+            errors.append(f"invalid Vitest reference: {reference}")
+            continue
+        spec = ROOT / "transgate/web" / match[1]
+        if not spec.is_file():
+            errors.append(f"Vitest file is not committed: {reference}")
+            continue
+        declared = re.findall(r"""\b(?:it|test)(?:\.\w+)?\(\s*(["'`])(.+?)\1""", spec.read_text())
+        if not any(match[2] == title or match[2].endswith(" " + title) for _, title in declared):
+            errors.append(f"Vitest file declares no test matching {match[2]!r}: {reference}")
+    return errors
+
+
+def vitest_evidence(references):
+    """Runs the named files with `npm run test:ci`; every referenced test must pass.
+    A run that cannot start or report is a failure, never a skip."""
+    directory = ROOT / "transgate/web"
+    if not (directory / "package.json").is_file():
+        return ["Transgate web shell is not implemented: transgate/web/package.json"]
+    files = sorted({VITEST_REFERENCE.fullmatch(r)[1] for r in references if VITEST_REFERENCE.fullmatch(r)})
+    report_path = directory / ".check-prd-vitest.json"
+    report_path.unlink(missing_ok=True)
+    result = subprocess.run(
+        ["npm", "run", "test:ci", "--", "--reporter=json", f"--outputFile={report_path}", *files],
+        cwd=directory, text=True, capture_output=True,
+    )
+    errors = []
+    if result.returncode:
+        print(result.stdout[-4000:], end="")
+        print(result.stderr[-4000:], end="", file=sys.stderr)
+        errors.append("Transgate Vitest run failed")
+    try:
+        report = json.loads(report_path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return errors + ["Vitest did not emit a JSON report"]
+    finally:
+        report_path.unlink(missing_ok=True)
+    outcomes = {}
+    for suite in report.get("testResults", []):
+        relative = Path(suite.get("name", "")).resolve().relative_to(directory.resolve()).as_posix()
+        for test in suite.get("assertionResults", []):
+            outcomes[f"vitest:{relative}#{test.get('fullName', '')}"] = test.get("status")
+    for reference in sorted(references):
+        if outcomes.get(reference) != "passed":
+            errors.append(f"test must run and pass (not skipped, todo or missing): {reference} ({outcomes.get(reference, 'absent')})")
+    return errors
+
+
 def coverage(kind):
-    errors, rust, web = [], set(), set()
+    errors, rust, web, unit = [], set(), set(), set()
     count = 0
     paths = [ROOT / "docs/scenarios.md"] if kind == "scenarios" else [
         ROOT / "transgate/docs/rules.md", ROOT / "transgate/docs/parity.md"
@@ -211,6 +270,8 @@ def coverage(kind):
                     rust.add(test)
                 elif test.startswith("playwright:"):
                     web.add(test)
+                elif test.startswith("vitest:"):
+                    unit.add(test)
                 else:
                     errors.append(f"{cells[0]}: missing or invalid executable test reference: {test}")
         count += local_count
@@ -235,6 +296,9 @@ def coverage(kind):
     if web:
         errors += playwright_specs(web)
         errors += playwright_evidence(web)
+    if unit:
+        errors += vitest_specs(unit)
+        errors += vitest_evidence(unit)
     return errors
 
 

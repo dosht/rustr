@@ -178,6 +178,65 @@ class GateTests(unittest.TestCase):
             with patch.dict(coverage.__globals__, ROOT=root, ledger_integrity=lambda: [], playwright_evidence=lambda refs: []):
                 self.assertTrue(any("invalid Playwright reference" in e for e in coverage("transgate")))
 
+    def test_a_browser_capability_rule_resolves_its_vitest_file_and_still_needs_a_passing_run(self):
+        coverage = GATE["coverage"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs = root / "transgate/docs"
+            docs.mkdir(parents=True)
+            unit = root / "transgate/web/src/lib/media/measure.test.ts"
+            unit.parent.mkdir(parents=True)
+            reference = "vitest:src/lib/media/measure.test.ts#measureFile never decodes a file above 100 MiB"
+            (docs / "rules.md").write_text(
+                "| ID | Rule | Source | Legacy test | Rust test | Status |\n|---|---|---|---|---|---|\n"
+                f"| UPL-006 | Measurement | source:1 | none | {reference} | tested |\n"
+            )
+            (docs / "parity.md").write_text("| ID | Flow | Surface | Today | Test | Status | Topic |\n|---|---|---|---|---|---|---|\n")
+            executed = []
+            run = lambda refs: executed.append(set(refs)) or []
+            with patch.dict(coverage.__globals__, ROOT=root, ledger_integrity=lambda: [], vitest_evidence=run):
+                self.assertTrue(any("Vitest file is not committed" in e for e in coverage("transgate")))
+                unit.write_text('describe("measureFile", () => {\n  it("decodes a file of exactly 100 MiB", async () => {});\n});\n')
+                self.assertTrue(any("declares no test matching" in e for e in coverage("transgate")))
+                unit.write_text(unit.read_text() + 'it("never decodes a file above 100 MiB", async () => {});\n')
+                executed.clear()
+                errors = coverage("transgate")
+                self.assertFalse([e for e in errors if "UPL-006" in e or "Vitest" in e], errors)
+                self.assertEqual(executed, [{reference}], "a resolved reference is still executed")
+
+    def test_a_vitest_reference_passes_only_when_the_run_reports_it_passed(self):
+        evidence = GATE["vitest_evidence"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            web = root / "transgate/web"
+            (web / "src").mkdir(parents=True)
+            (web / "package.json").write_text("{}")
+            ok = "vitest:src/a.test.ts#suite passes"
+            skipped = "vitest:src/a.test.ts#suite is skipped"
+            absent = "vitest:src/a.test.ts#suite is not in the report"
+
+            def run(command, cwd, **_):
+                out = next(a for a in command if a.startswith("--outputFile=")).split("=", 1)[1]
+                Path(out).write_text(
+                    '{"testResults":[{"name":"%s","assertionResults":['
+                    '{"fullName":"suite passes","status":"passed"},{"fullName":"suite is skipped","status":"skipped"}]}]}'
+                    % (web / "src/a.test.ts")
+                )
+                return subprocess.CompletedProcess(command, 0, "", "")
+
+            with patch.dict(evidence.__globals__, ROOT=root), patch.object(subprocess, "run", run):
+                errors = evidence({ok, skipped, absent})
+            self.assertEqual(len(errors), 2, errors)
+            self.assertTrue(any("skipped" in e for e in errors) and any("absent" in e for e in errors))
+
+            def unavailable(command, cwd, **_):
+                return subprocess.CompletedProcess(command, 127, "", "npm: not found")
+
+            with patch.dict(evidence.__globals__, ROOT=root), patch.object(subprocess, "run", unavailable):
+                errors = evidence({ok})
+            self.assertIn("Transgate Vitest run failed", errors)
+            self.assertIn("Vitest did not emit a JSON report", errors)
+
 
 if __name__ == "__main__":
     unittest.main()

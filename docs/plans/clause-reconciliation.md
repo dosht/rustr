@@ -536,3 +536,11 @@ p22 update (2026-10-27): UPL-013, UPL-014, EXP-015, EXP-016 and PRV-010 are now 
 - PRV-010: sign-out and deletion reset the analytics identity.
 
 UPL-006 stays `ledger`. Its evidence is the web Vitest `platform/media/measure.test.ts`, and the ledger accepts only `cargo:` and `playwright:` references, so it waits for the lead's decision. P3 rule rows: 187 `tested`, 26 `changed`, 58 `ledger` (44 other-phase, 14 missing: 13 for p1T, plus UPL-006).
+
+UPL-006 update (2026-10-27, lead decision c): `scripts/check-prd.py` now accepts `vitest:<path under transgate/web>#<describe and test title, space-joined>`.
+- **Static check:** `vitest_specs` requires the committed file to declare an `it`/`test` with that title.
+- **Execution:** `vitest_evidence` runs `npm run test:ci -- --reporter=json --outputFile=…` on the named files. Every reference must report `passed`. A failed or unreportable run is an error; skipped, todo and absent tests are errors.
+- **Regressions:** `test_a_browser_capability_rule_resolves_its_vitest_file_and_still_needs_a_passing_run` and `test_a_vitest_reference_passes_only_when_the_run_reports_it_passed` (19/19 script tests pass).
+- **Real run:** on `src/lib/platform/media/measure.test.ts` the seven cited tests passed, and an unknown title was reported as absent.
+
+UPL-006 is now `tested`, citing those seven Vitest tests plus core `file_flow_to_ready`. P3 rule rows: 188 `tested`, 26 `changed`, 57 `ledger` (44 other-phase, 13 missing for p1T).
