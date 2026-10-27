@@ -95,6 +95,7 @@
   "p5.erasure.request_failed": "Your account deletion could not be started. Please try again.",
   "p5.erasure.requested": "Your account is closed. Your data will be erased once every active subscription is confirmed stopped.",
   "p5.history.translation_job": "Translation job",
+  "p5.manage_data.save_failed": "Your setting could not be saved. Please try again.",
   "p5.player.pause": "Pause",
   "p5.player.play": "Play",
   "p5.player.seek": "Seek",

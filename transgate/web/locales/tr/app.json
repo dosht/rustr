@@ -95,6 +95,7 @@
   "p5.erasure.request_failed": "Hesabınızın silinmesi başlatılamadı. Lütfen tekrar deneyin.",
   "p5.erasure.requested": "Hesabınız kapatıldı. Tüm aktif aboneliklerin durdurulduğu doğrulandığında verileriniz silinecektir.",
   "p5.history.translation_job": "Çeviri görevi",
+  "p5.manage_data.save_failed": "Ayarınız kaydedilemedi. Lütfen tekrar deneyin.",
   "p5.player.pause": "Duraklat",
   "p5.player.play": "Oynat",
   "p5.player.seek": "Ara",

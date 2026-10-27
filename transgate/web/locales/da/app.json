@@ -95,6 +95,7 @@
   "p5.erasure.request_failed": "Sletning af din konto kunne ikke startes. Prøv igen.",
   "p5.erasure.requested": "Din konto er lukket. Dine data slettes, når det er bekræftet, at alle aktive abonnementer er stoppet.",
   "p5.history.translation_job": "Oversættelsesopgave",
+  "p5.manage_data.save_failed": "Din indstilling kunne ikke gemmes. Prøv igen.",
   "p5.player.pause": "Pause",
   "p5.player.play": "Afspil",
   "p5.player.seek": "Søg",

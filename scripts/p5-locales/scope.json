@@ -2190,6 +2190,13 @@
           "docs/plans/p7-api/implementation/core.md (p1X: API key lifetime choice; new P7 key, not source-derived; distinct from common \"1 Year\" plan label)"
         ],
         "origin": "approved"
+      },
+      "p5.manage_data.save_failed": {
+        "english": "Your setting could not be saved. Please try again.",
+        "sources": [
+          "P5 core: p1X Manage Data switch write refused; new key, not source-derived"
+        ],
+        "origin": "approved"
       }
     },
     "ai": {

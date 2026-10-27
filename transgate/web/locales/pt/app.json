@@ -95,6 +95,7 @@
   "p5.erasure.request_failed": "Não foi possível iniciar a eliminação da sua conta. Tente novamente.",
   "p5.erasure.requested": "A sua conta está encerrada. Os seus dados serão eliminados assim que se confirmar a interrupção de todas as subscrições ativas.",
   "p5.history.translation_job": "Tarefa de tradução",
+  "p5.manage_data.save_failed": "Não foi possível guardar a sua definição. Tente novamente.",
   "p5.player.pause": "Pausar",
   "p5.player.play": "Reproduzir",
   "p5.player.seek": "Procurar",

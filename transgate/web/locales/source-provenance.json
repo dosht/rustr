@@ -1137,7 +1137,7 @@
   ],
   "translationInput": {
     "path": "scripts/p5-locales/translations.json",
-    "sha256": "0257b2c9bc6b93ca9ec999c47a362e5d7703dd101ffdd4652deff0e218f77930"
+    "sha256": "0f4f2e1d5a1149b84249e9f35a3862b84492b69b6033eb635135f7d4cbad0d7c"
   },
   "sourceEquivalentReuse": [
     {
@@ -3187,7 +3187,8 @@
     "P7 key screen: NEW common key \"Expires\" (expiry badge label) requested by p1V, authored all16, new not source-derived.",
     "P7 key screen final emitted list from p1X: 3 source hardcoded labels (Never Expire, 30 Days, 90 Days; api-keys.tsx:121-137, no source translation, authored) added to common; 5 NEW app p7.keys.secret_* keys (title, description, copy, copied, copy_failed) authored, new not source-derived. Existing 1 Year reused (source common key; pt source text is \"Plano Anual\").",
     "P7 key screen correction: view-owned common keys \"Webhook signing secret\" and \"Callbacks we send to your server are signed with this secret. Use it to verify them.\" were removed (nothing emits or renders them; core now emits app p7.keys.secret_title/secret_description). \"Expires\" and \"Revoke API key\" remain (rendered by ApiKeysPage.svelte).",
-    "P7: NEW app key p7.keys.expiry_one_year (\"1 Year\" as an API key lifetime, not a plan label), authored all16 via explicit overrides so regeneration cannot reuse the same-English source common \"1 Year\" (pt \"Plano Anual\" = annual plan). New, not source-derived."
+    "P7: NEW app key p7.keys.expiry_one_year (\"1 Year\" as an API key lifetime, not a plan label), authored all16 via explicit overrides so regeneration cannot reuse the same-English source common \"1 Year\" (pt \"Plano Anual\" = annual plan). New, not source-derived.",
+    "P5: NEW app key p5.manage_data.save_failed (refused Manage Data switch write), authored all16, new not source-derived."
   ],
   "resolutions": [
     {
@@ -28440,6 +28441,111 @@
       "ns": "app",
       "key": "p7.keys.expiry_one_year",
       "kind": "translated_source_correction"
+    },
+    {
+      "locale": "tr",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "pt",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "es",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "de",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "id",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "it",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "fr",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "el",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "ru",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "da",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "sv",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "no",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "fi",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "kk",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
+    },
+    {
+      "locale": "az",
+      "ns": "app",
+      "key": "p5.manage_data.save_failed",
+      "kind": "translated",
+      "english": "Your setting could not be saved. Please try again."
     }
   ]
 }

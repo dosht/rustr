@@ -91,6 +91,9 @@
   {#if vm.error}
     <Alert tone="error">{i18n.t(vm.error)}</Alert>
   {/if}
+  {#if vm.save_error}
+    <Alert tone="error">{i18n.t(vm.save_error)}</Alert>
+  {/if}
 </div>
 
 <ConfirmDialog

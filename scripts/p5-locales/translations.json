@@ -5060,6 +5060,23 @@
       "fi": "Allekirjoitussalaisuuden kopiointi epäonnistui",
       "kk": "Қолтаңба құпиясын көшіру мүмкін болмады",
       "az": "İmza sirrini kopyalamaq mümkün olmadı"
+    },
+    "Your setting could not be saved. Please try again.": {
+      "tr": "Ayarınız kaydedilemedi. Lütfen tekrar deneyin.",
+      "pt": "Não foi possível guardar a sua definição. Tente novamente.",
+      "es": "No se pudo guardar tu ajuste. Inténtalo de nuevo.",
+      "de": "Ihre Einstellung konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+      "id": "Pengaturan Anda tidak dapat disimpan. Silakan coba lagi.",
+      "it": "Non è stato possibile salvare l’impostazione. Riprova.",
+      "fr": "Votre paramètre n’a pas pu être enregistré. Veuillez réessayer.",
+      "el": "Η ρύθμισή σας δεν ήταν δυνατό να αποθηκευτεί. Δοκιμάστε ξανά.",
+      "ru": "Не удалось сохранить настройку. Попробуйте ещё раз.",
+      "da": "Din indstilling kunne ikke gemmes. Prøv igen.",
+      "sv": "Din inställning kunde inte sparas. Försök igen.",
+      "no": "Innstillingen din kunne ikke lagres. Prøv igjen.",
+      "fi": "Asetustasi ei voitu tallentaa. Yritä uudelleen.",
+      "kk": "Параметріңізді сақтау мүмкін болмады. Қайталап көріңіз.",
+      "az": "Ayarınızı yadda saxlamaq mümkün olmadı. Yenidən cəhd edin."
     }
   },
   "pluralMessages": {

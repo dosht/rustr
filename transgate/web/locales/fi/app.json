@@ -95,6 +95,7 @@
   "p5.erasure.request_failed": "Tilisi poistamista ei voitu aloittaa. Yritä uudelleen.",
   "p5.erasure.requested": "Tilisi on suljettu. Tietosi poistetaan, kun kaikkien aktiivisten tilausten päättyminen on vahvistettu.",
   "p5.history.translation_job": "Käännöstyö",
+  "p5.manage_data.save_failed": "Asetustasi ei voitu tallentaa. Yritä uudelleen.",
   "p5.player.pause": "Keskeytä",
   "p5.player.play": "Toista",
   "p5.player.seek": "Siirry kohtaan",
