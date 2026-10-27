@@ -10686,9 +10686,12 @@ enum FfiError: Swift.Error, Equatable, Hashable, Foundation.LocalizedError {
      * The presenter was disposed, or its thread ended.
      */
     case Disposed
-    case Start(message: String
+    /**
+     * `reason`, not `message`: a Kotlin `Throwable` already owns `message`.
+     */
+    case Start(reason: String
     )
-    case Translate(message: String
+    case Translate(reason: String
     )
 
     
@@ -10721,10 +10724,10 @@ public struct FfiConverterTypeFfiError: FfiConverterRustBuffer {
         
         case 1: return .Disposed
         case 2: return .Start(
-            message: try FfiConverterString.read(from: &buf)
+            reason: try FfiConverterString.read(from: &buf)
             )
         case 3: return .Translate(
-            message: try FfiConverterString.read(from: &buf)
+            reason: try FfiConverterString.read(from: &buf)
             )
 
          default: throw UniffiInternalError.unexpectedEnumCase
@@ -10742,14 +10745,14 @@ public struct FfiConverterTypeFfiError: FfiConverterRustBuffer {
             writeInt(&buf, Int32(1))
         
         
-        case let .Start(message):
+        case let .Start(reason):
             writeInt(&buf, Int32(2))
-            FfiConverterString.write(message, into: &buf)
+            FfiConverterString.write(reason, into: &buf)
             
         
-        case let .Translate(message):
+        case let .Translate(reason):
             writeInt(&buf, Int32(3))
-            FfiConverterString.write(message, into: &buf)
+            FfiConverterString.write(reason, into: &buf)
             
         }
     }
