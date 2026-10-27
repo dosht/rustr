@@ -279,3 +279,230 @@ These are p1X's closed entries (test names from his P3-CLOSE report, each resolv
 | PRV-046..048 | unchanged (closed via the Playwright cookie spec) | Lead: consent gating of SDK loading is browser mechanics; no move to core |
 
 p1X's 17 owner entries: 15 fully closed, LNG-002..006 closed except LNG-005 (reference pending), and TRX-023/LNG-013 reopened. P3 rule rows across JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN and EML now stand at 64 tested, 4 changed and 203 ledger.
+
+## P3 ledger pass: the remaining 203 rows (2026-10-27, p21)
+
+This classifies every P3 rule row that still read `ledger` after P3-CLOSE.
+- **Reference-only:** an existing test proves the row, so its reference was added and the status set (`tested`, or `changed` with the decision).
+- **Other:** owned by another phase.
+- **Decision:** retired by a PRD or P3 contract decision. There is no executable evidence to cite, and the ledger has no status for it (`excluded` is reserved for AI-027), so the lead must choose a disposition.
+- **Missing:** no test yet; the closing test and owner are named.
+
+Every cargo reference was resolved against `cargo test -- --list --include-ignored` for the 15 workspace crates involved; the Playwright reference is checked by `playwright_specs`. `assemble-discovery --check` is green.
+
+| Class | Rows |
+|---|---|
+| Reference-only, tested | 116 |
+| Reference-only, changed | 13 |
+| Other | 38 |
+| Decision | 15 |
+| Missing | 21 |
+| **Total** | **203** |
+
+After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, EML) stand at 180 `tested`, 17 `changed` and 74 `ledger` (38 other-phase, 21 missing, 15 decision).
+
+| Row | Class | Evidence or reason | Owner / closing test |
+|---|---|---|---|
+| JOB-001 | other | Importing deprecated production statuses: P9 | — |
+| JOB-004 | tested | `a_lifecycle_save_is_a_revision_compare_and_swap_and_job_locks_are_owne`, `bil_030_031_a_refused_batch_leaves_every_job_status_and_the_ledger_unt`, `negative_balance_refuses_all_drafts` | — |
+| JOB-006 | tested | `job_006_lng_029_a_start_batch_mixing_an_exempt_and_a_normal_draft_foll`, `fre_018_only_the_first_draft_by_id_decides_the_exception_in_any_reques`, `negative_balance_refuses_all_drafts` | — |
+| JOB-007 | tested | `a_lifecycle_save_is_a_revision_compare_and_swap_and_job_locks_are_owne`, `bil_030_031_a_refused_batch_leaves_every_job_status_and_the_ledger_unt`, `negative_balance_refuses_all_drafts` | — |
+| JOB-008 | other | Imported ready/uploaded jobs: P9 migration | — |
+| JOB-009 | other | API-key URL entry, callback_url fallback: P7 | — |
+| JOB-010 | other | API-key URL entry, callback_url fallback: P7 | — |
+| JOB-011 | tested | `job_011_012_start_reports_the_first_refusal_and_delivers_the_later_job`, `start_charges_and_hands_over` | — |
+| JOB-012 | tested | `job_011_012_start_reports_the_first_refusal_and_delivers_the_later_job`, `start_charges_and_hands_over` | — |
+| JOB-013 | tested | `a_late_acceptance_after_a_second_claim_is_learned_and_deleted`, `a_live_claim_fences_the_job`, `acceptance_records_the_accepting_provider` (+1) | — |
+| JOB-014 | tested | `a_late_acceptance_after_a_second_claim_is_learned_and_deleted`, `a_live_claim_fences_the_job`, `acceptance_records_the_accepting_provider` (+1) | — |
+| JOB-015 | tested | `deepgram_rate_limits_are_detected`, `lost_answers_are_uncertain`, `post_ambiguity_does_not_become_rejection_or_retry_and_explicit_429_is_` (+3) | — |
+| JOB-016 | changed | `a_refusal_falls_back_to_the_other_provider_and_a_second_refusal_fails_`, `rate_limit_fails_over`, `trx_014_a_definite_refusal_fails_over_and_an_uncertain_answer_never_do` — P3 contract (definite refusal fails over) | — |
+| JOB-017 | tested | `deepgram_rate_limits_are_detected`, `lost_answers_are_uncertain`, `post_ambiguity_does_not_become_rejection_or_retry_and_explicit_429_is_` (+3) | — |
+| JOB-018 | tested | `job_018_a_deepgram_pass_keeps_one_slot_free_orders_the_queue_spaces_su`, `a_jobs_pass_still_inside_provider_io_keeps_the_next_slot_unclaimed_unt`, `deepgram_capacity_keeps_one_slot` (+2) | — |
+| JOB-019 | changed | `job_019_dispatch_pass_continues_after_a_definite_refusal_and_never_rec`, `jobs_slot_is_three_minutes` — P3 C5 (all-provider dispatch) | — |
+| JOB-020 | tested | `job_020_021_a_stuck_deepgram_job_is_reset_every_time_without_a_limit_a`, `a_deepgram_submission_without_answer_is_redispatched_once_without_a_se`, `f4_a_user_delete_and_the_stuck_pass_on_one_job_queue_on_the_account_lo` (+1) | — |
+| JOB-021 | tested | `job_020_021_a_stuck_deepgram_job_is_reset_every_time_without_a_limit_a`, `a_deepgram_submission_without_answer_is_redispatched_once_without_a_se`, `f4_a_user_delete_and_the_stuck_pass_on_one_job_queue_on_the_account_lo` (+1) | — |
+| JOB-022 | tested | `job_022_023_024_soniox_recovery_polls_claims_and_gives_up_by_the_rule`, `recovery_claim_is_compare_and_swap`, `recovery_poll_owns_its_duration_and_mismatched_transcript_identity_is_` (+1) | — |
+| JOB-023 | tested | `job_022_023_024_soniox_recovery_polls_claims_and_gives_up_by_the_rule`, `recovery_claim_is_compare_and_swap`, `recovery_poll_owns_its_duration_and_mismatched_transcript_identity_is_` (+1) | — |
+| JOB-025 | changed | `job_019_dispatch_pass_continues_after_a_definite_refusal_and_never_rec`, `jobs_slot_is_three_minutes` — P3 C5 (all-provider dispatch) | — |
+| JOB-026 | missing | — | p1T: process test: a stranded pending Soniox row is dispatched once after a restart, with no second charge |
+| JOB-027 | tested | `callback_completes_once`, `late_result_after_delete_writes_nothing`, `late_results_are_ignored` | — |
+| JOB-028 | tested | `callback_completes_once`, `late_result_after_delete_writes_nothing`, `late_results_are_ignored` | — |
+| JOB-029 | missing | — | p1T: callback intake: a transient fetch/storage error is retried, a deterministic failure fails the job once |
+| JOB-030 | changed | `callbacks_authenticate_before_parse_and_bind_provider_project_remote_w`, `f6_a_conflicting_delivery_is_held_once_with_its_body_and_is_never_pend` — P3 D8 (divergent callback 409) | — |
+| JOB-031 | tested | `job_031_jobs_ingest_rolls_back_partial_lines_and_emits_one_coded_failu`, `empty_results_give_no_lines`, `no_speech_keeps_the_duration_step` (+1) | — |
+| JOB-032 | decision | provider health scoring/cleanup retired (PRD/P3 contract) | lead: disposition |
+| JOB-033 | other | Customer callback delivery: P7 | — |
+| JOB-034 | changed | `completion_with_error_mails_support_only`, `failure_mails_user_and_support`, `job_events_are_claimed_once_and_only_the_current_claim_acknowledges` (+2) — P3 contract (transition outbox replaces every-UPDATE hook) | — |
+| JOB-037 | tested | `an_expired_upload_of_a_removed_draft_is_deleted_and_swept_again`, `prv_026_lines_need_an_existing_job_and_a_job_with_lines_cannot_be_dele` | — |
+| JOB-038 | tested | `an_expired_upload_of_a_removed_draft_is_deleted_and_swept_again`, `prv_026_lines_need_an_existing_job_and_a_job_with_lines_cannot_be_dele` | — |
+| JOB-040 | tested | `cancel_requires_an_active_status` | — |
+| JOB-041 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
+| JOB-042 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
+| JOB-043 | other | API-key URL entry, callback_url fallback: P7 | — |
+| JOB-044 | changed | `a_sweep_racing_the_acknowledgement_keeps_the_acknowledged_state`, `an_archive_put_completing_after_the_cascade_is_acknowledged_and_delete`, `an_unacknowledged_archive_write_stays_pending_until_its_object_is_foun` (+4) — P3 F2 (archive intent before PUT) | — |
+| JOB-045 | changed | `edits_are_owner_scoped_last_write_wins` — P3 D7 (controlled edit commands) | — |
+| JOB-046 | decision | provider health scoring/cleanup retired (PRD/P3 contract) | lead: disposition |
+| UPL-002 | tested | `upl_002_the_picker_accept_list_follows_the_layout` | — |
+| UPL-003 | missing | — | p1Z: Drop-zone view test: m4a accepted, rejected MIME ignored, drops after ten ignored, button visibility. Y adds the Playwright drop. |
+| UPL-004 | missing | — | p1Z: Drop-zone view test: m4a accepted, rejected MIME ignored, drops after ten ignored, button visibility. Y adds the Playwright drop. |
+| UPL-005 | tested | `upl_005_a_very_large_and_very_long_upload_is_accepted_without_a_produc` | — |
+| UPL-006 | missing | — | p22: Duration measurement: the decode fallback, the 5 s and 10 s timeouts, the 100 MB decode boundary |
+| UPL-008 | tested | `duration_polling` | — |
+| UPL-009 | tested | `upl_009_init_upload_answers_401_400_201_and_500`, `init_upload_and_streaming_url_need_a_numeric_job_id_and_a_string_name` | — |
+| UPL-010 | tested | `an_upload_capability_belongs_to_the_signing_caller_even_for_a_foreign_`, `issued_uploads_belong_to_the_signing_caller` | — |
+| UPL-011 | tested | `gcs_and_r2_signed_access_binds_key_method_expiry_without_content_type_` | — |
+| UPL-013 | missing | — | p22: A failed PUT keeps the draft marked failed with no automatic retry; progress shown; only HTTP 200 counts as success |
+| UPL-014 | missing | — | p22: A failed PUT keeps the draft marked failed with no automatic retry; progress shown; only HTTP 200 counts as success |
+| UPL-021 | tested | `upl_021_language_usage_orders_this_accounts_languages_and_targets_by_u`, `language_usage_lists_stored_names_with_counts_most_used_first` | — |
+| UPL-022 | tested | `youtube_ids_are_extracted_from_every_accepted_form` | — |
+| UPL-023 | tested | `upl_023_youtube_add_answers_401_403_400_404_502_and_the_eleventh_reque`, `youtube_add_creates_the_draft`, `youtube_metadata_limits_and_errors` | — |
+| UPL-024 | tested | `metadata_preserves_raw_language_precedence_and_provider_duration_witho`, `youtube_add_creates_the_draft`, `youtube_language_and_duration` | — |
+| UPL-026 | tested | `upl_026_youtube_resolve_is_limited_to_five_per_minute_owner_and_draft_`, `paid_caption_wire_is_authenticated_timestamped_and_never_uses_public_f`, `youtube_completes_from_draft` | — |
+| UPL-029 | tested | `cache_evicts_least_recently_used`, `formats`, `successes_are_cached_six_hours` (+3) | — |
+| UPL-030 | changed | `direct_private_and_private_redirects_fail_before_target_connect_or_sta`, `private_reserved_and_tunnel_addresses_cannot_be_external_audio_destina`, `real_external_body_is_pinned_fetched_spooled_and_uploaded_not_handed_d` (+1) — P3 D12 (pinned controlled fetch) | — |
+| UPL-031 | other | API-key options and legacy public contract: P7. Imported echoed options: P9. | — |
+| UPL-032 | decision | no invented recording/Drive/OneDrive sources (PRD §2); visibility is P5 FLG-004 | lead: disposition |
+| TRX-001 | tested | `pins_that_cannot_execute_fail_over`, `stored_provider_comes_first` | — |
+| TRX-002 | tested | `long_audio_goes_to_deepgram`, `qta_goes_to_deepgram_unless_translation` | — |
+| TRX-003 | tested | `long_audio_goes_to_deepgram`, `qta_goes_to_deepgram_unless_translation` | — |
+| TRX-004 | other | API-key options and legacy public contract: P7. Imported echoed options: P9. | — |
+| TRX-005 | tested | `soniox_takes_its_languages_and_auto_detect` | — |
+| TRX-006 | tested | `soniox_takes_its_languages_and_auto_detect` | — |
+| TRX-007 | tested | `deepgram_capacity_keeps_one_slot`, `eight_languages_go_to_deepgram`, `last_resort_waits_or_fails_explicitly` | — |
+| TRX-008 | tested | `last_resort_waits_or_fails_explicitly` | — |
+| TRX-009 | tested | `long_audio_goes_to_deepgram`, `pins_that_cannot_execute_fail_over`, `qta_goes_to_deepgram_unless_translation` (+1) | — |
+| TRX-010 | tested | `deepgram_capacity_keeps_one_slot`, `eight_languages_go_to_deepgram`, `last_resort_waits_or_fails_explicitly` | — |
+| TRX-011 | tested | `deepgram_capacity_keeps_one_slot`, `eight_languages_go_to_deepgram`, `preferred_provider_needs_to_be_valid` (+1) | — |
+| TRX-012 | tested | `deepgram_capacity_keeps_one_slot`, `eight_languages_go_to_deepgram`, `preferred_provider_needs_to_be_valid` (+1) | — |
+| TRX-013 | changed | `pins_that_cannot_execute_fail_over` — PRD: RunPod retired; a preserved RunPod pin fails over | — |
+| TRX-014 | tested | `trx_014_a_definite_refusal_fails_over_and_an_uncertain_answer_never_do`, `pins_that_cannot_execute_fail_over`, `rate_limit_fails_over` (+1) | — |
+| TRX-015 | tested | `soniox_real_post_keeps_source_reference_and_explicit_v5_language_trans`, `start_charges_and_hands_over` | — |
+| TRX-016 | tested | `soniox_real_post_keeps_source_reference_and_explicit_v5_language_trans`, `trx_023_lng_013_an_unmapped_stored_target_fails_the_job_at_dispatch`, `trx_023_lng_013_only_the_first_target_is_sent_as_its_code` (+1) | — |
+| TRX-017 | tested | `soniox_real_post_keeps_source_reference_and_explicit_v5_language_trans`, `trx_023_lng_013_an_unmapped_stored_target_fails_the_job_at_dispatch`, `trx_023_lng_013_only_the_first_target_is_sent_as_its_code` (+1) | — |
+| TRX-018 | tested | `soniox_real_post_keeps_source_reference_and_explicit_v5_language_trans`, `trx_023_lng_013_an_unmapped_stored_target_fails_the_job_at_dispatch`, `trx_023_lng_013_only_the_first_target_is_sent_as_its_code` (+1) | — |
+| TRX-019 | tested | `soniox_real_post_keeps_source_reference_and_explicit_v5_language_trans`, `start_charges_and_hands_over` | — |
+| TRX-020 | tested | `d3_d4_deepgram_global_whisper_request_is_opted_out_and_basic_authentic`, `models_come_from_configuration` | — |
+| TRX-021 | changed | `one_line_per_sentence` — PRD (RunPod grammar retired; output unchanged) | — |
+| TRX-022 | other | API-key options and legacy public contract: P7. Imported echoed options: P9. | — |
+| TRX-023 | tested | `trx_023_lng_013_an_unmapped_stored_target_fails_the_job_at_dispatch`, `trx_023_lng_013_only_the_first_target_is_sent_as_its_code`, `trx_023_lng_013_a_stored_target_without_a_code_fails_the_job_and_never` (+1) | — |
+| TRX-026 | tested | `sentence_punctuation_splits_lines`, `speaker_changes_split_when_enabled` | — |
+| TRX-027 | tested | `sentence_punctuation_splits_lines`, `speaker_changes_split_when_enabled` | — |
+| TRX-029 | missing | — | p1T: real-PG round trip of every optional normalized line field (language, status, speaker change) |
+| TRX-030 | tested | `empty_results_give_no_lines`, `one_line_per_sentence`, `word_fallback_keeps_the_parse_float_quirk` (+1) | — |
+| TRX-031 | missing | — | p1T: same round-trip test |
+| TRX-032 | tested | `job_031_jobs_ingest_rolls_back_partial_lines_and_emits_one_coded_failu` | — |
+| TRX-035 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
+| TRX-036 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
+| TRX-037 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
+| TRX-039 | other | Public status API: P7 | — |
+| TRX-040 | missing | — | p1T: consumer test: a no-speech result from Soniox and from Deepgram persists the job failure and one outbox event |
+| TRX-041 | other | Live provider retention, GCS lifecycle, live language/model acceptance: P9 | — |
+| TRL-001 | tested | `long_audio_goes_to_deepgram`, `pins_that_cannot_execute_fail_over`, `qta_goes_to_deepgram_unless_translation` (+1) | — |
+| TRL-002 | tested | `soniox_real_post_keeps_source_reference_and_explicit_v5_language_trans`, `trx_023_lng_013_an_unmapped_stored_target_fails_the_job_at_dispatch`, `trx_023_lng_013_only_the_first_target_is_sent_as_its_code` (+1) | — |
+| EDT-002 | missing | — | p1T: real-PG race: a line edit concurrent with the retention sweep and with erasure never resurrects or loses a line |
+| EDT-003 | missing | — | p1T: same race test |
+| EDT-004 | tested | `display_fallback_only_for_null`, `distinct_speakers_first_seen`, `speaker_display` (+1) | — |
+| EDT-005 | tested | `edt_005_006_a_speaker_choice_changes_one_line_and_racing_renames_never`, `d7_line_edits_update_only_and_lines_sort_by_stored_text`, `rename_speaker` | — |
+| EDT-006 | tested | `edt_005_006_a_speaker_choice_changes_one_line_and_racing_renames_never`, `d7_line_edits_update_only_and_lines_sort_by_stored_text`, `rename_speaker` | — |
+| EDT-007 | tested | `display_fallback_only_for_null`, `distinct_speakers_first_seen`, `speaker_display` (+1) | — |
+| EDT-009 | tested | `display_fallback_only_for_null`, `distinct_speakers_first_seen`, `speaker_display` (+1) | — |
+| EDT-011 | changed | `ordering_and_merge`, `d11_a_poll_merges_every_loaded_page_without_moving_the_cursor` — P5 D11: polling replaces realtime | — |
+| EXP-001 | tested | `download_requires_completion`, `export_use_case` | — |
+| EXP-002 | tested | `file_names_are_sanitized`, `names_that_could_escape_the_folder_or_collide_are_refused`, `the_zip_holds_the_folder_and_every_core_entry_as_utf8_text` (+1) | — |
+| EXP-003 | tested | `file_names_are_sanitized`, `names_that_could_escape_the_folder_or_collide_are_refused`, `the_zip_holds_the_folder_and_every_core_entry_as_utf8_text` (+1) | — |
+| EXP-004 | tested | `file_names_are_sanitized`, `names_that_could_escape_the_folder_or_collide_are_refused`, `the_zip_holds_the_folder_and_every_core_entry_as_utf8_text` (+1) | — |
+| EXP-005 | tested | `a_word_document_is_well_formed_ooxml_that_keeps_text_fonts_bold_and_sp`, `all_formats_and_plain_word`, `speaker_blocks_group_by_speaker_and_time` (+1) | — |
+| EXP-006 | tested | `a_word_document_is_well_formed_ooxml_that_keeps_text_fonts_bold_and_sp`, `all_formats_and_plain_word`, `speaker_blocks_group_by_speaker_and_time` (+1) | — |
+| EXP-007 | tested | `exp_007_009_010_translated_headers_and_newline_csv_in_every_extension`, `all_formats_and_plain_word`, `wysiwyg_bundle_for_video_with_speakers` | — |
+| EXP-008 | tested | `exp_008_subtitle_split_at_exactly_six_seconds_and_arrow_escaping`, `long_lines_split_for_subtitles` | — |
+| EXP-009 | tested | `exp_007_009_010_translated_headers_and_newline_csv_in_every_extension`, `all_formats_and_plain_word`, `wysiwyg_bundle_for_video_with_speakers` | — |
+| EXP-010 | tested | `exp_007_009_010_translated_headers_and_newline_csv_in_every_extension`, `all_formats_and_plain_word`, `wysiwyg_bundle_for_video_with_speakers` | — |
+| EXP-011 | tested | `all_formats_and_plain_word`, `wysiwyg_bundle_for_video_with_speakers` | — |
+| EXP-012 | tested | `all_formats_and_plain_word`, `wysiwyg_bundle_for_video_with_speakers` | — |
+| EXP-013 | tested | `export_use_case`, `translation_page` | — |
+| EXP-014 | tested | `clipboard_lines` | — |
+| EXP-015 | missing | — | p22: Phone export of a transcript with empty lines through the share-unavailable fallback |
+| EXP-016 | missing | — | p22: `transcript_downloaded` with word count, media and flags reaches PostHog after consent. Y asserts delivery in C2. |
+| EXP-017 | other | P6 (public free-tool page); core formats tested | — |
+| LNG-005 | other | Y adds a Playwright locale no-fallback test in candidate9 (lead); changed under P5 D3 then | — |
+| LNG-009 | tested | `soniox_real_post_keeps_source_reference_and_explicit_v5_language_trans`, `start_needs_a_language_choice` | — |
+| LNG-010 | tested | `preferred_provider_needs_to_be_valid`, `soniox_takes_its_languages_and_auto_detect` | — |
+| LNG-013 | tested | `trx_023_lng_013_an_unmapped_stored_target_fails_the_job_at_dispatch`, `trx_023_lng_013_only_the_first_target_is_sent_as_its_code`, `trx_023_lng_013_a_stored_target_without_a_code_fails_the_job_and_never` | — |
+| LNG-014 | tested | `long_audio_goes_to_deepgram`, `pins_that_cannot_execute_fail_over`, `qta_goes_to_deepgram_unless_translation` (+1) | — |
+| LNG-015 | tested | `soniox_takes_its_languages_and_auto_detect`, `eight_languages_go_to_deepgram` | — |
+| LNG-016 | tested | `soniox_takes_its_languages_and_auto_detect`, `eight_languages_go_to_deepgram` | — |
+| LNG-017 | other | Live provider retention, GCS lifecycle, live language/model acceptance: P9 | — |
+| LNG-018 | tested | `pins_that_cannot_execute_fail_over`, `preferred_provider_needs_to_be_valid`, `stored_provider_comes_first` | — |
+| LNG-019 | tested | `long_audio_goes_to_deepgram`, `qta_goes_to_deepgram_unless_translation` | — |
+| LNG-020 | tested | `long_audio_goes_to_deepgram`, `qta_goes_to_deepgram_unless_translation` | — |
+| LNG-021 | changed | `soniox_real_post_keeps_source_reference_and_explicit_v5_language_trans` — P3 D11 (explicit v5) | — |
+| LNG-022 | other | Live provider retention, GCS lifecycle, live language/model acceptance: P9 | — |
+| LNG-023 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
+| LNG-025 | other | API-key options and legacy public contract: P7. Imported echoed options: P9. | — |
+| LNG-026 | tested | `youtube_add_creates_the_draft`, `youtube_language_and_duration` | — |
+| LNG-027 | other | API-key options and legacy public contract: P7. Imported echoed options: P9. | — |
+| LNG-028 | other | API-key options and legacy public contract: P7. Imported echoed options: P9. | — |
+| LNG-029 | tested | `job_006_lng_029_a_start_batch_mixing_an_exempt_and_a_normal_draft_foll`, `fre_018_only_the_first_draft_by_id_decides_the_exception_in_any_reques` | — |
+| LNG-031 | other | P9 (archived beta-consent import) | — |
+| LNG-032 | tested | `cookie consent PostHog does not start for the id locale` | — |
+| LNG-033 | tested | `transcription_languages_are_a_superset_of_the_fixture` | — |
+| PRV-004 | changed | `erasure_runs_to_fully_erased`, `erasure_waits_for_subscription_stop` — P3 D9/D15 (honest erasure saga outcome) | — |
+| PRV-005 | other | API keys and audit: P7. Historical archives: P9. | — |
+| PRV-006 | tested | `d9_erasure_locks_every_affected_owner_and_cascades_signed_cross_owner_` | — |
+| PRV-007 | tested | `d9_erasure_locks_every_affected_owner_and_cascades_signed_cross_owner_` | — |
+| PRV-008 | other | API audit anonymization: P7. Historical data: P9. | — |
+| PRV-009 | other | API audit anonymization: P7. Historical data: P9. | — |
+| PRV-010 | missing | — | p22: Sign-out and deletion reset the analytics identity (PostHog reset). Y asserts it in C2. |
+| PRV-013 | tested | `retention_respects_the_preference`, `retention_treats_an_absent_settings_row_as_the_source_default_and_keep` | — |
+| PRV-014 | tested | `prv_014_015_017_the_sweep_deletes_only_old_completed_lines_of_owners_w`, `cutoff_adds_one_day` | — |
+| PRV-015 | tested | `prv_014_015_017_the_sweep_deletes_only_old_completed_lines_of_owners_w`, `cutoff_adds_one_day` | — |
+| PRV-016 | tested | `retention_respects_the_preference`, `retention_treats_an_absent_settings_row_as_the_source_default_and_keep` | — |
+| PRV-017 | tested | `prv_014_015_017_the_sweep_deletes_only_old_completed_lines_of_owners_w` | — |
+| PRV-018 | tested | `retention_days_are_validated` | — |
+| PRV-019 | tested | `prv_019_the_sweep_is_all_or_nothing_at_100000_versus_100001_rows`, `history_retention_skips_and_aborts_like_the_source`, `plan_counts_only_opted_in_lines` | — |
+| PRV-020 | tested | `an_advisory_lock_is_exclusive_across_processes_until_released`, `retention_skips_while_locked` | — |
+| PRV-021 | tested | `prv_021_every_run_writes_one_audit_row_with_all_its_fields`, `history_retention_removes_only_old_finished_runs`, `the_history_purge_and_its_audit_row_commit_together_and_interrupted_ru` (+1) | — |
+| PRV-022 | tested | `retention_respects_the_preference`, `retention_treats_an_absent_settings_row_as_the_source_default_and_keep` | — |
+| PRV-024 | decision | provider health scoring/cleanup retired (PRD/P3 contract) | lead: disposition |
+| PRV-025 | tested | `history_slot_is_sunday_four_am`, `crn_007_the_sunday_0400_sweep_keeps_ninety_days_of_scheduler_history` | — |
+| PRV-026 | tested | `prv_026_lines_need_an_existing_job_and_a_job_with_lines_cannot_be_dele` | — |
+| PRV-028 | other | Legal and marketing copy and promises: P6. Deployed retention and IP/backup claims: P9. | — |
+| PRV-029 | tested | `prv_029_crn_005_the_daily_0200_sweep_runs_once_per_slot_and_resumes_af`, `retention_slot_is_two_am_utc` | — |
+| PRV-030 | decision | provider health scoring/cleanup retired (PRD/P3 contract) | lead: disposition |
+| PRV-031 | tested | `history_slot_is_sunday_four_am`, `crn_007_the_sunday_0400_sweep_keeps_ninety_days_of_scheduler_history` | — |
+| PRV-033 | other | Imported values: P9 | — |
+| PRV-035 | other | Live provider retention, GCS lifecycle, live language/model acceptance: P9 | — |
+| PRV-037 | other | Live provider retention, GCS lifecycle, live language/model acceptance: P9 | — |
+| PRV-043 | tested | `prv_043_consent_post_needs_a_boolean_and_every_consent_method_needs_a_` | — |
+| PRV-045 | other | P9 (archived beta-consent import) | — |
+| PRV-049 | other | GA, Hotjar and New Relic are absent from the app. Gate or drop is PRV-D13; site trackers: P6 | — |
+| PRV-051 | tested | `prv_051_a_blocked_account_is_refused_by_youtube_add_and_resolve_only` | — |
+| PRV-052 | missing | — | p1T: settings endpoint test: the owner can change only auto_delete_transcripts and deleted_monthly; blocked and unlimited_history are refused |
+| PRV-053 | other | Legal and marketing copy and promises: P6. Deployed retention and IP/backup claims: P9. | — |
+| PRV-054 | other | Legal and marketing copy and promises: P6. Deployed retention and IP/backup claims: P9. | — |
+| PRV-055 | other | Legal and marketing copy and promises: P6. Deployed retention and IP/backup claims: P9. | — |
+| PRV-056 | other | Legal and marketing copy and promises: P6. Deployed retention and IP/backup claims: P9. | — |
+| PRV-057 | other | Legal and marketing copy and promises: P6. Deployed retention and IP/backup claims: P9. | — |
+| PRV-058 | other | Legal and marketing copy and promises: P6. Deployed retention and IP/backup claims: P9. | — |
+| PRV-059 | other | Legal and marketing copy and promises: P6. Deployed retention and IP/backup claims: P9. | — |
+| PRV-060 | other | Legal and marketing copy and promises: P6. Deployed retention and IP/backup claims: P9. | — |
+| CRN-001 | missing | — | p1T: process test: the 3-minute jobs slot runs once per slot across two replicas and resumes after a restart |
+| CRN-002 | missing | — | p1T: same process test, covering the Deepgram queue pass and 30-minute stuck recovery |
+| CRN-003 | missing | — | p1T: same process test, covering Soniox 30-minute stuck recovery |
+| CRN-004 | tested | `cron_accepts_only_the_exact_bearer_secret_and_refuses_everything_when_` | — |
+| CRN-005 | tested | `prv_029_crn_005_the_daily_0200_sweep_runs_once_per_slot_and_resumes_af` | — |
+| CRN-006 | decision | provider-health cleanup retired with the health subsystem (P3 contract) | lead: disposition |
+| CRN-007 | tested | `crn_007_the_sunday_0400_sweep_keeps_ninety_days_of_scheduler_history` | — |
+| CRN-010 | decision | HealthMonitor retired (P3 contract) | lead: disposition |
+| EML-001 | tested | `mail_that_is_not_configured_is_an_error_not_a_silent_acknowledgement`, `mail_delivery_is_required_to_start_and_a_partial_group_names_what_is_m` | — |
+| EML-002 | missing | — | p1T: welcome mail: an account creation sends exactly one welcome email with the source subject and greeting, and a malformed or non-insert event sends none |
+| EML-003 | tested | `eml_bil_001_002_completion_sends_the_buyer_and_the_sales_email_with_th`, `eml_bil_001_002_003_committed_events_are_delivered_to_buyer_sales_and_` | — |
+| EML-004 | tested | `eml_004_a_failed_job_mails_the_user_then_support_and_a_retry_never_rep` | — |
+| EML-005 | tested | `eml_005_a_completion_with_an_error_mails_support_only_and_a_clean_comp` | — |
+| EML-006 | tested | `support_mails_go_to_support_first_then_acknowledge_the_owner`, `support_failure_preserves_order_and_only_both_successful_mails_ack_the` | — |
+| EML-007 | other | P6 (public contact form) | — |
+| EML-008 | other | P6 (newsletter; keep/throw "throw") | — |
+| EML-009 | tested | `eml_bil_003_a_cancellation_request_goes_to_support_with_the_payment_id`, `bil_062_only_the_owner_can_request_cancellation_which_keeps_the_minute` | — |
+| EML-010 | decision | diagnostic subscription-callback email to a personal address (DEF-031): retire or port, lead decision | lead: disposition |
+| EML-011 | decision | provider-health notification retired with the health subsystem (P3 contract) | lead: disposition |
+| EML-012 | missing | — | p1T: mail chrome test: every template carries the Get Started CTA and the homepage UTM links, and receives the name |
