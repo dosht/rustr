@@ -1,11 +1,21 @@
-//! Typed calls into the shell's `Platform` object (`transgate/web/src/lib/core/platform.ts`).
+//! Typed calls into the shell's `Platform` object (`transgate/web/src/lib/core/platform.ts`)
+//! and the browser implementation of the shared driver's `Platform` port.
 //! Every result becomes a core event; a throwing or missing capability is
 //! reported as its failure value, never as success.
-use js_sys::{Function, Object, Promise, Reflect, Uint8Array};
+use billing_core::presentation::confirm::ConfirmPayload;
+use js_sys::{Date, Function, Object, Promise, Reflect, Uint8Array};
+use transgate_client::attribution::UTM_STORAGE_KEY;
+use transgate_client::auth::AuthStorage;
+use transgate_client::checkout::CheckoutForm;
+use transgate_client::driver::{LocalFuture, Platform as ShellPlatform, ShareOutcome};
+use transgate_core::jobs::app::CalendarContext;
 use transgate_core::presentation::telemetry::{Prop, TelemetryEvent};
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
+
+use crate::browser::{self, BrowserStorage};
+use crate::tasks::sleep;
 
 #[wasm_bindgen]
 extern "C" {
@@ -42,14 +52,6 @@ extern "C" {
     fn seek(this: &PlayerPort, seconds: f64);
     #[wasm_bindgen(method, js_name = isPlaying)]
     fn is_playing(this: &PlayerPort) -> bool;
-}
-
-/// Outcome of the phone share sheet; `Dismissed` must not fall through.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum ShareOutcome {
-    Shared,
-    Dismissed,
-    Unsupported,
 }
 
 /// File handles are small integers assigned by the shell; JS numbers carry them exactly.
@@ -150,5 +152,103 @@ impl Platform {
 
     pub fn telemetry_reset(&self) {
         self.reset_telemetry();
+    }
+}
+
+/// The browser as the shared driver's `Platform`: the JS capability object plus
+/// the page mechanics `browser.rs` owns.
+pub struct WebPlatform(pub Platform);
+
+impl ShellPlatform for WebPlatform {
+    fn spawn(&self, work: LocalFuture<'static, ()>) {
+        wasm_bindgen_futures::spawn_local(work);
+    }
+
+    fn sleep(&self, ms: u64) -> LocalFuture<'static, ()> {
+        Box::pin(sleep(ms))
+    }
+
+    fn now_ms(&self) -> f64 {
+        Date::now()
+    }
+
+    fn calendar(&self) -> CalendarContext {
+        browser::calendar()
+    }
+
+    fn navigate(&self, path: &str, replace: bool) {
+        browser::navigate(path, replace);
+    }
+
+    fn leave(&self, url: &str) {
+        browser::assign(url);
+    }
+
+    fn confirmation(&self) -> Option<ConfirmPayload> {
+        browser::confirmation()
+    }
+
+    fn measure<'a>(&'a self, file: u64) -> LocalFuture<'a, Option<f64>> {
+        Box::pin(self.0.measured(file))
+    }
+
+    fn upload<'a>(&'a self, file: u64, url: &'a str, progress: Box<dyn FnMut(u8)>) -> LocalFuture<'a, bool> {
+        Box::pin(self.0.upload(file, url, progress))
+    }
+
+    fn release(&self, file: u64) {
+        self.0.release(file);
+    }
+
+    fn pause_player(&self) -> bool {
+        self.0.pause_player()
+    }
+
+    fn resume_player<'a>(&'a self) -> LocalFuture<'a, ()> {
+        Box::pin(self.0.resume_player())
+    }
+
+    fn seek_player(&self, seconds: f64) {
+        self.0.seek_player(seconds);
+    }
+
+    fn copy<'a>(&'a self, text: &'a str, html: Option<&'a str>) -> LocalFuture<'a, bool> {
+        Box::pin(self.0.copied(text, html))
+    }
+
+    fn download(&self, bytes: &[u8], filename: &str, mime: &str) -> bool {
+        self.0.download(bytes, filename, mime)
+    }
+
+    fn preview_document(&self, bytes: &[u8], filename: &str, mime: &str) -> bool {
+        self.0.preview_document(bytes, filename, mime)
+    }
+
+    fn share<'a>(&'a self, bytes: &'a [u8], filename: &'a str, mime: &'a str) -> LocalFuture<'a, ShareOutcome> {
+        Box::pin(self.0.shared(bytes, filename, mime))
+    }
+
+    fn submit_checkout(&self, form: &CheckoutForm) -> bool {
+        browser::submit_checkout(form)
+    }
+
+    fn analytics(&self, event: &TelemetryEvent) {
+        self.0.analytics(event);
+    }
+
+    fn track_value(&self, event: &str, properties: &serde_json::Value) {
+        self.0.track_value(event, properties);
+    }
+
+    fn telemetry_reset(&self) {
+        self.0.telemetry_reset();
+    }
+
+    fn stored_attribution(&self) -> Option<String> {
+        BrowserStorage.get(UTM_STORAGE_KEY)
+    }
+
+    fn user_agent(&self) -> String {
+        web_sys::window().and_then(|w| w.navigator().user_agent().ok()).unwrap_or_default()
     }
 }
