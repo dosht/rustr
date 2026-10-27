@@ -21,6 +21,7 @@ export const Welcome: Story = state("welcome");
 export const History: Story = state("history");
 export const Typing: Story = state("typing");
 export const Streaming: Story = state("streaming");
+export const Reattached: Story = state("reattached");
 export const SyncWarning: Story = state("sync_warning");
 export const LimitReached: Story = state("limit_reached");
 export const Disabled: Story = state("disabled");

@@ -487,7 +487,8 @@ pub enum AppEffect {
     Chat { epoch: Epoch, job: JobId, effect: chat::Effect },
     Purchase { epoch: Epoch, effect: PurchaseEffect },
     Subscription { epoch: Epoch, effect: SubscriptionEffect },
-    Invoices { epoch: Epoch, ticket: u64, effect: InvoicesEffect },
+    /// Boxed: the document facts make this the largest effect by far.
+    Invoices { epoch: Epoch, ticket: u64, effect: Box<InvoicesEffect> },
     /// Read `#tg-confirm` once. No HTTP confirmation or checkout request.
     ReadConfirmation { epoch: Epoch, sequence: u64 },
     Confirmation { epoch: Epoch, effect: ConfirmEffect },
@@ -1082,7 +1083,7 @@ impl AppState {
     fn invoice_effects(&self, effects: Vec<InvoicesEffect>) -> Vec<AppEffect> {
         let epoch = self.epoch();
         let ticket = self.invoice_preview_ticket;
-        effects.into_iter().map(|effect| AppEffect::Invoices { epoch, ticket, effect }).collect()
+        effects.into_iter().map(|effect| AppEffect::Invoices { epoch, ticket, effect: Box::new(effect) }).collect()
     }
 
     fn confirmation_effects(&self, effects: Vec<ConfirmEffect>) -> Vec<AppEffect> {
@@ -1799,7 +1800,7 @@ impl AppState {
                     transcript: (selected.is_some() && self.transcript.job.is_some()).then(|| self.transcript.view()),
                     consent: self.consent.view(),
                     analysis: selected.map(|_| self.analysis.view(now)),
-                    chat: selected.map(|_| self.chat.view(now)),
+                    chat: selected.map(|_| self.chat.view(now, self.layouts().phone_ai)),
                     settings: self.profile.as_ref().map(|p| self.settings.view(p)),
                     manage_data: self.manage_data.view(),
                     feedback: self.feedback.view(),

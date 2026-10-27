@@ -3905,6 +3905,7 @@ export const fixtures: FixtureFile = {
         "can_send": true,
         "enabled": true,
         "error": null,
+        "input_locked": false,
         "limits": null,
         "lines": [],
         "loading_history": false,
@@ -10959,6 +10960,7 @@ export const fixtures: FixtureFile = {
       "can_send": true,
       "enabled": true,
       "error": null,
+      "input_locked": false,
       "limits": null,
       "lines": [
         {
@@ -10989,6 +10991,7 @@ export const fixtures: FixtureFile = {
       "can_send": true,
       "enabled": false,
       "error": null,
+      "input_locked": true,
       "limits": null,
       "lines": [],
       "loading_history": false,
@@ -11002,6 +11005,7 @@ export const fixtures: FixtureFile = {
       "can_send": true,
       "enabled": true,
       "error": null,
+      "input_locked": false,
       "limits": {
         "questions": {
           "current": 8,
@@ -11054,6 +11058,60 @@ export const fixtures: FixtureFile = {
           "ns": "ai"
         }
       },
+      "input_locked": false,
+      "limits": {
+        "questions": {
+          "current": 8,
+          "max": 10,
+          "tone": "progress",
+          "width_percent": 80
+        },
+        "reset": {
+          "hours": 5,
+          "type": "in_hours"
+        },
+        "tokens": {
+          "current": 9500,
+          "max": 10000,
+          "tone": "danger",
+          "width_percent": 95
+        }
+      },
+      "lines": [
+        {
+          "content": "What did we decide about the launch?",
+          "role": "user",
+          "show_actions": false,
+          "streaming": false
+        },
+        {
+          "content": "You agreed to ship the beta on **1 May**, with Ada owning the memo.",
+          "role": "assistant",
+          "show_actions": true,
+          "streaming": false
+        }
+      ],
+      "loading_history": false,
+      "notice": null,
+      "show_history_header": true,
+      "show_welcome": false,
+      "sync_warning": null,
+      "typing": false
+    },
+    "limit_reached_phone": {
+      "can_send": true,
+      "enabled": true,
+      "error": {
+        "detail": null,
+        "message": {
+          "args": {
+            "maxQuestionsPerTranscript": 10
+          },
+          "key": "TRANSCRIPT_QUESTIONS_LIMIT_EXCEEDED",
+          "ns": "ai"
+        }
+      },
+      "input_locked": true,
       "limits": {
         "questions": {
           "current": 8,
@@ -11097,6 +11155,7 @@ export const fixtures: FixtureFile = {
       "can_send": false,
       "enabled": true,
       "error": null,
+      "input_locked": false,
       "limits": null,
       "lines": [],
       "loading_history": true,
@@ -11110,6 +11169,7 @@ export const fixtures: FixtureFile = {
       "can_send": false,
       "enabled": true,
       "error": null,
+      "input_locked": false,
       "limits": {
         "questions": {
           "current": 8,
@@ -11165,6 +11225,7 @@ export const fixtures: FixtureFile = {
       "can_send": false,
       "enabled": true,
       "error": null,
+      "input_locked": false,
       "limits": {
         "questions": {
           "current": 8,
@@ -11220,6 +11281,7 @@ export const fixtures: FixtureFile = {
       "can_send": true,
       "enabled": true,
       "error": null,
+      "input_locked": false,
       "limits": {
         "questions": {
           "current": 8,
@@ -11279,6 +11341,7 @@ export const fixtures: FixtureFile = {
       "can_send": false,
       "enabled": true,
       "error": null,
+      "input_locked": false,
       "limits": {
         "questions": {
           "current": 8,
@@ -11328,6 +11391,7 @@ export const fixtures: FixtureFile = {
       "can_send": true,
       "enabled": true,
       "error": null,
+      "input_locked": false,
       "limits": null,
       "lines": [],
       "loading_history": false,
@@ -16965,6 +17029,7 @@ export const fixtures: FixtureFile = {
         "can_send": true,
         "enabled": true,
         "error": null,
+        "input_locked": false,
         "limits": null,
         "lines": [],
         "loading_history": false,

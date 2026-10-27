@@ -167,8 +167,9 @@ describe("desktop chat panel", () => {
     expect(limits).toHaveTextContent("Resets in 5 hours");
   });
 
-  it("shows a limit refusal and dismisses it", async () => {
+  it("shows a limit refusal, keeps the box usable as core reports, and dismisses it", async () => {
     const { onintent } = chat("limit_reached");
+    expect(screen.getByRole("textbox")).toBeEnabled();
     const alert = screen.getByRole("alert");
     expect(alert).toHaveTextContent("Failed to get response");
     await userEvent.click(within(alert).getByRole("button", { name: "Dismiss" }));

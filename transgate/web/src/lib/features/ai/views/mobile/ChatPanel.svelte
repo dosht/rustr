@@ -71,7 +71,7 @@
   }
 
   function send() {
-    if (!draft.trim() || busy || !view.enabled) return;
+    if (!draft.trim() || busy || view.input_locked) return;
     const text = draft;
     draft = "";
     onintent({ type: "send", text });
@@ -161,7 +161,7 @@
         class="max-h-32 min-h-11 flex-1 resize-none rounded-md border border-border bg-bg px-3 py-2 text-base text-fg"
         placeholder={i18n.tk("ai", "Ask about the transcript...")}
         aria-label={i18n.tk("ai", "Ask about the transcript...")}
-        disabled={view.error !== null || !view.enabled}
+        disabled={view.input_locked}
         onkeydown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -169,7 +169,7 @@
           }
         }}
       ></textarea>
-      <IconButton label={i18n.tk("common", "Send message")} icon={Send} disabled={!draft.trim() || busy || view.error !== null || !view.enabled} onclick={send} />
+      <IconButton label={i18n.tk("common", "Send message")} icon={Send} disabled={!draft.trim() || busy || view.input_locked} onclick={send} />
     </div>
   </div>
 </AiGate>

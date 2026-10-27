@@ -540,12 +540,12 @@ fn uncertain_confirmation_has_no_countdown_and_old_route_answers_are_discarded()
 fn invoice_documents_and_answers_are_scoped_to_the_signed_in_owner() {
     let (mut s, effects) = signed_in("/billing", desktop());
     let epoch = s.epoch();
-    assert!(effects.contains(&AppEffect::Invoices { epoch, ticket: s.invoice_preview_ticket(), effect: InvoicesEffect::LoadOwn }));
+    assert!(effects.contains(&AppEffect::Invoices { epoch, ticket: s.invoice_preview_ticket(), effect: Box::new(InvoicesEffect::LoadOwn) }));
     let context = billing_core::presentation::fixtures::invoice_context_sample();
     let payment_id = context.invoices[0].payment_id;
     s.update(AppEvent::Invoices { epoch, ticket: s.invoice_preview_ticket(), event: InvoicesEvent::Loaded(Ok(context.clone())) }, NOW);
     let effects = s.update(AppEvent::User(AppIntent::Invoices(InvoicesIntent::Download { payment_id })), NOW);
-    assert!(matches!(effects.as_slice(), [AppEffect::Invoices { epoch: e, effect: InvoicesEffect::Document { purpose: billing_core::presentation::invoices::DocumentPurpose::Download, .. }, .. }] if *e == epoch));
+    assert!(matches!(effects.as_slice(), [AppEffect::Invoices { epoch: e, effect, .. }] if *e == epoch && matches!(**effect, InvoicesEffect::Document { purpose: billing_core::presentation::invoices::DocumentPurpose::Download, .. })));
     s.update(AppEvent::Invoices { epoch, ticket: s.invoice_preview_ticket(), event: InvoicesEvent::DocumentFailed {
         payment_id, failure: billing_core::presentation::purchase::PurchaseFailure::Unavailable,
     } }, NOW);

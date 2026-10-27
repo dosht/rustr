@@ -8,7 +8,13 @@ export type ChatPanelVm = {
 /**
  * False when the host reports chat disabled (503).
  */
-enabled: boolean, loading_history: boolean, lines: Array<ChatLineVm>, 
+enabled: boolean, 
+/**
+ * The question box and Send are locked: on a disabled host in both
+ * layouts, and on the phone while an error is shown (source
+ * `MobileChatView`; the desktop never locked on an error).
+ */
+input_locked: boolean, loading_history: boolean, lines: Array<ChatLineVm>, 
 /**
  * "Chat History" with copy and download.
  */

@@ -156,6 +156,10 @@ pub struct ChatErrorVm {
 pub struct ChatPanelVm {
     /// False when the host reports chat disabled (503).
     pub enabled: bool,
+    /// The question box and Send are locked: on a disabled host in both
+    /// layouts, and on the phone while an error is shown (source
+    /// `MobileChatView`; the desktop never locked on an error).
+    pub input_locked: bool,
     pub loading_history: bool,
     pub lines: Vec<ChatLineVm>,
     /// "Chat History" with copy and download.
@@ -383,7 +387,9 @@ impl ChatPanelState {
         }
     }
 
-    pub fn view(&self, now: Micros) -> ChatPanelVm {
+    /// `phone`: the phone AI layout (`Layouts::phone_ai`), which locks the
+    /// question box while an error is shown.
+    pub fn view(&self, now: Micros, phone: bool) -> ChatPanelVm {
         let streaming_index = match &self.pending {
             // A reattached answer streams from its held partial before any frame.
             Some(Pending { index, request, step: Step::Streaming { started, .. } }) if *started || *request == Request::Attach => Some(*index),
@@ -404,6 +410,7 @@ impl ChatPanelState {
             .collect();
         ChatPanelVm {
             enabled: !self.disabled,
+            input_locked: self.disabled || (phone && self.error.is_some()),
             loading_history: self.loading_history,
             lines,
             show_history_header: !self.lines.is_empty(),
@@ -480,10 +487,10 @@ impl ChatPanelState {
         let generation = in_flight.generation.id;
         self.lines.push(Line { role: ChatRole::User, content: in_flight.question, generation: None });
         let index = self.lines.len();
-        if let Draft::Text { text } = in_flight.generation.draft {
-            if !text.is_empty() {
-                self.lines.push(Line { role: ChatRole::Assistant, content: text, generation: None });
-            }
+        if let Draft::Text { text } = in_flight.generation.draft
+            && !text.is_empty()
+        {
+            self.lines.push(Line { role: ChatRole::Assistant, content: text, generation: None });
         }
         self.stream.clear();
         self.pending = Some(Pending { request: Request::Attach, index, step: Step::Streaming { generation, started: false, reconnected: false } });
@@ -601,10 +608,10 @@ impl ChatPanelState {
     /// The source's failure: a new question loses its last displayed message;
     /// a retried answer keeps its emptied placeholder.
     fn fail(&mut self, error: ChatErrorVm) {
-        if let Some(p) = self.pending.take() {
-            if matches!(p.request, Request::Send { .. } | Request::Attach) {
-                self.lines.pop();
-            }
+        if let Some(p) = self.pending.take()
+            && matches!(p.request, Request::Send { .. } | Request::Attach)
+        {
+            self.lines.pop();
         }
         self.error = Some(error);
     }

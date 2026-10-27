@@ -252,7 +252,7 @@ impl JobListState {
                 let deleted = &self.deleted;
                 self.jobs.retain(|j| j.id.0 < floor);
                 self.jobs.extend(jobs.into_iter().filter(|j| j.id.0 >= floor && j.status.is_listed() && !deleted.contains(&j.id)));
-                self.jobs.sort_by(|a, b| b.id.cmp(&a.id));
+                self.jobs.sort_by_key(|j| std::cmp::Reverse(j.id));
                 vec![]
             }
             Event::PollFailed => {

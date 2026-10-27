@@ -253,7 +253,7 @@ fn chat_message(order: i64, role: ChatRole, content: &str) -> ChatMessage {
         id: uuid::Uuid::from_u128(0xf3_0000 + order as u128),
         account: AccountId(uuid::Uuid::nil()),
         job: JOB,
-        generation: generation(200 + (order as u128 + 1) / 2),
+        generation: generation(200 + (order as u128).div_ceil(2)),
         order,
         role,
         content: content.into(),
@@ -354,17 +354,20 @@ pub fn chat() -> Vec<(&'static str, ChatPanelVm)> {
         s.update(chat::Event::LimitsLoaded { job: JOB, result: Ok(limited()) });
         s
     };
+    // Desktop layout unless named `_phone`: the phone locks the question box
+    // while an error is shown.
     vec![
-        ("loading_history", loading.view(NOW)),
-        ("welcome", chat_panel(vec![], unlimited()).view(NOW)),
-        ("history", chat_panel(history(), Ok(limited())).view(NOW)),
-        ("disabled", chat_panel(vec![], Err(ApiFailure::http(503, None))).view(NOW)),
-        ("typing", typing.view(NOW)),
-        ("streaming", streaming.view(NOW)),
-        ("reattached", reattached.view(NOW)),
-        ("sync_warning", sync_warning.view(NOW)),
-        ("limit_reached", limit_reached.view(NOW)),
-        ("copied", copied.view(NOW)),
+        ("loading_history", loading.view(NOW, false)),
+        ("welcome", chat_panel(vec![], unlimited()).view(NOW, false)),
+        ("history", chat_panel(history(), Ok(limited())).view(NOW, false)),
+        ("disabled", chat_panel(vec![], Err(ApiFailure::http(503, None))).view(NOW, false)),
+        ("typing", typing.view(NOW, false)),
+        ("streaming", streaming.view(NOW, false)),
+        ("reattached", reattached.view(NOW, false)),
+        ("sync_warning", sync_warning.view(NOW, false)),
+        ("limit_reached", limit_reached.view(NOW, false)),
+        ("limit_reached_phone", limit_reached.view(NOW, true)),
+        ("copied", copied.view(NOW, false)),
     ]
 }
 
@@ -414,5 +417,6 @@ mod tests {
         assert!(chat["typing"].typing && chat["streaming"].lines.last().unwrap().streaming);
         assert!(chat["sync_warning"].sync_warning.is_some() && chat["limit_reached"].error.is_some() && chat["copied"].notice.is_some());
         assert!(chat["history"].limits.is_some());
+        assert!(chat["limit_reached_phone"].input_locked && !chat["limit_reached"].input_locked && chat["disabled"].input_locked);
     }
 }

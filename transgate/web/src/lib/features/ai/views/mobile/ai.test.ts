@@ -67,8 +67,8 @@ describe("phone chat view", () => {
     expect(screen.getByRole("textbox")).toHaveValue("");
   });
 
-  it("locks the input while a refusal is shown, as the source did", () => {
-    chat("limit_reached", "One more");
+  it("locks the input while core reports a phone refusal lock", () => {
+    chat("limit_reached_phone", "One more");
     expect(screen.getByRole("textbox")).toBeDisabled();
     expect(screen.getByRole("button", { name: "Send message" })).toBeDisabled();
   });
