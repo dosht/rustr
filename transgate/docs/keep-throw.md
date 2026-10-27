@@ -11,10 +11,10 @@ Verdicts: `keep-knowledge` (a rule, lesson or ADR, no code), `port` (rewrite in 
 | keep-knowledge | 30 |
 | port | 74 |
 | simplify | 39 |
-| throw | 51 |
+| throw | 52 |
 | gap | 12 |
 | other | 1 |
-| Total | 207 |
+| Total | 208 |
 
 ## ai
 
@@ -37,7 +37,8 @@ Verdicts: `keep-knowledge` (a rule, lesson or ADR, no code), `port` (rewrite in 
 | Three transcription entry shapes | frontend/src/app/api/v1/transcriptions/route.ts:564-721; frontend/src/services/unified-transcription/middleware/backward-compatibility.ts:197-269 | simplify | One generated versioned contract; compatibility only by migration decision | Public API and optional boundary shim |
 | Legacy v1-beta and unified transcription shapes | frontend/src/app/api/v1-beta/transcriptions/url/route.ts:1-14; frontend/src/app/api/v1-beta/transcriptions/[id]/route.ts; frontend/src/app/api/unified/transcriptions/route.ts | throw | mu approved 2026-10-27 (P7 D12 revised: there are no API users). API-F03, API-F04 and API-F05 are not served; neither are the shapes in rules API-011 to API-014. The public API ships only the current contract. The router mounts only the OpenAPI operation table. | none |
 | Callback payload and delivery history | frontend/src/services/unified-transcription/services/callback-delivery.ts:83-175,272-317 | port | Customer callbacks are used in production | Callback port and delivery records |
-| Generic key webhook placeholder handlers | frontend/src/app/api/webhooks/route.ts:53-90 | throw | Only log, do not deliver the promised lifecycle actions | Domain events only if actually consumed |
+| Generic key webhook placeholder handlers | frontend/src/app/api/webhooks/route.ts:53-90 | throw | mu approved: decisions delegated to the lead on 2026-10-27. API-F11 (and rule API-018) is not served: the handlers only log and do not deliver the promised lifecycle actions (docs/plans/p7-api/decisions.md, accepted Opus proposal §1). | Domain events only if actually consumed |
+| Browser legacy `/api/transcripts` submission | frontend/src/pages/api/transcripts.ts:9-38 | throw | mu approved: decisions delegated to the lead on 2026-10-27. API-F06 is replaced by the P5 D5 session route `/api/jobs/start` (docs/plans/p7-api/decisions.md#accepted-contract, D13). | `/api/jobs/start` |
 | SQL limiter implementation | frontend/supabase/migrations/20251130113249_remote_schema.sql:296-345 | simplify | Preserve configured limits, remove duplicate counters and races | Atomic shared limiter |
 | Public monitoring and diagnostic endpoints | frontend/src/app/api/unified/monitoring/route.ts:11-14,100-103; frontend/src/pages/api/test-ffmpeg.ts:18-20 | simplify | Operational concerns, not product contract | Authenticated operations surface plus health |
 | RunPod-specific API options | frontend/src/services/unified-transcription/middleware/backward-compatibility.ts:232-255 | gap | Remaining providers do not implement all Whisper options | Explicit migration compatibility gap |
