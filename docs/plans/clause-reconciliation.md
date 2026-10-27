@@ -363,8 +363,8 @@ After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, E
 | JOB-045 | changed | `edits_are_owner_scoped_last_write_wins` — P3 D7 (controlled edit commands) | — |
 | JOB-046 | other | P9 operations: provider health monitoring and cleanup (lead 2026-10-27) | — |
 | UPL-002 | tested | `upl_002_the_picker_accept_list_follows_the_layout` | — |
-| UPL-003 | missing | — | Y: browser drop zone: m4a accepted, rejected MIME ignored, drops after ten ignored, button visibility, in the candidate9 Playwright spec |
-| UPL-004 | missing | — | Y: browser drop zone: m4a accepted, rejected MIME ignored, drops after ten ignored, button visibility, in the candidate9 Playwright spec |
+| UPL-003 | tested | `upload-drop.spec.ts#…dropped or picked files reach the queue only when core accepts them`, `drop_filters_and_cap` | — |
+| UPL-004 | tested | `upload-drop.spec.ts#…at ten queued files the add buttons disappear…`, `drop_filters_and_cap` | — |
 | UPL-005 | tested | `upl_005_a_very_large_and_very_long_upload_is_accepted_without_a_produc` | — |
 | UPL-006 | missing | — | p22: Duration measurement: the decode fallback, the 5 s and 10 s timeouts, the 100 MB decode boundary |
 | UPL-008 | tested | `duration_polling` | — |
@@ -444,7 +444,7 @@ After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, E
 | EXP-015 | missing | — | p22: Phone export of a transcript with empty lines through the share-unavailable fallback |
 | EXP-016 | missing | — | p22: `transcript_downloaded` with word count, media and flags reaches PostHog after consent. Y asserts delivery in C2. |
 | EXP-017 | other | P6 (public free-tool page); core formats tested | — |
-| LNG-005 | other | Y adds a Playwright locale no-fallback test in candidate9 (lead); changed under P5 D3 then | — |
+| LNG-005 | changed | `locale-no-fallback.spec.ts` (3 tests) — P5 D3: no English fallback, a missing key is shown as the key | — |
 | LNG-009 | tested | `soniox_real_post_keeps_source_reference_and_explicit_v5_language_trans`, `start_needs_a_language_choice` | — |
 | LNG-010 | tested | `preferred_provider_needs_to_be_valid`, `soniox_takes_its_languages_and_auto_detect` | — |
 | LNG-013 | tested | `trx_023_lng_013_an_unmapped_stored_target_fails_the_job_at_dispatch`, `trx_023_lng_013_only_the_first_target_is_sent_as_its_code`, `trx_023_lng_013_a_stored_target_without_a_code_fails_the_job_and_never` | — |
@@ -526,3 +526,5 @@ After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, E
 | EML-010 | changed | `eml_004_a_failed_job_mails_the_user_then_support_and_a_retry_never_rep`, `eml_005_a_completion_with_an_error_mails_support_only_and_a_clean_comp`, `support_mails_go_to_support_first_then_acknowledge_the_owner` — not carried over: the failure mails (EML-004/005) and support mail cover it (lead 2026-10-27) | — |
 | EML-011 | other | P9 operations: provider health monitoring and cleanup (lead 2026-10-27) | — |
 | EML-012 | missing | — | p1T: mail chrome test: every template carries the Get Started CTA and the homepage UTM links, and receives the name |
+
+Candidate9 update (2026-10-27): LNG-005 is now `changed` and UPL-003/004 are `tested`, citing Y's committed specs. P3 rule rows stand at 182 `tested`, 26 `changed` and 63 `ledger` (44 other-phase, 19 missing: 13 for p1T and 6 for p22).
