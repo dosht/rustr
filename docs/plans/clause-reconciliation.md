@@ -285,21 +285,41 @@ p1X's 17 owner entries: 15 fully closed, LNG-002..006 closed except LNG-005 (ref
 This classifies every P3 rule row that still read `ledger` after P3-CLOSE.
 - **Reference-only:** an existing test proves the row, so its reference was added and the status set (`tested`, or `changed` with the decision).
 - **Other:** owned by another phase.
-- **Decision:** retired by a PRD or P3 contract decision. There is no executable evidence to cite, and the ledger has no status for it (`excluded` is reserved for AI-027), so the lead must choose a disposition.
 - **Missing:** no test yet; the closing test and owner are named.
 
-Every cargo reference was resolved against `cargo test -- --list --include-ignored` for the 15 workspace crates involved; the Playwright reference is checked by `playwright_specs`. `assemble-discovery --check` is green.
+The 15 former retirement rows follow the lead decisions of 2026-10-27, listed below. Every cargo reference was resolved against `cargo test -- --list --include-ignored`; the Playwright reference is checked by `playwright_specs`. `assemble-discovery --check` is green.
 
 | Class | Rows |
 |---|---|
 | Reference-only, tested | 116 |
-| Reference-only, changed | 13 |
-| Other | 38 |
-| Decision | 15 |
+| Reference-only, changed | 21 |
+| Other | 45 |
 | Missing | 21 |
 | **Total** | **203** |
 
-After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, EML) stand at 180 `tested`, 17 `changed` and 74 `ledger` (38 other-phase, 21 missing, 15 decision).
+After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, EML) stand at 180 `tested`, 25 `changed` and 66 `ledger` (45 other-phase, 21 missing).
+
+### Retirement dispositions (lead 2026-10-27)
+
+| Row | Disposition | Reason | Evidence |
+|---|---|---|---|
+| JOB-041 | changed | P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | `pins_that_cannot_execute_fail_over`, `twelve_statuses_round_trip` |
+| JOB-042 | changed | P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | `pins_that_cannot_execute_fail_over`, `twelve_statuses_round_trip` |
+| TRX-035 | changed | P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | `pins_that_cannot_execute_fail_over`, `eight_languages_go_to_deepgram` |
+| TRX-036 | changed | P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | `pins_that_cannot_execute_fail_over`, `eight_languages_go_to_deepgram` |
+| TRX-037 | changed | P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | `pins_that_cannot_execute_fail_over`, `twelve_statuses_round_trip` |
+| LNG-023 | changed | P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | `pins_that_cannot_execute_fail_over`, `eight_languages_go_to_deepgram` |
+| EML-010 | changed | not carried over: the failure mails (EML-004/005) and support mail cover it (lead 2026-10-27) | `eml_004_a_failed_job_mails_the_user_then_support_and_a_retry_never_rep`, `eml_005_a_completion_with_an_error_mails_support_only_and_a_clean_comp`, `support_mails_go_to_support_first_then_acknowledge_the_owner` |
+| UPL-032 | changed | not carried over: no recording/Drive/OneDrive surface in the new product (lead decision 2026-10-27 under mu delegation) | `source_defaults_open_ai_youtube_mobile_and_history_and_close_the_rest`, `upl_002_the_picker_accept_list_follows_the_layout` |
+| JOB-032 | other (P9) | Provider health monitoring and cleanup belong to operations | — |
+| JOB-046 | other (P9) | Provider health monitoring and cleanup belong to operations | — |
+| PRV-024 | other (P9) | Provider health monitoring and cleanup belong to operations | — |
+| PRV-030 | other (P9) | Provider health monitoring and cleanup belong to operations | — |
+| CRN-006 | other (P9) | Provider health monitoring and cleanup belong to operations | — |
+| CRN-010 | other (P9) | Provider health monitoring and cleanup belong to operations | — |
+| EML-011 | other (P9) | Provider health monitoring and cleanup belong to operations | — |
+
+### All 203 rows
 
 | Row | Class | Evidence or reason | Owner / closing test |
 |---|---|---|---|
@@ -330,21 +350,21 @@ After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, E
 | JOB-029 | missing | — | p1T: callback intake: a transient fetch/storage error is retried, a deterministic failure fails the job once |
 | JOB-030 | changed | `callbacks_authenticate_before_parse_and_bind_provider_project_remote_w`, `f6_a_conflicting_delivery_is_held_once_with_its_body_and_is_never_pend` — P3 D8 (divergent callback 409) | — |
 | JOB-031 | tested | `job_031_jobs_ingest_rolls_back_partial_lines_and_emits_one_coded_failu`, `empty_results_give_no_lines`, `no_speech_keeps_the_duration_step` (+1) | — |
-| JOB-032 | decision | provider health scoring/cleanup retired (PRD/P3 contract) | lead: disposition |
+| JOB-032 | other | P9 operations: provider health monitoring and cleanup (lead 2026-10-27) | — |
 | JOB-033 | other | Customer callback delivery: P7 | — |
 | JOB-034 | changed | `completion_with_error_mails_support_only`, `failure_mails_user_and_support`, `job_events_are_claimed_once_and_only_the_current_claim_acknowledges` (+2) — P3 contract (transition outbox replaces every-UPDATE hook) | — |
 | JOB-037 | tested | `an_expired_upload_of_a_removed_draft_is_deleted_and_swept_again`, `prv_026_lines_need_an_existing_job_and_a_job_with_lines_cannot_be_dele` | — |
 | JOB-038 | tested | `an_expired_upload_of_a_removed_draft_is_deleted_and_swept_again`, `prv_026_lines_need_an_existing_job_and_a_job_with_lines_cannot_be_dele` | — |
 | JOB-040 | tested | `cancel_requires_an_active_status` | — |
-| JOB-041 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
-| JOB-042 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
+| JOB-041 | changed | `pins_that_cannot_execute_fail_over`, `twelve_statuses_round_trip` — P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | — |
+| JOB-042 | changed | `pins_that_cannot_execute_fail_over`, `twelve_statuses_round_trip` — P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | — |
 | JOB-043 | other | API-key URL entry, callback_url fallback: P7 | — |
 | JOB-044 | changed | `a_sweep_racing_the_acknowledgement_keeps_the_acknowledged_state`, `an_archive_put_completing_after_the_cascade_is_acknowledged_and_delete`, `an_unacknowledged_archive_write_stays_pending_until_its_object_is_foun` (+4) — P3 F2 (archive intent before PUT) | — |
 | JOB-045 | changed | `edits_are_owner_scoped_last_write_wins` — P3 D7 (controlled edit commands) | — |
-| JOB-046 | decision | provider health scoring/cleanup retired (PRD/P3 contract) | lead: disposition |
+| JOB-046 | other | P9 operations: provider health monitoring and cleanup (lead 2026-10-27) | — |
 | UPL-002 | tested | `upl_002_the_picker_accept_list_follows_the_layout` | — |
-| UPL-003 | missing | — | p1Z: Drop-zone view test: m4a accepted, rejected MIME ignored, drops after ten ignored, button visibility. Y adds the Playwright drop. |
-| UPL-004 | missing | — | p1Z: Drop-zone view test: m4a accepted, rejected MIME ignored, drops after ten ignored, button visibility. Y adds the Playwright drop. |
+| UPL-003 | missing | — | Y: browser drop zone: m4a accepted, rejected MIME ignored, drops after ten ignored, button visibility, in the candidate9 Playwright spec |
+| UPL-004 | missing | — | Y: browser drop zone: m4a accepted, rejected MIME ignored, drops after ten ignored, button visibility, in the candidate9 Playwright spec |
 | UPL-005 | tested | `upl_005_a_very_large_and_very_long_upload_is_accepted_without_a_produc` | — |
 | UPL-006 | missing | — | p22: Duration measurement: the decode fallback, the 5 s and 10 s timeouts, the 100 MB decode boundary |
 | UPL-008 | tested | `duration_polling` | — |
@@ -361,7 +381,7 @@ After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, E
 | UPL-029 | tested | `cache_evicts_least_recently_used`, `formats`, `successes_are_cached_six_hours` (+3) | — |
 | UPL-030 | changed | `direct_private_and_private_redirects_fail_before_target_connect_or_sta`, `private_reserved_and_tunnel_addresses_cannot_be_external_audio_destina`, `real_external_body_is_pinned_fetched_spooled_and_uploaded_not_handed_d` (+1) — P3 D12 (pinned controlled fetch) | — |
 | UPL-031 | other | API-key options and legacy public contract: P7. Imported echoed options: P9. | — |
-| UPL-032 | decision | no invented recording/Drive/OneDrive sources (PRD §2); visibility is P5 FLG-004 | lead: disposition |
+| UPL-032 | changed | `source_defaults_open_ai_youtube_mobile_and_history_and_close_the_rest`, `upl_002_the_picker_accept_list_follows_the_layout` — not carried over: no recording/Drive/OneDrive surface in the new product (lead decision 2026-10-27 under mu delegation) | — |
 | TRX-001 | tested | `pins_that_cannot_execute_fail_over`, `stored_provider_comes_first` | — |
 | TRX-002 | tested | `long_audio_goes_to_deepgram`, `qta_goes_to_deepgram_unless_translation` | — |
 | TRX-003 | tested | `long_audio_goes_to_deepgram`, `qta_goes_to_deepgram_unless_translation` | — |
@@ -391,9 +411,9 @@ After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, E
 | TRX-030 | tested | `empty_results_give_no_lines`, `one_line_per_sentence`, `word_fallback_keeps_the_parse_float_quirk` (+1) | — |
 | TRX-031 | missing | — | p1T: same round-trip test |
 | TRX-032 | tested | `job_031_jobs_ingest_rolls_back_partial_lines_and_emits_one_coded_failu` | — |
-| TRX-035 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
-| TRX-036 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
-| TRX-037 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
+| TRX-035 | changed | `pins_that_cannot_execute_fail_over`, `eight_languages_go_to_deepgram` — P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | — |
+| TRX-036 | changed | `pins_that_cannot_execute_fail_over`, `eight_languages_go_to_deepgram` — P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | — |
+| TRX-037 | changed | `pins_that_cannot_execute_fail_over`, `twelve_statuses_round_trip` — P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | — |
 | TRX-039 | other | Public status API: P7 | — |
 | TRX-040 | missing | — | p1T: consumer test: a no-speech result from Soniox and from Deepgram persists the job failure and one outbox event |
 | TRX-041 | other | Live provider retention, GCS lifecycle, live language/model acceptance: P9 | — |
@@ -437,7 +457,7 @@ After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, E
 | LNG-020 | tested | `long_audio_goes_to_deepgram`, `qta_goes_to_deepgram_unless_translation` | — |
 | LNG-021 | changed | `soniox_real_post_keeps_source_reference_and_explicit_v5_language_trans` — P3 D11 (explicit v5) | — |
 | LNG-022 | other | Live provider retention, GCS lifecycle, live language/model acceptance: P9 | — |
-| LNG-023 | decision | RunPod execution retired (PRD); legacy rows import in P9 | lead: disposition |
+| LNG-023 | changed | `pins_that_cannot_execute_fail_over`, `eight_languages_go_to_deepgram` — P3 server-first decision: no RunPod (lead 2026-10-27); a preserved RunPod pin fails over, the eight non-Soniox languages go to Deepgram | — |
 | LNG-025 | other | API-key options and legacy public contract: P7. Imported echoed options: P9. | — |
 | LNG-026 | tested | `youtube_add_creates_the_draft`, `youtube_language_and_duration` | — |
 | LNG-027 | other | API-key options and legacy public contract: P7. Imported echoed options: P9. | — |
@@ -463,12 +483,12 @@ After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, E
 | PRV-020 | tested | `an_advisory_lock_is_exclusive_across_processes_until_released`, `retention_skips_while_locked` | — |
 | PRV-021 | tested | `prv_021_every_run_writes_one_audit_row_with_all_its_fields`, `history_retention_removes_only_old_finished_runs`, `the_history_purge_and_its_audit_row_commit_together_and_interrupted_ru` (+1) | — |
 | PRV-022 | tested | `retention_respects_the_preference`, `retention_treats_an_absent_settings_row_as_the_source_default_and_keep` | — |
-| PRV-024 | decision | provider health scoring/cleanup retired (PRD/P3 contract) | lead: disposition |
+| PRV-024 | other | P9 operations: provider health monitoring and cleanup (lead 2026-10-27) | — |
 | PRV-025 | tested | `history_slot_is_sunday_four_am`, `crn_007_the_sunday_0400_sweep_keeps_ninety_days_of_scheduler_history` | — |
 | PRV-026 | tested | `prv_026_lines_need_an_existing_job_and_a_job_with_lines_cannot_be_dele` | — |
 | PRV-028 | other | Legal and marketing copy and promises: P6. Deployed retention and IP/backup claims: P9. | — |
 | PRV-029 | tested | `prv_029_crn_005_the_daily_0200_sweep_runs_once_per_slot_and_resumes_af`, `retention_slot_is_two_am_utc` | — |
-| PRV-030 | decision | provider health scoring/cleanup retired (PRD/P3 contract) | lead: disposition |
+| PRV-030 | other | P9 operations: provider health monitoring and cleanup (lead 2026-10-27) | — |
 | PRV-031 | tested | `history_slot_is_sunday_four_am`, `crn_007_the_sunday_0400_sweep_keeps_ninety_days_of_scheduler_history` | — |
 | PRV-033 | other | Imported values: P9 | — |
 | PRV-035 | other | Live provider retention, GCS lifecycle, live language/model acceptance: P9 | — |
@@ -491,9 +511,9 @@ After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, E
 | CRN-003 | missing | — | p1T: same process test, covering Soniox 30-minute stuck recovery |
 | CRN-004 | tested | `cron_accepts_only_the_exact_bearer_secret_and_refuses_everything_when_` | — |
 | CRN-005 | tested | `prv_029_crn_005_the_daily_0200_sweep_runs_once_per_slot_and_resumes_af` | — |
-| CRN-006 | decision | provider-health cleanup retired with the health subsystem (P3 contract) | lead: disposition |
+| CRN-006 | other | P9 operations: provider health monitoring and cleanup (lead 2026-10-27) | — |
 | CRN-007 | tested | `crn_007_the_sunday_0400_sweep_keeps_ninety_days_of_scheduler_history` | — |
-| CRN-010 | decision | HealthMonitor retired (P3 contract) | lead: disposition |
+| CRN-010 | other | P9 operations: provider health monitoring and cleanup (lead 2026-10-27) | — |
 | EML-001 | tested | `mail_that_is_not_configured_is_an_error_not_a_silent_acknowledgement`, `mail_delivery_is_required_to_start_and_a_partial_group_names_what_is_m` | — |
 | EML-002 | missing | — | p1T: welcome mail: an account creation sends exactly one welcome email with the source subject and greeting, and a malformed or non-insert event sends none |
 | EML-003 | tested | `eml_bil_001_002_completion_sends_the_buyer_and_the_sales_email_with_th`, `eml_bil_001_002_003_committed_events_are_delivered_to_buyer_sales_and_` | — |
@@ -503,6 +523,6 @@ After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, E
 | EML-007 | other | P6 (public contact form) | — |
 | EML-008 | other | P6 (newsletter; keep/throw "throw") | — |
 | EML-009 | tested | `eml_bil_003_a_cancellation_request_goes_to_support_with_the_payment_id`, `bil_062_only_the_owner_can_request_cancellation_which_keeps_the_minute` | — |
-| EML-010 | decision | diagnostic subscription-callback email to a personal address (DEF-031): retire or port, lead decision | lead: disposition |
-| EML-011 | decision | provider-health notification retired with the health subsystem (P3 contract) | lead: disposition |
+| EML-010 | changed | `eml_004_a_failed_job_mails_the_user_then_support_and_a_retry_never_rep`, `eml_005_a_completion_with_an_error_mails_support_only_and_a_clean_comp`, `support_mails_go_to_support_first_then_acknowledge_the_owner` — not carried over: the failure mails (EML-004/005) and support mail cover it (lead 2026-10-27) | — |
+| EML-011 | other | P9 operations: provider health monitoring and cleanup (lead 2026-10-27) | — |
 | EML-012 | missing | — | p1T: mail chrome test: every template carries the Get Started CTA and the homepage UTM links, and receives the name |
