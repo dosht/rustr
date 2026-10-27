@@ -143,7 +143,7 @@ impl JobUow for PgJobUow {
             let products: Vec<&str> =
                 Provider::ALL.into_iter().filter(|p| p.transport() == Some(provider)).map(|p| p.as_str()).collect();
             let n: i64 = sqlx::query_scalar(
-                "SELECT count(*) FROM transgate_jobs.attempts a JOIN transgate_jobs.jobs j ON j.id = a.job_id
+                "SELECT count(DISTINCT j.id) FROM transgate_jobs.attempts a JOIN transgate_jobs.jobs j ON j.id = a.job_id
                  WHERE a.provider = ANY($1) AND a.project = $2
                    AND (a.state IN ('accepted', 'uncertain')
                         OR (a.state = 'claimed' AND a.lease_until > transgate_jobs.us_to_ts($3)))

@@ -349,3 +349,6 @@ mod support;
 
 #[path = "pg_tests/callbacks.rs"]
 mod callbacks;
+
+#[path = "pg_tests/schedule.rs"]
+mod schedule;

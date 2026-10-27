@@ -360,3 +360,27 @@ async fn ai_http_watch_capacity_is_held_for_the_stream_and_refuses_legacy_starts
     for _ in 0..4 { after_eof.push(f.ai.watch(AccountId(person.id), id).await.unwrap()); }
     assert!(matches!(f.ai.watch(AccountId(person.id), id).await, Err(transgate_core::ai::AiError::Capacity)));
 }
+
+// PRV-043: `/api/ai/consent` offers GET, POST `{hasConsented: boolean}` and DELETE for the signed-in
+// account; a body that is not a boolean is 400 and a request without a session is 401.
+#[tokio::test]
+#[ignore = "needs BILLING_TEST_DATABASE_URL"]
+async fn prv_043_consent_post_needs_a_boolean_and_every_consent_method_needs_a_session() {
+    let f = fixture().await;
+    let person = user();
+    super::erasure::register_auth(&f.app, &person);
+    assert_eq!(f.app.call("GET", "/api/billing/overview", Some(&person.jwt), None).await.0, 200);
+    for body in [json!({"hasConsented": "true"}), json!({"hasConsented": 1}), json!({"hasConsented": null}), json!({})] {
+        assert_eq!(f.app.call("POST", "/api/ai/consent", Some(&person.jwt), Some(body.clone())).await.0, 400, "{body}");
+    }
+    assert_eq!(f.app.call("POST", "/api/ai/consent", Some(&person.jwt), Some(json!({"hasConsented": true}))).await.0, 200);
+    let (status, state) = f.app.call("GET", "/api/ai/consent", Some(&person.jwt), None).await;
+    assert_eq!((status, state["hasConsented"].clone()), (200, json!(true)));
+    assert_eq!(f.app.call("DELETE", "/api/ai/consent", Some(&person.jwt), None).await.0, 200);
+    let (_, state) = f.app.call("GET", "/api/ai/consent", Some(&person.jwt), None).await;
+    assert_eq!(state["hasConsented"], json!(false));
+    for method in ["GET", "POST", "DELETE"] {
+        let body = (method == "POST").then(|| json!({"hasConsented": true}));
+        assert_eq!(f.app.call(method, "/api/ai/consent", None, body).await.0, 401, "{method} without a session");
+    }
+}

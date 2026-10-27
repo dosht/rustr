@@ -1130,3 +1130,6 @@ mod ai;
 
 #[path = "runtime/api.rs"]
 mod api;
+
+#[path = "runtime/p3_close.rs"]
+mod p3_close;

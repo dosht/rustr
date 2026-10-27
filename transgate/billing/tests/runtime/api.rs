@@ -313,3 +313,54 @@ async fn the_document_is_served_from_the_same_table_that_mounts_the_routes() {
         assert!(matches!(status, 400 | 401 | 403), "{}: unauthenticated call answered {status}", op.id);
     }
 }
+
+// API-BIL-012: a key whose account has no balance left (zero or less) starting transcriptions gets 402
+// `insufficient_balance`, in both start modes, and nothing is created: no job, no charge, no delivery.
+#[tokio::test]
+#[ignore = "needs BILLING_TEST_DATABASE_URL"]
+async fn api_bil_012_a_key_with_zero_balance_gets_402_and_nothing_is_created() {
+    let (app, store, _) = fixture(RateLimits::default()).await;
+    let owner = user();
+    assert_eq!(app.signup(&owner, now_micros()).await.0, 200, "an account with an open free package");
+    assert_eq!(app.call("GET", "/api/billing/overview", Some(&owner.jwt), None).await.0, 200);
+    let (secret, _) = new_key(&app, &owner, r#"["transcriptions:create"]"#).await;
+    let draft = {
+        let mut uow = store.begin().await.unwrap();
+        let job = uow.insert_job(&NewJob {
+            account: AccountId(owner.id), status: JobStatus::Draft, name: Some("d.mp3".into()),
+            source: JobSource::Upload { storage: StorageProvider::Gcs, object: None },
+            language: None, translate_to: vec![], speakers: false, fix_grammer: None,
+            duration_minutes: Some(3), size_bytes: Some(10), callback_url: None, whisper_params: None,
+            created_at: transgate_billing::SystemClock.now(),
+        }).await.unwrap();
+        uow.commit().await.unwrap();
+        job.id.0
+    };
+    // Spend exactly everything the free package holds: the balance is zero.
+    sqlx::query("INSERT INTO billing.usage (account_id, package_id, subject_ref, minutes, used_at) SELECT $1, id, 999999, minutes_included, now() FROM billing.packages WHERE account_id = $1")
+        .bind(owner.id).execute(&app.owner).await.unwrap();
+    let counts = || async {
+        let one = |sql: &'static str| {
+            let (pool, id) = (app.owner.clone(), owner.id);
+            async move { sqlx::query_scalar::<_, i64>(sql).bind(id).fetch_one(&pool).await.unwrap() }
+        };
+        (
+            one("SELECT count(*) FROM transgate_jobs.jobs WHERE account_id = $1").await,
+            one("SELECT COALESCE(sum(minutes), 0)::bigint FROM billing.usage WHERE account_id = $1").await,
+            one("SELECT count(*) FROM transgate_api.callback_deliveries WHERE account_id = $1").await,
+        )
+    };
+    let before = counts().await;
+    for (mode, body) in [
+        ("jobIds", json!({"jobIds": [draft]})),
+        ("audioUrls", json!({"audioUrls": [{"audioUrl": "https://example.com/a.mp3", "callbackUrl": "https://example.com/hook"}]})),
+    ] {
+        let response = app.http.post(format!("{}/api/v1/transcriptions", app.base)).bearer_auth(&secret).json(&body).send().await.unwrap();
+        let status = response.status().as_u16();
+        let answer: Value = response.json().await.unwrap();
+        assert_eq!((status, answer["code"].clone()), (402, json!("insufficient_balance")), "{mode}: {answer}");
+        assert_eq!(counts().await, before, "{mode}: no job, charge or delivery row was created");
+    }
+    let status: String = sqlx::query_scalar("SELECT status FROM transgate_jobs.jobs WHERE id = $1").bind(draft).fetch_one(&app.owner).await.unwrap();
+    assert_eq!(status, "draft", "the draft did not start");
+}
