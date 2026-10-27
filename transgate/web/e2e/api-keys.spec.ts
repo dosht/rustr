@@ -132,7 +132,7 @@ test.describe("api keys", () => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   });
 
-  test("the desktop account menu opens the key screen; on phone it is reached by URL", async ({ context, page }) => {
+  test("the desktop account menu opens the key screen, and on phone it is reached by URL", async ({ context, page }) => {
     await signedIn(context, newHost());
     await page.goto("/home");
     if (isPhone(page)) {
