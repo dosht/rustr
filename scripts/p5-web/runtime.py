@@ -98,6 +98,8 @@ class P5Fixtures(p4.Fixtures):
         self.browser_telemetry = []
         self.youtube = {}
         self.youtube_calls = []
+        # Bytes served for any not-yet-staged `staging/<account>/<job>` object (P7 URL sources).
+        self.staging_default = None
 
 
 class P5Handler(p4.FixtureHandler):
@@ -151,6 +153,8 @@ class P5Handler(p4.FixtureHandler):
             return self.youtube_transcript(self.fixture)
         if self.command == 'POST' and path == '/v1/transcriptions':
             return self.soniox_submit(self.fixture)
+        if self.command in ('GET', 'HEAD') and self.bucket_request():
+            self.seed_staged(self.fixture, path)
         if self.command == 'GET' and self.headers.get('Range') and self.bucket_request():
             return self.ranged(self.fixture, path)
         return super().handle_owned()
@@ -193,6 +197,14 @@ class P5Handler(p4.FixtureHandler):
         if meta is None:
             return self.reply(404, {'error': 'not found'})
         return self.reply(200, {'video_id': video, 'language': 'en', 'transcript': meta['cues']})
+
+    def seed_staged(self, f, path):
+        key = urllib.parse.unquote(path)
+        prefix = '/' + f.buckets.get('staging', '') + '/staging/'
+        with f.lock:
+            if f.staging_default is not None and key.startswith(prefix) and key not in f.objects:
+                f.objects[key] = f.staging_default
+                f.events.append((time.time(), 'STAGED-DEFAULT', key))
 
     def ranged(self, f, path):
         """Single `bytes=a-b` / `bytes=a-` range on a signed GET, as the media element asks for."""
@@ -281,6 +293,14 @@ class P5Handler(p4.FixtureHandler):
             tokens = body.get('tokens') or [{'text': body['text'], 'start_ms': 0, 'end_ms': 1000, 'speaker': '1'}]
             with f.lock:
                 f.soniox_default = {'tokens': tokens, 'duration_ms': int(body.get('duration_ms', 60000))}
+            return self.reply(200, {'ok': True})
+        if self.command == 'POST' and path == '/__p5/staging-default':
+            # {"bytes": int}: a silent WAV of that size answers the first HEAD/GET of each staging object.
+            # The host's controlled fetcher refuses loopback audio URLs by design; an existing staged
+            # object is how the URL-source path proceeds without a public audio host (jobs/app.rs signed_audio).
+            size = int(body.get('bytes', 32044))
+            with f.lock:
+                f.staging_default = b'RIFF' + (size - 8).to_bytes(4, 'little') + b'WAVE' + bytes(size - 12)
             return self.reply(200, {'ok': True})
         if self.command == 'POST' and path == '/__p5/youtube':
             # {"video": 11-char id, "title": str, "duration": ISO-8601, "cues": [{"text","start","duration"}]}
