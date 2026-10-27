@@ -5136,6 +5136,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "transgate-ffi"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "billing-core",
+ "serde_json",
+ "tokio",
+ "transgate-client",
+ "transgate-core",
+ "transgate-export",
+ "transgate-i18n",
+ "uniffi",
+ "uuid",
+]
+
+[[package]]
 name = "transgate-http"
 version = "0.1.0"
 dependencies = [

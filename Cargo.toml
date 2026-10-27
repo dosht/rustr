@@ -12,6 +12,7 @@ members = [
     "transgate/jobs-postgres",
     "transgate/client",
     "transgate/i18n",
+    "transgate/ffi",
     "transgate/wasm",
     "modules/billing/core",
     "modules/billing/postgres",

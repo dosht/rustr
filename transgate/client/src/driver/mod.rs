@@ -843,15 +843,12 @@ fn jobs(inner: &Rc<AppDriver>, epoch: Epoch, effect: job_list::Effect) {
 fn manage_data(inner: &Rc<AppDriver>, epoch: Epoch, effect: data_management::Effect) {
     use data_management::{Effect, Event};
     let manage = move |event: Event| AppEvent::ManageData { epoch, event };
-    // A refused toggle rereads the settings, so it returns to the stored value.
-    let saved = move |this: &Rc<AppDriver>, result: Result<_, ApiError>| match result {
+    // A refused write answers `SaveFailed`, and core returns the switch to its stored
+    // value. A session failure (401/410) was already reported by `fetch`'s escalation.
+    let saved = move |_: &Rc<AppDriver>, result: Result<_, ApiError>| match result {
         Ok(settings) => Some(manage(Event::Saved { settings })),
-        Err(error) => {
-            if rereads(&error) {
-                run(this, AppEffect::LoadSettings { epoch });
-            }
-            None
-        }
+        Err(error) if rereads(&error) => Some(manage(Event::SaveFailed { failure: failure(&error) })),
+        Err(_) => None,
     };
     match effect {
         Effect::SetAutoDelete { value } => {

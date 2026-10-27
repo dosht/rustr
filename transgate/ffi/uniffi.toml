@@ -1,0 +1,8 @@
+[bindings.kotlin]
+package_name = "dev.transgate.core"
+cdylib_name = "transgate_ffi"
+
+[bindings.swift]
+module_name = "TransgateCore"
+ffi_module_name = "TransgateCoreFFI"
+ffi_module_filename = "TransgateCoreFFI"

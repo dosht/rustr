@@ -1,0 +1,33 @@
+[package]
+name = "transgate-ffi"
+description = "UniFFI facade of the Transgate core for Android and iOS: one presenter object over the shared AppDriver, the core view models as UniFFI remote types, and translate(). Treat it as a public, versioned API."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["lib", "cdylib", "staticlib"]
+name = "transgate_ffi"
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "src/bin/uniffi-bindgen.rs"
+required-features = ["cli"]
+
+[features]
+cli = ["uniffi/cli"]
+
+[dependencies]
+billing-core = { path = "../../modules/billing/core" }
+serde_json.workspace = true
+tokio = { version = "1", features = ["rt", "sync", "time", "macros"] }
+transgate-client = { path = "../client" }
+transgate-core = { path = "../core" }
+transgate-export = { path = "../export" }
+transgate-i18n = { path = "../i18n" }
+uniffi.workspace = true
+uuid = { version = "1", default-features = false }
+
+[dev-dependencies]
+axum = "0.8"
+tokio = { version = "1", features = ["rt", "rt-multi-thread", "net", "sync", "time", "macros"] }

@@ -12,7 +12,7 @@ use std::time::Duration;
 
 use axum::body::Body;
 use axum::extract::State;
-use axum::http::Request;
+use axum::http::{Request, StatusCode};
 use axum::middleware::{self, Next};
 use axum::response::Response;
 use axum::routing::get;
@@ -28,7 +28,8 @@ use transgate_client::export::{DocumentAssetSource, DocumentFonts};
 use transgate_client::future::BoxFuture;
 use transgate_core::jobs::app::CalendarContext;
 use transgate_core::jobs::domain::JobStatus;
-use transgate_core::presentation::app::{AppConfig, AppIntent, AppVm};
+use transgate_core::presentation::app::{AppConfig, AppIntent, AppVm, ManageDataIntent};
+use transgate_core::privacy::settings::UserSettings;
 use transgate_core::presentation::fixtures::{self, session_profile};
 use transgate_core::presentation::layout::Viewport;
 use transgate_core::presentation::telemetry::TelemetryEvent;
@@ -129,9 +130,12 @@ async fn host() -> Host {
             async move { Json(json!({"jobs": rows, "next_cursor": null})) }
         }
     };
+    let settings = || async { Json(UserSettings::defaults(session_profile().account)) };
     let routes = Router::new()
         .route("/api/session", get(|| async { Json(session_profile()) }))
         .route("/api/jobs", get(list))
+        // The settings write is always refused (a 503), the read answers the stored value.
+        .route("/api/settings", get(settings).patch(|| async { StatusCode::SERVICE_UNAVAILABLE }))
         .layer(middleware::from_fn_with_state(seen.clone(), record));
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let base = format!("http://{}/api", listener.local_addr().unwrap());
@@ -301,5 +305,28 @@ fn dispose_drops_timers_and_a_late_fire_changes_nothing() {
         // An intent after dispose returns the current view and runs nothing.
         rig.driver.dispatch(AppIntent::VisibilityChanged { visible: false });
         assert_eq!(rig.host.seen.lock().unwrap().len(), mark);
+    });
+}
+
+/// A refused settings write returns the switch to its stored value with the save
+/// error shown (core's `SaveFailed`), and the driver does not reread the settings.
+#[test]
+fn a_refused_settings_write_answers_save_failed_without_a_reread() {
+    local(async {
+        let rig = rig().await;
+        until("the signed-in list", || rows(&rig.driver) == Some(vec![1])).await;
+        let reads = || rig.host.seen.lock().unwrap().iter().filter(|(path, _)| path == "/api/settings").count();
+        until("the settings to load", || reads() >= 1).await;
+        let before = reads();
+
+        rig.driver.dispatch(AppIntent::ManageData(ManageDataIntent::DeleteMonthlyToggled { on: false }));
+        let settled = |driver: &AppDriver| match driver.current() {
+            AppVm::SignedIn(vm) => (vm.manage_data.delete_monthly_on, vm.manage_data.save_error.is_some()),
+            _ => (false, false),
+        };
+        until("the refused write to be answered", || settled(&rig.driver) == (true, true)).await;
+        tokio::time::sleep(Duration::from_millis(200)).await;
+        // The PATCH hit the same path once; no GET followed the refusal.
+        assert_eq!(reads(), before + 1, "one PATCH and no reread");
     });
 }
