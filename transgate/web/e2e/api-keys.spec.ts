@@ -1,21 +1,11 @@
 // WEB-045/046 and API-F08/F09: the key screen at /dashboard/api-keys on the real
-// built shell. The session routes (/api/keys, /api/keys/signing-secret,
-// /api/session) are answered here with the wire shapes of transgate_api::public
-// and core's SessionProfile; nothing reaches a host, GoTrue or a provider.
+// built shell. The key routes (/api/keys, /api/keys/signing-secret) are answered
+// here with the wire shapes of transgate_api::public; e2e/support/shell.ts serves
+// the session and refuses everything else.
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
+import { DISPLAY_NAME, shell, type Handler } from "./support/shell";
 
-const USER = "6f1d2c3b-4a5e-4f60-8a7b-9c0d1e2f3a4b";
-const EMAIL = "key-owner@example.test";
 const SECRET = "dGVzdC1zaWduaW5nLXNlY3JldC1ub3QtYS1jcmVkZW50aWFs";
-
-const CONFIG = {
-  apiUrl: "/api",
-  authUrl: "https://auth.example.test/auth/v1",
-  authKey: null,
-  siteUrl: "https://app.example.test",
-  captcha: null,
-  telemetry: { posthog: null, sentry: null },
-};
 
 const SCOPES = {
   read: ["transcriptions:read"],
@@ -43,46 +33,16 @@ interface Host {
   list: "ok" | "fail" | Promise<void>;
 }
 
-async function signedIn(context: BrowserContext, host: Host): Promise<void> {
-  await context.addInitScript(
-    ([user, email]) => {
-      const session = { access_token: "e2e-access", refresh_token: "e2e-refresh", expires_at: Math.floor(Date.now() / 1000) + 3600, user_id: user, email };
-      localStorage.setItem("transgate.session", JSON.stringify(session));
-      document.cookie = "cookieConsent=rejected; Path=/";
-    },
-    [USER, EMAIL],
-  );
-  await context.route("**/*", async (route) => {
-    const request = route.request();
-    const url = new URL(request.url());
-    if (url.hostname === "127.0.0.1" && !url.pathname.startsWith("/api/")) {
-      if (request.resourceType() === "document") {
-        const response = await route.fetch();
-        const island = `<script type="application/json" id="tg-config">${JSON.stringify(CONFIG).replace(/</g, "\\u003c")}</script>`;
-        return route.fulfill({ response, body: (await response.text()).replace("<!--tg-inject-->", island) });
-      }
-      return route.continue();
-    }
-    if (url.hostname !== "127.0.0.1") return route.abort();
+function keyRoutes(host: Host): Handler {
+  return (request, url, route) => {
     const method = request.method();
     const path = url.pathname;
-    if (path === "/api/session") {
-      return route.fulfill({
-        json: {
-          account: USER, email: EMAIL, full_name: null, display_name: "key-owner", joined_on: null,
-          capabilities: {
-            ai: false, ai_chat: false, youtube: false, microphone: false, google_drive: false, onedrive: false, show_original: false,
-            mobile_ux_jobs: true, mobile_expanded_player: false, mobile_ux_ai: true, billing_history: true, customer_lookup: false,
-          },
-        },
-      });
-    }
     if (path === "/api/keys/signing-secret" && method === "GET") return route.fulfill({ json: { secret: SECRET } });
-    if (path === "/api/keys" && method === "GET") {
+    if (path === "/api/keys" && method === "GET") return (async () => {
       if (host.list instanceof Promise) await host.list;
       if (host.list === "fail") return route.fulfill({ status: 500, json: { code: "internal", error: "Internal error" } });
       return route.fulfill({ json: { keys: host.keys } });
-    }
+    })();
     if (path === "/api/keys" && method === "POST") {
       const body = request.postDataJSON() as { name: string; scopes: string[]; expirationPolicy: string };
       const n = host.issued.length + 1;
@@ -102,9 +62,12 @@ async function signedIn(context: BrowserContext, host: Host): Promise<void> {
       host.revoked.push(key.id);
       return route.fulfill({ json: { key } });
     }
-    // Everything else the signed-in frame reads is outside the key screen.
-    return route.fulfill({ status: 404, json: { code: "not_found", error: "Not found" } });
-  });
+    return undefined;
+  };
+}
+
+async function signedIn(context: BrowserContext, host: Host): Promise<void> {
+  await shell(context, { signedIn: true, consent: "rejected", handlers: [keyRoutes(host)] });
 }
 
 function newHost(list: Host["list"] = "ok"): Host {
@@ -142,7 +105,7 @@ test.describe("api keys", () => {
       await expect(page.getByRole("button", { name: "API Keys", exact: true })).toHaveCount(0);
       await openKeys(page);
     } else {
-      await page.getByRole("button", { name: "key-owner", exact: true }).click();
+      await page.getByRole("button", { name: DISPLAY_NAME, exact: true }).click();
       await page.getByRole("button", { name: "API Keys", exact: true }).click();
       await expect(page).toHaveURL(/\/dashboard\/api-keys$/);
       await expect(page.getByRole("heading", { name: "Your API Keys" })).toBeVisible();

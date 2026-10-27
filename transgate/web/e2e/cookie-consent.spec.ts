@@ -5,17 +5,14 @@
 // source loaded PostHog opted out), and GTM/gtag are not carried over.
 import { gunzipSync } from "node:zlib";
 import { expect, test, type BrowserContext, type Page, type Request } from "@playwright/test";
+import { CONFIG as BASE, shell } from "./support/shell";
 
 const POSTHOG = "https://ph.example.test";
 const SENTRY = "https://sentry.example.test";
 const DAY = 24 * 60 * 60;
 
 const CONFIG = {
-  apiUrl: "/api",
-  authUrl: "https://auth.example.test/auth/v1",
-  authKey: null,
-  siteUrl: "https://app.example.test",
-  captcha: null,
+  ...BASE,
   telemetry: {
     posthog: { key: "phc_e2e", host: POSTHOG },
     sentry: { dsn: "https://e2ekey@sentry.example.test/1", environment: "e2e" },
@@ -49,19 +46,14 @@ async function open(context: BrowserContext, page: Page, path: string): Promise<
     Object.defineProperty(Navigator.prototype, "webdriver", { get: () => false });
     Object.defineProperty(Navigator.prototype, "userAgentData", { get: () => undefined });
   });
-  await context.route("**/*", async (route) => {
-    const request = route.request();
-    const url = new URL(request.url());
-    if (url.hostname === "127.0.0.1") {
-      if (request.resourceType() === "document") {
-        const response = await route.fetch();
-        const island = `<script type="application/json" id="tg-config">${JSON.stringify(CONFIG).replace(/</g, "\\u003c")}</script>`;
-        return route.fulfill({ response, body: (await response.text()).replace("<!--tg-inject-->", island) });
-      }
+  await shell(context, {
+    config: CONFIG,
+    handlers: [(_request, url) => {
       if (/\/_app\/(module|prod)-/.test(url.pathname)) seen.sdkChunks.push(url.pathname);
-      return route.continue();
-    }
-    if (url.origin === POSTHOG || url.origin === SENTRY) {
+      return undefined;
+    }],
+    external: (request, url, route) => {
+      if (url.origin !== POSTHOG && url.origin !== SENTRY) return undefined;
       seen.telemetry.push(`${request.method()} ${url.origin}${url.pathname}`);
       for (const event of body(request) as { event?: string; properties?: Record<string, unknown> }[]) {
         if (event.event) seen.events.push(event.event);
@@ -70,8 +62,7 @@ async function open(context: BrowserContext, page: Page, path: string): Promise<
       if (url.pathname.endsWith("/config.js")) return route.fulfill({ status: 200, contentType: "application/javascript", body: "" });
       if (url.pathname.includes("/flags")) return route.fulfill({ status: 200, json: { featureFlags: {}, featureFlagPayloads: {}, errorsWhileComputingFlags: false } });
       return route.fulfill({ status: 200, json: { status: 1 } });
-    }
-    return route.abort();
+    },
   });
   await page.goto(path);
   await expect(page.locator('input[type="email"]')).toBeVisible();
