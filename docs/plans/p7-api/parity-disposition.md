@@ -27,9 +27,13 @@ Rules:
 | **P7-owned** | **23** | **14** | **37** |
 | OTHER (not P7) | 13 rules + RTL-004..008 | 48 parity rows | — |
 
-Canonical ledger: 23 P7 rules and 7 P7 parity rows are applied (F01/F02 `tested`, F07/F10 `changed`, F03/F04/F05 `dropped` through the mu-approved keep/throw row). Six P7 parity rows stay `inventoried` in the canonical ledger, although their disposition here is settled:
-- **API-F08, API-F09, WEB-045, WEB-046** are proven in y7 browser receipts. The ledger accepts only committed specs (`playwright:`), so Y must commit the key-screen spec, as was done for cookie consent.
-- **API-F06, API-F11** are dropped by lead decision (D13, accepted proposal §1). `check-prd.py` accepts a parity drop only through a keep/throw row whose reason says "mu approved". The lead must either record mu's approval or extend the checker to accept a recorded lead decision, as the voice-demo path does.
+Canonical ledger: all 23 P7 rules and 13 of the 14 P7 parity rows are applied.
+- F01/F02 `tested`, F07/F10 `changed`.
+- F03/F04/F05 `dropped` through the mu-approved keep/throw row.
+- F06/F11 `dropped` through keep/throw rows reading "mu approved: decisions delegated to the lead on 2026-10-27", with the decision reference (lead instruction).
+- F08/F09 and WEB-045/046 `tested`, citing all six tests of Y's committed `transgate/web/e2e/api-keys.spec.ts`. Each test passes on both projects; Y's runs were 12/12, three times on `9d76d0d` and once on `5ad7082` with the retitle. F08/F09 are the full create/copy/list/revoke flow per platform, so they cite all six tests and not Y's suggested split.
+
+The only open P7 row is API-BIL-012 (MISSING).
 
 ## Rules (P7-owned)
 
@@ -65,15 +69,15 @@ Canonical ledger: 23 P7 rules and 7 P7 parity rows are applied (F01/F02 `tested`
 | API-F03 v1-beta URL | DROPPED | `keep-throw:Legacy v1-beta and unified transcription shapes` | mu, D12 revised |
 | API-F04 v1-beta status | DROPPED | same | mu, D12 revised |
 | API-F05 unified redirect | DROPPED | same | mu, D12 revised |
-| API-F06 browser `/api/transcripts` | DROPPED (canonical pending) | replaced by the P5 D5 session route `/api/jobs/start`, proven in P5 WEB-007/008 | Lead D13; needs mu approval or a checker change (see above) |
+| API-F06 browser `/api/transcripts` | DROPPED | `keep-throw:Browser legacy \`/api/transcripts\` submission`; replaced by the P5 D5 session route `/api/jobs/start`, proven in P5 WEB-007/008 | Lead D13, mu-delegated |
 | API-F07 `GET /api/keys/list` | CHANGED | billing runtime owner test, `api_005_019_d02_…`; y7 list | Now `GET /api/keys` from the OpenAPI operation table (D9) |
-| API-F08 key screen, desktop | TESTED (canonical pending) | y7: menu entry to `/dashboard/api-keys`, create in three scope variants shown once with copy, hidden after reload, revoke with confirm, loading and load_failed states, signing secret shown | Ledger needs Y's committed key-screen spec |
-| API-F09 key screen, phone | TESTED (canonical pending) | y7 Pixel 7: empty state and signing secret, create shown once with copy, revoke with confirm sheet, no phone menu entry (reach by URL, as source) | Same |
+| API-F08 key screen, desktop | TESTED | `playwright:e2e/api-keys.spec.ts#api keys …`, all six tests (menu/URL entry; empty + signing secret; each scope shown once, copies, hidden after reload; revoke with confirm; loading; failed load); y7 receipts | |
+| API-F09 key screen, phone | TESTED | the same six tests on the `mobile` project (reach by URL, revoke via sheet); y7 Pixel 7 receipts | |
 | API-F10 customer callback delivery | CHANGED | server PG dispatcher test, `d5_d6_fan_out_is_idempotent_per_completed_event`, `an_admin_replay_appends_an_attempt_…`, PG `a_relay_retry_inserts_no_second_delivery_…`; y7 callback (3 attempts, delivered), retry, admin replay with the same delivery id and valid HMAC | D5/D6/D7/D8 |
-| API-F11 `/api/webhooks` | DROPPED (canonical pending) | not in the operation table (operation-table tests) | Accepted proposal §1 (keep/throw "throw"); needs mu approval or a checker change |
+| API-F11 `/api/webhooks` | DROPPED | `keep-throw:Generic key webhook placeholder handlers`; not in the operation table (operation-table tests) | Accepted proposal §1, mu-delegated |
 | API-BIL-012 public 402 and balance metadata | MISSING | y7 start answer carries `newBalance` and `isFreemium`; the core rule is BIL-039/040 (`bil_039_040_web_refuses_below_zero_and_api_at_zero_or_less`) | Closing test (p1T): a billing-runtime HTTP test where a key with balance 0 starts `audioUrls` and gets 402 `insufficient_balance`, with no job and no charge |
-| WEB-045 key screen, desktop | TESTED (canonical pending) | as API-F08 | D13: closes jointly with P5 views |
-| WEB-046 key screen, phone | TESTED (canonical pending) | as API-F09 | Same |
+| WEB-045 key screen, desktop | TESTED | as API-F08 | D13: closes jointly with P5 views |
+| WEB-046 key screen, phone | TESTED | as API-F09 | Same |
 
 ## Other phases (not reopened by P7)
 
