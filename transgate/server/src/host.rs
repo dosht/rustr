@@ -17,7 +17,9 @@
 //!   account's `jobs` bucket in the old Supabase project is inventoried and deleted by erasure; without
 //!   it no erasure could finish, so the host refuses to start rather than leave one open forever.
 //! - `CRON_SECRET` (the cron routes refuse every call while it is unset), `TRANSGATE_JOBS_TICK_SECONDS`
-//!   (default 15), `TRANSGATE_SONIOX_AUTO_DELETE` (default on).
+//! - `TRANSGATE_CALLBACK_ALLOW_PRIVATE=1` (development and fixtures only): customer callbacks may
+//!   reach loopback/private addresses. Off by default: send-time destination checks accept only
+//!   public addresses (API-D06).
 //! - The account's GoTrue deletion needs billing's `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
 
 use std::sync::Arc;
@@ -92,6 +94,9 @@ pub struct JobsSettings {
     /// Private deployment allow-lists; only effective capabilities reach the session DTO.
     pub flags: transgate_core::flags::FlagConfig,
     pub tick: Duration,
+    /// Development and fixture switch (`TRANSGATE_CALLBACK_ALLOW_PRIVATE=1`): callbacks may reach
+    /// private and loopback addresses. A deployment leaves it off; only public addresses are used.
+    pub callback_allow_private: bool,
 }
 
 fn object_group(get: Get<'_>, prefix: &str) -> Result<Option<ObjectGroup>, String> {
@@ -183,6 +188,7 @@ pub fn settings_from(get: Get<'_>) -> Result<Option<JobsSettings>, String> {
         ai: crate::ai::Settings::from_env(get)?,
         flags: crate::account::flags_from(get)?,
         tick: Duration::from_secs(tick),
+        callback_allow_private: get("TRANSGATE_CALLBACK_ALLOW_PRIVATE").as_deref() == Some("1"),
     }))
 }
 
@@ -293,6 +299,7 @@ pub async fn compose(settings: JobsSettings, billing: &Transgate, owner_url: Opt
         _ => settings.r2.as_ref().map(|g| g.bucket.clone()),
     }
     .ok_or("the upload storage group is not configured")?;
+    let callback_allow_private = settings.callback_allow_private;
     let ai_chat = settings.ai.policy.chat_enabled;
     let ai = crate::ai::compose(settings.ai, job_store.clone(), clock.clone(), sleeper.clone())?;
 
@@ -337,9 +344,28 @@ pub async fn compose(settings: JobsSettings, billing: &Transgate, owner_url: Opt
         exceptions: ExceptionPolicy::default(),
     }));
     let account_router = crate::account::router(
-        billing, transgate_core::account::AccountServices { store: job_store, clock: clock.clone() },
+        billing, transgate_core::account::AccountServices { store: job_store.clone(), clock: clock.clone() },
         privacy.clone(), settings.flags, ai_chat,
     );
+    // P7: the public API and its callback dispatcher. Rules are core's; these are adapters.
+    let crypto: Arc<dyn transgate_core::api::ports::ApiCrypto> = Arc::new(crate::crypto::HostCrypto);
+    let outbox: Arc<dyn transgate_core::api::ports::CallbackOutbox> = Arc::new(transgate_jobs_postgres::PgCallbackOutbox::new(pool.clone()));
+    let api = Arc::new(transgate_core::api::app::Api::new(transgate_core::api::app::ApiServices {
+        store: job_store.clone(),
+        jobs: jobs.clone(),
+        crypto: crypto.clone(),
+        limiter: Arc::new(transgate_jobs_postgres::PgApiRateLimiter::new(pool.clone())),
+        clock: clock.clone(),
+        limits: transgate_core::api::limits::RateLimits::default(),
+        outbox: outbox.clone(),
+    }));
+    let callbacks = Arc::new(transgate_core::api::app::Callbacks::new(transgate_core::api::app::CallbackServices {
+        outbox,
+        transport: Arc::new(crate::callbacks::HostCallbackTransport::new(callback_allow_private)),
+        content: Arc::new(transgate_core::api::app::JobsCallbackContent { store: job_store.clone(), jobs: jobs.clone(), ai: ai.clone() }),
+        crypto,
+        clock: clock.clone(),
+    }));
     let downloads: Option<Arc<dyn DownloadEvents>> =
         billing.analytics.clone().map(|sink| Arc::new(DownloadAnalytics { sink, clock: clock.clone() }) as Arc<dyn DownloadEvents>);
     let http_state = Arc::new(TransgateHttp {
@@ -353,6 +379,8 @@ pub async fn compose(settings: JobsSettings, billing: &Transgate, owner_url: Opt
         clock: clock.clone(),
         cron_secret: settings.cron_secret.clone().map(SecretString::new),
         downloads,
+        api: Some(api),
+        callbacks: Some(callbacks.clone()),
     });
     let background = Arc::new(Workers {
         jobs,
@@ -364,6 +392,7 @@ pub async fn compose(settings: JobsSettings, billing: &Transgate, owner_url: Opt
         directory: transgate_billing::directory::PgCustomerDirectory::new(pool),
         clock,
         locks,
+        callbacks: Some(callbacks),
     });
     Ok(JobHost { router: transgate_http::router(http_state).merge(account_router), workers: workers::spawn(background, settings.tick) })
 }

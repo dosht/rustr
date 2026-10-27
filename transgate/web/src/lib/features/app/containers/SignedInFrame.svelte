@@ -28,6 +28,8 @@
   import { i18n } from "$lib/i18n/index.svelte";
   import type { MediaPlatform } from "$lib/platform/media";
   import type { ThemeStore } from "$lib/theme/theme.svelte";
+  import DesktopApiKeys from "$lib/features/api-keys/views/desktop/DesktopApiKeys.svelte";
+  import MobileApiKeys from "$lib/features/api-keys/views/mobile/MobileApiKeys.svelte";
   import DesktopSidebar from "../views/desktop/DesktopSidebar.svelte";
   import type { AccountAction } from "../views/desktop/UserArea.svelte";
   import AccountSheet, { type AccountChoice } from "../views/mobile/AccountSheet.svelte";
@@ -55,6 +57,7 @@
   const kind = $derived(phone ? "sheet" : "dialog");
   const Purchase = $derived(phone ? MobilePurchase : DesktopPurchase);
   const Invoices = $derived(phone ? MobileInvoices : DesktopInvoices);
+  const ApiKeys = $derived(phone ? MobileApiKeys : DesktopApiKeys);
   const Subscription = $derived(phone ? MobileSubscription : DesktopSubscription);
   const offer = $derived(offerDismissed ? null : vm.special_client_alert);
   const displayName = $derived(vm.profile?.display_name ?? "");
@@ -70,6 +73,7 @@
   function account(action: AccountAction) {
     if (action === "sign_out") signOut();
     else if (action === "change_plan") openPurchase();
+    else if (action === "api_keys") dispatch({ type: "navigate", intent: { route: { page: "api_keys" } } });
     else openSettings();
   }
 
@@ -183,6 +187,8 @@
     {#if vm.invoices}
       <Invoices vm={vm.invoices} messages={vm.billing_messages} {previewUrl}
         onintent={(intent) => dispatch({ type: "invoices", intent })} onback={openNew} />
+    {:else if vm.api_keys}
+      <ApiKeys vm={vm.api_keys} onintent={(intent) => dispatch({ type: "api_keys", intent })} />
     {:else}
       {#if offer}<div class="p-3"><SpecialOffer {offer} ondismiss={() => (offerDismissed = true)} {oncopy} /></div>{/if}
       <HomeContent {vm} {dispatch} {media} bind:menuOpen />

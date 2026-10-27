@@ -1,8 +1,6 @@
-#[path = "../../tests/support/mod.rs"]
-mod support;
 use super::*;
 use crate::storage::{S3Store,S3StoreConfig};
-use support::{Reply,Server};
+use crate::test_support::{Reply,Server};
 
 fn fetcher(server:&Server)->ControlledFetcher {
     let mut fetcher=ControlledFetcher::new(FetchConfig::default()).unwrap();

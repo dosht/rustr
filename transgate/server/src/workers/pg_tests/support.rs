@@ -123,8 +123,7 @@ async fn erasure_during_the_first_support_mail_prevents_the_owner_ack_and_never_
     assert_eq!(remaining(&f).await, 0, "the committed cascade removes the queued request");
     release.notify_one();
     assert_eq!(running.await.unwrap().unwrap(), 1);
-    let state = f.mail.0.lock().unwrap();
-    assert_eq!(state.attempts.iter().map(|d| d.to.as_str()).collect::<Vec<_>>(), vec![SUPPORT_ADDRESS], "no new dispatch after the barrier is observed");
-    drop(state);
+    let recipients: Vec<String> = f.mail.0.lock().unwrap().attempts.iter().map(|d| d.to.clone()).collect();
+    assert_eq!(recipients, vec![SUPPORT_ADDRESS], "no new dispatch after the barrier is observed");
     assert_eq!(remaining(&f).await, 0, "a late worker ack cannot recreate erased content");
 }

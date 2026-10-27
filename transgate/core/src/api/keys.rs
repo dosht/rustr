@@ -17,6 +17,7 @@ pub const EXPIRED_KEY: &str = "API key has expired";
 
 /// The source `expiration_policy_type` values (API-019).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
 pub enum ExpirationPolicy {
     #[serde(rename = "never")]
     Never,

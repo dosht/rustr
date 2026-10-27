@@ -1,8 +1,8 @@
--- P7 (docs/plans/p7-api/decisions.md D1-D5, D10, D11): the public API's rows in
+-- P7 (docs/plans/p7-api/decisions.md D1-D5, D10): the public API's rows in
 -- their own schema, written by the same restricted runtime group and in the same
--- transactions as every other account write. Keys, their audit rows,
--- idempotency records, callback deliveries and attempts, signing secrets and the
--- per-key rate windows all go with account erasure (`erase_account_rows`).
+-- transactions as every other account write. Keys (with their last_used_at; there is no
+-- per-request usage row), idempotency records, callback deliveries and attempts, signing
+-- secrets and the per-key rate windows all go with account erasure (`erase_account_rows`).
 --
 -- Times are timestamptz written through transgate_jobs.us_to_ts and read through
 -- transgate_jobs.ts_to_us, so a session time zone never changes a value.
@@ -31,23 +31,6 @@ CREATE TABLE transgate_api.api_keys (
 CREATE INDEX api_keys_account ON transgate_api.api_keys (account_id, created_at DESC, id);
 -- The D2 scan set: active keys not yet upgraded.
 CREATE INDEX api_keys_legacy ON transgate_api.api_keys (id) WHERE digest IS NULL AND active;
-
--- D11: one audit row per authenticated request (source parity, mu decides later).
-CREATE TABLE transgate_api.key_uses (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  key_id uuid NOT NULL REFERENCES transgate_api.api_keys (id) ON DELETE CASCADE,
-  account_id uuid NOT NULL,
-  at timestamptz NOT NULL,
-  endpoint text NOT NULL,
-  method text NOT NULL,
-  status integer NOT NULL,
-  ip text,
-  user_agent text,
-  duration_ms integer NOT NULL
-);
-
-CREATE INDEX key_uses_key ON transgate_api.key_uses (key_id, at);
-CREATE INDEX key_uses_account ON transgate_api.key_uses (account_id);
 
 -- D3: calendar-aligned minute and hour windows per key, consumed together.
 CREATE TABLE transgate_api.rate_windows (
@@ -117,9 +100,6 @@ GRANT USAGE ON SCHEMA transgate_api TO billing_runtime;
 
 GRANT SELECT, INSERT, DELETE ON transgate_api.api_keys TO billing_runtime;
 GRANT UPDATE (name, active, last_used_at, digest, legacy_bcrypt, hint) ON transgate_api.api_keys TO billing_runtime;
-
--- Audit rows are written once and never edited.
-GRANT SELECT, INSERT, DELETE ON transgate_api.key_uses TO billing_runtime;
 
 GRANT SELECT, INSERT, DELETE ON transgate_api.rate_windows TO billing_runtime;
 GRANT UPDATE (count) ON transgate_api.rate_windows TO billing_runtime;

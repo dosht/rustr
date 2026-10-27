@@ -936,6 +936,336 @@
           "src/pages/checkout/confirm.tsx:99,113"
         ],
         "origin": "source_literal"
+      },
+      "Active": {
+        "english": "Active",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:500"
+        ],
+        "origin": "source_literal"
+      },
+      "API Documentation": {
+        "english": "API Documentation",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:525"
+        ],
+        "origin": "source_literal"
+      },
+      "API key copied to clipboard": {
+        "english": "API key copied to clipboard",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:232"
+        ],
+        "origin": "source_literal"
+      },
+      "API key created successfully": {
+        "english": "API key created successfully",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:191",
+          "src/pages/dashboard/api-keys.tsx:198"
+        ],
+        "origin": "source_literal"
+      },
+      "API key revoked successfully": {
+        "english": "API key revoked successfully",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:216",
+          "src/pages/dashboard/api-keys.tsx:218"
+        ],
+        "origin": "source_literal"
+      },
+      "Are you sure you want to revoke this API key?": {
+        "english": "Are you sure you want to revoke this API key?",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:209"
+        ],
+        "origin": "source_literal"
+      },
+      "Copied!": {
+        "english": "Copied!",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:305"
+        ],
+        "origin": "source_literal"
+      },
+      "Copy": {
+        "english": "Copy",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:310"
+        ],
+        "origin": "source_literal"
+      },
+      "Create Only": {
+        "english": "Create Only",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:59",
+          "src/pages/dashboard/api-keys.tsx:60",
+          "src/pages/dashboard/api-keys.tsx:243"
+        ],
+        "origin": "source_literal"
+      },
+      "Created": {
+        "english": "Created",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:461"
+        ],
+        "origin": "source_literal"
+      },
+      "Custom": {
+        "english": "Custom",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:125",
+          "src/pages/dashboard/api-keys.tsx:138",
+          "src/pages/dashboard/api-keys.tsx:273"
+        ],
+        "origin": "source_literal"
+      },
+      "Custom Days": {
+        "english": "Custom Days",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:419"
+        ],
+        "origin": "source_literal"
+      },
+      "Days": {
+        "english": "Days",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:264",
+          "src/pages/dashboard/api-keys.tsx:267"
+        ],
+        "origin": "source_literal"
+      },
+      "e.g. My App Key": {
+        "english": "e.g. My App Key",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:345"
+        ],
+        "origin": "source_literal"
+      },
+      "Enter the number of days until the key expires (1-3650)": {
+        "english": "Enter the number of days until the key expires (1-3650)",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:430"
+        ],
+        "origin": "source_literal"
+      },
+      "Expiration Policy": {
+        "english": "Expiration Policy",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:384"
+        ],
+        "origin": "source_literal"
+      },
+      "Expired": {
+        "english": "Expired",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:258"
+        ],
+        "origin": "source_literal"
+      },
+      "Failed to copy API key": {
+        "english": "Failed to copy API key",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:235"
+        ],
+        "origin": "source_literal"
+      },
+      "Failed to create API key": {
+        "english": "Failed to create API key",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:108",
+          "src/pages/dashboard/api-keys.tsx:202"
+        ],
+        "origin": "source_literal"
+      },
+      "Failed to revoke API key": {
+        "english": "Failed to revoke API key",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:221"
+        ],
+        "origin": "source_literal"
+      },
+      "For more information on how to use API keys, visit our ": {
+        "english": "For more information on how to use API keys, visit our ",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:523"
+        ],
+        "origin": "source_literal"
+      },
+      "Generate Key": {
+        "english": "Generate Key",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:439"
+        ],
+        "origin": "source_literal"
+      },
+      "Generate New Key": {
+        "english": "Generate New Key",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:326",
+          "src/pages/dashboard/api-keys.tsx:331"
+        ],
+        "origin": "source_literal"
+      },
+      "Key Name": {
+        "english": "Key Name",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:338"
+        ],
+        "origin": "source_literal"
+      },
+      "Manage your API keys for accessing the transcription service": {
+        "english": "Manage your API keys for accessing the transcription service",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:277"
+        ],
+        "origin": "source_literal"
+      },
+      "Name": {
+        "english": "Name",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:459"
+        ],
+        "origin": "source_literal"
+      },
+      "Never": {
+        "english": "Never",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:251"
+        ],
+        "origin": "source_literal"
+      },
+      "No API keys found.": {
+        "english": "No API keys found.",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:453"
+        ],
+        "origin": "source_literal"
+      },
+      "No Permissions": {
+        "english": "No Permissions",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:477"
+        ],
+        "origin": "source_literal"
+      },
+      "Permissions": {
+        "english": "Permissions",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:349"
+        ],
+        "origin": "source_literal"
+      },
+      "Read & Create": {
+        "english": "Read & Create",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:65",
+          "src/pages/dashboard/api-keys.tsx:66",
+          "src/pages/dashboard/api-keys.tsx:78",
+          "src/pages/dashboard/api-keys.tsx:244"
+        ],
+        "origin": "source_literal"
+      },
+      "Read Only": {
+        "english": "Read Only",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:53",
+          "src/pages/dashboard/api-keys.tsx:54",
+          "src/pages/dashboard/api-keys.tsx:242"
+        ],
+        "origin": "source_literal"
+      },
+      "Revoke": {
+        "english": "Revoke",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:510"
+        ],
+        "origin": "source_literal"
+      },
+      "Revoked": {
+        "english": "Revoked",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:500"
+        ],
+        "origin": "source_literal"
+      },
+      "Scopes": {
+        "english": "Scopes",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:460"
+        ],
+        "origin": "source_literal"
+      },
+      "Select": {
+        "english": "Select",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:392"
+        ],
+        "origin": "source_literal"
+      },
+      "Status": {
+        "english": "Status",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:462",
+          "src/pages/dashboard/api-keys.tsx:463"
+        ],
+        "origin": "source_literal"
+      },
+      "This key will only be shown once. Please copy and store it securely.": {
+        "english": "This key will only be shown once. Please copy and store it securely.",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:319"
+        ],
+        "origin": "source_literal"
+      },
+      "Your API Keys": {
+        "english": "Your API Keys",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:447"
+        ],
+        "origin": "source_literal"
+      },
+      "Your new API key": {
+        "english": "Your new API key",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:293"
+        ],
+        "origin": "source_literal"
+      },
+      "Revoke API key": {
+        "english": "Revoke API key",
+        "sources": [
+          "P7 key screen (D5): p1V request; new P7 key, not source-derived (legacy api-keys.tsx had no signing-secret UI)"
+        ],
+        "origin": "approved"
+      },
+      "Expires": {
+        "english": "Expires",
+        "sources": [
+          "P7 key screen: p1V request; new P7 key, not source-derived (legacy api-keys.tsx showed two unlabeled Status columns)"
+        ],
+        "origin": "approved"
+      },
+      "Never Expire": {
+        "english": "Never Expire",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:121-124,134-137"
+        ],
+        "origin": "source_literal"
+      },
+      "30 Days": {
+        "english": "30 Days",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:121-124,134-137"
+        ],
+        "origin": "source_literal"
+      },
+      "90 Days": {
+        "english": "90 Days",
+        "sources": [
+          "src/pages/dashboard/api-keys.tsx:121-124,134-137"
+        ],
+        "origin": "source_literal"
       }
     },
     "app": {
@@ -1802,6 +2132,62 @@
         "english": "Seek",
         "sources": [
           "P5 D3/a11y: p1Z REPAIR-P5-11 new accessible name for the player seek slider (no source wording; new P5 key, not source-derived)"
+        ],
+        "origin": "approved"
+      },
+      "p7.keys.load_failed": {
+        "english": "Failed to load API keys.",
+        "sources": [
+          "docs/plans/p7-api/implementation/core.md:49 (new P7 key from p1X ApiKeysVm, not source-derived)"
+        ],
+        "origin": "approved"
+      },
+      "p7.keys.secret_load_failed": {
+        "english": "Failed to load the signing secret.",
+        "sources": [
+          "docs/plans/p7-api/implementation/core.md:49 (new P7 key from p1X ApiKeysVm, not source-derived)"
+        ],
+        "origin": "approved"
+      },
+      "p7.keys.secret_title": {
+        "english": "Callback signing secret",
+        "sources": [
+          "docs/plans/p7-api/implementation/core.md (p1X signing-secret copy; new P7 key, not source-derived)"
+        ],
+        "origin": "approved"
+      },
+      "p7.keys.secret_description": {
+        "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback.",
+        "sources": [
+          "docs/plans/p7-api/implementation/core.md (p1X signing-secret copy; new P7 key, not source-derived)"
+        ],
+        "origin": "approved"
+      },
+      "p7.keys.secret_copy": {
+        "english": "Copy secret",
+        "sources": [
+          "docs/plans/p7-api/implementation/core.md (p1X signing-secret copy; new P7 key, not source-derived)"
+        ],
+        "origin": "approved"
+      },
+      "p7.keys.secret_copied": {
+        "english": "Signing secret copied to clipboard",
+        "sources": [
+          "docs/plans/p7-api/implementation/core.md (p1X signing-secret copy; new P7 key, not source-derived)"
+        ],
+        "origin": "approved"
+      },
+      "p7.keys.secret_copy_failed": {
+        "english": "Failed to copy the signing secret",
+        "sources": [
+          "docs/plans/p7-api/implementation/core.md (p1X signing-secret copy; new P7 key, not source-derived)"
+        ],
+        "origin": "approved"
+      },
+      "p7.keys.expiry_one_year": {
+        "english": "1 Year",
+        "sources": [
+          "docs/plans/p7-api/implementation/core.md (p1X: API key lifetime choice; new P7 key, not source-derived; distinct from common \"1 Year\" plan label)"
         ],
         "origin": "approved"
       }

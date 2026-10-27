@@ -14,6 +14,10 @@ fn home_views_jobs_and_pages_parse_with_or_without_a_locale_prefix() {
     assert_eq!(route("/new-password"), Route::NewPassword);
     assert_eq!(route("/tr/billing"), Route::Billing);
     assert_eq!(route("/checkout/confirm"), Route::CheckoutConfirm);
+    // WEB-045/046: the source's key screen path (`pages/dashboard/api-keys.tsx`).
+    assert_eq!(route("/de/dashboard/api-keys"), Route::ApiKeys);
+    assert_eq!(href(Route::ApiKeys, "de"), "/de/dashboard/api-keys");
+    assert!(Route::ApiKeys.protected());
     assert_eq!(parse("/id/home").unwrap().locale, "id");
     assert_eq!(parse("/home").unwrap().locale, "en");
     assert_eq!(route("/home?view=unknown"), Route::Home(HomeView::Default));
@@ -32,7 +36,7 @@ fn aliases_parse_to_their_canonical_route_and_ask_for_replacement() {
 
 #[test]
 fn public_api_asset_and_unknown_paths_are_not_app_routes() {
-    for path in ["/", "/de", "/en", "/pricing", "/api/jobs", "/api/unknown", "/home/abc", "/dashboard/api-keys", "/checkout", "/favicon.png", "/xx/home"] {
+    for path in ["/", "/de", "/en", "/pricing", "/api/jobs", "/api/unknown", "/home/abc", "/dashboard", "/dashboard/audit-logs", "/checkout", "/favicon.png", "/xx/home"] {
         assert!(parse(path).is_none(), "{path}");
         assert!(!is_app_path(path), "{path}");
     }

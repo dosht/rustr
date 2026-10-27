@@ -36,7 +36,7 @@ use crate::presentation::msg::{Msg, app, auth, common};
 use crate::presentation::route::{self, HomeView, Route};
 use crate::presentation::telemetry::TelemetryEvent;
 use crate::presentation::upload_queue::{Alert, Choice, Mode, PickedFile};
-use crate::presentation::{data_management, dates, feedback, job_list, settings, support, transcript, upload_queue};
+use crate::presentation::{api_keys, data_management, dates, feedback, job_list, settings, support, transcript, upload_queue};
 use crate::transcript::LanguageTab;
 
 /// How long the "Password updated successfully!" notice stays before the page
@@ -425,6 +425,7 @@ pub enum AppIntent {
     Purchase(PurchaseIntent),
     Subscription(SubscriptionIntent),
     Invoices(InvoicesIntent),
+    ApiKeys(api_keys::Intent),
 }
 
 // ---- driver events and effects -------------------------------------------------------
@@ -454,6 +455,7 @@ pub enum AppEvent {
     Purchase { epoch: Epoch, event: PurchaseEvent },
     Subscription { epoch: Epoch, event: SubscriptionEvent },
     Invoices { epoch: Epoch, ticket: u64, event: InvoicesEvent },
+    ApiKeys { epoch: Epoch, event: api_keys::Event },
     ConfirmationLoaded { epoch: Epoch, sequence: u64, payload: Option<ConfirmPayload> },
 }
 
@@ -492,6 +494,9 @@ pub enum AppEffect {
     /// Read `#tg-confirm` once. No HTTP confirmation or checkout request.
     ReadConfirmation { epoch: Epoch, sequence: u64 },
     Confirmation { epoch: Epoch, effect: ConfirmEffect },
+    /// The key screen: `GET /api/keys`, `POST /api/keys`, `DELETE /api/keys/{id}`,
+    /// `GET /api/keys/signing-secret`, and the clipboard.
+    ApiKeys { epoch: Epoch, effect: api_keys::Effect },
     /// Product analytics; the shell sends it only with cookie consent (D12).
     Telemetry { event: TelemetryEvent },
     /// PostHog `reset()` after sign-out (IDN-024).
@@ -601,6 +606,8 @@ pub struct SignedInVm {
     /// The purchase dialog while open.
     pub purchase: Option<PurchaseVm>,
     pub invoices: Option<InvoicesVm>,
+    /// The key screen while its route is open (WEB-045/046).
+    pub api_keys: Option<api_keys::ApiKeysVm>,
     pub billing_messages: BillingMessages,
     /// Configured host data, not translated or recomputed (DEF-023).
     pub special_client_alert: Option<SpecialClientAlert>,
@@ -687,6 +694,8 @@ pub struct AppState {
     subscription: SubscriptionState,
     purchase: Option<PurchaseState>,
     invoices: Option<InvoicesState>,
+    /// Only while `/dashboard/api-keys` is open: leaving drops a shown-once key.
+    api_keys: Option<api_keys::ApiKeysState>,
     invoice_lookup_failed: bool,
     invoice_preview_ticket: u64,
     confirmation: Option<ConfirmPageState>,
@@ -738,6 +747,7 @@ impl AppState {
             subscription: SubscriptionState::default(),
             purchase: None,
             invoices: None,
+            api_keys: None,
             invoice_lookup_failed: false,
             invoice_preview_ticket: 0,
             confirmation: None,
@@ -847,6 +857,7 @@ impl AppState {
         self.subscription = SubscriptionState::default();
         self.purchase = None;
         self.invoices = None;
+        self.api_keys = None;
         self.invoice_lookup_failed = false;
         self.invoice_preview_ticket += 1;
         self.confirmation = None;
@@ -953,6 +964,15 @@ impl AppState {
         }
         if self.profile.is_none() {
             return vec![];
+        }
+        if route != Route::ApiKeys {
+            self.api_keys = None;
+        } else if self.api_keys.is_none() {
+            self.deselect_job();
+            let mut state = api_keys::ApiKeysState::default();
+            let effects = state.update(api_keys::Event::Opened);
+            self.api_keys = Some(state);
+            return self.api_keys_effects(effects);
         }
         if route == Route::Home(HomeView::Default) && self.layouts().frame == Frame::Phone {
             return self.navigate(Route::Home(HomeView::New), true);
@@ -1084,6 +1104,11 @@ impl AppState {
         let epoch = self.epoch();
         let ticket = self.invoice_preview_ticket;
         effects.into_iter().map(|effect| AppEffect::Invoices { epoch, ticket, effect: Box::new(effect) }).collect()
+    }
+
+    fn api_keys_effects(&self, effects: Vec<api_keys::Effect>) -> Vec<AppEffect> {
+        let epoch = self.epoch();
+        effects.into_iter().map(|effect| AppEffect::ApiKeys { epoch, effect }).collect()
     }
 
     fn confirmation_effects(&self, effects: Vec<ConfirmEffect>) -> Vec<AppEffect> {
@@ -1280,6 +1305,11 @@ impl AppState {
                 }
                 let effects = state.update(event);
                 self.invoice_effects(effects)
+            }
+            AppEvent::ApiKeys { epoch, event } if self.is_current(epoch) && self.signed_in() => {
+                let Some(state) = self.api_keys.as_mut() else { return vec![] };
+                let effects = state.update(event);
+                self.api_keys_effects(effects)
             }
             AppEvent::ConfirmationLoaded { epoch, sequence, payload }
                 if self.is_current(epoch) && sequence == self.confirmation_sequence
@@ -1709,6 +1739,11 @@ impl AppState {
                 self.invoice_effects(effects)
             }
             AppIntent::Invoices(_) => vec![],
+            AppIntent::ApiKeys(intent) => {
+                let Some(state) = self.api_keys.as_mut() else { return vec![] };
+                let effects = state.update(intent.into());
+                self.api_keys_effects(effects)
+            }
         }
     }
 
@@ -1809,6 +1844,7 @@ impl AppState {
                     subscription,
                     purchase,
                     invoices,
+                    api_keys: self.api_keys.as_ref().map(|state| state.view(now)),
                     billing_messages,
                     special_client_alert: self.balance.as_ref().and_then(|b| b.special_client_alert.clone()),
                 }))

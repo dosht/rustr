@@ -24,3 +24,13 @@ it("composes one navigation set and keeps collapsed navigation usable", async ()
   await userEvent.click(sidebar.getByRole("button", { name: "New Transcript" }));
   expect(dispatch).toHaveBeenLastCalledWith({ type: "navigate", intent: { route: vm.new_transcript_route } });
 });
+
+it.each(["desktop", "phone"] as const)("shows the key screen inside the %s frame on its route and forwards its intents", async (layout) => {
+  const base = fixture("SignedInVm", layout === "phone" ? "phone_job" : "desktop_new");
+  const vm = { ...base, route: { page: "api_keys" as const }, api_keys: fixture("ApiKeysVm", "list") };
+  const dispatch = vi.fn();
+  render(SignedInFrame, { vm, dispatch, media: createMediaPlatform(), theme: new ThemeStore(), previewUrl: null, oncopy: vi.fn().mockResolvedValue(true) });
+  expect(screen.getByRole("heading", { name: "API Keys", level: 1 })).toBeInTheDocument();
+  await userEvent.click(screen.getAllByRole("button", { name: "Revoke" })[0]);
+  expect(dispatch).toHaveBeenLastCalledWith({ type: "api_keys", intent: { type: "revoke_requested", id: "00000000-0000-0000-0000-000000000001" } });
+});

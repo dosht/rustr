@@ -242,13 +242,13 @@ fn not_found(path: &str) -> Response {
 
 async fn fallback(State(web): State<Option<Arc<WebHost>>>, request: Request) -> Response {
     let path = request.uri().path();
-    if let Some(web) = web {
-        if transgate_core::presentation::route::is_app_path(path) {
-            if request.method() == Method::GET || request.method() == Method::HEAD {
-                return web.document(request.method() == Method::HEAD);
-            }
-            return (StatusCode::METHOD_NOT_ALLOWED, [(header::ALLOW, "GET, HEAD")]).into_response();
+    if let Some(web) = web
+        && transgate_core::presentation::route::is_app_path(path)
+    {
+        if request.method() == Method::GET || request.method() == Method::HEAD {
+            return web.document(request.method() == Method::HEAD);
         }
+        return (StatusCode::METHOD_NOT_ALLOWED, [(header::ALLOW, "GET, HEAD")]).into_response();
     }
     not_found(path)
 }

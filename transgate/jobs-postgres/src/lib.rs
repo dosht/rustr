@@ -79,7 +79,7 @@ fn column_write_allowed(schema: &str, table: &str, column: &str, privilege: &str
 
 fn api_column_write_allowed(table: &str, column: &str, privilege: &str) -> bool {
     match (table, privilege) {
-        ("api_keys" | "key_uses" | "rate_windows" | "idempotency" | "callback_deliveries" | "callback_attempts" | "signing_secrets", "INSERT") => true,
+        ("api_keys" | "rate_windows" | "idempotency" | "callback_deliveries" | "callback_attempts" | "signing_secrets", "INSERT") => true,
         ("api_keys", "UPDATE") => matches!(column, "name" | "active" | "last_used_at" | "digest" | "legacy_bcrypt" | "hint"),
         ("rate_windows", "UPDATE") => column == "count",
         ("idempotency", "UPDATE") => matches!(column, "request_digest" | "request_type" | "jobs" | "answer" | "created_at"),
@@ -128,7 +128,7 @@ fn jobs_column_write_allowed(table: &str, column: &str, privilege: &str) -> bool
     }
 }
 
-/// The barrier (`erasures`), the audit rows and the rate windows are never deleted.
+/// The barrier (`erasures`) is never deleted.
 fn delete_allowed(schema: &str, table: &str) -> bool {
     match schema {
         SCHEMA => matches!(
@@ -140,7 +140,7 @@ fn delete_allowed(schema: &str, table: &str) -> bool {
         // Every API row goes with its account (erasure); old rate windows are pruned.
         API_SCHEMA => matches!(
             table,
-            "api_keys" | "key_uses" | "rate_windows" | "idempotency" | "callback_deliveries" | "callback_attempts" | "signing_secrets"
+            "api_keys" | "rate_windows" | "idempotency" | "callback_deliveries" | "callback_attempts" | "signing_secrets"
         ),
         _ => false,
     }

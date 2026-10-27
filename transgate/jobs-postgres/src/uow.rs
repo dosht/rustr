@@ -1046,12 +1046,11 @@ impl JobUow for PgJobUow {
                 "DELETE FROM transgate_jobs.job_feedback WHERE account_id = $1",
                 // Undelivered support requests and their messages (P5 D7).
                 "DELETE FROM transgate_jobs.support_requests WHERE account_id = $1",
-                // P7 (D10): keys with their audit rows and rate windows, idempotency records,
+                // P7 (D10): keys with their rate windows, idempotency records,
                 // deliveries with their attempts and stored payloads, and the signing secret.
                 "DELETE FROM transgate_api.callback_deliveries WHERE account_id = $1",
                 "DELETE FROM transgate_api.idempotency WHERE account_id = $1",
                 "DELETE FROM transgate_api.signing_secrets WHERE account_id = $1",
-                "DELETE FROM transgate_api.key_uses WHERE account_id = $1",
                 "DELETE FROM transgate_api.api_keys WHERE account_id = $1",
             ] {
                 sqlx::query(statement).bind(account.0).execute(self.conn()).await.map_err(db)?;

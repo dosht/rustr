@@ -143,6 +143,7 @@ impl World {
             crypto: self.crypto.clone(),
             limiter: self.limiter.clone(),
             clock: self.clock.clone(),
+            outbox: Arc::new(self.store.clone()),
             limits: RateLimits::default(),
         })
     }
@@ -324,23 +325,38 @@ fn api_005_019_d02_keys_are_managed_by_their_owners_session_only() {
     assert_eq!(run(api.authenticate(&second.api_key)), Err(ApiError::Unauthorized(keys::INVALID_KEY)));
 }
 
-// D11: one audit row per authenticated request.
+// The HTTP host spawns these futures on a multi-threaded runtime: each must be `Send`
+// (an `AsyncFnOnce(&mut dyn JobUow)` body made them unprovable; p1T, E0277).
 #[test]
-fn d11_each_authenticated_request_records_one_use() {
+fn the_host_facing_use_case_futures_are_send() {
+    fn send<T: Send>(_: T) {}
     let w = World::new();
-    let usage = KeyUse {
-        key: KeyId(Uuid::from_u128(1)),
-        account: fixtures::account(),
-        at: NOW,
-        endpoint: "/api/v1/transcriptions".into(),
-        method: "POST".into(),
-        status: 201,
-        ip: Some("203.0.113.9".into()),
-        user_agent: Some("curl/8".into()),
-        duration_ms: 12,
-    };
-    run(w.api().record_use(&usage)).unwrap();
-    assert_eq!(w.store.with(|d| d.api.uses.clone()), vec![usage]);
+    let api = w.api();
+    let actor = Actor::Session { account: fixtures::account() };
+    send(api.authenticate("sk_x"));
+    let request = crate::jobs::app::StartRequest { job_ids: vec![], locale: None, preferences: Default::default() };
+    send(api.start(&actor, PublicStart::Jobs(request), None));
+    send(api.create_key(&actor, NewKey { name: "ci".into(), scopes: vec![], expiration_policy: ExpirationPolicy::Never, custom_days: None }));
+    send(api.list_keys(&actor));
+    send(api.revoke_key(&actor, KeyId(Uuid::from_u128(1))));
+    send(api.signing_secret(&actor));
+}
+
+// D5 (lead 2026-10-27): the account owner's session sees the signing secret on the key screen; it is
+// created once and stable; a key actor or another account never reads it.
+#[test]
+fn d5_only_the_owners_session_reads_the_signing_secret() {
+    let w = World::new();
+    let api = w.api();
+    let owner = Actor::Session { account: fixtures::account() };
+    let first = run(api.signing_secret(&owner)).unwrap();
+    assert!(!first.is_empty());
+    assert_eq!(run(api.signing_secret(&owner)).unwrap(), first, "created once");
+    assert_eq!(w.store.with(|d| d.api.secrets[&fixtures::account()].clone()), first, "the secret callbacks are signed with");
+    let key = Actor::ApiKey { account: fixtures::account(), key: KeyId(Uuid::from_u128(1)), scopes: both().iter().map(|s| s.to_string()).collect() };
+    assert_eq!(run(api.signing_secret(&key)), Err(ApiError::Forbidden));
+    let other_owner = Actor::Session { account: other() };
+    assert_ne!(run(api.signing_secret(&other_owner)).unwrap(), first, "per account");
 }
 
 // ---- callbacks -----------------------------------------------------------------------------
@@ -493,4 +509,25 @@ fn a_delivery_for_a_missing_job_is_abandoned_unsent() {
     *d.content.facts.lock().unwrap() = None;
     assert_eq!(run(d.callbacks.dispatch_pass(10)).abandoned, 1);
     assert_eq!((stored(&d).state, d.transport.sent.lock().unwrap().len()), (DeliveryState::Abandoned, 0));
+}
+
+// D8: an admin replay appends one attempt to the same delivery id with a freshly built body;
+// a pending delivery is not replayed, an unknown one is not found, and a replay needs the operator.
+#[test]
+fn d8_an_admin_replay_appends_one_attempt_to_the_same_delivery() {
+    let d = delivery();
+    d.transport.answers.lock().unwrap().push_back(SendOutcome::Status { code: 404, excerpt: String::new() });
+    run(d.callbacks.dispatch_pass(10));
+    let id = stored(&d).id;
+    assert_eq!(stored(&d).state, DeliveryState::Failed);
+    assert_eq!(run(d.callbacks.replay("", id)), Err(ApiError::Forbidden), "the host's verified operator is required");
+    assert_eq!(run(d.callbacks.replay("ops@example.test", DeliveryId(Uuid::from_u128(99)))), Err(ApiError::NotFound));
+    d.w.clock.advance_minutes(5);
+    run(d.callbacks.replay("ops@example.test", id)).unwrap();
+    assert_eq!((stored(&d).state, stored(&d).next_attempt_at), (DeliveryState::Pending, Micros(NOW.0 + 5 * 60 * MICROS_PER_SECOND)));
+    assert!(matches!(run(d.callbacks.replay("ops@example.test", id)), Err(ApiError::Jobs(_)) | Err(ApiError::Invalid(_))), "already pending");
+    assert_eq!(run(d.callbacks.dispatch_pass(10)).delivered, 1);
+    let sent = d.transport.sent.lock().unwrap();
+    assert_eq!((sent.len(), sent[1].0.delivery, sent[1].1.clone()), (2, id, vec![1, 2]), "same id, attempt 2 recorded first");
+    assert_eq!((stored(&d).state, stored(&d).attempts), (DeliveryState::Delivered, 2));
 }

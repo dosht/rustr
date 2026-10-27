@@ -5,6 +5,7 @@
 
 /// AI panels (consent, analysis, chat), owned by the AI panel slice.
 pub mod ai;
+pub mod api_keys;
 pub mod app;
 pub mod billing;
 pub mod data_management;

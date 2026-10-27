@@ -1,8 +1,8 @@
 <script lang="ts">
   // Sidebar foot (source UserArea.tsx:130-267, collapsed :66-124): balance,
-  // support, upgrade and the account menu. The source "API Keys" entry is not
-  // rendered until P7 delivers the key screen (P5 D13); the KenzNote promo is
-  // not carried into the app (screens ledger open question, recorded).
+  // support, upgrade and the account menu, including the source "API Keys"
+  // entry (P7). The KenzNote promo is not carried into the app (screens
+  // ledger open question, recorded).
   import Coins from "@lucide/svelte/icons/coins";
   import LifeBuoy from "@lucide/svelte/icons/life-buoy";
   import Package from "@lucide/svelte/icons/package";
@@ -12,7 +12,7 @@
   import IconButton from "$lib/ui/IconButton.svelte";
   import Menu from "$lib/ui/Menu.svelte";
 
-  export type AccountAction = "sign_out" | "change_plan" | "settings";
+  export type AccountAction = "sign_out" | "change_plan" | "settings" | "api_keys";
 
   interface Props {
     collapsed: boolean;
@@ -31,6 +31,7 @@
     { id: "sign_out" as const, label: t("Sign Out"), disabled: signingOut },
     { id: "change_plan" as const, label: t("Change Plan") },
     { id: "settings" as const, label: t("Settings") },
+    { id: "api_keys" as const, label: t("API Keys") },
   ]);
   const initial = $derived(displayName.charAt(0).toUpperCase() || "U");
   const row = "flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-muted hover:bg-cursor-bg hover:text-fg";

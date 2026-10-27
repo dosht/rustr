@@ -604,6 +604,73 @@ fn signed_in_view(state: &AppState) -> SignedInVm {
     }
 }
 
+/// WEB-045/046 states, each driven through the signed-in app on `/dashboard/api-keys`.
+pub fn api_keys_fixtures() -> Vec<(&'static str, crate::presentation::api_keys::ApiKeysVm)> {
+    use crate::api::KeyId;
+    use crate::api::keys::{CreatedKey, ExpirationPolicy, KeyView};
+    use crate::presentation::api_keys::{Copied, Event, Intent};
+    use crate::presentation::app::AppIntent;
+    use crate::presentation::layout::Viewport;
+    fn key(n: u128, name: &str, scopes: &[&str], expires_at: Option<Micros>, active: bool) -> KeyView {
+        KeyView {
+            id: KeyId(uuid::Uuid::from_u128(n)),
+            name: name.into(),
+            created_at: Micros(NOW.0 - 10 * crate::ids::MICROS_PER_DAY),
+            expires_at,
+            active,
+            scopes: scopes.iter().map(|s| s.to_string()).collect(),
+            expiration_policy: if expires_at.is_some() { ExpirationPolicy::Days30 } else { ExpirationPolicy::Never },
+            hint: Some("sk_Ab3x".into()),
+        }
+    }
+    let keys = vec![
+        key(1, "CI pipeline", &["transcriptions:read", "transcriptions:create"], None, true),
+        key(2, "Reporting", &["transcriptions:read"], Some(Micros(NOW.0 + 3 * crate::ids::MICROS_PER_DAY)), true),
+        key(3, "Old integration", &["transcriptions:create"], Some(Micros(NOW.0 - crate::ids::MICROS_PER_DAY)), false),
+    ];
+    let screen = |events: Vec<Event>, intents: Vec<Intent>| {
+        let mut s = signed_in_app("/dashboard/api-keys", Viewport { touch: false, width: 1440 });
+        let epoch = s.epoch();
+        for event in events {
+            s.update(AppEvent::ApiKeys { epoch, event }, NOW);
+        }
+        for intent in intents {
+            s.update(AppEvent::User(AppIntent::ApiKeys(intent)), NOW);
+        }
+        let AppVm::SignedIn(vm) = s.view(NOW) else { panic!("signed in") };
+        vm.api_keys.expect("the key screen is open")
+    };
+    let loaded = || vec![Event::KeysLoaded { result: Ok(keys.clone()) }, Event::SecretLoaded { result: Ok("whsec_7f3a9c2e41b8d6".into()) }];
+    let created = CreatedKey { key: key(4, "New key", &["transcriptions:read"], None, true), api_key: "sk_q1W2e3R4t5Y6u7I8o9P0a1S2d3F4g5H6j7K8l9Z0x1C=".into() };
+    let with = |mut events: Vec<Event>, extra: Vec<Event>| {
+        events.extend(extra);
+        events
+    };
+    vec![
+        ("loading", screen(vec![], vec![])),
+        ("empty", screen(vec![Event::KeysLoaded { result: Ok(vec![]) }, Event::SecretLoaded { result: Ok("whsec_7f3a9c2e41b8d6".into()) }], vec![])),
+        ("list", screen(loaded(), vec![])),
+        ("creating_form", screen(loaded(), vec![Intent::FormToggled, Intent::NameChanged { text: "Nightly export".into() }, Intent::PolicyChosen { policy: ExpirationPolicy::Custom }])),
+        ("created", {
+            let mut s = signed_in_app("/dashboard/api-keys", Viewport { touch: false, width: 1440 });
+            let epoch = s.epoch();
+            for event in loaded() {
+                s.update(AppEvent::ApiKeys { epoch, event }, NOW);
+            }
+            for intent in [Intent::FormToggled, Intent::NameChanged { text: "New key".into() }, Intent::CreateRequested] {
+                s.update(AppEvent::User(AppIntent::ApiKeys(intent)), NOW);
+            }
+            s.update(AppEvent::ApiKeys { epoch, event: Event::Created { result: Ok(created.clone()) } }, NOW);
+            s.update(AppEvent::User(AppIntent::ApiKeys(Intent::CopyRequested { what: Copied::Key })), NOW);
+            s.update(AppEvent::ApiKeys { epoch, event: Event::CopyAnswered { what: Copied::Key, ok: true } }, NOW);
+            let AppVm::SignedIn(vm) = s.view(NOW) else { panic!("signed in") };
+            vm.api_keys.expect("the key screen is open")
+        }),
+        ("confirm_revoke", screen(loaded(), vec![Intent::RevokeRequested { id: KeyId(uuid::Uuid::from_u128(1)) }])),
+        ("load_failed", screen(with(vec![Event::KeysLoaded { result: Err(ApiFailure::http(503, None)) }], vec![Event::SecretLoaded { result: Err(ApiFailure::network()) }]), vec![])),
+    ]
+}
+
 pub fn signed_in_fixtures() -> Vec<(&'static str, SignedInVm)> {
     use billing_core::presentation::{fixtures as billing, invoices::InvoicesEvent};
     let desktop = Viewport { touch: false, width: 1440 };
@@ -764,6 +831,7 @@ pub fn export() -> BTreeMap<&'static str, Named> {
             ]),
         ),
         ("SupportVm", named(vec![("typing", support_typing()), ("sending", support_sending()), ("failed", support_failed())])),
+        ("ApiKeysVm", named(api_keys_fixtures())),
         ("AuthVm", named(auth_fixtures())),
         ("NewPasswordVm", named(new_password_fixtures())),
         ("SignedInVm", named(signed_in_fixtures())),
@@ -883,6 +951,7 @@ mod web {
     use crate::presentation::transcript::TranscriptVm;
     use crate::presentation::upload_queue::{PickedFile, UploadQueueVm};
     use crate::presentation::app::{AppIntent, AppVm, SignedInVm, AuthVm, NewPasswordVm};
+    use crate::presentation::api_keys::ApiKeysVm;
     use billing_core::presentation::confirm::ConfirmVm;
     use billing_core::presentation::invoices::InvoicesVm;
     use billing_core::presentation::purchase::PurchaseVm;
@@ -1052,7 +1121,8 @@ mod web {
             assert!(before.contains_key(Path::new("fixtures.json")));
             assert!(before.contains_key(Path::new("fixtures.generated.ts")));
 
-            let cases: [(&str, fn(&Path)); 2] = [
+            type Case = (&'static str, fn(&Path));
+            let cases: [Case; 2] = [
                 ("duplicate TypeScript name Duplicated", conflicting_names),
                 ("duplicate TypeScript output path collision.ts", conflicting_paths),
             ];
@@ -1082,7 +1152,7 @@ mod web {
             SettingsVm, DataManagementVm, FeedbackVm, SupportVm, ConsentPanelVm,
             AnalysisPanelVm, ChatPanelVm, Layouts, Viewport, Route, Msg, AppIntent,
             AuthVm, NewPasswordVm, AppVm, SignedInVm, PurchaseVm, SubscriptionVm,
-            InvoicesVm, ConfirmVm,
+            InvoicesVm, ConfirmVm, ApiKeysVm,
         );
     }
 }

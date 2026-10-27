@@ -89,7 +89,7 @@ fn rows(s: &AppState) -> Vec<i64> {
 
 fn poll_timer(effects: &[AppEffect]) -> Option<(transgate_core::presentation::app::Epoch, Timer)> {
     effects.iter().find_map(|e| match e {
-        AppEffect::Timer { epoch, timer: timer @ Timer::JobsPoll { .. }, .. } => Some((*epoch, timer.clone())),
+        AppEffect::Timer { epoch, timer: timer @ Timer::JobsPoll { .. }, .. } => Some((*epoch, *timer)),
         _ => None,
     })
 }
@@ -129,7 +129,7 @@ async fn a_failed_poll_keeps_every_row_and_signing_out_ends_the_chain() {
     let mut s = signed_in();
     let armed = s.update(AppEvent::User(AppIntent::VisibilityChanged { visible: true }), NOW);
     let (epoch, timer) = poll_timer(&armed).unwrap();
-    s.update(AppEvent::Timer { epoch, timer: timer.clone() }, NOW);
+    s.update(AppEvent::Timer { epoch, timer }, NOW);
     s.update(AppEvent::Jobs { epoch, event: Event::PollFailed }, NOW);
     assert_eq!(rows(&s), vec![1]);
     match s.view(NOW) {

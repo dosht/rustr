@@ -1,6 +1,7 @@
 use super::*;
 use crate::ai::ConsentView;
 use crate::jobs::domain::Job;
+use crate::presentation::api_keys;
 use crate::presentation::fixtures;
 use billing_core::presentation::confirm::ConfirmKind;
 
@@ -601,4 +602,44 @@ fn closing_and_reopening_the_same_invoice_rejects_old_preview_delivery_and_failu
     let current = s.invoice_preview_ticket();
     s.update(AppEvent::User(AppIntent::Navigate { route: Route::Home(HomeView::New) }), NOW);
     assert!(!s.is_current_invoice_preview(current, payment_id), "leaving history invalidates held rendering");
+}
+
+// WEB-045/046: the key screen loads its list and the signing secret on entry, its
+// answers are fenced by the session epoch, and leaving drops the shown-once key.
+#[test]
+fn the_key_screen_loads_on_entry_and_forgets_its_secret_on_leaving() {
+    let (mut s, effects) = signed_in("/dashboard/api-keys", desktop());
+    let epoch = s.epoch();
+    for effect in [api_keys::Effect::LoadKeys, api_keys::Effect::LoadSigningSecret] {
+        assert!(effects.contains(&AppEffect::ApiKeys { epoch, effect }), "{effects:?}");
+    }
+    s.update(AppEvent::ApiKeys { epoch, event: api_keys::Event::KeysLoaded { result: Ok(vec![]) } }, NOW);
+    s.update(AppEvent::User(AppIntent::ApiKeys(api_keys::Intent::FormToggled)), NOW);
+    s.update(AppEvent::User(AppIntent::ApiKeys(api_keys::Intent::NameChanged { text: "ci".into() })), NOW);
+    let create = s.update(AppEvent::User(AppIntent::ApiKeys(api_keys::Intent::CreateRequested)), NOW);
+    assert!(matches!(create.as_slice(), [AppEffect::ApiKeys { effect: api_keys::Effect::CreateKey { .. }, .. }]), "{create:?}");
+    let AppVm::SignedIn(vm) = s.view(NOW) else { panic!("signed in") };
+    assert!(vm.api_keys.as_ref().is_some_and(|k| k.empty && k.form.is_some()));
+
+    s.update(AppEvent::User(AppIntent::Navigate { route: Route::Home(HomeView::New) }), NOW);
+    let AppVm::SignedIn(vm) = s.view(NOW) else { panic!("signed in") };
+    assert!(vm.api_keys.is_none(), "leaving drops the screen and any shown-once key");
+
+    let back = s.update(AppEvent::User(AppIntent::Navigate { route: Route::ApiKeys }), NOW);
+    assert!(back.contains(&AppEffect::ApiKeys { epoch, effect: api_keys::Effect::LoadKeys }), "re-entry reloads");
+    s.update(AppEvent::Auth { epoch, event: AuthEvent::SessionAdopted { facts: facts(2) } }, NOW);
+    let stale = s.update(AppEvent::ApiKeys { epoch, event: api_keys::Event::SecretLoaded { result: Ok("whsec_old".into()) } }, NOW);
+    assert!(stale.is_empty());
+    if let AppVm::SignedIn(vm) = s.view(NOW) {
+        assert!(vm.api_keys.is_none_or(|k| k.signing_secret.is_none()), "another owner never sees the old secret");
+    }
+}
+
+// The key screen is a session-owner page: the app shows it to signed-in users only.
+#[test]
+fn the_key_screen_needs_a_signed_in_user() {
+    let (mut s, _) = start("/dashboard/api-keys", desktop());
+    let epoch = s.epoch();
+    let effects = s.update(AppEvent::Auth { epoch, event: AuthEvent::Restored { facts: None } }, NOW);
+    assert!(effects.contains(&AppEffect::Navigate { path: "/signin".into(), replace: true }), "{effects:?}");
 }

@@ -43,7 +43,7 @@ impl ObjectInventory for LegacyInventory {
 }
 
 #[derive(Default)]
-struct IdentityDeletion(Mutex<Vec<AccountId>>);
+pub(super) struct IdentityDeletion(Mutex<Vec<AccountId>>);
 
 impl IdentityAdmin for IdentityDeletion {
     fn delete_user(&self, account: AccountId) -> BoxFuture<'_, Result<IdentityOutcome, String>> {
@@ -61,7 +61,7 @@ impl Sleeper for RuntimeSleeper {
     }
 }
 
-struct NoPublicCaptions;
+pub(super) struct NoPublicCaptions;
 impl PublicCaptions for NoPublicCaptions {
     fn fetch<'a>(&'a self, _: &'a str, _: Option<&'a str>) -> BoxFuture<'a, Result<CaptionDocument, CaptionError>> {
         Box::pin(async { Err(CaptionError::Network) })
@@ -109,7 +109,7 @@ async fn app_with_objects(clock: Arc<dyn Clock>, legacy: Arc<LegacyInventory>, i
         ai: None,
         jobs, privacy, public_transcript: Arc::new(PublicTranscript::new(Arc::new(NoPublicCaptions), limiter, clock.clone())),
         queries: Arc::new(PgJobStore::new(pool)), transcribers: vec![],
-        identity: app.transgate.identity.clone(), clock, cron_secret: None, downloads: None,
+        identity: app.transgate.identity.clone(), clock, cron_secret: None, downloads: None, api: None, callbacks: None,
     });
     let server = serve(app.transgate.router.clone().merge(transgate_http::router(state)).merge(account_router)).await;
     app.base = server.url.clone();

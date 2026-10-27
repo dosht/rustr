@@ -41,9 +41,6 @@ pub trait ApiTx: Send {
     fn legacy_candidates(&mut self, now: Micros) -> StoreResult<'_, Vec<ApiKey>>;
     /// API-005: the account's keys, newest first.
     fn list_keys(&mut self, account: AccountId) -> StoreResult<'_, Vec<ApiKey>>;
-    /// D11: one audit row per authenticated request.
-    fn record_use<'a>(&'a mut self, usage: &'a KeyUse) -> StoreResult<'a, ()>;
-
     /// D4: the account's record for `key` created after `expired_before`.
     fn idempotency<'a>(&'a mut self, account: AccountId, key: &'a str, expired_before: Micros) -> StoreResult<'a, Option<IdempotencyRecord>>;
     /// Inserts, replacing an expired record of the same key;
@@ -55,20 +52,6 @@ pub trait ApiTx: Send {
     /// D5 fan-out from the event relay's transaction: inserts unless a delivery
     /// for `delivery.event_id` exists (UNIQUE); `true` when inserted.
     fn insert_delivery<'a>(&'a mut self, delivery: &'a CallbackDelivery) -> StoreResult<'a, bool>;
-}
-
-/// D11: one authenticated request, recorded after the answer is known.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-pub struct KeyUse {
-    pub key: KeyId,
-    pub account: AccountId,
-    pub at: Micros,
-    pub endpoint: String,
-    pub method: String,
-    pub status: u16,
-    pub ip: Option<String>,
-    pub user_agent: Option<String>,
-    pub duration_ms: u32,
 }
 
 /// Cryptography the core may not link (no crypto crates in core).
@@ -125,9 +108,23 @@ pub trait CallbackOutbox: Send + Sync {
     fn finish_attempt<'a>(&'a self, claim: &'a ClaimedDelivery, attempt: &'a CallbackAttempt, settlement: &'a Settlement) -> StoreResult<'a, bool>;
     /// Ends a delivery without an attempt (its job is gone): `Abandoned`.
     fn abandon<'a>(&'a self, claim: &'a ClaimedDelivery, reason: &'a str, now: Micros) -> StoreResult<'a, bool>;
+    /// D8 admin replay: a delivered, failed or abandoned delivery becomes
+    /// pending again, due at `now`, `delivered_at` cleared, keeping its id and
+    /// attempt count, so the next pass appends one attempt to the same delivery.
+    /// A pending delivery and a missing one change nothing.
+    fn reopen(&self, id: DeliveryId, now: Micros) -> StoreResult<'_, Reopen>;
     /// D5 per-account signing secret: stores `candidate` when the account has
     /// none, and returns the stored one.
     fn signing_secret<'a>(&'a self, account: AccountId, candidate: &'a str) -> StoreResult<'a, String>;
+}
+
+/// [`CallbackOutbox::reopen`]'s answer.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Reopen {
+    Reopened,
+    /// Already pending (waiting, retrying or leased): nothing to replay.
+    StillPending,
+    Missing,
 }
 
 /// One POST as sent (API-016, D5).

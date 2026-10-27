@@ -32,7 +32,8 @@ fn family(c: char) -> &'static str {
 fn text_run(out: &mut String, text: &str, font: &str, bold: bool, italic: bool, tone: DocumentTone, role: BlockRole) {
     out.push_str("<w:r><w:rPr>");
     out.push_str(&format!(r#"<w:rFonts w:ascii="{font}" w:hAnsi="{font}" w:cs="Noto Sans Arabic"/>"#));
-    if bold { out.push_str("<w:b/><w:bCs/>"); } if italic { out.push_str("<w:i/><w:iCs/>"); }
+    if bold { out.push_str("<w:b/><w:bCs/>"); }
+    if italic { out.push_str("<w:i/><w:iCs/>"); }
     let color = match tone { DocumentTone::Muted => Some("888888"), DocumentTone::Positive => Some("2E7D32"), DocumentTone::Caution => Some("E65100"), DocumentTone::Negative => Some("C62828"), DocumentTone::Standard => match role { BlockRole::Metadata => Some("888888"), BlockRole::Footer => Some("999999"), _ => None } };
     if let Some(color) = color { out.push_str(&format!(r#"<w:color w:val="{color}"/>"#)); }
     if matches!(role, BlockRole::Metadata | BlockRole::Footer) && !italic { out.push_str("<w:i/><w:iCs/>"); }
@@ -61,7 +62,12 @@ fn paragraph(out: &mut String, block: &DocumentBlock) {
         let mut start = 0; let mut current = None;
         for (offset, c) in run.text.char_indices() {
             let next = family(c);
-            if let Some(font) = current { if font != next { text_run(out, &run.text[start..offset], font, run.bold, run.italic, run.tone, block.role); start = offset; } }
+            if let Some(font) = current
+                && font != next
+            {
+                text_run(out, &run.text[start..offset], font, run.bold, run.italic, run.tone, block.role);
+                start = offset;
+            }
             current = Some(next);
         }
         if let Some(font) = current { text_run(out, &run.text[start..], font, run.bold, run.italic, run.tone, block.role); }

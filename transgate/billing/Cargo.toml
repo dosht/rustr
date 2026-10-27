@@ -25,6 +25,7 @@ axum = "0.8"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "sync"] }
 media-ports = { path = "../../crates/media-ports" }
 transgate-core = { path = "../core" }
+transgate-api = { path = "../api" }
 transgate-http = { path = "../http" }
 transgate-jobs-postgres = { path = "../jobs-postgres" }
 llm-core = { path = "../../crates/llm-core" }

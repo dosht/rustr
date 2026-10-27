@@ -228,7 +228,7 @@ fn replica(pool: &PgPool, clock: Arc<dyn Clock>, transcriber: Arc<HeldListing>) 
         terminators: vec![],
         exceptions: ExceptionPolicy::default(),
     }));
-    Arc::new(Workers { jobs, privacy, ai, store, pool: pool.clone(), mailer: Arc::new(NoMail), directory: PgCustomerDirectory::new(pool.clone()), clock, locks })
+    Arc::new(Workers { jobs, privacy, ai, store, pool: pool.clone(), mailer: Arc::new(NoMail), directory: PgCustomerDirectory::new(pool.clone()), clock, locks, callbacks: None })
 }
 
 fn object(key: &str) -> ObjectRef {
@@ -346,3 +346,6 @@ mod ai;
 
 #[path = "pg_tests/support.rs"]
 mod support;
+
+#[path = "pg_tests/callbacks.rs"]
+mod callbacks;

@@ -41,6 +41,8 @@ impl Plan {
     fn rule(&mut self, x: f32, width: f32, thickness: f32) -> Result<(), Error> {
         self.ensure(4.0 * MM)?; self.rect(x, self.cursor.y, width, thickness, [200; 3]); self.spacing(4.0 * MM); Ok(())
     }
+    // Layout primitive: position, box and typography are independent inputs.
+    #[allow(clippy::too_many_arguments)]
     fn lines(&mut self, lines: Vec<ShapedLine>, x: f32, width: f32, size: f32, leading: f32, color: Color, align: Align) -> Result<(), Error> {
         for line in lines {
             self.ensure(leading)?;
@@ -49,6 +51,8 @@ impl Plan {
         }
         Ok(())
     }
+    // Layout primitive: position, box and typography are independent inputs.
+    #[allow(clippy::too_many_arguments)]
     fn text(&mut self, layout: &TextLayout<'_>, text: impl Into<String>, x: f32, width: f32, size: f32, style: Style, color: Color, align: Align) -> Result<(), Error> {
         let lines = layout.wrap(Styled::plain(text, style), size, width, style)?;
         self.lines(lines, x, width, size, size * 1.6, color, align)

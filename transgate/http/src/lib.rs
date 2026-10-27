@@ -12,6 +12,7 @@
 
 pub mod account;
 pub mod ai;
+mod public_api;
 
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -62,6 +63,10 @@ pub struct TransgateHttp {
     /// `CRON_SECRET`. `None` refuses every cron call: nothing matches an unset secret.
     pub cron_secret: Option<SecretString>,
     pub downloads: Option<Arc<dyn DownloadEvents>>,
+    /// P7: the public API (keys, scopes, per-key limits). `None` mounts no public API route.
+    pub api: Option<Arc<transgate_core::api::app::Api>>,
+    /// P7: administrators' callback replay.
+    pub callbacks: Option<Arc<transgate_core::api::app::Callbacks>>,
 }
 
 pub fn router(state: Arc<TransgateHttp>) -> Router {
@@ -90,6 +95,7 @@ pub fn router(state: Arc<TransgateHttp>) -> Router {
         .route("/api/jobs/{id}/export", post(export_job))
         .route("/api/languages/usage", get(language_usage))
         .route("/api/settings", get(get_settings).patch(patch_settings))
+        .merge(public_api::router())
         .with_state(state);
     match ai_router { Some(ai) => app.merge(ai), None => app }
 }

@@ -16,9 +16,10 @@ use media_postgres::SlotClaim;
 use sqlx::PgPool;
 use tokio::task::JoinHandle;
 use transgate_billing::directory::PgCustomerDirectory;
+use transgate_core::api::app::{CallbackPass, Callbacks};
 use transgate_core::jobs::app::Jobs;
 use transgate_core::jobs::events::{JobEvent, mails_for};
-use transgate_core::jobs::ports::Locks;
+use transgate_core::jobs::ports::{JobStore, Locks};
 use transgate_core::privacy::app::Privacy;
 use transgate_core::privacy::retention::{HISTORY_RETENTION_DAYS, HistoryOutcome, RetentionDays, RetentionOutcome};
 use transgate_core::schedule::Schedule;
@@ -32,6 +33,8 @@ const SLOT_LEASE_SECONDS: i64 = 600;
 /// How long a claimed event may be held while its mails are sent.
 const EVENT_LEASE_SECONDS: i64 = 120;
 const EVENT_BATCH: i64 = 20;
+/// Deliveries one callback pass claims.
+const CALLBACK_BATCH: u32 = 20;
 /// The transcript retention the schedule runs with (CRN-005, PRV-029).
 const TRANSCRIPT_RETENTION_DAYS: i64 = 30;
 
@@ -45,6 +48,8 @@ pub struct Workers {
     pub directory: PgCustomerDirectory,
     pub clock: Arc<dyn Clock>,
     pub locks: Arc<dyn Locks>,
+    /// P7: the customer callback dispatcher. `None` fans nothing out and sends nothing.
+    pub callbacks: Option<Arc<Callbacks>>,
 }
 
 fn event_account(event: &JobEvent) -> AccountId {
@@ -178,7 +183,40 @@ impl Workers {
         Ok(count)
     }
 
+    /// D5: the delivery of a completed job's event is created in its own transaction, idempotent on
+    /// the event id, before the mails (a failure releases the event like a mail failure). An account
+    /// whose erasure has begun gets none: its API rows are being deleted.
+    async fn fan_out(&self, claimed: &ClaimedEvent) -> Result<(), String> {
+        if self.callbacks.is_none() {
+            return Ok(());
+        }
+        let now = self.clock.now();
+        let mut uow = self.store.begin().await.map_err(|e| e.to_string())?;
+        let result = async {
+            if uow.lock_barrier(event_account(&claimed.event)).await?.is_some() {
+                return Ok(());
+            }
+            Callbacks::fan_out(uow.as_mut(), claimed.id, &claimed.event, now).await.map(|_| ())
+        }
+        .await;
+        match result {
+            Ok(()) => uow.commit().await.map_err(|e| e.to_string()),
+            Err(e) => {
+                let _ = uow.rollback().await;
+                Err(e.to_string())
+            }
+        }
+    }
+
+    /// One pass over due callback deliveries. Independent from mail, media and AI so a slow
+    /// receiver holds none of them.
+    pub async fn callback_tick(&self) -> Option<CallbackPass> {
+        let callbacks = self.callbacks.as_ref()?;
+        Some(callbacks.dispatch_pass(CALLBACK_BATCH).await)
+    }
+
     async fn deliver(&self, claimed: &ClaimedEvent) -> Result<(), String> {
+        self.fan_out(claimed).await?;
         let account = event_account(&claimed.event);
         let owner = match self.directory.by_account(account).await {
             Ok(Some(customer)) => Owner { email: Some(customer.email), full_name: customer.full_name },
@@ -223,7 +261,20 @@ pub fn spawn(workers: Arc<Workers>, every: Duration) -> JoinHandle<()> {
         };
         // All futures belong to this task: abort/shutdown drops them together. A held support
         // provider never holds the media scheduler, job mail, or AI recovery loop.
-        tokio::join!(media, ai, support);
+        let callbacks = async {
+            let mut interval = tokio::time::interval(every);
+            interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
+            loop {
+                interval.tick().await;
+                if let Some(pass) = workers.callback_tick().await
+                    && pass.errors > 0
+                {
+                    eprintln!("transgate: callback delivery: {} store errors", pass.errors);
+                }
+            }
+        };
+        // A slow callback receiver never holds the media scheduler, job mail, support mail or AI recovery.
+        tokio::join!(media, ai, support, callbacks);
     })
 }
 

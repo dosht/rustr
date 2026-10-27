@@ -5111,6 +5111,7 @@ dependencies = [
  "serde_json",
  "sqlx",
  "tokio",
+ "transgate-api",
  "transgate-core",
  "transgate-http",
  "transgate-jobs-postgres",

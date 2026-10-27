@@ -34,7 +34,7 @@ use transgate_core::presentation::app::{
     AppEffect, AppEvent, AuthEffect, AuthEvent, AuthFailure, BalanceView, Epoch, SessionFacts, Timer,
 };
 use transgate_core::presentation::failure::ApiFailure;
-use transgate_core::presentation::{data_management, feedback, job_list, support, transcript, upload_queue};
+use transgate_core::presentation::{api_keys, data_management, feedback, job_list, support, transcript, upload_queue};
 use transgate_core::{JobId, Micros};
 use uuid::Uuid;
 
@@ -145,6 +145,7 @@ pub(crate) fn run(inner: &Rc<Inner>, effect: AppEffect) {
         AppEffect::Purchase { epoch, effect } => purchase(inner, epoch, effect),
         AppEffect::Subscription { epoch, effect } => subscription(inner, epoch, effect),
         AppEffect::Invoices { epoch, ticket, effect } => invoices(inner, epoch, ticket, *effect),
+        AppEffect::ApiKeys { epoch, effect } => api_keys(inner, epoch, effect),
         AppEffect::ReadConfirmation { epoch, sequence } => {
             if inner.is_current(epoch) {
                 inner.apply(AppEvent::ConfirmationLoaded { epoch, sequence, payload: browser::confirmation() });
@@ -1114,5 +1115,41 @@ fn invoices(inner: &Rc<Inner>, epoch: Epoch, ticket: u64, effect: InvoicesEffect
                 }
             });
         }
+    }
+}
+
+// ---- api keys ---------------------------------------------------------------------------------
+
+/// The key screen (WEB-045/046): transport and the clipboard only. Every answer,
+/// including a failed one, is core's to interpret (a stale epoch is dropped by `fetch`).
+fn api_keys(inner: &Rc<Inner>, epoch: Epoch, effect: api_keys::Effect) {
+    use api_keys::{Effect, Event};
+    let keys = move |event: Event| AppEvent::ApiKeys { epoch, event };
+    match effect {
+        Effect::LoadKeys => fetch(
+            inner,
+            epoch,
+            |api, user| async move { api.list_keys(user).await },
+            move |_, result| Some(keys(Event::KeysLoaded { result: result.map_err(|e| failure(&e)) })),
+        ),
+        Effect::LoadSigningSecret => fetch(
+            inner,
+            epoch,
+            |api, user| async move { api.signing_secret(user).await },
+            move |_, result| Some(keys(Event::SecretLoaded { result: result.map_err(|e| failure(&e)) })),
+        ),
+        Effect::CreateKey { key } => fetch(
+            inner,
+            epoch,
+            move |api, user| async move { api.create_key(user, &key).await },
+            move |_, result| Some(keys(Event::Created { result: result.map_err(|e| failure(&e)) })),
+        ),
+        Effect::RevokeKey { id } => fetch(
+            inner,
+            epoch,
+            move |api, user| async move { api.revoke_key(user, id).await },
+            move |_, result| Some(keys(Event::Revoked { id, result: result.map_err(|e| failure(&e)) })),
+        ),
+        Effect::CopyText { text, what } => copy(inner, epoch, text, None, move |ok| Some(keys(Event::CopyAnswered { what, ok }))),
     }
 }

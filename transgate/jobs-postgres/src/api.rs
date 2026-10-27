@@ -16,7 +16,7 @@ use transgate_core::api::callbacks::{CallbackDelivery, DeliveryId, DeliveryState
 use transgate_core::api::idempotency::IdempotencyRecord;
 use transgate_core::api::keys::ApiKey;
 use transgate_core::api::limits::{RateCounts, RateLimits, RateWindows};
-use transgate_core::api::ports::{ApiRateLimiter, ApiTx, CallbackAttempt, CallbackOutbox, ClaimedDelivery, KeyUse};
+use transgate_core::api::ports::{ApiRateLimiter, ApiTx, CallbackAttempt, CallbackOutbox, ClaimedDelivery, Reopen};
 use transgate_core::ids::{AccountId, JobId, Micros};
 use transgate_core::jobs::app::StartAnswer;
 use transgate_core::jobs::ports::{BoxFuture, StoreResult};
@@ -195,28 +195,6 @@ impl ApiTx for PgJobUow {
             .await
             .map_err(db)?;
             rows.iter().map(key_from).collect()
-        })
-    }
-
-    fn record_use<'a>(&'a mut self, usage: &'a KeyUse) -> StoreResult<'a, ()> {
-        Box::pin(async move {
-            sqlx::query(
-                "INSERT INTO transgate_api.key_uses (key_id, account_id, at, endpoint, method, status, ip, user_agent, duration_ms)
-                 VALUES ($1, $2, transgate_jobs.us_to_ts($3), $4, $5, $6, $7, $8, $9)",
-            )
-            .bind(usage.key.0)
-            .bind(usage.account.0)
-            .bind(usage.at.0)
-            .bind(&usage.endpoint)
-            .bind(&usage.method)
-            .bind(i32::from(usage.status))
-            .bind(&usage.ip)
-            .bind(&usage.user_agent)
-            .bind(i32::try_from(usage.duration_ms).unwrap_or(i32::MAX))
-            .execute(self.conn())
-            .await
-            .map_err(db)?;
-            Ok(())
         })
     }
 
@@ -520,6 +498,33 @@ impl CallbackOutbox for PgCallbackOutbox {
             .await
             .map_err(db)?;
             Ok(done.rows_affected() == 1)
+        })
+    }
+
+    fn reopen(&self, id: DeliveryId, now: Micros) -> StoreResult<'_, Reopen> {
+        Box::pin(async move {
+            // D8: an ended delivery becomes pending again and due now; its id and attempt count are
+            // kept, so the replay appends attempts to the same delivery. A pending one is untouched.
+            let done = sqlx::query(
+                "UPDATE transgate_api.callback_deliveries
+                 SET state = 'pending', next_attempt_at = transgate_jobs.us_to_ts($2), delivered_at = NULL,
+                     claim_token = NULL, claimed_until = NULL, note = NULL
+                 WHERE id = $1 AND state <> 'pending'",
+            )
+            .bind(id.0)
+            .bind(now.0)
+            .execute(&self.pool)
+            .await
+            .map_err(db)?;
+            if done.rows_affected() == 1 {
+                return Ok(Reopen::Reopened);
+            }
+            let exists: bool = sqlx::query_scalar("SELECT EXISTS (SELECT 1 FROM transgate_api.callback_deliveries WHERE id = $1)")
+                .bind(id.0)
+                .fetch_one(&self.pool)
+                .await
+                .map_err(db)?;
+            Ok(if exists { Reopen::StillPending } else { Reopen::Missing })
         })
     }
 

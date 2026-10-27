@@ -7,6 +7,7 @@
 
 mod account;
 mod ai;
+mod callbacks;
 mod crypto;
 mod host;
 mod mail;

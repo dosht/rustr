@@ -22176,6 +22176,4521 @@
       "key": "Move to bottom-right",
       "reason": "hardcoded_source_copy",
       "source": "public/locales/az/app.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Active",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "API Documentation",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "API key created successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Copied!",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Copy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Create Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Created",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Custom",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Custom Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Expired",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Generate Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Generate New Key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Key Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Name",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Never",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "No API keys found.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "No Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Permissions",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Read & Create",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Read Only",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Revoke",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Revoked",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Scopes",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Select",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Status",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Your API Keys",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Your new API key",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Never Expire",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "30 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/tr/common.json"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/pt/common.json"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/es/common.json"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/de/common.json"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/id/common.json"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/it/common.json"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fr/common.json"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/el/common.json"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/ru/common.json"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/da/common.json"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/sv/common.json"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/no/common.json"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/fi/common.json"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/kk/common.json"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "90 Days",
+      "reason": "hardcoded_source_copy",
+      "source": "public/locales/az/common.json"
     }
   ],
   "active": [],

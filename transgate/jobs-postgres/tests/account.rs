@@ -12,7 +12,7 @@ use transgate_core::account::ports::SupportOutbox;
 use transgate_core::account::{FeedbackRating, JobFeedback, SupportId, SupportRequest};
 use transgate_core::ids::JobId;
 use transgate_core::jobs::domain::{JobSource, JobStatus, NewJob, StorageProvider};
-use transgate_core::jobs::ports::{JobStore, JobUow};
+use transgate_core::jobs::ports::JobStore;
 use transgate_jobs_postgres::PgJobStore;
 use uuid::Uuid;
 

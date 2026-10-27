@@ -1,5 +1,5 @@
 //! P7 persistence against a real database through the restricted billing runtime
-//! login: keys, audit rows, idempotency, the D3 limiter, the D5 outbox and erasure.
+//! login: keys, idempotency, the D3 limiter, the D5 outbox and erasure.
 //!
 //! Run with `TRANSGATE_JOBS_TEST_DATABASE_URL=... cargo test -p transgate-jobs-postgres --test api -- --include-ignored`.
 //! The URL names a disposable database with owner authority; a missing variable
@@ -17,7 +17,7 @@ use transgate_core::api::callbacks::{CallbackDelivery, DeliveryId, DeliveryState
 use transgate_core::api::idempotency::{IdempotencyRecord, expired_before};
 use transgate_core::api::keys::{ApiKey, ExpirationPolicy};
 use transgate_core::api::limits::{self, RateLimits, RateWindows};
-use transgate_core::api::ports::{ApiRateLimiter, ApiTx, CallbackAttempt, CallbackOutbox, KeyUse};
+use transgate_core::api::ports::{ApiRateLimiter, ApiTx, CallbackAttempt, CallbackOutbox, Reopen};
 use transgate_core::ids::{JobId, MICROS_PER_DAY, MICROS_PER_MINUTE};
 use transgate_core::jobs::app::{JobResult, StartAnswer, StartMeta};
 use transgate_core::jobs::domain::JobStatus;
@@ -149,28 +149,6 @@ async fn keys_round_trip_and_the_legacy_scan_set_is_exactly_active_unexpired_and
     let gone = ApiKey { id: KeyId(Uuid::new_v4()), ..upgraded.clone() };
     assert!(matches!(uow.save_key(&gone).await, Err(StoreError::Conflict(_))), "saving a missing key is a conflict, never an insert");
     uow.commit().await.unwrap();
-}
-
-#[tokio::test]
-#[ignore = "needs TRANSGATE_JOBS_TEST_DATABASE_URL"]
-async fn one_audit_row_is_kept_per_authenticated_request() {
-    let pool = runtime().await;
-    let owner = owner().await;
-    let account = AccountId(Uuid::new_v4());
-    let k = key(account, NOW);
-    let mut uow = PgJobUow::begin(&pool).await.unwrap();
-    uow.insert_key(&k).await.unwrap();
-    for status in [200u16, 429] {
-        let usage = KeyUse {
-            key: k.id, account, at: NOW, endpoint: "/api/v1/transcriptions".into(), method: "POST".into(), status,
-            ip: Some("203.0.113.9".into()), user_agent: None, duration_ms: 12,
-        };
-        uow.record_use(&usage).await.unwrap();
-    }
-    uow.commit().await.unwrap();
-    let rows: Vec<(i32, Option<String>, Option<String>)> =
-        sqlx::query_as("SELECT status, ip, user_agent FROM transgate_api.key_uses WHERE key_id = $1 ORDER BY id").bind(k.id.0).fetch_all(&owner).await.unwrap();
-    assert_eq!(rows, vec![(200, Some("203.0.113.9".into()), None), (429, Some("203.0.113.9".into()), None)]);
 }
 
 fn answer() -> StartAnswer {
@@ -462,7 +440,6 @@ async fn account_erasure_removes_every_api_row_of_that_account_only() {
     let mut uow = PgJobUow::begin(&pool).await.unwrap();
     for k in [&mine, &theirs] {
         uow.insert_key(k).await.unwrap();
-        uow.record_use(&KeyUse { key: k.id, account: k.account, at: NOW, endpoint: "/x".into(), method: "GET".into(), status: 200, ip: None, user_agent: None, duration_ms: 1 }).await.unwrap();
         let record = IdempotencyRecord { account: k.account, key: "k".into(), request_digest: "d".into(), request_type: "jobIds".into(), jobs: vec![], answer: None, created_at: NOW };
         uow.insert_idempotency(&record, expired_before(NOW)).await.unwrap();
     }
@@ -484,7 +461,7 @@ async fn account_erasure_removes_every_api_row_of_that_account_only() {
     JobUow::erase_account_rows(&mut uow, account).await.unwrap();
     uow.commit().await.unwrap();
 
-    for (table, column) in [("api_keys", "account_id"), ("key_uses", "account_id"), ("idempotency", "account_id"), ("callback_deliveries", "account_id"), ("signing_secrets", "account_id")] {
+    for (table, column) in [("api_keys", "account_id"), ("idempotency", "account_id"), ("callback_deliveries", "account_id"), ("signing_secrets", "account_id")] {
         let sql: &'static str = Box::leak(format!("SELECT count(*) FROM transgate_api.{table} WHERE {column} = $1").into_boxed_str());
         assert_eq!(count(&owner, sql, account.0).await, 0, "{table} of the erased account");
         assert_eq!(count(&owner, sql, bystander.0).await, 1, "{table} of the other account is untouched");
@@ -506,7 +483,7 @@ async fn runtime_verification_flags_a_role_that_can_edit_what_the_api_schema_for
     sqlx::query(sqlx::AssertSqlSafe(format!("CREATE ROLE \"{role}\" NOLOGIN IN ROLE billing_runtime"))).execute(&owner).await.unwrap();
     for grant in [
         format!("GRANT UPDATE (account_id) ON transgate_api.api_keys TO \"{role}\""),
-        format!("GRANT UPDATE (status) ON transgate_api.key_uses TO \"{role}\""),
+        format!("GRANT UPDATE (key_id) ON transgate_api.rate_windows TO \"{role}\""),
         format!("GRANT TRUNCATE ON transgate_api.callback_attempts TO \"{role}\""),
     ] {
         sqlx::query(sqlx::AssertSqlSafe(grant)).execute(&owner).await.unwrap();
@@ -520,7 +497,7 @@ async fn runtime_verification_flags_a_role_that_can_edit_what_the_api_schema_for
         vec![
             "can TRUNCATE transgate_api.callback_attempts".to_string(),
             "can UPDATE transgate_api.api_keys.account_id".to_string(),
-            "can UPDATE transgate_api.key_uses.status".to_string(),
+            "can UPDATE transgate_api.rate_windows.key_id".to_string(),
         ]
     );
 }
@@ -575,4 +552,40 @@ async fn the_consent_purge_clears_every_stored_callback_body_of_the_account_only
         assert_eq!(count(&owner, "SELECT count(*) FROM transgate_api.callback_deliveries WHERE id = $1", d.id.0).await, 1, "deliveries are kept");
     }
     assert!(stored_payload(&owner, theirs.id).await.is_some(), "another account's body is untouched");
+}
+
+// D8: reopening an ended delivery makes it due again under the same id with its attempts kept; a
+// pending or unknown delivery is left alone.
+#[tokio::test]
+#[ignore = "needs TRANSGATE_JOBS_TEST_DATABASE_URL"]
+async fn reopen_makes_an_ended_delivery_due_again_keeping_its_id_and_attempts() {
+    let _serial = OUTBOX.lock().await;
+    let pool = runtime().await;
+    let owner = owner().await;
+    let outbox = PgCallbackOutbox::new(pool.clone());
+    let account = AccountId(Uuid::new_v4());
+    let event = i64::from_be_bytes(Uuid::new_v4().as_bytes()[..8].try_into().unwrap()).abs();
+    let d = due_delivery(&pool, account, event, NOW).await;
+    assert_eq!(outbox.reopen(d.id, NOW).await.unwrap(), Reopen::StillPending, "a pending delivery is not reopened");
+    assert_eq!(outbox.reopen(DeliveryId(Uuid::new_v4()), NOW).await.unwrap(), Reopen::Missing, "an unknown id is missing");
+
+    let claim = outbox.claim_deliveries(1000, 60, NOW).await.unwrap().into_iter().find(|c| c.delivery.id == d.id).unwrap();
+    assert!(outbox.begin_attempt(&claim, &attempt(&d, 1, NOW), &json!({})).await.unwrap());
+    let mut finished = attempt(&d, 1, NOW);
+    finished.outcome = Some(SendOutcome::Status { code: 404, excerpt: String::new() });
+    finished.finished_at = Some(NOW);
+    let failed = Settlement { state: DeliveryState::Failed, next_attempt_at: None, delivered_at: None };
+    assert!(outbox.finish_attempt(&claim, &finished, &failed).await.unwrap());
+    assert!(outbox.claim_deliveries(1000, 60, Micros(NOW.0 + 86_400 * SECOND)).await.unwrap().iter().all(|c| c.delivery.id != d.id));
+
+    let later = Micros(NOW.0 + 3_600 * SECOND);
+    assert_eq!(outbox.reopen(d.id, later).await.unwrap(), Reopen::Reopened);
+    assert_eq!(outbox.reopen(d.id, later).await.unwrap(), Reopen::StillPending, "now pending, so a second reopen changes nothing");
+    let (state, attempts, next): (String, i32, i64) = sqlx::query_as(
+        "SELECT state, attempts, transgate_jobs.ts_to_us(next_attempt_at) FROM transgate_api.callback_deliveries WHERE id = $1",
+    ).bind(d.id.0).fetch_one(&owner).await.unwrap();
+    assert_eq!((state.as_str(), attempts, next), ("pending", 1, later.0));
+    let again = outbox.claim_deliveries(1000, 60, later).await.unwrap().into_iter().find(|c| c.delivery.id == d.id).expect("due at the reopen time");
+    assert_eq!(again.delivery.attempts, 1, "the next attempt continues the count");
+    assert_eq!(count(&owner, "SELECT count(*) FROM transgate_api.callback_attempts WHERE delivery_id = $1", d.id.0).await, 1, "the old attempt record is kept");
 }

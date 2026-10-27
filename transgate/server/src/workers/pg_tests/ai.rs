@@ -84,7 +84,7 @@ async fn a_held_then_failed_ai_summary_cannot_hold_partial_error_mail_or_fail_co
     let baseline = replica(&pool, clock.clone(), transport);
     let mail = Arc::new(Mailbox::default());
     let workers = Arc::new(Workers { jobs:baseline.jobs.clone(), privacy:baseline.privacy.clone(), ai:ai.clone(), store:store.clone(),
-        pool:pool.clone(), mailer:mail.clone(), directory:PgCustomerDirectory::new(pool.clone()), clock, locks:baseline.locks.clone() });
+        pool:pool.clone(), mailer:mail.clone(), directory:PgCustomerDirectory::new(pool.clone()), clock, locks:baseline.locks.clone(), callbacks: None });
     let _task = WorkerTask(super::super::spawn(workers, Duration::from_millis(10)));
     tokio::time::timeout(Duration::from_secs(10), provider.opened.notified()).await.expect("summary worker reached controlled pending provider I/O");
     // Enqueue the other completion only AFTER the AI loop is known to be held.

@@ -1,0 +1,1419 @@
+{
+  "components": {
+    "schemas": {
+      "ApiKeyView": {
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "expirationPolicy": {
+            "$ref": "#/components/schemas/ExpirationPolicyView"
+          },
+          "expiresAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hint": {
+            "description": "The first characters of the key, for recognising it in a list.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "createdAt",
+          "isActive",
+          "scopes",
+          "expirationPolicy"
+        ],
+        "type": "object"
+      },
+      "AudioUrlRequest": {
+        "properties": {
+          "audioUrl": {
+            "description": "An absolute `http` or `https` URL of the audio.",
+            "type": "string"
+          },
+          "callbackUrl": {
+            "description": "Receives a signed POST with the result when the job completes.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "language": {
+            "description": "A language name such as `English`; English when absent.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "audioUrl"
+        ],
+        "type": "object"
+      },
+      "CreatedKeyResponse": {
+        "description": "201 of `POST /api/keys`: the plaintext key is returned exactly once.",
+        "properties": {
+          "apiKey": {
+            "type": "string"
+          },
+          "key": {
+            "$ref": "#/components/schemas/ApiKeyView"
+          }
+        },
+        "required": [
+          "key",
+          "apiKey"
+        ],
+        "type": "object"
+      },
+      "ErrorBody": {
+        "description": "Every failure body: a message and a stable code.",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error",
+          "code"
+        ],
+        "type": "object"
+      },
+      "ExpirationPolicyView": {
+        "description": "The source `expiration_policy_type` values.",
+        "enum": [
+          "never",
+          "30_days",
+          "90_days",
+          "1_year",
+          "custom"
+        ],
+        "type": "string"
+      },
+      "JobResultView": {
+        "properties": {
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "estimatedCompletionTime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "jobId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "description": "`not_started`, `pending`, `running`, `completed`, `failed` and the other job statuses.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "jobId",
+          "status"
+        ],
+        "type": "object"
+      },
+      "JobView": {
+        "properties": {
+          "audio_url": {
+            "description": "A short-lived signed URL of the stored audio; null when none is stored.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "duration": {
+            "description": "Whole minutes, when known.",
+            "format": "int32",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "fix_grammer": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "language": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status"
+        ],
+        "type": "object"
+      },
+      "KeyListResponse": {
+        "description": "200 of `GET /api/keys`.",
+        "properties": {
+          "keys": {
+            "items": {
+              "$ref": "#/components/schemas/ApiKeyView"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "keys"
+        ],
+        "type": "object"
+      },
+      "NewKeyRequest": {
+        "description": "`POST /api/keys`.",
+        "properties": {
+          "customDays": {
+            "description": "Days until expiry; read only when `expirationPolicy` is `custom`.",
+            "format": "int32",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "expirationPolicy": {
+            "$ref": "#/components/schemas/ExpirationPolicyView"
+          },
+          "name": {
+            "description": "A label for the dashboard.",
+            "type": "string"
+          },
+          "scopes": {
+            "description": "`transcriptions:read`, `transcriptions:create` or both.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "scopes",
+          "expirationPolicy"
+        ],
+        "type": "object"
+      },
+      "ReplayResponse": {
+        "description": "200 of `POST /api/admin/callbacks/{id}/replay`.",
+        "properties": {
+          "status": {
+            "description": "`queued`: the next dispatch pass appends an attempt to the same delivery.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "RequestOptions": {
+        "properties": {
+          "fallbackEnabled": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "preferredProvider": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "webhookUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "ResponseMetadata": {
+        "properties": {
+          "clientType": {
+            "type": "string"
+          },
+          "processingTime": {
+            "description": "Milliseconds spent on the request.",
+            "format": "uint64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "timestamp": {
+            "description": "RFC 3339 UTC.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "requestId",
+          "timestamp",
+          "processingTime",
+          "clientType"
+        ],
+        "type": "object"
+      },
+      "ResultLine": {
+        "properties": {
+          "corrected_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "end_time": {
+            "type": "string"
+          },
+          "speaker": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "start_time": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "start_time",
+          "end_time",
+          "text"
+        ],
+        "type": "object"
+      },
+      "RevokedKeyResponse": {
+        "description": "200 of `DELETE /api/keys/{id}`.",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/ApiKeyView"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "type": "object"
+      },
+      "SigningSecretResponse": {
+        "description": "The per-account callback signing secret an owner reads on the key screen.",
+        "properties": {
+          "secret": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "secret"
+        ],
+        "type": "object"
+      },
+      "StartData": {
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/StartMetaView"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/JobResultView"
+            },
+            "type": "array"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "results",
+          "metadata"
+        ],
+        "type": "object"
+      },
+      "StartMetaView": {
+        "properties": {
+          "estimatedCompletion": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "failedJobs": {
+            "format": "uint",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "isFreemium": {
+            "type": "boolean"
+          },
+          "newBalance": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "queuedJobs": {
+            "format": "uint",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "requestType": {
+            "description": "`jobIds` or `audioUrls`.",
+            "type": "string"
+          },
+          "successfulJobs": {
+            "format": "uint",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "totalJobs": {
+            "format": "uint",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "newBalance",
+          "isFreemium",
+          "totalJobs",
+          "successfulJobs",
+          "failedJobs",
+          "queuedJobs",
+          "requestType"
+        ],
+        "type": "object"
+      },
+      "StartResponse": {
+        "description": "201 of `POST /api/v1/transcriptions`.",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/StartData"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ResponseMetadata"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "data",
+          "metadata"
+        ],
+        "type": "object"
+      },
+      "StatusData": {
+        "properties": {
+          "errors": {
+            "description": "The job's error record, when it has one."
+          },
+          "job": {
+            "$ref": "#/components/schemas/JobView"
+          },
+          "result": {
+            "description": "Present once the job is completed.",
+            "items": {
+              "$ref": "#/components/schemas/ResultLine"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SummaryText"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The general summary, when one was made and its owner may read it."
+          }
+        },
+        "required": [
+          "job"
+        ],
+        "type": "object"
+      },
+      "StatusResponse": {
+        "description": "200 of `GET /api/v1/transcriptions`.",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/StatusData"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ResponseMetadata"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success",
+          "data",
+          "metadata"
+        ],
+        "type": "object"
+      },
+      "SummaryText": {
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      },
+      "TranscriptionsRequest": {
+        "description": "`POST /api/v1/transcriptions`: exactly one of `jobIds` and `audioUrls`.",
+        "properties": {
+          "audioUrls": {
+            "description": "Audio to fetch and transcribe. Cannot be combined with `jobIds`.",
+            "items": {
+              "$ref": "#/components/schemas/AudioUrlRequest"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "jobIds": {
+            "description": "Draft jobs to start (positive integers). Cannot be combined with `audioUrls`.",
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "locale": {
+            "description": "The caller's locale, used for the freemium exception rules.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "options": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RequestOptions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "apiKey": {
+        "description": "An API key: `sk_` followed by 44 characters.",
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "session": {
+        "bearerFormat": "JWT",
+        "description": "The signed-in dashboard session.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Start transcriptions and read their results with an API key, and manage keys from the dashboard. Every key request is limited to 60 per minute and 1000 per hour; the answer carries `X-RateLimit-*` headers. Callbacks to a job's `callbackUrl` are POSTed as JSON with `Transgate-Delivery-Id` (stable across retries; use it to deduplicate) and `Transgate-Signature: t=<unix seconds>,v1=<hex HMAC-SHA256(secret, \"<t>.\" + body)>`.",
+    "title": "Transgate API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/admin/callbacks/{id}/replay": {
+      "post": {
+        "description": "Administrators only. A delivered, failed or abandoned delivery becomes due again under the same delivery id; the next dispatch appends one attempt. A delivery that is still pending is `400`.",
+        "operationId": "replayCallback",
+        "parameters": [
+          {
+            "description": "The delivery id (the `Transgate-Delivery-Id` header receivers saw).",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplayResponse"
+                }
+              }
+            },
+            "description": "The delivery was reopened."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Missing, malformed, unknown, inactive or expired credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The credentials lack the required scope or permission."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not found, or not yours."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "A required store is unavailable. Retry later."
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Replay a callback delivery",
+        "x-codeSamples": [
+          {
+            "label": "curl",
+            "lang": "Shell",
+            "source": "curl -X POST https://transgate.ai/api/admin/callbacks/$DELIVERY_ID/replay -H 'Authorization: Bearer $ADMIN_SESSION_TOKEN'"
+          }
+        ]
+      }
+    },
+    "/api/keys": {
+      "get": {
+        "description": "Your keys, newest first. Never includes a key's secret value.",
+        "operationId": "listApiKeys",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeyListResponse"
+                }
+              }
+            },
+            "description": "Your keys."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Missing, malformed, unknown, inactive or expired credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The credentials lack the required scope or permission."
+          },
+          "410": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The account is being deleted."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "A required store is unavailable. Retry later."
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "List your API keys",
+        "x-codeSamples": [
+          {
+            "label": "curl",
+            "lang": "Shell",
+            "source": "curl https://transgate.ai/api/keys -H 'Authorization: Bearer $SESSION_TOKEN'"
+          }
+        ]
+      },
+      "post": {
+        "description": "The plaintext key is in the answer exactly once; only its digest is stored.",
+        "operationId": "createApiKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "expirationPolicy": "90_days",
+                "name": "CI",
+                "scopes": [
+                  "transcriptions:read",
+                  "transcriptions:create"
+                ]
+              },
+              "schema": {
+                "$ref": "#/components/schemas/NewKeyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedKeyResponse"
+                }
+              }
+            },
+            "description": "The key and its plaintext value."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Missing, malformed, unknown, inactive or expired credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The credentials lack the required scope or permission."
+          },
+          "410": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The account is being deleted."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "A required store is unavailable. Retry later."
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Create an API key",
+        "x-codeSamples": [
+          {
+            "label": "curl",
+            "lang": "Shell",
+            "source": "curl -X POST https://transgate.ai/api/keys -H 'Authorization: Bearer $SESSION_TOKEN' -H 'Content-Type: application/json' -d '{\"name\":\"CI\",\"scopes\":[\"transcriptions:read\"],\"expirationPolicy\":\"never\"}'"
+          }
+        ]
+      }
+    },
+    "/api/keys/signing-secret": {
+      "get": {
+        "description": "The secret every callback to your account is signed with (`Transgate-Signature: t=<unix>,v1=<hex HMAC-SHA256(secret, \"<t>.\" + body)>`). Created on first use.",
+        "operationId": "getSigningSecret",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SigningSecretResponse"
+                }
+              }
+            },
+            "description": "The signing secret."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Missing, malformed, unknown, inactive or expired credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The credentials lack the required scope or permission."
+          },
+          "410": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The account is being deleted."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "A required store is unavailable. Retry later."
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Read the callback signing secret",
+        "x-codeSamples": [
+          {
+            "label": "curl",
+            "lang": "Shell",
+            "source": "curl https://transgate.ai/api/keys/signing-secret -H 'Authorization: Bearer $SESSION_TOKEN'"
+          }
+        ]
+      }
+    },
+    "/api/keys/{id}": {
+      "delete": {
+        "description": "Deactivates one of your keys. Another account's key is `404`.",
+        "operationId": "revokeApiKey",
+        "parameters": [
+          {
+            "description": "The key id.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokedKeyResponse"
+                }
+              }
+            },
+            "description": "The revoked key."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Missing, malformed, unknown, inactive or expired credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The credentials lack the required scope or permission."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not found, or not yours."
+          },
+          "410": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The account is being deleted."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "A required store is unavailable. Retry later."
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Revoke an API key",
+        "x-codeSamples": [
+          {
+            "label": "curl",
+            "lang": "Shell",
+            "source": "curl -X DELETE https://transgate.ai/api/keys/$KEY_ID -H 'Authorization: Bearer $SESSION_TOKEN'"
+          }
+        ]
+      }
+    },
+    "/api/v1/transcriptions": {
+      "get": {
+        "description": "The status of one of your jobs, with its lines and general summary once it is completed. Needs the `transcriptions:read` scope. A job that is not yours is `404`.",
+        "operationId": "getTranscription",
+        "parameters": [
+          {
+            "description": "The job id returned when it was started.",
+            "in": "query",
+            "name": "jobId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            },
+            "description": "The job and, when completed, its result.",
+            "headers": {
+              "X-RateLimit-Limit-Hour": {
+                "description": "Requests allowed per hour.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Limit-Minute": {
+                "description": "Requests allowed per minute.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Remaining-Hour": {
+                "description": "Requests left in the current hour.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Remaining-Minute": {
+                "description": "Requests left in the current minute.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Reset-Hour": {
+                "description": "When the hour window resets (RFC 3339).",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Reset-Minute": {
+                "description": "When the minute window resets (RFC 3339).",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Missing, malformed, unknown, inactive or expired credentials."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The credentials lack the required scope or permission."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not found, or not yours."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Rate limit exceeded: 60 requests per minute and 1000 per hour per key. See `Retry-After`.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until the exhausted window resets.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Limit-Hour": {
+                "description": "Requests allowed per hour.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Limit-Minute": {
+                "description": "Requests allowed per minute.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Remaining-Hour": {
+                "description": "Requests left in the current hour.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Remaining-Minute": {
+                "description": "Requests left in the current minute.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Reset-Hour": {
+                "description": "When the hour window resets (RFC 3339).",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Reset-Minute": {
+                "description": "When the minute window resets (RFC 3339).",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "A required store is unavailable. Retry later."
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "Get a transcription",
+        "x-codeSamples": [
+          {
+            "label": "curl",
+            "lang": "Shell",
+            "source": "curl 'https://transgate.ai/api/v1/transcriptions?jobId=123' -H 'Authorization: Bearer $TRANSGATE_API_KEY'"
+          }
+        ],
+        "x-required-scope": "transcriptions:read"
+      },
+      "post": {
+        "description": "Starts draft jobs by id (`jobIds`) or creates and starts jobs from audio URLs (`audioUrls`). Needs the `transcriptions:create` scope. Send an `Idempotency-Key` to make a retry safe: the same key with the same body returns the first answer without charging again for 24 hours; the same key with another body is `409 request_conflict`. A job can carry a `callbackUrl`: when it completes, a signed POST is delivered (see the callback payload in the guide).",
+        "operationId": "startTranscriptions",
+        "parameters": [
+          {
+            "description": "Optional. 1 to 255 characters. Makes a retried start return the first answer.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "audioUrls": [
+                  {
+                    "audioUrl": "https://example.com/meeting.mp3",
+                    "callbackUrl": "https://example.com/hook",
+                    "language": "English"
+                  }
+                ]
+              },
+              "schema": {
+                "$ref": "#/components/schemas/TranscriptionsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartResponse"
+                }
+              }
+            },
+            "description": "The jobs were accepted. Acceptance is not completion.",
+            "headers": {
+              "X-RateLimit-Limit-Hour": {
+                "description": "Requests allowed per hour.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Limit-Minute": {
+                "description": "Requests allowed per minute.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Remaining-Hour": {
+                "description": "Requests left in the current hour.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Remaining-Minute": {
+                "description": "Requests left in the current minute.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Reset-Hour": {
+                "description": "When the hour window resets (RFC 3339).",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Reset-Minute": {
+                "description": "When the minute window resets (RFC 3339).",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The request is invalid."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Missing, malformed, unknown, inactive or expired credentials."
+          },
+          "402": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not enough balance."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The credentials lack the required scope or permission."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "`request_conflict`: this Idempotency-Key was already used for a different request."
+          },
+          "410": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "The account is being deleted."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Rate limit exceeded: 60 requests per minute and 1000 per hour per key. See `Retry-After`.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until the exhausted window resets.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Limit-Hour": {
+                "description": "Requests allowed per hour.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Limit-Minute": {
+                "description": "Requests allowed per minute.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Remaining-Hour": {
+                "description": "Requests left in the current hour.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Remaining-Minute": {
+                "description": "Requests left in the current minute.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Reset-Hour": {
+                "description": "When the hour window resets (RFC 3339).",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Reset-Minute": {
+                "description": "When the minute window resets (RFC 3339).",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "A required store is unavailable. Retry later."
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "Start transcriptions",
+        "x-codeSamples": [
+          {
+            "label": "curl",
+            "lang": "Shell",
+            "source": "curl -X POST https://transgate.ai/api/v1/transcriptions -H 'Authorization: Bearer $TRANSGATE_API_KEY' -H 'Idempotency-Key: order-1001' -H 'Content-Type: application/json' -d '{\"audioUrls\":[{\"audioUrl\":\"https://example.com/meeting.mp3\"}]}'"
+          }
+        ],
+        "x-required-scope": "transcriptions:create"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ]
+}

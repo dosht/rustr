@@ -34,8 +34,11 @@ impl Clock for Fixed {
     fn now_secs(&self) -> i64 { self.0.load(Ordering::SeqCst) }
 }
 
+/// One recorded request: path, bearer token, JSON body.
+type Recorded = (String, Option<String>, Value);
+
 #[derive(Clone, Default)]
-struct Host(Arc<Mutex<Vec<(String, Option<String>, Value)>>>);
+struct Host(Arc<Mutex<Vec<Recorded>>>);
 
 async fn options(State(h): State<Host>, headers: HeaderMap, body: Bytes) -> Json<Value> {
     let bearer = headers.get("authorization").map(|v| v.to_str().unwrap().to_string());

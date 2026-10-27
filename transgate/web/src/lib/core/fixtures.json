@@ -528,9 +528,720 @@
       "summary": null
     }
   },
+  "ApiKeysVm": {
+    "confirm_revoke": {
+      "confirm_revoke": "00000000-0000-0000-0000-000000000001",
+      "created_key": null,
+      "empty": false,
+      "error": null,
+      "form": null,
+      "form_toggle": {
+        "args": {},
+        "key": "Generate New Key",
+        "ns": "common"
+      },
+      "key_copied": false,
+      "loading": false,
+      "notice": null,
+      "rows": [
+        {
+          "active": true,
+          "can_revoke": true,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "kind": "never"
+          },
+          "expiry_tone": "neutral",
+          "id": "00000000-0000-0000-0000-000000000001",
+          "name": "CI pipeline",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Read Only",
+                "ns": "common"
+              }
+            },
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Create Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Active",
+            "ns": "common"
+          },
+          "status_tone": "success"
+        },
+        {
+          "active": true,
+          "can_revoke": true,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "days": 3,
+            "kind": "days"
+          },
+          "expiry_tone": "progress",
+          "id": "00000000-0000-0000-0000-000000000002",
+          "name": "Reporting",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Read Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Active",
+            "ns": "common"
+          },
+          "status_tone": "success"
+        },
+        {
+          "active": false,
+          "can_revoke": false,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "kind": "expired"
+          },
+          "expiry_tone": "danger",
+          "id": "00000000-0000-0000-0000-000000000003",
+          "name": "Old integration",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Create Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Revoked",
+            "ns": "common"
+          },
+          "status_tone": "danger"
+        }
+      ],
+      "secret_copied": false,
+      "secret_copy_label": {
+        "args": {},
+        "key": "p7.keys.secret_copy",
+        "ns": "app"
+      },
+      "secret_description": {
+        "args": {},
+        "key": "p7.keys.secret_description",
+        "ns": "app"
+      },
+      "secret_error": null,
+      "secret_title": {
+        "args": {},
+        "key": "p7.keys.secret_title",
+        "ns": "app"
+      },
+      "signing_secret": "whsec_7f3a9c2e41b8d6"
+    },
+    "created": {
+      "confirm_revoke": null,
+      "created_key": "sk_q1W2e3R4t5Y6u7I8o9P0a1S2d3F4g5H6j7K8l9Z0x1C=",
+      "empty": false,
+      "error": null,
+      "form": null,
+      "form_toggle": {
+        "args": {},
+        "key": "Generate New Key",
+        "ns": "common"
+      },
+      "key_copied": true,
+      "loading": false,
+      "notice": {
+        "args": {},
+        "key": "API key copied to clipboard",
+        "ns": "common"
+      },
+      "rows": [
+        {
+          "active": true,
+          "can_revoke": true,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "kind": "never"
+          },
+          "expiry_tone": "neutral",
+          "id": "00000000-0000-0000-0000-000000000001",
+          "name": "CI pipeline",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Read Only",
+                "ns": "common"
+              }
+            },
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Create Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Active",
+            "ns": "common"
+          },
+          "status_tone": "success"
+        },
+        {
+          "active": true,
+          "can_revoke": true,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "days": 3,
+            "kind": "days"
+          },
+          "expiry_tone": "progress",
+          "id": "00000000-0000-0000-0000-000000000002",
+          "name": "Reporting",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Read Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Active",
+            "ns": "common"
+          },
+          "status_tone": "success"
+        },
+        {
+          "active": false,
+          "can_revoke": false,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "kind": "expired"
+          },
+          "expiry_tone": "danger",
+          "id": "00000000-0000-0000-0000-000000000003",
+          "name": "Old integration",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Create Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Revoked",
+            "ns": "common"
+          },
+          "status_tone": "danger"
+        }
+      ],
+      "secret_copied": false,
+      "secret_copy_label": {
+        "args": {},
+        "key": "p7.keys.secret_copy",
+        "ns": "app"
+      },
+      "secret_description": {
+        "args": {},
+        "key": "p7.keys.secret_description",
+        "ns": "app"
+      },
+      "secret_error": null,
+      "secret_title": {
+        "args": {},
+        "key": "p7.keys.secret_title",
+        "ns": "app"
+      },
+      "signing_secret": "whsec_7f3a9c2e41b8d6"
+    },
+    "creating_form": {
+      "confirm_revoke": null,
+      "created_key": null,
+      "empty": false,
+      "error": null,
+      "form": {
+        "can_create": true,
+        "creating": false,
+        "custom_days": "30",
+        "custom_days_invalid": false,
+        "name": "Nightly export",
+        "policies": [
+          {
+            "label": {
+              "args": {},
+              "key": "Never Expire",
+              "ns": "common"
+            },
+            "selected": false,
+            "value": "never"
+          },
+          {
+            "label": {
+              "args": {},
+              "key": "30 Days",
+              "ns": "common"
+            },
+            "selected": false,
+            "value": "30_days"
+          },
+          {
+            "label": {
+              "args": {},
+              "key": "90 Days",
+              "ns": "common"
+            },
+            "selected": false,
+            "value": "90_days"
+          },
+          {
+            "label": {
+              "args": {},
+              "key": "p7.keys.expiry_one_year",
+              "ns": "app"
+            },
+            "selected": false,
+            "value": "1_year"
+          },
+          {
+            "label": {
+              "args": {},
+              "key": "Custom",
+              "ns": "common"
+            },
+            "selected": true,
+            "value": "custom"
+          }
+        ],
+        "scopes": [
+          {
+            "label": {
+              "args": {},
+              "key": "Read Only",
+              "ns": "common"
+            },
+            "selected": false,
+            "value": "read"
+          },
+          {
+            "label": {
+              "args": {},
+              "key": "Create Only",
+              "ns": "common"
+            },
+            "selected": false,
+            "value": "create"
+          },
+          {
+            "label": {
+              "args": {},
+              "key": "Read & Create",
+              "ns": "common"
+            },
+            "selected": true,
+            "value": "read_and_create"
+          }
+        ]
+      },
+      "form_toggle": {
+        "args": {},
+        "key": "Cancel",
+        "ns": "common"
+      },
+      "key_copied": false,
+      "loading": false,
+      "notice": null,
+      "rows": [
+        {
+          "active": true,
+          "can_revoke": true,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "kind": "never"
+          },
+          "expiry_tone": "neutral",
+          "id": "00000000-0000-0000-0000-000000000001",
+          "name": "CI pipeline",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Read Only",
+                "ns": "common"
+              }
+            },
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Create Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Active",
+            "ns": "common"
+          },
+          "status_tone": "success"
+        },
+        {
+          "active": true,
+          "can_revoke": true,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "days": 3,
+            "kind": "days"
+          },
+          "expiry_tone": "progress",
+          "id": "00000000-0000-0000-0000-000000000002",
+          "name": "Reporting",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Read Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Active",
+            "ns": "common"
+          },
+          "status_tone": "success"
+        },
+        {
+          "active": false,
+          "can_revoke": false,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "kind": "expired"
+          },
+          "expiry_tone": "danger",
+          "id": "00000000-0000-0000-0000-000000000003",
+          "name": "Old integration",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Create Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Revoked",
+            "ns": "common"
+          },
+          "status_tone": "danger"
+        }
+      ],
+      "secret_copied": false,
+      "secret_copy_label": {
+        "args": {},
+        "key": "p7.keys.secret_copy",
+        "ns": "app"
+      },
+      "secret_description": {
+        "args": {},
+        "key": "p7.keys.secret_description",
+        "ns": "app"
+      },
+      "secret_error": null,
+      "secret_title": {
+        "args": {},
+        "key": "p7.keys.secret_title",
+        "ns": "app"
+      },
+      "signing_secret": "whsec_7f3a9c2e41b8d6"
+    },
+    "empty": {
+      "confirm_revoke": null,
+      "created_key": null,
+      "empty": true,
+      "error": null,
+      "form": null,
+      "form_toggle": {
+        "args": {},
+        "key": "Generate New Key",
+        "ns": "common"
+      },
+      "key_copied": false,
+      "loading": false,
+      "notice": null,
+      "rows": [],
+      "secret_copied": false,
+      "secret_copy_label": {
+        "args": {},
+        "key": "p7.keys.secret_copy",
+        "ns": "app"
+      },
+      "secret_description": {
+        "args": {},
+        "key": "p7.keys.secret_description",
+        "ns": "app"
+      },
+      "secret_error": null,
+      "secret_title": {
+        "args": {},
+        "key": "p7.keys.secret_title",
+        "ns": "app"
+      },
+      "signing_secret": "whsec_7f3a9c2e41b8d6"
+    },
+    "list": {
+      "confirm_revoke": null,
+      "created_key": null,
+      "empty": false,
+      "error": null,
+      "form": null,
+      "form_toggle": {
+        "args": {},
+        "key": "Generate New Key",
+        "ns": "common"
+      },
+      "key_copied": false,
+      "loading": false,
+      "notice": null,
+      "rows": [
+        {
+          "active": true,
+          "can_revoke": true,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "kind": "never"
+          },
+          "expiry_tone": "neutral",
+          "id": "00000000-0000-0000-0000-000000000001",
+          "name": "CI pipeline",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Read Only",
+                "ns": "common"
+              }
+            },
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Create Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Active",
+            "ns": "common"
+          },
+          "status_tone": "success"
+        },
+        {
+          "active": true,
+          "can_revoke": true,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "days": 3,
+            "kind": "days"
+          },
+          "expiry_tone": "progress",
+          "id": "00000000-0000-0000-0000-000000000002",
+          "name": "Reporting",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Read Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Active",
+            "ns": "common"
+          },
+          "status_tone": "success"
+        },
+        {
+          "active": false,
+          "can_revoke": false,
+          "created_at_ms": 1766361600000,
+          "expiry": {
+            "kind": "expired"
+          },
+          "expiry_tone": "danger",
+          "id": "00000000-0000-0000-0000-000000000003",
+          "name": "Old integration",
+          "revoking": false,
+          "scopes": [
+            {
+              "kind": "known",
+              "label": {
+                "args": {},
+                "key": "Create Only",
+                "ns": "common"
+              }
+            }
+          ],
+          "status": {
+            "args": {},
+            "key": "Revoked",
+            "ns": "common"
+          },
+          "status_tone": "danger"
+        }
+      ],
+      "secret_copied": false,
+      "secret_copy_label": {
+        "args": {},
+        "key": "p7.keys.secret_copy",
+        "ns": "app"
+      },
+      "secret_description": {
+        "args": {},
+        "key": "p7.keys.secret_description",
+        "ns": "app"
+      },
+      "secret_error": null,
+      "secret_title": {
+        "args": {},
+        "key": "p7.keys.secret_title",
+        "ns": "app"
+      },
+      "signing_secret": "whsec_7f3a9c2e41b8d6"
+    },
+    "load_failed": {
+      "confirm_revoke": null,
+      "created_key": null,
+      "empty": false,
+      "error": {
+        "args": {},
+        "key": "p7.keys.load_failed",
+        "ns": "app"
+      },
+      "form": null,
+      "form_toggle": {
+        "args": {},
+        "key": "Generate New Key",
+        "ns": "common"
+      },
+      "key_copied": false,
+      "loading": false,
+      "notice": null,
+      "rows": [],
+      "secret_copied": false,
+      "secret_copy_label": {
+        "args": {},
+        "key": "p7.keys.secret_copy",
+        "ns": "app"
+      },
+      "secret_description": {
+        "args": {},
+        "key": "p7.keys.secret_description",
+        "ns": "app"
+      },
+      "secret_error": {
+        "args": {},
+        "key": "p7.keys.secret_load_failed",
+        "ns": "app"
+      },
+      "secret_title": {
+        "args": {},
+        "key": "p7.keys.secret_title",
+        "ns": "app"
+      },
+      "signing_secret": null
+    },
+    "loading": {
+      "confirm_revoke": null,
+      "created_key": null,
+      "empty": false,
+      "error": null,
+      "form": null,
+      "form_toggle": {
+        "args": {},
+        "key": "Generate New Key",
+        "ns": "common"
+      },
+      "key_copied": false,
+      "loading": true,
+      "notice": null,
+      "rows": [],
+      "secret_copied": false,
+      "secret_copy_label": {
+        "args": {},
+        "key": "p7.keys.secret_copy",
+        "ns": "app"
+      },
+      "secret_description": {
+        "args": {},
+        "key": "p7.keys.secret_description",
+        "ns": "app"
+      },
+      "secret_error": null,
+      "secret_title": {
+        "args": {},
+        "key": "p7.keys.secret_title",
+        "ns": "app"
+      },
+      "signing_secret": null
+    }
+  },
   "AppVm": {
     "billing_owner": {
       "analysis": null,
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,
@@ -2225,6 +2936,7 @@
     },
     "desktop_new": {
       "analysis": null,
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,
@@ -3820,6 +4532,7 @@
         "state": "idle",
         "summary": null
       },
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,
@@ -5529,6 +6242,7 @@
     },
     "purchase_open": {
       "analysis": null,
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,
@@ -7160,6 +7874,7 @@
     },
     "settings_open": {
       "analysis": null,
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,
@@ -8918,6 +9633,7 @@
     },
     "special_offer": {
       "analysis": null,
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,
@@ -13766,6 +14482,7 @@
   "SignedInVm": {
     "billing_owner": {
       "analysis": null,
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,
@@ -15359,6 +16076,7 @@
     },
     "desktop_new": {
       "analysis": null,
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,
@@ -16944,6 +17662,7 @@
         "state": "idle",
         "summary": null
       },
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,
@@ -18652,6 +19371,7 @@
     },
     "purchase_open": {
       "analysis": null,
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,
@@ -20278,6 +20998,7 @@
     },
     "settings_open": {
       "analysis": null,
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,
@@ -21850,6 +22571,7 @@
     },
     "special_offer": {
       "analysis": null,
+      "api_keys": null,
       "balance": {
         "args": {
           "hours": 1,

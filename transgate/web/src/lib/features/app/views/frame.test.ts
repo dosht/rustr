@@ -19,12 +19,14 @@ function sidebar(collapsed: boolean) {
 }
 
 describe("DesktopSidebar", () => {
-  it("expanded: history slot and account menu without an API-key entry (D13)", async () => {
+  it("expanded: history slot and account menu with the API Keys entry (P7)", async () => {
     const h = sidebar(false);
     expect(screen.getByText("podcast.mp3")).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Ada Lovelace" }));
     expect(screen.getByRole("button", { name: "Settings" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /API Keys/ })).toBeNull();
+    await userEvent.click(screen.getByRole("button", { name: "API Keys" }));
+    expect(h.onaccount).toHaveBeenCalledWith("api_keys");
+    await userEvent.click(screen.getByRole("button", { name: "Ada Lovelace" }));
     await userEvent.click(screen.getByRole("button", { name: "Sign Out" }));
     expect(h.onaccount).toHaveBeenCalledWith("sign_out");
   });

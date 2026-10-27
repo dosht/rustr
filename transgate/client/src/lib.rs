@@ -10,6 +10,7 @@ pub mod attribution;
 pub mod billing;
 pub mod auth;
 pub mod checkout;
+pub mod keys;
 pub mod export;
 pub mod future;
 pub mod location;

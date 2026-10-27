@@ -41,13 +41,15 @@ pub enum Route {
     /// The provider return page. A browser POST is answered by the host from
     /// the one trusted confirmation; a GET shows the source's failure page.
     CheckoutConfirm,
+    /// `/dashboard/api-keys`: the owner's API keys and callback signing secret (WEB-045/046).
+    ApiKeys,
 }
 
 impl Route {
     /// IDN-022: pages that need a signed-in user. Sign-in, the recovery
     /// screen and the provider return page do not.
     pub fn protected(self) -> bool {
-        matches!(self, Route::Home(_) | Route::Billing)
+        matches!(self, Route::Home(_) | Route::Billing | Route::ApiKeys)
     }
 
     pub fn job(self) -> Option<JobId> {
@@ -138,6 +140,7 @@ fn app_route(rest: &str, query: &str) -> Option<(Route, bool)> {
         ["new-password"] => (Route::NewPassword, false),
         ["billing"] => (Route::Billing, false),
         ["checkout", "confirm"] => (Route::CheckoutConfirm, false),
+        ["dashboard", "api-keys"] => (Route::ApiKeys, false),
         _ => return None,
     };
     Some(route)
@@ -177,6 +180,7 @@ pub fn href(route: Route, locale: &str) -> String {
         Route::NewPassword => "/new-password".to_string(),
         Route::Billing => "/billing".to_string(),
         Route::CheckoutConfirm => "/checkout/confirm".to_string(),
+        Route::ApiKeys => "/dashboard/api-keys".to_string(),
     };
     format!("{prefix}{path}")
 }

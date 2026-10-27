@@ -17,7 +17,7 @@ use crate::api::keys::{self, ApiKey, CreatedKey, KeyView, NewKey};
 use crate::api::limits::{self, ApiRate, RateLimits, RateWindows};
 use crate::api::ports::{
     ApiCrypto, ApiRateLimiter, CallbackAttempt, CallbackContent, CallbackContentFacts, CallbackOutbox, CallbackRequest,
-    CallbackTransport, ClaimedDelivery, KeyUse,
+    CallbackTransport, ClaimedDelivery, Reopen,
 };
 use crate::api::{Action, Actor, ApiError, KeyId, Resource, can};
 use crate::ids::{AccountId, JobId, MICROS_PER_SECOND, Micros};
@@ -36,6 +36,8 @@ pub struct ApiServices {
     pub crypto: Arc<dyn ApiCrypto>,
     pub limiter: Arc<dyn ApiRateLimiter>,
     pub clock: Arc<dyn Clock>,
+    /// The per-account signing secret lives with the callback deliveries.
+    pub outbox: Arc<dyn CallbackOutbox>,
     /// RTL-001 defaults unless configured.
     pub limits: RateLimits,
 }
@@ -52,13 +54,11 @@ pub struct Admitted<T> {
     pub result: Result<T, ApiError>,
 }
 
-/// Runs `body` in one transaction: commit on success, roll back otherwise.
-async fn in_tx<T>(
-    store: &dyn JobStore,
-    body: impl AsyncFnOnce(&mut dyn JobUow) -> Result<T, ApiError>,
-) -> Result<T, ApiError> {
-    let mut uow = store.begin().await?;
-    match body(uow.as_mut()).await {
+/// Commits on success, rolls back otherwise. Callers run their body as an
+/// inline `async` block over the open `uow` (not an `AsyncFnOnce` over
+/// `&mut dyn JobUow`, whose future the host cannot prove `Send`).
+async fn finish<T>(uow: Box<dyn JobUow>, result: Result<T, ApiError>) -> Result<T, ApiError> {
+    match result {
         Ok(value) => {
             uow.commit().await?;
             Ok(value)
@@ -88,7 +88,9 @@ impl Api {
         }
         let now = self.now();
         let digest = self.s.crypto.sha256_hex(bearer.as_bytes());
-        let found = in_tx(self.s.store.as_ref(), async |uow| Ok(uow.api().key_by_digest(&digest).await?)).await?;
+        let mut uow = self.s.store.begin().await?;
+        let read = async { Ok(uow.api().key_by_digest(&digest).await?) }.await;
+        let found = finish(uow, read).await?;
         let key = match found {
             Some(key) => key,
             None => self.upgrade_legacy(bearer, &digest, now).await?.ok_or(ApiError::Unauthorized(keys::INVALID_KEY))?,
@@ -98,27 +100,32 @@ impl Api {
             return Err(ApiError::Erased);
         }
         // API-003: a successful verification updates `last_used_at`.
-        in_tx(self.s.store.as_ref(), async |uow| {
+        let mut uow = self.s.store.begin().await?;
+        let touched = async {
             if let Some(mut row) = uow.api().lock_key(key.id).await? {
                 row.last_used_at = Some(now);
                 uow.api().save_key(&row).await?;
             }
             Ok(())
-        })
-        .await?;
+        }
+        .await;
+        finish(uow, touched).await?;
         Ok(Actor::ApiKey { account: key.account, key: key.id, scopes: key.scopes })
     }
 
     /// D2: verify against each legacy candidate outside any transaction (bcrypt
     /// is slow), then write the digest and null the hash under the row lock.
     async fn upgrade_legacy(&self, bearer: &str, digest: &str, now: Micros) -> Result<Option<ApiKey>, ApiError> {
-        let candidates = in_tx(self.s.store.as_ref(), async |uow| Ok(uow.api().legacy_candidates(now).await?)).await?;
+        let mut uow = self.s.store.begin().await?;
+        let read = async { Ok(uow.api().legacy_candidates(now).await?) }.await;
+        let candidates = finish(uow, read).await?;
         for candidate in candidates {
             let Some(hash) = candidate.legacy_bcrypt.as_deref() else { continue };
             if !self.s.crypto.verify_legacy(bearer, hash).await {
                 continue;
             }
-            let upgraded = in_tx(self.s.store.as_ref(), async |uow| {
+            let mut uow = self.s.store.begin().await?;
+            let written = async {
                 let Some(mut row) = uow.api().lock_key(candidate.id).await? else { return Ok(None) };
                 if row.legacy_bcrypt.as_deref() == Some(hash) {
                     row.digest = Some(digest.to_string());
@@ -127,12 +134,17 @@ impl Api {
                     uow.api().save_key(&row).await?;
                 }
                 Ok(Some(row))
-            })
+            }
             .await;
+            let upgraded = finish(uow, written).await;
             return match upgraded {
                 Ok(row) => Ok(row),
                 // A concurrent request upgraded the same key first: read it by digest.
-                Err(ApiError::Unavailable(_)) => in_tx(self.s.store.as_ref(), async |uow| Ok(uow.api().key_by_digest(digest).await?)).await,
+                Err(ApiError::Unavailable(_)) => {
+                    let mut uow = self.s.store.begin().await?;
+                    let read = async { Ok(uow.api().key_by_digest(digest).await?) }.await;
+                    finish(uow, read).await
+                }
                 Err(e) => Err(e),
             };
         }
@@ -176,11 +188,6 @@ impl Api {
         Ok(Admitted { rate, result })
     }
 
-    /// D11: one audit row per authenticated request.
-    pub async fn record_use(&self, usage: &KeyUse) -> Result<(), ApiError> {
-        in_tx(self.s.store.as_ref(), async |uow| Ok(uow.api().record_use(usage).await?)).await
-    }
-
     /// API-002/019: the plaintext is returned once; only its digest is stored.
     pub async fn create_key(&self, actor: &Actor, new: NewKey) -> Result<CreatedKey, ApiError> {
         let account = actor.account();
@@ -204,15 +211,17 @@ impl Api {
             legacy_bcrypt: None,
             hint: Some(keys::hint(&api_key)),
         };
-        in_tx(self.s.store.as_ref(), async |uow| {
+        let mut uow = self.s.store.begin().await?;
+        let inserted = async {
             // Account writes share the erasure barrier and the billing account lock.
             if uow.lock_barrier(account).await?.is_some() {
                 return Err(ApiError::Erased);
             }
             uow.billing().await?.lock_account(account).await?;
             Ok(uow.api().insert_key(&key).await?)
-        })
-        .await?;
+        }
+        .await;
+        finish(uow, inserted).await?;
         Ok(CreatedKey { key: KeyView::from(&key), api_key })
     }
 
@@ -222,7 +231,9 @@ impl Api {
         if !can(actor, Action::KeysManage, Resource::Account(account)) {
             return Err(ApiError::Forbidden);
         }
-        let keys = in_tx(self.s.store.as_ref(), async |uow| Ok(uow.api().list_keys(account).await?)).await?;
+        let mut uow = self.s.store.begin().await?;
+        let read = async { Ok(uow.api().list_keys(account).await?) }.await;
+        let keys = finish(uow, read).await?;
         Ok(keys.iter().map(KeyView::from).collect())
     }
 
@@ -231,7 +242,8 @@ impl Api {
         if !matches!(actor, Actor::Session { .. }) {
             return Err(ApiError::Forbidden);
         }
-        in_tx(self.s.store.as_ref(), async |uow| {
+        let mut uow = self.s.store.begin().await?;
+        let revoked = async {
             let Some(mut key) = uow.api().lock_key(id).await? else { return Err(ApiError::NotFound) };
             if !can(actor, Action::KeysManage, Resource::Key { id, owner: key.account }) {
                 return Err(ApiError::NotFound);
@@ -239,8 +251,19 @@ impl Api {
             key.active = false;
             uow.api().save_key(&key).await?;
             Ok(KeyView::from(&key))
-        })
-        .await
+        }
+        .await;
+        finish(uow, revoked).await
+    }
+
+    /// D5: the account's callback signing secret, shown to the owner on the key
+    /// screen (lead 2026-10-27, no flag). Created on first read; never to a key actor.
+    pub async fn signing_secret(&self, actor: &Actor) -> Result<String, ApiError> {
+        let account = actor.account();
+        if !can(actor, Action::KeysManage, Resource::Account(account)) {
+            return Err(ApiError::Forbidden);
+        }
+        Ok(self.s.outbox.signing_secret(account, &self.s.crypto.random_token()).await?)
     }
 }
 
@@ -286,6 +309,21 @@ enum Step {
 impl Callbacks {
     pub fn new(services: CallbackServices) -> Callbacks {
         Callbacks { s: services }
+    }
+
+    /// D8 admin replay. `operator` is the identity the host verified against
+    /// its admin allow-list (IDN-032), never a request field. The delivery
+    /// keeps its id; the next pass appends one attempt with a freshly built
+    /// body. A pending delivery is not replayed.
+    pub async fn replay(&self, operator: &str, id: DeliveryId) -> Result<(), ApiError> {
+        if operator.trim().is_empty() {
+            return Err(ApiError::Forbidden);
+        }
+        match self.s.outbox.reopen(id, self.s.clock.now()).await? {
+            Reopen::Reopened => Ok(()),
+            Reopen::StillPending => Err(ApiError::Invalid("The delivery is still pending; it is not replayed".into())),
+            Reopen::Missing => Err(ApiError::NotFound),
+        }
     }
 
     /// D5/D6: the delivery of a completed job's event, idempotent on `event_id`.

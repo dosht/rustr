@@ -9,10 +9,11 @@
 
 pub mod account;
 pub mod ai;
+pub mod openapi;
+pub mod public;
 
-use serde::Serialize;
 use serde_json::{Value, json};
-use transgate_core::jobs::app::{DraftOptions, JobResult, StartAnswer, StartMeta, StartRequest, UrlItem, UrlRequest};
+use transgate_core::jobs::app::{DraftOptions, StartAnswer, StartRequest, UrlItem, UrlRequest};
 use transgate_core::jobs::domain::Provider;
 use transgate_core::jobs::ports::LanguageUsage;
 use transgate_core::jobs::routing::Preferences;
@@ -235,30 +236,6 @@ pub fn language_usage_response(usage: &LanguageUsage) -> Value {
     json!({"languages": rows(&usage.languages), "targets": rows(&usage.targets)})
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct ResultView {
-    job_id: i64,
-    status: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    estimated_completion_time: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    error: Option<String>,
-}
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct MetaView {
-    new_balance: i64,
-    is_freemium: bool,
-    total_jobs: usize,
-    successful_jobs: usize,
-    failed_jobs: usize,
-    queued_jobs: usize,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    estimated_completion: Option<String>,
-    request_type: String,
-}
 
 /// RFC 3339 UTC with milliseconds, the JavaScript `toISOString()` shape.
 pub fn iso8601(at: Micros) -> String {
@@ -278,44 +255,19 @@ pub fn iso8601(at: Micros) -> String {
     format!("{year:04}-{month:02}-{day:02}T{h:02}:{m:02}:{s:02}.{ms:03}Z")
 }
 
-fn result_view(result: &JobResult) -> ResultView {
-    ResultView {
-        job_id: result.job_id.0,
-        status: result.status.as_str().into(),
-        estimated_completion_time: result.estimated_completion.map(iso8601),
-        error: result.error.clone(),
-    }
-}
-
-fn meta_view(meta: &StartMeta) -> MetaView {
-    MetaView {
-        new_balance: meta.new_balance,
-        is_freemium: meta.is_freemium,
-        total_jobs: meta.total_jobs,
-        successful_jobs: meta.successful_jobs,
-        failed_jobs: meta.failed_jobs,
-        queued_jobs: meta.queued_jobs,
-        estimated_completion: meta.estimated_completion.map(iso8601),
-        request_type: meta.request_type.clone(),
-    }
-}
-
 /// The 201 session answer of `/api/jobs/start`: `{ success, data: { success, results, metadata }, metadata }`.
+/// Built from the same DTOs as the public route, so the two bodies cannot drift.
 pub fn start_response(answer: &StartAnswer, request_id: &str, at: Micros, processing_ms: u64, client_type: &str) -> Value {
-    json!({
-        "success": true,
-        "data": {
-            "success": true,
-            "results": answer.results.iter().map(result_view).collect::<Vec<_>>(),
-            "metadata": meta_view(&answer.meta),
+    let response = public::StartResponse {
+        success: true,
+        data: public::StartData {
+            success: true,
+            results: answer.results.iter().map(public::result_view).collect(),
+            metadata: public::meta_view(&answer.meta),
         },
-        "metadata": {
-            "requestId": request_id,
-            "timestamp": iso8601(at),
-            "processingTime": processing_ms,
-            "clientType": client_type,
-        },
-    })
+        metadata: public::metadata(request_id, at, processing_ms, client_type),
+    };
+    serde_json::to_value(response).unwrap_or(Value::Null)
 }
 
 #[cfg(test)]

@@ -4856,6 +4856,210 @@
       "fi": "Siirry kohtaan",
       "kk": "Іздеу",
       "az": "Axtar"
+    },
+    "Failed to load API keys.": {
+      "tr": "API anahtarları yüklenemedi.",
+      "pt": "Não foi possível carregar as chaves de API.",
+      "es": "No se pudieron cargar las claves de API.",
+      "de": "API-Schlüssel konnten nicht geladen werden.",
+      "id": "Gagal memuat kunci API.",
+      "it": "Impossibile caricare le chiavi API.",
+      "fr": "Impossible de charger les clés API.",
+      "el": "Δεν ήταν δυνατή η φόρτωση των κλειδιών API.",
+      "ru": "Не удалось загрузить ключи API.",
+      "da": "API-nøglerne kunne ikke indlæses.",
+      "sv": "API-nycklarna kunde inte läsas in.",
+      "no": "API-nøklene kunne ikke lastes inn.",
+      "fi": "API-avaimia ei voitu ladata.",
+      "kk": "API кілттерін жүктеу мүмкін болмады.",
+      "az": "API açarlarını yükləmək mümkün olmadı."
+    },
+    "Failed to load the signing secret.": {
+      "tr": "İmza sırrı yüklenemedi.",
+      "pt": "Não foi possível carregar o segredo de assinatura.",
+      "es": "No se pudo cargar el secreto de firma.",
+      "de": "Das Signaturgeheimnis konnte nicht geladen werden.",
+      "id": "Gagal memuat rahasia penandatanganan.",
+      "it": "Impossibile caricare il segreto di firma.",
+      "fr": "Impossible de charger le secret de signature.",
+      "el": "Δεν ήταν δυνατή η φόρτωση του μυστικού υπογραφής.",
+      "ru": "Не удалось загрузить секрет подписи.",
+      "da": "Signeringshemmeligheden kunne ikke indlæses.",
+      "sv": "Signeringshemligheten kunde inte läsas in.",
+      "no": "Signeringshemmeligheten kunne ikke lastes inn.",
+      "fi": "Allekirjoitussalaisuutta ei voitu ladata.",
+      "kk": "Қолтаңба құпиясын жүктеу мүмкін болмады.",
+      "az": "İmza sirrini yükləmək mümkün olmadı."
+    },
+    "Revoke API key": {
+      "tr": "API anahtarını iptal et",
+      "pt": "Revogar chave de API",
+      "es": "Revocar clave de API",
+      "de": "API-Schlüssel widerrufen",
+      "id": "Cabut kunci API",
+      "it": "Revoca chiave API",
+      "fr": "Révoquer la clé API",
+      "el": "Ανάκληση κλειδιού API",
+      "ru": "Отозвать ключ API",
+      "da": "Tilbagekald API-nøgle",
+      "sv": "Återkalla API-nyckel",
+      "no": "Tilbakekall API-nøkkel",
+      "fi": "Peruuta API-avain",
+      "kk": "API кілтін қайтарып алу",
+      "az": "API açarını ləğv et"
+    },
+    "Expires": {
+      "tr": "Sona erme",
+      "pt": "Expira",
+      "es": "Caduca",
+      "de": "Läuft ab",
+      "id": "Kedaluwarsa",
+      "it": "Scade",
+      "fr": "Expire",
+      "el": "Λήγει",
+      "ru": "Истекает",
+      "da": "Udløber",
+      "sv": "Går ut",
+      "no": "Utløper",
+      "fi": "Vanhenee",
+      "kk": "Мерзімі аяқталады",
+      "az": "Bitir"
+    },
+    "Never Expire": {
+      "tr": "Süresiz",
+      "pt": "Nunca expira",
+      "es": "Nunca caduca",
+      "de": "Läuft nie ab",
+      "id": "Tidak pernah kedaluwarsa",
+      "it": "Non scade mai",
+      "fr": "N’expire jamais",
+      "el": "Δεν λήγει ποτέ",
+      "ru": "Бессрочно",
+      "da": "Udløber aldrig",
+      "sv": "Går aldrig ut",
+      "no": "Utløper aldri",
+      "fi": "Ei vanhene koskaan",
+      "kk": "Мерзімсіз",
+      "az": "Heç vaxt bitmir"
+    },
+    "30 Days": {
+      "tr": "30 gün",
+      "pt": "30 dias",
+      "es": "30 días",
+      "de": "30 Tage",
+      "id": "30 hari",
+      "it": "30 giorni",
+      "fr": "30 jours",
+      "el": "30 ημέρες",
+      "ru": "30 дней",
+      "da": "30 dage",
+      "sv": "30 dagar",
+      "no": "30 dager",
+      "fi": "30 päivää",
+      "kk": "30 күн",
+      "az": "30 gün"
+    },
+    "90 Days": {
+      "tr": "90 gün",
+      "pt": "90 dias",
+      "es": "90 días",
+      "de": "90 Tage",
+      "id": "90 hari",
+      "it": "90 giorni",
+      "fr": "90 jours",
+      "el": "90 ημέρες",
+      "ru": "90 дней",
+      "da": "90 dage",
+      "sv": "90 dagar",
+      "no": "90 dager",
+      "fi": "90 päivää",
+      "kk": "90 күн",
+      "az": "90 gün"
+    },
+    "Callback signing secret": {
+      "tr": "Geri çağırma imza sırrı",
+      "pt": "Segredo de assinatura de callbacks",
+      "es": "Secreto de firma de callbacks",
+      "de": "Callback-Signaturgeheimnis",
+      "id": "Rahasia penandatanganan callback",
+      "it": "Segreto di firma dei callback",
+      "fr": "Secret de signature des callbacks",
+      "el": "Μυστικό υπογραφής callback",
+      "ru": "Секрет подписи обратных вызовов",
+      "da": "Hemmelighed til signering af callbacks",
+      "sv": "Hemlighet för signering av callbacks",
+      "no": "Hemmelighet for signering av callbacks",
+      "fi": "Callbackien allekirjoitussalaisuus",
+      "kk": "Callback қолтаңбасының құпиясы",
+      "az": "Callback imza sirri"
+    },
+    "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback.": {
+      "tr": "Transgate her iş geri çağırmasını bu sırla imzalar. Bir geri çağırmaya güvenmeden önce Transgate-Signature başlığını doğrulamak için bunu kullanın.",
+      "pt": "O Transgate assina cada callback de tarefa com este segredo. Use-o para verificar o cabeçalho Transgate-Signature antes de confiar num callback.",
+      "es": "Transgate firma cada callback de trabajo con este secreto. Úsalo para verificar el encabezado Transgate-Signature antes de confiar en un callback.",
+      "de": "Transgate signiert jeden Auftrags-Callback mit diesem Geheimnis. Verwenden Sie es, um den Header Transgate-Signature zu prüfen, bevor Sie einem Callback vertrauen.",
+      "id": "Transgate menandatangani setiap callback tugas dengan rahasia ini. Gunakan untuk memverifikasi header Transgate-Signature sebelum memercayai callback.",
+      "it": "Transgate firma ogni callback dei lavori con questo segreto. Usalo per verificare l’intestazione Transgate-Signature prima di fidarti di un callback.",
+      "fr": "Transgate signe chaque callback de tâche avec ce secret. Utilisez-le pour vérifier l’en-tête Transgate-Signature avant de faire confiance à un callback.",
+      "el": "Το Transgate υπογράφει κάθε callback εργασίας με αυτό το μυστικό. Χρησιμοποιήστε το για να επαληθεύσετε την κεφαλίδα Transgate-Signature πριν εμπιστευτείτε ένα callback.",
+      "ru": "Transgate подписывает каждый обратный вызов задания этим секретом. Используйте его для проверки заголовка Transgate-Signature, прежде чем доверять вызову.",
+      "da": "Transgate signerer hvert job-callback med denne hemmelighed. Brug den til at bekræfte headeren Transgate-Signature, før du stoler på et callback.",
+      "sv": "Transgate signerar varje jobbcallback med den här hemligheten. Använd den för att verifiera rubriken Transgate-Signature innan du litar på en callback.",
+      "no": "Transgate signerer hver jobb-callback med denne hemmeligheten. Bruk den til å bekrefte headeren Transgate-Signature før du stoler på en callback.",
+      "fi": "Transgate allekirjoittaa jokaisen työn callbackin tällä salaisuudella. Käytä sitä Transgate-Signature-otsakkeen vahvistamiseen ennen kuin luotat callbackiin.",
+      "kk": "Transgate әр тапсырма callback-іне осы құпиямен қол қояды. Callback-ке сенбес бұрын Transgate-Signature тақырыбын тексеру үшін пайдаланыңыз.",
+      "az": "Transgate hər tapşırıq callback-ini bu sirrlə imzalayır. Callback-ə etibar etməzdən əvvəl Transgate-Signature başlığını yoxlamaq üçün istifadə edin."
+    },
+    "Copy secret": {
+      "tr": "Sırrı kopyala",
+      "pt": "Copiar segredo",
+      "es": "Copiar secreto",
+      "de": "Geheimnis kopieren",
+      "id": "Salin rahasia",
+      "it": "Copia segreto",
+      "fr": "Copier le secret",
+      "el": "Αντιγραφή μυστικού",
+      "ru": "Копировать секрет",
+      "da": "Kopiér hemmelighed",
+      "sv": "Kopiera hemligheten",
+      "no": "Kopier hemmeligheten",
+      "fi": "Kopioi salaisuus",
+      "kk": "Құпияны көшіру",
+      "az": "Sirri kopyala"
+    },
+    "Signing secret copied to clipboard": {
+      "tr": "İmza sırrı panoya kopyalandı",
+      "pt": "Segredo de assinatura copiado para a área de transferência",
+      "es": "Secreto de firma copiado al portapapeles",
+      "de": "Signaturgeheimnis in die Zwischenablage kopiert",
+      "id": "Rahasia penandatanganan disalin ke papan klip",
+      "it": "Segreto di firma copiato negli appunti",
+      "fr": "Secret de signature copié dans le presse-papiers",
+      "el": "Το μυστικό υπογραφής αντιγράφηκε στο πρόχειρο",
+      "ru": "Секрет подписи скопирован в буфер обмена",
+      "da": "Signeringshemmeligheden er kopieret til udklipsholderen",
+      "sv": "Signeringshemligheten har kopierats till urklipp",
+      "no": "Signeringshemmeligheten er kopiert til utklippstavlen",
+      "fi": "Allekirjoitussalaisuus kopioitu leikepöydälle",
+      "kk": "Қолтаңба құпиясы буферге көшірілді",
+      "az": "İmza sirri mübadilə buferinə kopyalandı"
+    },
+    "Failed to copy the signing secret": {
+      "tr": "İmza sırrı kopyalanamadı",
+      "pt": "Não foi possível copiar o segredo de assinatura",
+      "es": "No se pudo copiar el secreto de firma",
+      "de": "Das Signaturgeheimnis konnte nicht kopiert werden",
+      "id": "Gagal menyalin rahasia penandatanganan",
+      "it": "Impossibile copiare il segreto di firma",
+      "fr": "Impossible de copier le secret de signature",
+      "el": "Δεν ήταν δυνατή η αντιγραφή του μυστικού υπογραφής",
+      "ru": "Не удалось скопировать секрет подписи",
+      "da": "Signeringshemmeligheden kunne ikke kopieres",
+      "sv": "Signeringshemligheten kunde inte kopieras",
+      "no": "Signeringshemmeligheten kunne ikke kopieres",
+      "fi": "Allekirjoitussalaisuuden kopiointi epäonnistui",
+      "kk": "Қолтаңба құпиясын көшіру мүмкін болмады",
+      "az": "İmza sirrini kopyalamaq mümkün olmadı"
     }
   },
   "pluralMessages": {
@@ -4877,6 +5081,9 @@
         "20": "Ödemeyi onayla",
         "21": "Yetersiz bakiye",
         "YouTube URL": "YouTube bağlantısı"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 yıl"
       }
     },
     "pt": {
@@ -4892,6 +5099,9 @@
         "18": "Obrigado",
         "20": "Confirmar compra",
         "21": "Saldo insuficiente"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 ano"
       }
     },
     "de": {
@@ -4900,17 +5110,22 @@
         "Show Time": "Zeitstempel anzeigen"
       },
       "app": {
-        "Show Time": "Zeitstempel anzeigen"
+        "Show Time": "Zeitstempel anzeigen",
+        "p7.keys.expiry_one_year": "1 Jahr"
       }
     },
     "it": {
       "app": {
-        "Show Speaker": "Mostra il parlante"
+        "Show Speaker": "Mostra il parlante",
+        "p7.keys.expiry_one_year": "1 anno"
       }
     },
     "el": {
       "auth": {
         "forgotten_password.confirmation_text": "Ελέγξτε το email σας για τον σύνδεσμο επαναφοράς κωδικού πρόσβασης"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 έτος"
       }
     },
     "da": {
@@ -4921,6 +5136,9 @@
       "ai": {
         "AI Chat Assistant": "AI-chatassistent",
         "Download chat": "Hent chat"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 år"
       }
     },
     "sv": {
@@ -4929,22 +5147,59 @@
       },
       "ai": {
         "AI Chat Assistant": "AI-chattassistent"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 år"
       }
     },
     "no": {
       "auth": {
         "sign_in.button_label": "Logg inn",
         "sign_up.button_label": "Registrer deg"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 år"
       }
     },
     "kk": {
       "common": {
         "YouTube URL": "YouTube URL мекенжайы"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 жыл"
       }
     },
     "az": {
       "common": {
         "YouTube URL": "YouTube keçidi"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 il"
+      }
+    },
+    "es": {
+      "app": {
+        "p7.keys.expiry_one_year": "1 año"
+      }
+    },
+    "id": {
+      "app": {
+        "p7.keys.expiry_one_year": "1 tahun"
+      }
+    },
+    "fr": {
+      "app": {
+        "p7.keys.expiry_one_year": "1 an"
+      }
+    },
+    "ru": {
+      "app": {
+        "p7.keys.expiry_one_year": "1 год"
+      }
+    },
+    "fi": {
+      "app": {
+        "p7.keys.expiry_one_year": "1 vuosi"
       }
     }
   },

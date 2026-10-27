@@ -215,6 +215,10 @@ pub struct TransgatePresenter {
 
 #[wasm_bindgen]
 impl TransgatePresenter {
+    // wasm32-unknown-unknown has no threads: the ports are single-threaded browser
+    // handles, yet `GoTrue` and `HttpApi` take `Arc` because the same client code
+    // also runs natively on threads (P8).
+    #[allow(clippy::arc_with_non_send_sync)]
     #[wasm_bindgen(constructor)]
     pub fn new(config: JsValue, platform: Platform) -> Result<TransgatePresenter, JsError> {
         let config: Config = serde_wasm_bindgen::from_value(config)?;

@@ -74,7 +74,6 @@ pub struct Data {
 #[derive(Clone, Default)]
 pub struct ApiData {
     pub keys: Vec<crate::api::keys::ApiKey>,
-    pub uses: Vec<crate::api::ports::KeyUse>,
     pub idempotency: Vec<crate::api::idempotency::IdempotencyRecord>,
     pub deliveries: Vec<crate::api::callbacks::CallbackDelivery>,
     /// Delivery leases: claim token and lease end.
@@ -312,10 +311,6 @@ impl crate::api::ports::ApiTx for MemUow {
         keys.sort_by_key(|k| std::cmp::Reverse(k.created_at));
         ok(keys)
     }
-    fn record_use<'a>(&'a mut self, usage: &'a crate::api::ports::KeyUse) -> StoreResult<'a, ()> {
-        self.data.api.uses.push(usage.clone());
-        ok(())
-    }
     fn idempotency<'a>(&'a mut self, account: AccountId, key: &'a str, expired_before: Micros) -> StoreResult<'a, Option<crate::api::idempotency::IdempotencyRecord>> {
         ok(self.data.api.idempotency.iter().find(|r| r.account == account && r.key == key && r.created_at > expired_before).cloned())
     }
@@ -432,6 +427,20 @@ impl crate::api::ports::CallbackOutbox for MemStore {
                 x.state = crate::api::callbacks::DeliveryState::Abandoned;
             }
             true
+        }))
+    }
+    fn reopen(&self, id: crate::api::callbacks::DeliveryId, now: Micros) -> StoreResult<'_, crate::api::ports::Reopen> {
+        use crate::api::callbacks::DeliveryState;
+        use crate::api::ports::Reopen;
+        ok(self.with(|d| {
+            let Some(x) = d.api.deliveries.iter_mut().find(|x| x.id == id) else { return Reopen::Missing };
+            if x.state == DeliveryState::Pending {
+                return Reopen::StillPending;
+            }
+            x.state = DeliveryState::Pending;
+            x.next_attempt_at = now;
+            x.delivered_at = None;
+            Reopen::Reopened
         }))
     }
     fn signing_secret<'a>(&'a self, account: AccountId, candidate: &'a str) -> StoreResult<'a, String> {
@@ -1321,7 +1330,6 @@ impl JobUow for MemUow {
         self.data.support.retain(|s| s.request.account != account);
         let api = &mut self.data.api;
         api.keys.retain(|k| k.account != account);
-        api.uses.retain(|u| u.account != account);
         api.idempotency.retain(|r| r.account != account);
         api.deliveries.retain(|d| d.account != account);
         ok(())

@@ -1137,7 +1137,7 @@
   ],
   "translationInput": {
     "path": "scripts/p5-locales/translations.json",
-    "sha256": "d5b0b6d74b9a6efb7b7cf962ae4d044d339a04bdc748b3f834777b0217744796"
+    "sha256": "0257b2c9bc6b93ca9ec999c47a362e5d7703dd101ffdd4652deff0e218f77930"
   },
   "sourceEquivalentReuse": [
     {
@@ -3038,6 +3038,9 @@
         "20": "Ödemeyi onayla",
         "21": "Yetersiz bakiye",
         "YouTube URL": "YouTube bağlantısı"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 yıl"
       }
     },
     "pt": {
@@ -3053,6 +3056,9 @@
         "18": "Obrigado",
         "20": "Confirmar compra",
         "21": "Saldo insuficiente"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 ano"
       }
     },
     "de": {
@@ -3061,17 +3067,22 @@
         "Show Time": "Zeitstempel anzeigen"
       },
       "app": {
-        "Show Time": "Zeitstempel anzeigen"
+        "Show Time": "Zeitstempel anzeigen",
+        "p7.keys.expiry_one_year": "1 Jahr"
       }
     },
     "it": {
       "app": {
-        "Show Speaker": "Mostra il parlante"
+        "Show Speaker": "Mostra il parlante",
+        "p7.keys.expiry_one_year": "1 anno"
       }
     },
     "el": {
       "auth": {
         "forgotten_password.confirmation_text": "Ελέγξτε το email σας για τον σύνδεσμο επαναφοράς κωδικού πρόσβασης"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 έτος"
       }
     },
     "da": {
@@ -3082,6 +3093,9 @@
       "ai": {
         "AI Chat Assistant": "AI-chatassistent",
         "Download chat": "Hent chat"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 år"
       }
     },
     "sv": {
@@ -3090,22 +3104,59 @@
       },
       "ai": {
         "AI Chat Assistant": "AI-chattassistent"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 år"
       }
     },
     "no": {
       "auth": {
         "sign_in.button_label": "Logg inn",
         "sign_up.button_label": "Registrer deg"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 år"
       }
     },
     "kk": {
       "common": {
         "YouTube URL": "YouTube URL мекенжайы"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 жыл"
       }
     },
     "az": {
       "common": {
         "YouTube URL": "YouTube keçidi"
+      },
+      "app": {
+        "p7.keys.expiry_one_year": "1 il"
+      }
+    },
+    "es": {
+      "app": {
+        "p7.keys.expiry_one_year": "1 año"
+      }
+    },
+    "id": {
+      "app": {
+        "p7.keys.expiry_one_year": "1 tahun"
+      }
+    },
+    "fr": {
+      "app": {
+        "p7.keys.expiry_one_year": "1 an"
+      }
+    },
+    "ru": {
+      "app": {
+        "p7.keys.expiry_one_year": "1 год"
+      }
+    },
+    "fi": {
+      "app": {
+        "p7.keys.expiry_one_year": "1 vuosi"
       }
     }
   },
@@ -3130,7 +3181,13 @@
     "The six Portuguese corrections are authoritative regeneration inputs, mirrored in translatedSourceCorrections/resolutions and source_empty_value baseline/input evidence. Original source file hashes are retained. Validator and importer behavior are unchanged; no runtime fallback enabled.",
     "Working-source repair only: /home/mu/.cache/rustr-integration/s1-20261026142204 and its failed evidence remain immutable. No worker validation/import/capture/test rerun; passing a future fresh gate is not claimed.",
     "Separate same-slice p1Z request: five actual source YouTube resize/corner control keys added in all16 app catalogs with source references; no aliases for prior machine keys.",
-    "REPAIR-P5-11: new P5 key app:p5.player.seek (English \"Seek\", accessible name of the player seek slider, PlayerControls.svelte:36) added in all16 with authored translations. New approved key, not source-derived; no fallback-baseline entry (approved origin)."
+    "REPAIR-P5-11: new P5 key app:p5.player.seek (English \"Seek\", accessible name of the player seek slider, PlayerControls.svelte:36) added in all16 with authored translations. New approved key, not source-derived; no fallback-baseline entry (approved origin).",
+    "P7 key screen (WEB-045/046): 40 legacy api-keys.tsx strings (source dashboard namespace, p1X core emits common keys) added to common in all16 using the actual source dashboard.json translations (source_equivalent, ns_source dashboard; source file:line in reachable-keys). Source-identical shared words (Status, Name) are genuine. Two NEW P7 keys app:p7.keys.load_failed and app:p7.keys.secret_load_failed added with authored translations (new, not source-derived, approved origin, no baseline row).",
+    "P7 key screen: 3 NEW common keys (Webhook signing secret; callback signing description; Revoke API key) requested by p1V per D5, authored all16, new not source-derived, approved origin.",
+    "P7 key screen: NEW common key \"Expires\" (expiry badge label) requested by p1V, authored all16, new not source-derived.",
+    "P7 key screen final emitted list from p1X: 3 source hardcoded labels (Never Expire, 30 Days, 90 Days; api-keys.tsx:121-137, no source translation, authored) added to common; 5 NEW app p7.keys.secret_* keys (title, description, copy, copied, copy_failed) authored, new not source-derived. Existing 1 Year reused (source common key; pt source text is \"Plano Anual\").",
+    "P7 key screen correction: view-owned common keys \"Webhook signing secret\" and \"Callbacks we send to your server are signed with this secret. Use it to verify them.\" were removed (nothing emits or renders them; core now emits app p7.keys.secret_title/secret_description). \"Expires\" and \"Revoke API key\" remain (rendered by ApiKeysPage.svelte).",
+    "P7: NEW app key p7.keys.expiry_one_year (\"1 Year\" as an API key lifetime, not a plan label), authored all16 via explicit overrides so regeneration cannot reuse the same-English source common \"1 Year\" (pt \"Plano Anual\" = annual plan). New, not source-derived."
   ],
   "resolutions": [
     {
@@ -22833,6 +22890,5556 @@
       "key": "p5.player.seek",
       "kind": "translated",
       "english": "Seek"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Active",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "API Documentation",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "API key copied to clipboard",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "API key created successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "API key revoked successfully",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Are you sure you want to revoke this API key?",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Copied!",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Copy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Create Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Created",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Custom",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Custom Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Days",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "e.g. My App Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Enter the number of days until the key expires (1-3650)",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Expiration Policy",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Expired",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Failed to copy API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Failed to create API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Failed to revoke API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "For more information on how to use API keys, visit our ",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Generate Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Generate New Key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Key Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Manage your API keys for accessing the transcription service",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Name",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Never",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "No API keys found.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "No Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Permissions",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Read & Create",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Read Only",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Revoke",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Revoked",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Scopes",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Select",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Status",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "This key will only be shown once. Please copy and store it securely.",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Your API Keys",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Your new API key",
+      "kind": "source_equivalent",
+      "ns_source": "dashboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "pt",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "es",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "de",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "id",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "it",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "fr",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "el",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "ru",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "da",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "sv",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "no",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "fi",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "kk",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "az",
+      "ns": "app",
+      "key": "p7.keys.load_failed",
+      "kind": "translated",
+      "english": "Failed to load API keys."
+    },
+    {
+      "locale": "tr",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "pt",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "es",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "de",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "id",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "it",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "fr",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "el",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "ru",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "da",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "sv",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "no",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "fi",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "kk",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "az",
+      "ns": "app",
+      "key": "p7.keys.secret_load_failed",
+      "kind": "translated",
+      "english": "Failed to load the signing secret."
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Revoke API key",
+      "kind": "translated",
+      "english": "Revoke API key"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Expires",
+      "kind": "translated",
+      "english": "Expires"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "Never Expire",
+      "kind": "translated",
+      "english": "Never Expire"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "30 Days",
+      "kind": "translated",
+      "english": "30 Days"
+    },
+    {
+      "locale": "tr",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "pt",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "es",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "de",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "id",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "it",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "fr",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "el",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "ru",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "da",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "sv",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "no",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "fi",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "kk",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "az",
+      "ns": "common",
+      "key": "90 Days",
+      "kind": "translated",
+      "english": "90 Days"
+    },
+    {
+      "locale": "tr",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "pt",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "es",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "de",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "id",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "it",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "fr",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "el",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "ru",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "da",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "sv",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "no",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "fi",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "kk",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "az",
+      "ns": "app",
+      "key": "p7.keys.secret_title",
+      "kind": "translated",
+      "english": "Callback signing secret"
+    },
+    {
+      "locale": "tr",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "pt",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "es",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "de",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "id",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "it",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "fr",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "el",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "ru",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "da",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "sv",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "no",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "fi",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "kk",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "az",
+      "ns": "app",
+      "key": "p7.keys.secret_description",
+      "kind": "translated",
+      "english": "Transgate signs every job callback with this secret. Use it to verify the Transgate-Signature header before trusting a callback."
+    },
+    {
+      "locale": "tr",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "pt",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "es",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "de",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "id",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "it",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "fr",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "el",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "ru",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "da",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "sv",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "no",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "fi",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "kk",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "az",
+      "ns": "app",
+      "key": "p7.keys.secret_copy",
+      "kind": "translated",
+      "english": "Copy secret"
+    },
+    {
+      "locale": "tr",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "pt",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "es",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "de",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "id",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "it",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "fr",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "el",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "ru",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "da",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "sv",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "no",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "fi",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "kk",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "az",
+      "ns": "app",
+      "key": "p7.keys.secret_copied",
+      "kind": "translated",
+      "english": "Signing secret copied to clipboard"
+    },
+    {
+      "locale": "tr",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "pt",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "es",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "de",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "id",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "it",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "fr",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "el",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "ru",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "da",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "sv",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "no",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "fi",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "kk",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "az",
+      "ns": "app",
+      "key": "p7.keys.secret_copy_failed",
+      "kind": "translated",
+      "english": "Failed to copy the signing secret"
+    },
+    {
+      "locale": "tr",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "pt",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "es",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "de",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "id",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "it",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "fr",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "el",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "ru",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "da",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "sv",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "no",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "fi",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "kk",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
+    },
+    {
+      "locale": "az",
+      "ns": "app",
+      "key": "p7.keys.expiry_one_year",
+      "kind": "translated_source_correction"
     }
   ]
 }

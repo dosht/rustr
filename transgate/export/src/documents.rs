@@ -72,7 +72,7 @@ impl DocumentWriter {
         if index < 7 { &self.fonts[index] }
         else {
             let pair = self.fallbacks[(index - 7) / 2].as_ref().expect("a shaped run refers only to a loaded font");
-            if (index - 7) % 2 == 0 { &pair.regular } else { &pair.bold }
+            if (index - 7).is_multiple_of(2) { &pair.regular } else { &pair.bold }
         }
     }
     pub fn invoice(&self, document: &InvoiceDocument) -> Result<DocumentBytes, DocumentBytesError> {

@@ -125,13 +125,13 @@ impl AnalysisDocument {
         if let Some(summary) = self.displayed.summary.as_deref().filter(|s| !s.is_empty()) {
             b.heading("Summary"); b.push(BlockRole::Paragraph, summary); b.end();
         }
-        if let Some(Analysis::Generic(g)) = &self.displayed.analysis {
-            if let Some(highlights) = g.highlights.as_ref().filter(|h| !h.is_empty()) {
-                b.heading("Key Highlights");
-                let category = if flavor == Flavor::Pdf { "Highlights" } else { "Highlight" };
-                if flavor == Flavor::Docx { b.push(BlockRole::Heading(2), category); } else { b.subheading(category); }
-                b.list(highlights);
-            }
+        if let Some(Analysis::Generic(g)) = &self.displayed.analysis
+            && let Some(highlights) = g.highlights.as_ref().filter(|h| !h.is_empty())
+        {
+            b.heading("Key Highlights");
+            let category = if flavor == Flavor::Pdf { "Highlights" } else { "Highlight" };
+            if flavor == Flavor::Docx { b.push(BlockRole::Heading(2), category); } else { b.subheading(category); }
+            b.list(highlights);
         }
         if let Some(analysis) = &self.displayed.analysis { b.analysis(analysis); }
         if flavor == Flavor::Docx {
@@ -238,8 +238,10 @@ impl Blocks {
     }
     fn advice_heading(&mut self, title: &str, positive: bool) {
         self.subheading(title);
-        if self.flavor == Flavor::Docx {
-            if let Some(block) = self.out.last_mut() { for run in &mut block.runs { run.tone = if positive { DocumentTone::Positive } else { DocumentTone::Caution }; } }
+        if self.flavor == Flavor::Docx
+            && let Some(block) = self.out.last_mut()
+        {
+            for run in &mut block.runs { run.tone = if positive { DocumentTone::Positive } else { DocumentTone::Caution }; }
         }
     }
     fn advice_item(&mut self, text: &str, positive: bool) {
@@ -264,8 +266,10 @@ impl Blocks {
     fn analysis(&mut self, analysis: &Analysis) {
         match analysis {
             Analysis::Generic(g) => {
-                if self.flavor == Flavor::Docx {
-                    if let Some(items) = nonempty(&g.highlights) { self.push(BlockRole::Heading(2), "Key Highlights"); self.list(items); }
+                if self.flavor == Flavor::Docx
+                    && let Some(items) = nonempty(&g.highlights)
+                {
+                    self.push(BlockRole::Heading(2), "Key Highlights"); self.list(items);
                 }
             }
             Analysis::Meeting(m) => {
@@ -316,7 +320,12 @@ impl Blocks {
                     for (i, topic) in topics.iter().enumerate() {
                         let mut runs = vec![run(&topic.title)]; let mut details = vec![];
                         if let Some(at) = topic.timestamp { details.push(match self.flavor { Flavor::Plain | Flavor::Html => format!("[{}]", ts(at)), Flavor::Docx => format!("at {}", ts(at)), Flavor::Pdf => format!("Starts at {}", ts(at)) }); }
-                        if self.flavor.rich_file() { if let Some(duration) = topic.duration.filter(|d| *d != 0.0) { let minutes = (duration / 60.0 + 0.5).floor(); details.push(if self.flavor == Flavor::Pdf { format!("Duration: {minutes} min") } else { format!("{minutes} min") }); } }
+                        if self.flavor.rich_file()
+                            && let Some(duration) = topic.duration.filter(|d| *d != 0.0)
+                        {
+                            let minutes = (duration / 60.0 + 0.5).floor();
+                            details.push(if self.flavor == Flavor::Pdf { format!("Duration: {minutes} min") } else { format!("{minutes} min") });
+                        }
                         if !details.is_empty() { runs.push(meta(format!(" {}", details.join(if self.flavor == Flavor::Pdf { "  |  " } else { " | " })))); }
                         self.runs(BlockRole::Numbered(i as u32 + 1), runs);
                     } self.end();
@@ -328,7 +337,11 @@ impl Blocks {
                         let mut runs = vec![strong(&c.concept)];
                         if !c.explanation.is_empty() { runs.push(run(format!("{}{}", if self.flavor.rich_file() { " — " } else { ": " }, c.explanation))); }
                         self.runs(BlockRole::Bullet, runs);
-                        if self.flavor != Flavor::Html { if let Some(examples) = nonempty(&c.examples) { self.runs(BlockRole::Paragraph, vec![meta(format!("{}Examples: {}", if self.flavor == Flavor::Plain { "  " } else { "" }, examples.join(", ")))]); } }
+                        if self.flavor != Flavor::Html
+                            && let Some(examples) = nonempty(&c.examples)
+                        {
+                            self.runs(BlockRole::Paragraph, vec![meta(format!("{}Examples: {}", if self.flavor == Flavor::Plain { "  " } else { "" }, examples.join(", ")))]);
+                        }
                     } self.end();
                 }
                 self.strings("Review Questions", &l.review_questions, true);
@@ -425,10 +438,12 @@ impl Blocks {
         if let Some(a) = &i.assessment {
             self.heading("Candidate Assessment");
             // Source plain/HTML omit position; preserve that difference.
-            if self.flavor.rich_file() { if let Some(position) = some(&a.position) {
+            if self.flavor.rich_file()
+                && let Some(position) = some(&a.position)
+            {
                 if self.flavor == Flavor::Docx { self.runs(BlockRole::Paragraph, vec![toned(run("Position: "), DocumentTone::Muted), strong(position)]); }
                 else { self.field("Position", position); }
-            } }
+            }
             if let Some(rating) = a.overall_rating {
                 if self.flavor == Flavor::Docx { self.push(BlockRole::Paragraph, format!("Overall Rating: {} ({}/5)", stars(rating.value()), rating.value())); }
                 else { self.field("Overall Rating", format!("{}/5", rating.value())); }
@@ -455,14 +470,14 @@ impl Blocks {
         }
     }
     fn support_insights(&mut self, s: &SupportAnalysis) {
-        if let Some(insights) = &s.insights {
-            if nonempty(&insights.strengths).is_some() || nonempty(&insights.improvements).is_some() {
-                self.heading("Support Insights");
-                for (title, items) in [("Strengths", &insights.strengths), ("Areas for Improvement", &insights.improvements)] {
-                    if let Some(items) = nonempty(items) { self.advice_heading(title, title == "Strengths"); for item in items {
-                        self.advice_item(item, title == "Strengths");
-                    } self.end(); }
-                }
+        if let Some(insights) = &s.insights
+            && (nonempty(&insights.strengths).is_some() || nonempty(&insights.improvements).is_some())
+        {
+            self.heading("Support Insights");
+            for (title, items) in [("Strengths", &insights.strengths), ("Areas for Improvement", &insights.improvements)] {
+                if let Some(items) = nonempty(items) { self.advice_heading(title, title == "Strengths"); for item in items {
+                    self.advice_item(item, title == "Strengths");
+                } self.end(); }
             }
         }
     }
@@ -516,13 +531,19 @@ fn clipboard_html(blocks: &[DocumentBlock]) -> String {
     let mut list = None;
     for block in blocks {
         let next = match block.role { BlockRole::Bullet => Some("ul"), BlockRole::Numbered(_) => Some("ol"), _ => None };
-        if list != next { if let Some(tag) = list { let _ = write!(out, "</{tag}>"); } if let Some(tag) = next { let _ = write!(out, "<{tag} style=\"{}\">", html_style(tag)); } list = next; }
+        if list != next {
+            if let Some(tag) = list { let _ = write!(out, "</{tag}>"); }
+            if let Some(tag) = next { let _ = write!(out, "<{tag} style=\"{}\">", html_style(tag)); }
+            list = next;
+        }
         let tag = match block.role { BlockRole::Title => "h1", BlockRole::Heading(1) => "h1", BlockRole::Heading(2) => "h2", BlockRole::Heading(_) => "h3", BlockRole::Bullet | BlockRole::Numbered(_) => "li", BlockRole::Divider => continue, _ => "p" };
         let _ = write!(out, "<{tag} style=\"{}\">", html_style(tag));
         for r in &block.runs {
-            if r.bold { out.push_str("<strong>"); } if r.italic { out.push_str("<span style=\"font-size: 0.85em; color: #888; font-style: italic;\">"); }
+            if r.bold { out.push_str("<strong>"); }
+            if r.italic { out.push_str("<span style=\"font-size: 0.85em; color: #888; font-style: italic;\">"); }
             escape_html(&mut out, &r.text);
-            if r.italic { out.push_str("</span>"); } if r.bold { out.push_str("</strong>"); }
+            if r.italic { out.push_str("</span>"); }
+            if r.bold { out.push_str("</strong>"); }
         }
         let _ = write!(out, "</{tag}>");
     }
