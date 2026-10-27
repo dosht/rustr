@@ -248,3 +248,34 @@ Each test is the one named in the P3 table above. Y runs browser assertions; the
 | p1Z | UPL-003, UPL-004 | Drop-zone view test: m4a accepted, rejected MIME ignored, drops after ten ignored, button visibility. Y adds the Playwright drop. |
 
 Totals: p1X 17, p1T 19, p22 5, p1W 2, p1Z 2, p23 0 (no P3 content rows are open). 45 in all.
+
+## P3-CLOSE ledger update (2026-10-27, p21)
+
+These are p1X's closed entries (test names from his P3-CLOSE report, each resolved against `cargo test --list`), applied with the lead's decisions. `assemble-discovery --check` is green.
+
+| Entries | Result | Test |
+|---|---|---|
+| JOB-003 | tested | `presentation::upload_queue::tests::job_003_restored_drafts_are_uploaded_without_language_and_aggregate_speakers` |
+| JOB-035 | tested | `jobs::app::tests::job_035_a_youtube_resolve_never_touches_the_balance` |
+| UPL-015 | tested | `upload_queue::tests::upl_015_a_removed_draft_leaves_the_queue_for_good` |
+| UPL-020, LNG-024 | tested | `upload_queue::tests::upl_020_lng_024_the_speaker_toggle_applies_to_every_draft_in_every_language` |
+| UPL-027 | tested | `upload_queue::tests::upl_027_youtube_failure_codes_show_their_messages` |
+| UPL-028 | tested | `upload_queue::tests::upl_028_a_failed_youtube_draft_is_removed_and_the_files_proceed` |
+| TRX-024 | tested | `transcript::soniox::tests::trx_024_gap_boundaries_and_every_punctuation_class` |
+| TRX-025 | tested | `soniox::tests::trx_025_merges_stop_at_language_and_status_changes`, `trx_025_zero_length_remainders_take_the_neighbour_edge` |
+| TRX-028, TRL-004 | tested | `soniox::tests::trx_028_trl_004_same_start_groups_split_a_default_two_second_window` |
+| TRX-038 | tested | `jobs::app::tests::trx_038_each_caption_cue_becomes_one_saved_line` |
+| EDT-008, EDT-010 | tested | `presentation::transcript::tests::edt_008_010_speaker_display_matrix` |
+| EDT-012, EDT-013, LNG-007 | tested | `transcript::tests::edt_013_lng_007_direction_switches_when_a_streaming_job_completes` |
+| LNG-002, LNG-006 | tested | `presentation::route::tests::lng_002_…`, `lng_006_…` |
+| LNG-003, LNG-004 | tested (core rule) | `route::tests::lng_003_first_visit_locale_is_cookie_then_accept_language_then_default`, `lng_004_the_signed_in_root_target_is_the_locale_home`; the leg at `/` moves to P6 (lead) |
+| LNG-005 | stays `ledger` | Lead: `changed` under P5 D3 (no runtime fallback). It needs an executable reference first: Y's Playwright locale spec, or a cargo test over the p24 locale validator. |
+| PRV-023 | tested | `privacy::app::tests::prv_023_the_retention_plan_matches_the_run_and_writes_nothing` |
+| PRV-027 | tested | `data_management::tests::prv_027_a_failed_cleanup_write_reverts_the_switch_and_shows_an_error` |
+| PRV-034 | tested | `jobs::app::tests::prv_034_every_list_request_applies_the_current_unlimited_history` |
+| PRV-036 (was proven-but-ledger) | tested | `data_management::tests::prv_036_the_legacy_switch_is_persisted_and_reloaded` |
+| JOB-024 (from the p1T entry JOB-022..024) | tested | `jobs::app::tests::job_024_a_stale_recovery_claim_does_not_call_soniox`, `job_022_023_024_soniox_recovery_polls_claims_and_gives_up_by_the_rule` |
+| TRX-023, LNG-013 | stays `ledger`, with core-leg references added | The stored-invalid-target leg is reopened (p1X core change, p1T real-PG `trx_023_*` in `transgate-jobs-postgres` `tests/p3_close.rs`) |
+| PRV-046..048 | unchanged (closed via the Playwright cookie spec) | Lead: consent gating of SDK loading is browser mechanics; no move to core |
+
+p1X's 17 owner entries: 15 fully closed, LNG-002..006 closed except LNG-005 (reference pending), and TRX-023/LNG-013 reopened. P3 rule rows across JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN and EML now stand at 64 tested, 4 changed and 203 ledger.
