@@ -706,7 +706,8 @@ impl UploadQueueState {
             .collect()
     }
 
-    pub fn view(&self) -> UploadQueueVm {
+    /// `frame` picks the layout-dependent facts (the picker accept list).
+    pub fn view(&self, frame: Frame) -> UploadQueueVm {
         let translation = self.mode == Mode::Translation;
         let in_mode = |l: &Language| !translation || l.translation_capable();
         let preferred: Vec<Language> = self.preferred.iter().copied().filter(in_mode).collect();
@@ -735,6 +736,11 @@ impl UploadQueueState {
             files_ready: self.files_ready(),
             transcribing: self.transcribing,
             max_files_reached: self.files.len() >= MAX_FILES,
+            picker_accept: match frame {
+                Frame::Desktop => DESKTOP_PICKER_ACCEPT,
+                Frame::Phone => PHONE_PICKER_ACCEPT,
+            }
+            .to_string(),
             show_language_selector: !self.files.is_empty(),
             // Phone "Calculating..." while any file is unmeasured.
             total_minutes: self.files.iter().map(|f| f.duration.map(i64::from)).sum(),
@@ -897,6 +903,8 @@ pub struct UploadQueueVm {
     pub files_ready: bool,
     pub transcribing: bool,
     pub max_files_reached: bool,
+    /// UPL-002: the file input's `accept` for the current layout.
+    pub picker_accept: String,
     pub show_language_selector: bool,
     /// `None` while any file's duration is unknown.
     #[cfg_attr(feature = "ts", ts(type = "number | null"))]

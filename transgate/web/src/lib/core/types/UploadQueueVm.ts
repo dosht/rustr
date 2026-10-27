@@ -20,7 +20,11 @@ phone_preferred: Array<LanguageOption>, start_disabled: boolean,
 /**
  * Every file uploaded and measured.
  */
-files_ready: boolean, transcribing: boolean, max_files_reached: boolean, show_language_selector: boolean, 
+files_ready: boolean, transcribing: boolean, max_files_reached: boolean, 
+/**
+ * UPL-002: the file input's `accept` for the current layout.
+ */
+picker_accept: string, show_language_selector: boolean, 
 /**
  * `None` while any file's duration is unknown.
  */

@@ -27,7 +27,7 @@
     ondragover={(event) => { event.preventDefault(); dragging = true; }}
     ondragleave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) dragging = false; }}
     ondrop={(event) => { event.preventDefault(); dragging = false; ondrop(Array.from(event.dataTransfer?.files ?? [])); }}>
-    <input bind:this={input} data-testid="upload-files" type="file" multiple class="sr-only" tabindex="-1" aria-label={i18n.tk("common", "Upload files")} onchange={(event) => { onpick(Array.from(event.currentTarget.files ?? [])); event.currentTarget.value = ""; }} />
+    <input bind:this={input} data-testid="upload-files" type="file" multiple accept={vm.picker_accept} class="sr-only" tabindex="-1" aria-label={i18n.tk("common", "Upload files")} onchange={(event) => { onpick(Array.from(event.currentTarget.files ?? [])); event.currentTarget.value = ""; }} />
     {#if vm.initializing}<p role="status">{i18n.tk("common", "Loading...")}</p>{/if}
     {#if vm.rows.length}
       <ul class="space-y-3">{#each vm.rows as row (row.id)}<UploadFileRow {row} onremove={(file) => onIntent({ type: "removed", file })} />{/each}</ul>

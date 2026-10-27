@@ -2176,6 +2176,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/*,video/*,.m4a",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -3847,6 +3848,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/*,video/*,.m4a",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -5456,6 +5458,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/mpeg,audio/mp4,audio/wav,audio/webm,.mp3,.m4a,.wav,.webm",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -7207,6 +7210,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/*,video/*,.m4a",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -8785,6 +8789,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/*,video/*,.m4a",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -10544,6 +10549,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/*,video/*,.m4a",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -15417,6 +15423,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/*,video/*,.m4a",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -16987,6 +16994,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/*,video/*,.m4a",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -18586,6 +18594,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/mpeg,audio/mp4,audio/wav,audio/webm,.mp3,.m4a,.wav,.webm",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -20336,6 +20345,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/*,video/*,.m4a",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -21909,6 +21919,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/*,video/*,.m4a",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -23482,6 +23493,7 @@ export const fixtures: FixtureFile = {
             "name": "Indonesian"
           }
         ],
+        "picker_accept": "audio/*,video/*,.m4a",
         "preferred": [],
         "preferred_targets": [],
         "rows": [],
@@ -26171,6 +26183,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/*,video/*,.m4a",
       "preferred": [
         {
           "flag": "🇹🇷",
@@ -27177,6 +27190,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/*,video/*,.m4a",
       "preferred": [
         {
           "flag": "🇹🇷",
@@ -28154,6 +28168,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/*,video/*,.m4a",
       "preferred": [
         {
           "flag": "🇹🇷",
@@ -28823,6 +28838,1233 @@ export const fixtures: FixtureFile = {
       },
       "youtube_error": null
     },
+    "max_files": {
+      "alerts": [],
+      "auto_detect_label": {
+        "args": {},
+        "key": "Auto-detect",
+        "ns": "common"
+      },
+      "auto_detect_offered": true,
+      "available": [
+        {
+          "flag": "🇿🇦",
+          "language": "Afrikaans",
+          "name": "Afrikaans"
+        },
+        {
+          "flag": "🇸🇦",
+          "language": "Arabic",
+          "name": "Arabic"
+        },
+        {
+          "flag": "🇦🇲",
+          "language": "Armenian",
+          "name": "Armenian"
+        },
+        {
+          "flag": "🇦🇿",
+          "language": "Azerbaijani",
+          "name": "Azerbaijani"
+        },
+        {
+          "flag": "🇧🇾",
+          "language": "Belarusian",
+          "name": "Belarusian"
+        },
+        {
+          "flag": "🇧🇦",
+          "language": "Bosnian",
+          "name": "Bosnian"
+        },
+        {
+          "flag": "🇧🇬",
+          "language": "Bulgarian",
+          "name": "Bulgarian"
+        },
+        {
+          "flag": "🇪🇸",
+          "language": "Catalan",
+          "name": "Catalan"
+        },
+        {
+          "flag": "🇨🇳",
+          "language": "Chinese",
+          "name": "Chinese"
+        },
+        {
+          "flag": "🇭🇷",
+          "language": "Croatian",
+          "name": "Croatian"
+        },
+        {
+          "flag": "🇨🇿",
+          "language": "Czech",
+          "name": "Czech"
+        },
+        {
+          "flag": "🇩🇰",
+          "language": "Danish",
+          "name": "Danish"
+        },
+        {
+          "flag": "🇳🇱",
+          "language": "Dutch",
+          "name": "Dutch"
+        },
+        {
+          "flag": "🇺🇸",
+          "language": "English",
+          "name": "English"
+        },
+        {
+          "flag": "🇪🇪",
+          "language": "Estonian",
+          "name": "Estonian"
+        },
+        {
+          "flag": "🇫🇮",
+          "language": "Finnish",
+          "name": "Finnish"
+        },
+        {
+          "flag": "🇫🇷",
+          "language": "French",
+          "name": "French"
+        },
+        {
+          "flag": "🇪🇸",
+          "language": "Galician",
+          "name": "Galician"
+        },
+        {
+          "flag": "🇩🇪",
+          "language": "German",
+          "name": "German"
+        },
+        {
+          "flag": "🇬🇷",
+          "language": "Greek",
+          "name": "Greek"
+        },
+        {
+          "flag": "🇮🇱",
+          "language": "Hebrew",
+          "name": "Hebrew"
+        },
+        {
+          "flag": "🇮🇳",
+          "language": "Hindi",
+          "name": "Hindi"
+        },
+        {
+          "flag": "🇭🇺",
+          "language": "Hungarian",
+          "name": "Hungarian"
+        },
+        {
+          "flag": "🇮🇸",
+          "language": "Icelandic",
+          "name": "Icelandic"
+        },
+        {
+          "flag": "🇮🇩",
+          "language": "Indonesian",
+          "name": "Indonesian"
+        },
+        {
+          "flag": "🇮🇹",
+          "language": "Italian",
+          "name": "Italian"
+        },
+        {
+          "flag": "🇯🇵",
+          "language": "Japanese",
+          "name": "Japanese"
+        },
+        {
+          "flag": "🇮🇳",
+          "language": "Kannada",
+          "name": "Kannada"
+        },
+        {
+          "flag": "🇰🇿",
+          "language": "Kazakh",
+          "name": "Kazakh"
+        },
+        {
+          "flag": "🇰🇷",
+          "language": "Korean",
+          "name": "Korean"
+        },
+        {
+          "flag": "🇱🇻",
+          "language": "Latvian",
+          "name": "Latvian"
+        },
+        {
+          "flag": "🇱🇹",
+          "language": "Lithuanian",
+          "name": "Lithuanian"
+        },
+        {
+          "flag": "🇲🇰",
+          "language": "Macedonian",
+          "name": "Macedonian"
+        },
+        {
+          "flag": "🇲🇾",
+          "language": "Malay",
+          "name": "Malay"
+        },
+        {
+          "flag": "🇮🇳",
+          "language": "Marathi",
+          "name": "Marathi"
+        },
+        {
+          "flag": "🇳🇿",
+          "language": "Maori",
+          "name": "Maori"
+        },
+        {
+          "flag": "🇳🇵",
+          "language": "Nepali",
+          "name": "Nepali"
+        },
+        {
+          "flag": "🇳🇴",
+          "language": "Norwegian",
+          "name": "Norwegian"
+        },
+        {
+          "flag": "🇮🇷",
+          "language": "Persian",
+          "name": "Persian"
+        },
+        {
+          "flag": "🇵🇱",
+          "language": "Polish",
+          "name": "Polish"
+        },
+        {
+          "flag": "🇧🇷",
+          "language": "Portuguese",
+          "name": "Portuguese"
+        },
+        {
+          "flag": "🇷🇴",
+          "language": "Romanian",
+          "name": "Romanian"
+        },
+        {
+          "flag": "🇷🇺",
+          "language": "Russian",
+          "name": "Russian"
+        },
+        {
+          "flag": "🇷🇸",
+          "language": "Serbian",
+          "name": "Serbian"
+        },
+        {
+          "flag": "🇸🇰",
+          "language": "Slovak",
+          "name": "Slovak"
+        },
+        {
+          "flag": "🇸🇮",
+          "language": "Slovenian",
+          "name": "Slovenian"
+        },
+        {
+          "flag": "🇪🇸",
+          "language": "Spanish",
+          "name": "Spanish"
+        },
+        {
+          "flag": "🇰🇪",
+          "language": "Swahili",
+          "name": "Swahili"
+        },
+        {
+          "flag": "🇸🇪",
+          "language": "Swedish",
+          "name": "Swedish"
+        },
+        {
+          "flag": "🇵🇭",
+          "language": "Tagalog",
+          "name": "Tagalog"
+        },
+        {
+          "flag": "🇱🇰",
+          "language": "Tamil",
+          "name": "Tamil"
+        },
+        {
+          "flag": "🇹🇭",
+          "language": "Thai",
+          "name": "Thai"
+        },
+        {
+          "flag": "🇺🇦",
+          "language": "Ukrainian",
+          "name": "Ukrainian"
+        },
+        {
+          "flag": "🇵🇰",
+          "language": "Urdu",
+          "name": "Urdu"
+        },
+        {
+          "flag": "🇻🇳",
+          "language": "Vietnamese",
+          "name": "Vietnamese"
+        },
+        {
+          "flag": "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
+          "language": "Welsh",
+          "name": "Welsh"
+        },
+        {
+          "flag": "🇬🇪",
+          "language": "Georgian",
+          "name": "Georgian"
+        },
+        {
+          "flag": "🇱🇻",
+          "language": "Latin",
+          "name": "Latin"
+        },
+        {
+          "flag": "🇺🇿",
+          "language": "Uzbek",
+          "name": "Uzbek"
+        },
+        {
+          "flag": "🇱🇺",
+          "language": "Luxembourgish",
+          "name": "Luxembourgish"
+        }
+      ],
+      "files_ready": false,
+      "initializing": false,
+      "language": null,
+      "max_files_reached": true,
+      "mode": "transcription",
+      "phone_preferred": [
+        {
+          "flag": "🇺🇸",
+          "language": "English",
+          "name": "English"
+        },
+        {
+          "flag": "🇹🇷",
+          "language": "Turkish",
+          "name": "Turkish"
+        },
+        {
+          "flag": "🇩🇪",
+          "language": "German",
+          "name": "German"
+        },
+        {
+          "flag": "🇮🇩",
+          "language": "Indonesian",
+          "name": "Indonesian"
+        }
+      ],
+      "picker_accept": "audio/*,video/*,.m4a",
+      "preferred": [
+        {
+          "flag": "🇹🇷",
+          "language": "Turkish",
+          "name": "Turkish"
+        }
+      ],
+      "preferred_targets": [],
+      "rows": [
+        {
+          "chip": {
+            "chip": "uploading",
+            "progress": 0
+          },
+          "desktop_size": "4.01 MiB",
+          "duration": null,
+          "duration_text": null,
+          "id": 1,
+          "label": {
+            "args": {},
+            "key": "Uploading",
+            "ns": "common"
+          },
+          "name": "part-01.mp3",
+          "phone_label": {
+            "args": {},
+            "key": "Uploading...",
+            "ns": "common"
+          },
+          "phone_size": "4.0 MB",
+          "progress": 0,
+          "size": 4200000,
+          "youtube": false
+        },
+        {
+          "chip": {
+            "chip": "uploading",
+            "progress": 0
+          },
+          "desktop_size": "4.01 MiB",
+          "duration": null,
+          "duration_text": null,
+          "id": 2,
+          "label": {
+            "args": {},
+            "key": "Uploading",
+            "ns": "common"
+          },
+          "name": "part-02.mp3",
+          "phone_label": {
+            "args": {},
+            "key": "Uploading...",
+            "ns": "common"
+          },
+          "phone_size": "4.0 MB",
+          "progress": 0,
+          "size": 4200000,
+          "youtube": false
+        },
+        {
+          "chip": {
+            "chip": "uploading",
+            "progress": 0
+          },
+          "desktop_size": "4.01 MiB",
+          "duration": null,
+          "duration_text": null,
+          "id": 3,
+          "label": {
+            "args": {},
+            "key": "Uploading",
+            "ns": "common"
+          },
+          "name": "part-03.mp3",
+          "phone_label": {
+            "args": {},
+            "key": "Uploading...",
+            "ns": "common"
+          },
+          "phone_size": "4.0 MB",
+          "progress": 0,
+          "size": 4200000,
+          "youtube": false
+        },
+        {
+          "chip": {
+            "chip": "uploading",
+            "progress": 0
+          },
+          "desktop_size": "4.01 MiB",
+          "duration": null,
+          "duration_text": null,
+          "id": 4,
+          "label": {
+            "args": {},
+            "key": "Uploading",
+            "ns": "common"
+          },
+          "name": "part-04.mp3",
+          "phone_label": {
+            "args": {},
+            "key": "Uploading...",
+            "ns": "common"
+          },
+          "phone_size": "4.0 MB",
+          "progress": 0,
+          "size": 4200000,
+          "youtube": false
+        },
+        {
+          "chip": {
+            "chip": "uploading",
+            "progress": 0
+          },
+          "desktop_size": "4.01 MiB",
+          "duration": null,
+          "duration_text": null,
+          "id": 5,
+          "label": {
+            "args": {},
+            "key": "Uploading",
+            "ns": "common"
+          },
+          "name": "part-05.mp3",
+          "phone_label": {
+            "args": {},
+            "key": "Uploading...",
+            "ns": "common"
+          },
+          "phone_size": "4.0 MB",
+          "progress": 0,
+          "size": 4200000,
+          "youtube": false
+        },
+        {
+          "chip": {
+            "chip": "uploading",
+            "progress": 0
+          },
+          "desktop_size": "4.01 MiB",
+          "duration": null,
+          "duration_text": null,
+          "id": 6,
+          "label": {
+            "args": {},
+            "key": "Uploading",
+            "ns": "common"
+          },
+          "name": "part-06.mp3",
+          "phone_label": {
+            "args": {},
+            "key": "Uploading...",
+            "ns": "common"
+          },
+          "phone_size": "4.0 MB",
+          "progress": 0,
+          "size": 4200000,
+          "youtube": false
+        },
+        {
+          "chip": {
+            "chip": "uploading",
+            "progress": 0
+          },
+          "desktop_size": "4.01 MiB",
+          "duration": null,
+          "duration_text": null,
+          "id": 7,
+          "label": {
+            "args": {},
+            "key": "Uploading",
+            "ns": "common"
+          },
+          "name": "part-07.mp3",
+          "phone_label": {
+            "args": {},
+            "key": "Uploading...",
+            "ns": "common"
+          },
+          "phone_size": "4.0 MB",
+          "progress": 0,
+          "size": 4200000,
+          "youtube": false
+        },
+        {
+          "chip": {
+            "chip": "uploading",
+            "progress": 0
+          },
+          "desktop_size": "4.01 MiB",
+          "duration": null,
+          "duration_text": null,
+          "id": 8,
+          "label": {
+            "args": {},
+            "key": "Uploading",
+            "ns": "common"
+          },
+          "name": "part-08.mp3",
+          "phone_label": {
+            "args": {},
+            "key": "Uploading...",
+            "ns": "common"
+          },
+          "phone_size": "4.0 MB",
+          "progress": 0,
+          "size": 4200000,
+          "youtube": false
+        },
+        {
+          "chip": {
+            "chip": "uploading",
+            "progress": 0
+          },
+          "desktop_size": "4.01 MiB",
+          "duration": null,
+          "duration_text": null,
+          "id": 9,
+          "label": {
+            "args": {},
+            "key": "Uploading",
+            "ns": "common"
+          },
+          "name": "part-09.mp3",
+          "phone_label": {
+            "args": {},
+            "key": "Uploading...",
+            "ns": "common"
+          },
+          "phone_size": "4.0 MB",
+          "progress": 0,
+          "size": 4200000,
+          "youtube": false
+        },
+        {
+          "chip": {
+            "chip": "uploading",
+            "progress": 0
+          },
+          "desktop_size": "4.01 MiB",
+          "duration": null,
+          "duration_text": null,
+          "id": 10,
+          "label": {
+            "args": {},
+            "key": "Uploading",
+            "ns": "common"
+          },
+          "name": "part-10.mp3",
+          "phone_label": {
+            "args": {},
+            "key": "Uploading...",
+            "ns": "common"
+          },
+          "phone_size": "4.0 MB",
+          "progress": 0,
+          "size": 4200000,
+          "youtube": false
+        }
+      ],
+      "show_language_selector": true,
+      "source_language": null,
+      "source_languages": [
+        {
+          "flag": "🇿🇦",
+          "language": "Afrikaans",
+          "name": "Afrikaans"
+        },
+        {
+          "flag": "🇸🇦",
+          "language": "Arabic",
+          "name": "Arabic"
+        },
+        {
+          "flag": "🇦🇲",
+          "language": "Armenian",
+          "name": "Armenian"
+        },
+        {
+          "flag": "🇦🇿",
+          "language": "Azerbaijani",
+          "name": "Azerbaijani"
+        },
+        {
+          "flag": "🇧🇾",
+          "language": "Belarusian",
+          "name": "Belarusian"
+        },
+        {
+          "flag": "🇧🇦",
+          "language": "Bosnian",
+          "name": "Bosnian"
+        },
+        {
+          "flag": "🇧🇬",
+          "language": "Bulgarian",
+          "name": "Bulgarian"
+        },
+        {
+          "flag": "🇪🇸",
+          "language": "Catalan",
+          "name": "Catalan"
+        },
+        {
+          "flag": "🇨🇳",
+          "language": "Chinese",
+          "name": "Chinese"
+        },
+        {
+          "flag": "🇭🇷",
+          "language": "Croatian",
+          "name": "Croatian"
+        },
+        {
+          "flag": "🇨🇿",
+          "language": "Czech",
+          "name": "Czech"
+        },
+        {
+          "flag": "🇩🇰",
+          "language": "Danish",
+          "name": "Danish"
+        },
+        {
+          "flag": "🇳🇱",
+          "language": "Dutch",
+          "name": "Dutch"
+        },
+        {
+          "flag": "🇺🇸",
+          "language": "English",
+          "name": "English"
+        },
+        {
+          "flag": "🇪🇪",
+          "language": "Estonian",
+          "name": "Estonian"
+        },
+        {
+          "flag": "🇫🇮",
+          "language": "Finnish",
+          "name": "Finnish"
+        },
+        {
+          "flag": "🇫🇷",
+          "language": "French",
+          "name": "French"
+        },
+        {
+          "flag": "🇪🇸",
+          "language": "Galician",
+          "name": "Galician"
+        },
+        {
+          "flag": "🇩🇪",
+          "language": "German",
+          "name": "German"
+        },
+        {
+          "flag": "🇬🇷",
+          "language": "Greek",
+          "name": "Greek"
+        },
+        {
+          "flag": "🇮🇱",
+          "language": "Hebrew",
+          "name": "Hebrew"
+        },
+        {
+          "flag": "🇮🇳",
+          "language": "Hindi",
+          "name": "Hindi"
+        },
+        {
+          "flag": "🇭🇺",
+          "language": "Hungarian",
+          "name": "Hungarian"
+        },
+        {
+          "flag": "🇮🇸",
+          "language": "Icelandic",
+          "name": "Icelandic"
+        },
+        {
+          "flag": "🇮🇩",
+          "language": "Indonesian",
+          "name": "Indonesian"
+        },
+        {
+          "flag": "🇮🇹",
+          "language": "Italian",
+          "name": "Italian"
+        },
+        {
+          "flag": "🇯🇵",
+          "language": "Japanese",
+          "name": "Japanese"
+        },
+        {
+          "flag": "🇮🇳",
+          "language": "Kannada",
+          "name": "Kannada"
+        },
+        {
+          "flag": "🇰🇿",
+          "language": "Kazakh",
+          "name": "Kazakh"
+        },
+        {
+          "flag": "🇰🇷",
+          "language": "Korean",
+          "name": "Korean"
+        },
+        {
+          "flag": "🇱🇻",
+          "language": "Latvian",
+          "name": "Latvian"
+        },
+        {
+          "flag": "🇱🇹",
+          "language": "Lithuanian",
+          "name": "Lithuanian"
+        },
+        {
+          "flag": "🇲🇰",
+          "language": "Macedonian",
+          "name": "Macedonian"
+        },
+        {
+          "flag": "🇲🇾",
+          "language": "Malay",
+          "name": "Malay"
+        },
+        {
+          "flag": "🇮🇳",
+          "language": "Marathi",
+          "name": "Marathi"
+        },
+        {
+          "flag": "🇳🇿",
+          "language": "Maori",
+          "name": "Maori"
+        },
+        {
+          "flag": "🇳🇵",
+          "language": "Nepali",
+          "name": "Nepali"
+        },
+        {
+          "flag": "🇳🇴",
+          "language": "Norwegian",
+          "name": "Norwegian"
+        },
+        {
+          "flag": "🇮🇷",
+          "language": "Persian",
+          "name": "Persian"
+        },
+        {
+          "flag": "🇵🇱",
+          "language": "Polish",
+          "name": "Polish"
+        },
+        {
+          "flag": "🇧🇷",
+          "language": "Portuguese",
+          "name": "Portuguese"
+        },
+        {
+          "flag": "🇷🇴",
+          "language": "Romanian",
+          "name": "Romanian"
+        },
+        {
+          "flag": "🇷🇺",
+          "language": "Russian",
+          "name": "Russian"
+        },
+        {
+          "flag": "🇷🇸",
+          "language": "Serbian",
+          "name": "Serbian"
+        },
+        {
+          "flag": "🇸🇰",
+          "language": "Slovak",
+          "name": "Slovak"
+        },
+        {
+          "flag": "🇸🇮",
+          "language": "Slovenian",
+          "name": "Slovenian"
+        },
+        {
+          "flag": "🇪🇸",
+          "language": "Spanish",
+          "name": "Spanish"
+        },
+        {
+          "flag": "🇰🇪",
+          "language": "Swahili",
+          "name": "Swahili"
+        },
+        {
+          "flag": "🇸🇪",
+          "language": "Swedish",
+          "name": "Swedish"
+        },
+        {
+          "flag": "🇵🇭",
+          "language": "Tagalog",
+          "name": "Tagalog"
+        },
+        {
+          "flag": "🇱🇰",
+          "language": "Tamil",
+          "name": "Tamil"
+        },
+        {
+          "flag": "🇹🇭",
+          "language": "Thai",
+          "name": "Thai"
+        },
+        {
+          "flag": "🇹🇷",
+          "language": "Turkish",
+          "name": "Turkish"
+        },
+        {
+          "flag": "🇺🇦",
+          "language": "Ukrainian",
+          "name": "Ukrainian"
+        },
+        {
+          "flag": "🇵🇰",
+          "language": "Urdu",
+          "name": "Urdu"
+        },
+        {
+          "flag": "🇻🇳",
+          "language": "Vietnamese",
+          "name": "Vietnamese"
+        },
+        {
+          "flag": "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
+          "language": "Welsh",
+          "name": "Welsh"
+        },
+        {
+          "flag": "🇬🇪",
+          "language": "Georgian",
+          "name": "Georgian"
+        },
+        {
+          "flag": "🇱🇻",
+          "language": "Latin",
+          "name": "Latin"
+        },
+        {
+          "flag": "🇺🇿",
+          "language": "Uzbek",
+          "name": "Uzbek"
+        },
+        {
+          "flag": "🇱🇺",
+          "language": "Luxembourgish",
+          "name": "Luxembourgish"
+        }
+      ],
+      "speakers": false,
+      "start_disabled": true,
+      "target_language": null,
+      "target_languages": [
+        {
+          "flag": "🇿🇦",
+          "language": "Afrikaans",
+          "name": "Afrikaans"
+        },
+        {
+          "flag": "🇸🇦",
+          "language": "Arabic",
+          "name": "Arabic"
+        },
+        {
+          "flag": "🇦🇲",
+          "language": "Armenian",
+          "name": "Armenian"
+        },
+        {
+          "flag": "🇦🇿",
+          "language": "Azerbaijani",
+          "name": "Azerbaijani"
+        },
+        {
+          "flag": "🇧🇾",
+          "language": "Belarusian",
+          "name": "Belarusian"
+        },
+        {
+          "flag": "🇧🇦",
+          "language": "Bosnian",
+          "name": "Bosnian"
+        },
+        {
+          "flag": "🇧🇬",
+          "language": "Bulgarian",
+          "name": "Bulgarian"
+        },
+        {
+          "flag": "🇪🇸",
+          "language": "Catalan",
+          "name": "Catalan"
+        },
+        {
+          "flag": "🇨🇳",
+          "language": "Chinese",
+          "name": "Chinese"
+        },
+        {
+          "flag": "🇭🇷",
+          "language": "Croatian",
+          "name": "Croatian"
+        },
+        {
+          "flag": "🇨🇿",
+          "language": "Czech",
+          "name": "Czech"
+        },
+        {
+          "flag": "🇩🇰",
+          "language": "Danish",
+          "name": "Danish"
+        },
+        {
+          "flag": "🇳🇱",
+          "language": "Dutch",
+          "name": "Dutch"
+        },
+        {
+          "flag": "🇺🇸",
+          "language": "English",
+          "name": "English"
+        },
+        {
+          "flag": "🇪🇪",
+          "language": "Estonian",
+          "name": "Estonian"
+        },
+        {
+          "flag": "🇫🇮",
+          "language": "Finnish",
+          "name": "Finnish"
+        },
+        {
+          "flag": "🇫🇷",
+          "language": "French",
+          "name": "French"
+        },
+        {
+          "flag": "🇪🇸",
+          "language": "Galician",
+          "name": "Galician"
+        },
+        {
+          "flag": "🇩🇪",
+          "language": "German",
+          "name": "German"
+        },
+        {
+          "flag": "🇬🇷",
+          "language": "Greek",
+          "name": "Greek"
+        },
+        {
+          "flag": "🇮🇱",
+          "language": "Hebrew",
+          "name": "Hebrew"
+        },
+        {
+          "flag": "🇮🇳",
+          "language": "Hindi",
+          "name": "Hindi"
+        },
+        {
+          "flag": "🇭🇺",
+          "language": "Hungarian",
+          "name": "Hungarian"
+        },
+        {
+          "flag": "🇮🇸",
+          "language": "Icelandic",
+          "name": "Icelandic"
+        },
+        {
+          "flag": "🇮🇩",
+          "language": "Indonesian",
+          "name": "Indonesian"
+        },
+        {
+          "flag": "🇮🇹",
+          "language": "Italian",
+          "name": "Italian"
+        },
+        {
+          "flag": "🇯🇵",
+          "language": "Japanese",
+          "name": "Japanese"
+        },
+        {
+          "flag": "🇮🇳",
+          "language": "Kannada",
+          "name": "Kannada"
+        },
+        {
+          "flag": "🇰🇿",
+          "language": "Kazakh",
+          "name": "Kazakh"
+        },
+        {
+          "flag": "🇰🇷",
+          "language": "Korean",
+          "name": "Korean"
+        },
+        {
+          "flag": "🇱🇻",
+          "language": "Latvian",
+          "name": "Latvian"
+        },
+        {
+          "flag": "🇱🇹",
+          "language": "Lithuanian",
+          "name": "Lithuanian"
+        },
+        {
+          "flag": "🇲🇰",
+          "language": "Macedonian",
+          "name": "Macedonian"
+        },
+        {
+          "flag": "🇲🇾",
+          "language": "Malay",
+          "name": "Malay"
+        },
+        {
+          "flag": "🇮🇳",
+          "language": "Marathi",
+          "name": "Marathi"
+        },
+        {
+          "flag": "🇳🇿",
+          "language": "Maori",
+          "name": "Maori"
+        },
+        {
+          "flag": "🇳🇵",
+          "language": "Nepali",
+          "name": "Nepali"
+        },
+        {
+          "flag": "🇳🇴",
+          "language": "Norwegian",
+          "name": "Norwegian"
+        },
+        {
+          "flag": "🇮🇷",
+          "language": "Persian",
+          "name": "Persian"
+        },
+        {
+          "flag": "🇵🇱",
+          "language": "Polish",
+          "name": "Polish"
+        },
+        {
+          "flag": "🇧🇷",
+          "language": "Portuguese",
+          "name": "Portuguese"
+        },
+        {
+          "flag": "🇷🇴",
+          "language": "Romanian",
+          "name": "Romanian"
+        },
+        {
+          "flag": "🇷🇺",
+          "language": "Russian",
+          "name": "Russian"
+        },
+        {
+          "flag": "🇷🇸",
+          "language": "Serbian",
+          "name": "Serbian"
+        },
+        {
+          "flag": "🇸🇰",
+          "language": "Slovak",
+          "name": "Slovak"
+        },
+        {
+          "flag": "🇸🇮",
+          "language": "Slovenian",
+          "name": "Slovenian"
+        },
+        {
+          "flag": "🇪🇸",
+          "language": "Spanish",
+          "name": "Spanish"
+        },
+        {
+          "flag": "🇰🇪",
+          "language": "Swahili",
+          "name": "Swahili"
+        },
+        {
+          "flag": "🇸🇪",
+          "language": "Swedish",
+          "name": "Swedish"
+        },
+        {
+          "flag": "🇵🇭",
+          "language": "Tagalog",
+          "name": "Tagalog"
+        },
+        {
+          "flag": "🇱🇰",
+          "language": "Tamil",
+          "name": "Tamil"
+        },
+        {
+          "flag": "🇹🇭",
+          "language": "Thai",
+          "name": "Thai"
+        },
+        {
+          "flag": "🇹🇷",
+          "language": "Turkish",
+          "name": "Turkish"
+        },
+        {
+          "flag": "🇺🇦",
+          "language": "Ukrainian",
+          "name": "Ukrainian"
+        },
+        {
+          "flag": "🇵🇰",
+          "language": "Urdu",
+          "name": "Urdu"
+        },
+        {
+          "flag": "🇻🇳",
+          "language": "Vietnamese",
+          "name": "Vietnamese"
+        },
+        {
+          "flag": "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
+          "language": "Welsh",
+          "name": "Welsh"
+        },
+        {
+          "flag": "🇬🇪",
+          "language": "Georgian",
+          "name": "Georgian"
+        },
+        {
+          "flag": "🇱🇻",
+          "language": "Latin",
+          "name": "Latin"
+        },
+        {
+          "flag": "🇺🇿",
+          "language": "Uzbek",
+          "name": "Uzbek"
+        },
+        {
+          "flag": "🇱🇺",
+          "language": "Luxembourgish",
+          "name": "Luxembourgish"
+        }
+      ],
+      "total_minutes": null,
+      "transcribing": false,
+      "youtube_dialog": {
+        "busy": false,
+        "error": null,
+        "open": false,
+        "url": ""
+      },
+      "youtube_error": null
+    },
     "preparing": {
       "alerts": [],
       "auto_detect_label": {
@@ -29160,6 +30402,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/mpeg,audio/mp4,audio/wav,audio/webm,.mp3,.m4a,.wav,.webm",
       "preferred": [
         {
           "flag": "🇹🇷",
@@ -30192,6 +31435,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/*,video/*,.m4a",
       "preferred": [
         {
           "flag": "🇹🇷",
@@ -31194,6 +32438,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/*,video/*,.m4a",
       "preferred": [
         {
           "flag": "🇹🇷",
@@ -32202,6 +33447,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/*,video/*,.m4a",
       "preferred": [
         {
           "flag": "🇹🇷",
@@ -33168,6 +34414,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/*,video/*,.m4a",
       "preferred": [
         {
           "flag": "🇹🇷",
@@ -34089,6 +35336,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/*,video/*,.m4a",
       "preferred": [
         {
           "flag": "🇹🇷",
@@ -35089,6 +36337,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/*,video/*,.m4a",
       "preferred": [
         {
           "flag": "🇹🇷",
@@ -36093,6 +37342,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/*,video/*,.m4a",
       "preferred": [
         {
           "flag": "🇹🇷",
@@ -37102,6 +38352,7 @@ export const fixtures: FixtureFile = {
           "name": "Indonesian"
         }
       ],
+      "picker_accept": "audio/*,video/*,.m4a",
       "preferred": [
         {
           "flag": "🇹🇷",

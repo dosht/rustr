@@ -75,12 +75,12 @@ fn file_flow_to_ready() {
             Effect::Upload { file: 1, handle: a.handle, job: JobId(5), name: "a.mp3".into() },
         ]
     );
-    assert!(s.view().start_disabled);
+    assert!(s.view(Frame::Desktop).start_disabled);
     s.update(Event::UploadFinished { file: 1, ok: false });
-    assert_eq!(s.view().rows[0].chip, Chip::UploadFailed);
+    assert_eq!(s.view(Frame::Desktop).rows[0].chip, Chip::UploadFailed);
     s.update(Event::UploadFinished { file: 1, ok: true });
-    assert_eq!(s.view().rows[0].chip, Chip::Ready);
-    assert!(!s.view().start_disabled);
+    assert_eq!(s.view(Frame::Desktop).rows[0].chip, Chip::Ready);
+    assert!(!s.view(Frame::Desktop).start_disabled);
 }
 
 // UPL-007/017: no language choice means the alert, not a start.
@@ -92,7 +92,7 @@ fn start_needs_a_language_choice() {
     assert_eq!(s.alerts, vec![Alert::Language]);
     s.update(Event::LanguageChosen { choice: Some(Choice::AutoDetect) });
     assert_eq!(work(s.update(Event::StartPressed)), vec![Effect::Start { jobs: vec![JobId(5)], language: None, translate_to: vec![] }]);
-    assert!(s.view().start_disabled);
+    assert!(s.view(Frame::Desktop).start_disabled);
 }
 
 // UPL-018/019: translation needs both sides; the same language clears the other side.
@@ -111,7 +111,7 @@ fn translation_languages() {
         work(s.update(Event::StartPressed)),
         vec![Effect::Start { jobs: vec![JobId(5)], language: Some(lang("Turkish")), translate_to: vec![lang("English")] }]
     );
-    assert!(!s.view().auto_detect_offered);
+    assert!(!s.view(Frame::Desktop).auto_detect_offered);
 }
 
 // UPL-008: 1 s ten times, then 2 s growing by 1.5 up to 30 s; timeout after 5 minutes.
@@ -130,7 +130,7 @@ fn duration_polling() {
     assert_eq!(s.alerts, vec![Alert::ProcessingTimeout]);
     d.duration_minutes = Some(3);
     s.update(Event::DraftsReloaded { drafts: vec![d], elapsed_ms: POLL_TIMEOUT_MS + 1 });
-    assert_eq!(s.view().rows[0].chip, Chip::Ready);
+    assert_eq!(s.view(Frame::Desktop).rows[0].chip, Chip::Ready);
 }
 
 // UPL-025/027/028: YouTube uses ceil minutes, the detected language, resolve only, and removal on failure.
@@ -180,13 +180,22 @@ fn the_phone_picker_drops_unsupported_and_oversized_files_silently() {
 #[test]
 fn the_total_is_unknown_until_every_file_is_measured() {
     let mut s = UploadQueueState::default();
-    assert_eq!(s.view().total_minutes, Some(0));
+    assert_eq!(s.view(Frame::Desktop).total_minutes, Some(0));
     s.update(desktop(vec![picked("a.mp3"), picked("b.mp3")]));
     s.update(Event::Measured { file: 1, seconds: Some(120.0) });
-    let vm = s.view();
+    let vm = s.view(Frame::Desktop);
     assert_eq!((vm.total_minutes, vm.files_ready), (None, false));
     s.update(Event::Measured { file: 2, seconds: Some(1.0) });
-    assert_eq!(s.view().total_minutes, Some(3));
+    assert_eq!(s.view(Frame::Desktop).total_minutes, Some(3));
+}
+
+// UPL-002: the picker's accept list is the product's, chosen by the layout
+// (desktop `TranscriptionContainer`, phone `FileUploadButton`).
+#[test]
+fn upl_002_the_picker_accept_list_follows_the_layout() {
+    let s = UploadQueueState::default();
+    assert_eq!(s.view(Frame::Desktop).picker_accept, "audio/*,video/*,.m4a");
+    assert_eq!(s.view(Frame::Phone).picker_accept, "audio/mpeg,audio/mp4,audio/wav,audio/webm,.mp3,.m4a,.wav,.webm");
 }
 
 // ANLZ-1-03: one started event per queued file on Start, one failed event per file on failure.

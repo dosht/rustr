@@ -22,11 +22,13 @@
   <UploadAlerts {vm} {onIntent} {onpurchase} />
   {#if vm.rows.length}<p class="text-sm"><strong>{i18n.tk("common", "Total Duration:")}</strong> {vm.total_minutes === null ? i18n.tk("common", "Calculating...") : i18n.tk("app", "p5.duration.minutes", { minutes: vm.total_minutes })}</p>{/if}
   {#if youtube}<aside class="hidden rounded-lg bg-notice-bg p-3 text-sm sm:block">{i18n.tk("common", "YouTube transcription is free during beta — no credits required.")}</aside>{/if}
-  <input bind:this={input} data-testid="upload-files" type="file" multiple class="sr-only" tabindex="-1" aria-label={i18n.tk("common", "Upload files")} onchange={(event) => { onpick(Array.from(event.currentTarget.files ?? [])); event.currentTarget.value = ""; }} />
-  <div class="grid grid-cols-1 gap-3">
-    <Button onclick={() => input?.click()}>{i18n.tk("common", "Upload files")}</Button>
-    {#if youtube}<Button onclick={() => onIntent({ type: "you_tube_dialog_opened" })}>{i18n.tk("common", "Add from YouTube")}</Button>{/if}
-  </div>
+  <input bind:this={input} data-testid="upload-files" type="file" multiple accept={vm.picker_accept} class="sr-only" tabindex="-1" aria-label={i18n.tk("common", "Upload files")} onchange={(event) => { onpick(Array.from(event.currentTarget.files ?? [])); event.currentTarget.value = ""; }} />
+  {#if !vm.max_files_reached}
+    <div class="grid grid-cols-1 gap-3">
+      <Button onclick={() => input?.click()}>{i18n.tk("common", "Upload files")}</Button>
+      {#if youtube}<Button onclick={() => onIntent({ type: "you_tube_dialog_opened" })}>{i18n.tk("common", "Add from YouTube")}</Button>{/if}
+    </div>
+  {/if}
   {#if vm.rows.length}
     <h2 class="font-medium">{i18n.tk("common", "Files")}</h2>
     <ul class="space-y-2">{#each vm.rows as row (row.id)}<UploadFileRow {row} phone onremove={(file) => onIntent({ type: "removed", file })} />{/each}</ul>

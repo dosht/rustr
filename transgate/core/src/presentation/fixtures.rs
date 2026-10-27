@@ -100,14 +100,14 @@ fn picked(handle: u64, name: &str) -> PickedFile {
 }
 
 pub fn queue_empty() -> UploadQueueVm {
-    restored(vec![]).view()
+    restored(vec![]).view(Frame::Desktop)
 }
 
 pub fn queue_uploading() -> UploadQueueVm {
     let mut s = restored(vec![]);
     s.update(upload_queue::Event::Picked { files: vec![picked(1, "lecture.mp3")], frame: Frame::Desktop });
     s.update(upload_queue::Event::UploadProgress { file: 1, progress: 42 });
-    s.view()
+    s.view(Frame::Desktop)
 }
 
 /// Uploaded but not yet measured: the phone "Calculating..." total and "Preparing files...".
@@ -117,20 +117,20 @@ pub fn queue_preparing() -> UploadQueueVm {
     s.update(upload_queue::Event::Measured { file: 1, seconds: Some(125.0) });
     s.update(upload_queue::Event::UploadFinished { file: 1, ok: true });
     s.update(upload_queue::Event::UploadFinished { file: 2, ok: true });
-    s.view()
+    s.view(Frame::Phone)
 }
 
 pub fn queue_upload_failed() -> UploadQueueVm {
     let mut s = restored(vec![]);
     s.update(upload_queue::Event::Picked { files: vec![picked(1, "lecture.mp3")], frame: Frame::Desktop });
     s.update(upload_queue::Event::UploadFinished { file: 1, ok: false });
-    s.view()
+    s.view(Frame::Desktop)
 }
 
 pub fn queue_ready() -> UploadQueueVm {
     let mut s = restored(vec![job(7, JobStatus::Draft, "interview.m4a")]);
     s.update(upload_queue::Event::LanguageChosen { choice: Some(upload_queue::Choice::AutoDetect) });
-    s.view()
+    s.view(Frame::Desktop)
 }
 
 pub fn queue_translation() -> UploadQueueVm {
@@ -138,20 +138,20 @@ pub fn queue_translation() -> UploadQueueVm {
     s.update(upload_queue::Event::TabChanged { mode: upload_queue::Mode::Translation, frame: Frame::Desktop });
     s.update(upload_queue::Event::SourceLanguageChosen { language: Language::from_name("English") });
     s.update(upload_queue::Event::TargetLanguageChosen { language: Language::from_name("German") });
-    s.view()
+    s.view(Frame::Desktop)
 }
 
 pub fn queue_starting() -> UploadQueueVm {
     let mut s = restored(vec![job(7, JobStatus::Draft, "interview.m4a")]);
     s.update(upload_queue::Event::LanguageChosen { choice: Some(upload_queue::Choice::AutoDetect) });
     s.update(upload_queue::Event::StartPressed);
-    s.view()
+    s.view(Frame::Desktop)
 }
 
 pub fn queue_language_alert() -> UploadQueueVm {
     let mut s = restored(vec![job(7, JobStatus::Draft, "interview.m4a")]);
     s.update(upload_queue::Event::StartPressed);
-    s.view()
+    s.view(Frame::Desktop)
 }
 
 pub fn queue_balance_alert() -> UploadQueueVm {
@@ -159,7 +159,7 @@ pub fn queue_balance_alert() -> UploadQueueVm {
     s.update(upload_queue::Event::LanguageChosen { choice: Some(upload_queue::Choice::AutoDetect) });
     s.update(upload_queue::Event::StartPressed);
     s.update(upload_queue::Event::StartFailed { balance: true });
-    s.view()
+    s.view(Frame::Desktop)
 }
 
 pub fn queue_processing_timeout() -> UploadQueueVm {
@@ -167,7 +167,15 @@ pub fn queue_processing_timeout() -> UploadQueueVm {
     draft.duration_minutes = None;
     let mut s = restored(vec![draft.clone()]);
     s.update(upload_queue::Event::DraftsReloaded { drafts: vec![draft], elapsed_ms: upload_queue::POLL_TIMEOUT_MS });
-    s.view()
+    s.view(Frame::Desktop)
+}
+
+/// UPL-003: ten queued files; drops are ignored from here on.
+pub fn queue_max_files() -> UploadQueueVm {
+    let mut s = restored(vec![]);
+    let files = (1..=10).map(|n| picked(n, &format!("part-{n:02}.mp3"))).collect();
+    s.update(upload_queue::Event::Picked { files, frame: Frame::Desktop });
+    s.view(Frame::Desktop)
 }
 
 fn youtube_draft() -> Job {
@@ -179,7 +187,7 @@ fn youtube_draft() -> Job {
 pub fn queue_youtube() -> UploadQueueVm {
     let mut s = restored(vec![]);
     s.update(upload_queue::Event::YouTubeAdded { job: youtube_draft(), title: "Conference talk".into(), duration_seconds: 754.0, detected_language: Some("en".into()) });
-    s.view()
+    s.view(Frame::Desktop)
 }
 
 pub fn queue_youtube_error() -> UploadQueueVm {
@@ -187,7 +195,7 @@ pub fn queue_youtube_error() -> UploadQueueVm {
     s.update(upload_queue::Event::YouTubeAdded { job: youtube_draft(), title: "Conference talk".into(), duration_seconds: 754.0, detected_language: Some("en".into()) });
     s.update(upload_queue::Event::StartPressed);
     s.update(upload_queue::Event::YouTubeResolved { job: JobId(9), completed: false, code: Some("no_captions".into()) });
-    s.view()
+    s.view(Frame::Desktop)
 }
 
 fn history(jobs: Vec<Job>, next_cursor: Option<JobId>) -> JobListState {
@@ -775,6 +783,7 @@ pub fn export() -> BTreeMap<&'static str, Named> {
                 ("language_alert", queue_language_alert()),
                 ("balance_alert", queue_balance_alert()),
                 ("processing_timeout", queue_processing_timeout()),
+                ("max_files", queue_max_files()),
                 ("youtube", queue_youtube()),
                 ("youtube_error", queue_youtube_error()),
             ]),

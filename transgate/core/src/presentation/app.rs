@@ -1830,7 +1830,7 @@ impl AppState {
                         Frame::Desktop => Route::Home(HomeView::Default),
                     },
                     signing_out: self.signing_out,
-                    queue: self.queue.view(),
+                    queue: self.queue.view(self.layouts().frame),
                     jobs: self.jobs.view(selected, self.utc_offset_minutes),
                     transcript: (selected.is_some() && self.transcript.job.is_some()).then(|| self.transcript.view()),
                     consent: self.consent.view(),
