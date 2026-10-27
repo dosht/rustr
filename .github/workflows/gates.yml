@@ -45,5 +45,9 @@ jobs:
       - name: Install book dependencies
         if: matrix.gate == 'rustr'
         run: npm ci --prefix book --no-fund --no-audit
+      # transgate-export's PDF tests read generated PDFs with Poppler pdftotext (bidi-aware independent
+      # reader); they fail, never skip, when it is missing.
+      - name: Install poppler-utils
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends poppler-utils
       - name: Run complete gate
         run: ./scripts/gate-${{ matrix.gate }}.sh

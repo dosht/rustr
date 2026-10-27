@@ -20,6 +20,10 @@ Krilla 0.8.2 is MIT OR Apache-2.0, MSRV 1.92; rustybuzz is MIT; the Unicode crat
 
 p1Y reports the lock resolved krilla 0.8.2, pdf-writer 0.15.0, subsetter 0.2.6, **skrifa 0.42.1**, rustybuzz 0.20.1 and lopdf 0.38.0. The exact unicode-segmentation pin was not an API requirement; it was relaxed to `^1.12` after Y reported the workspace-wide downgrade, allowing the existing 1.13.3 resolution. Y owns the lock refresh; W ran no checks. The existing ZIP dependency remains for OOXML; serde/serde_json and billing-core serve the pure typed model. Independent-reader dev dependencies are roxmltree 0.21 and native-only lopdf =0.38.0; they do not enter wasm production code.
 
+**REPAIR-P5-13 (lopdf bump, lead-approved).** The dev-only independent reader moved `lopdf =0.38.0` → `=0.46.0` (`default-features = false`; the 0.38.0 mentions above are superseded). Root cause: Krilla's ToUnicode CMap (no `/CIDInit` wrapper, with `/CMapVersion` and `/WMode`) is accepted by `qpdf --check` and Poppler `pdftotext`, but lopdf 0.38's parser demands the wrapper and rejects those metadata lines (`ToUnicodeCMap(Parse(Error))`); 0.46 parses it. Lock refresh by `cargo update -p lopdf --precise 0.46.0`: lopdf 0.38.0→0.46.0, cbc 0.1.2→0.2.1, ecb 0.1.2→0.2.1; added brotli-decompressor 5.0.3, alloc-no-stdlib 2.0.4, alloc-stdlib 0.2.4, cpubits 0.1.1, weezl 0.2.1; removed bytecount, cipher 0.4.4, inout 0.1.4, md-5 0.10.6, nom_locate 5.0.0, rand 0.9.5, rand_chacha 0.9.0, rand_core 0.9.5. Cargo.lock sha256 before `c7ea6155916e5496bd063a324fadbfb4a91fa29b6a39187d8b478c494e8e9f8c`, after `bd4e4c2675a3e526274092528786628639af250d99217aa707bb786d43d885ff`. Dev-only, native-only; wasm production graph unchanged.
+
+**Test-tooling requirement and logical-text reading (REPAIR-P5-13).** `transgate-export` tests need Poppler `pdftotext` (poppler-utils) and **fail, not skip,** when it is absent; `.github/workflows/gates.yml` installs it. lopdf stays the reader for ordinary text assertions. Why `extract_text`-style visual extraction cannot be exact for the offered Arabic, Hebrew and Indic scripts: the PDF content stream holds positioned glyphs in **visual** order, and shaping decomposes or reorders them (Arabic dots/marks are separate glyphs; Devanagari `ि` is drawn before its consonant; ligatures merge several characters into one glyph), so a per-glyph ToUnicode lookup yields reversed order, U+FFFD or split clusters (lopdf gave `हि� न्दी�`, `ة`+`العربي`). The spec mechanism for the logical text of such a cluster is the marked-content `/ActualText` span, which Krilla emits. The strict check in `offered_language_scripts…` therefore reads the spans structurally (`logical_words`: ActualText string, else each glyph's ToUnicode, reversed for RTL) and requires every word of all 16 offered-script samples to be carried **exactly**; Poppler must additionally contain each word once whitespace is removed (it inserts spaces between joined glyph chunks, e.g. `ف ارسی`). Mark y offsets are deliberately kept (zeroing them would misplace Arabic marks).
+
 This is a pure in-memory Rust dependency path suitable for native and wasm32-unknown-unknown: no system-font discovery, filesystem, process, host clock, native HarfBuzz or browser JS engine is required by the adapter. Actual wasm compilation, independent extraction and Arabic visual correctness remain **lead-run verification**, not claims from these reads.
 
 Primary sources: [published manifest](https://docs.rs/crate/krilla/0.8.2/source/Cargo.toml), [Font](https://docs.rs/krilla/0.8.2/krilla/text/struct.Font.html), [positioned glyphs](https://docs.rs/krilla/0.8.2/krilla/text/struct.KrillaGlyph.html), [Surface](https://docs.rs/krilla/0.8.2/krilla/surface/struct.Surface.html), [rustybuzz manifest](https://raw.githubusercontent.com/harfbuzz/rustybuzz/v0.20.1/Cargo.toml), [bidi](https://docs.rs/unicode-bidi/0.3.18/unicode_bidi/), [line breaks](https://docs.rs/unicode-linebreak/0.1.5/unicode_linebreak/), [graphemes](https://docs.rs/unicode-segmentation/1.12.0/unicode_segmentation/). Published Krilla source commit: `3ffdf0588cf98050aad6edba51ca70162e1fb5b5`.
@@ -32,6 +36,7 @@ Adapter code does **not** `include_bytes!` production fonts. Shells load the fol
 - `transgate/export/fonts/NotoSans-Italic.ttf` (same family, italic variable font).
 - `transgate/export/fonts/NotoSansArabic.ttf` (`ofl/notosansarabic/NotoSansArabic[wdth,wght].ttf`).
 - `transgate/export/fonts/NotoSansSymbols2-Regular.ttf` (`ofl/notosanssymbols2/NotoSansSymbols2-Regular.ttf`), for source rating/action/status symbols.
+- `transgate/export/fonts/NotoSansSymbols.ttf` (`ofl/notosanssymbols/NotoSansSymbols[wght].ttf`, v2.003, 372,684 bytes), added by REPAIR-P5-13 for U+2192: the PDF-only sentiment line "initial → final" (`core/src/documents.rs` `sentiment`) failed with `MissingGlyph('→')` because neither Noto Sans nor Symbols 2 covers it. It is the smallest OFL Noto face that does (Noto Sans Math is 1.0 MB, CJK 16 MB). Notice `NotoSansSymbols-OFL.txt`, provenance in `fonts/provenance.json`.
 - Each family ships its unchanged upstream `*-OFL.txt` notice under **SIL Open Font License 1.1**; CJK additionally ships `NotoSansCJK-COPYRIGHT.txt`, extracted from its font copyright name record. Redistribution/embedding permitted; fonts are not relicensed as application code. `fonts/provenance.json` records upstream identities, git blobs, acquired hashes, sizes and matching notices.
 - `transgate/export/assets/invoice-logo.jpg`: unchanged owned-product source `frontend/public/assets/Light-Logo-2x-100.jpg`; provenance recorded alongside it, not represented as an OFL font.
 
@@ -47,6 +52,7 @@ pub struct FontBytes {
     pub latin_italic: Vec<u8>,
     pub arabic: Vec<u8>,
     pub symbols: Vec<u8>,
+    pub arrows: Vec<u8>, // Noto Sans Symbols: U+2192
 }
 pub struct DocumentAssets { pub fonts: FontBytes, pub invoice_logo: Vec<u8> }
 pub struct DocumentWriter { /* reusable parsed fonts and logo; no I/O */ }
@@ -149,6 +155,7 @@ All files below are saved, unchanged upstream binaries under `transgate/export/f
 | NotoSans-Italic.ttf | Same scripts; real italic | 2322640 | 58e6e0ebd1931b29a365aa2d3e2ee9a9e831a3af7cf3ad1462d4e72154f0b291 |
 | NotoSansArabic.ttf | Arabic, Persian, Urdu | 844676 | 63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e |
 | NotoSansSymbols2-Regular.ttf | Rating/action/status symbols | 1233128 | 7d5fb73b7ca67a6798101741f5d280a3d016a56a197afcd4199dbb57b4b82a21 |
+| NotoSansSymbols.ttf | Arrow U+2192 (PDF sentiment line) | 372684 | f7e7e04b4a24b6c78893d50cbfd2b2f6cae49617ab047bfef668d252adb128f7 |
 | NotoSansHebrew.ttf | Hebrew | 112640 | 7ef36a2c3593758cdb622e1bdef4f84523e92fbc3ccc667438dd80ff54c2de88 |
 | NotoSansArmenian.ttf | Armenian | 221936 | 0870908d8318435a5daf1cd280ae15063f990cd9ad60f3e94c734ce9e1ffef71 |
 | NotoSansGeorgian.ttf | Georgian | 231988 | dc591156f36842d38996c4a7a17fee9bb58e45da3e2cac7a31b7d33de700adb9 |

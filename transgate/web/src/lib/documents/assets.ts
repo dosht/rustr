@@ -11,6 +11,7 @@ import notoSans from "../../../../export/fonts/NotoSans.ttf?url";
 import notoSansItalic from "../../../../export/fonts/NotoSans-Italic.ttf?url";
 import notoSansArabic from "../../../../export/fonts/NotoSansArabic.ttf?url";
 import notoSansSymbols2 from "../../../../export/fonts/NotoSansSymbols2-Regular.ttf?url";
+import notoSansSymbols from "../../../../export/fonts/NotoSansSymbols.ttf?url";
 import notoSansHebrew from "../../../../export/fonts/NotoSansHebrew.ttf?url";
 import notoSansArmenian from "../../../../export/fonts/NotoSansArmenian.ttf?url";
 import notoSansGeorgian from "../../../../export/fonts/NotoSansGeorgian.ttf?url";
@@ -22,6 +23,7 @@ import notoSansCjk from "../../../../export/fonts/NotoSansCJKjp-Regular.otf?url"
 import notoSansLicense from "../../../../export/fonts/NotoSans-OFL.txt?url";
 import notoSansArabicLicense from "../../../../export/fonts/NotoSansArabic-OFL.txt?url";
 import notoSansSymbols2License from "../../../../export/fonts/NotoSansSymbols2-OFL.txt?url";
+import notoSansSymbolsLicense from "../../../../export/fonts/NotoSansSymbols-OFL.txt?url";
 import notoSansHebrewLicense from "../../../../export/fonts/NotoSansHebrew-OFL.txt?url";
 import notoSansArmenianLicense from "../../../../export/fonts/NotoSansArmenian-OFL.txt?url";
 import notoSansGeorgianLicense from "../../../../export/fonts/NotoSansGeorgian-OFL.txt?url";
@@ -44,6 +46,7 @@ export const documentAssetUrls: DocumentAssetUrls = {
     latinItalic: notoSansItalic,
     arabic: notoSansArabic,
     symbols: notoSansSymbols2,
+    arrows: notoSansSymbols,
     invoiceLogo,
   },
   fallbacks: {
@@ -63,6 +66,7 @@ export const fontLicenses: readonly { family: string; notices: readonly string[]
   { family: "Noto Sans", notices: [notoSansLicense] },
   { family: "Noto Sans Arabic", notices: [notoSansArabicLicense] },
   { family: "Noto Sans Symbols 2", notices: [notoSansSymbols2License] },
+  { family: "Noto Sans Symbols", notices: [notoSansSymbolsLicense] },
   { family: "Noto Sans Hebrew", notices: [notoSansHebrewLicense] },
   { family: "Noto Sans Armenian", notices: [notoSansArmenianLicense] },
   { family: "Noto Sans Georgian", notices: [notoSansGeorgianLicense] },

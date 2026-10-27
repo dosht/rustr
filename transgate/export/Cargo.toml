@@ -25,4 +25,4 @@ uuid = { version = "1", features = ["v4"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 # Independent PDF reader; never part of the wasm production graph.
-lopdf = { version = "=0.38.0", default-features = false }
+lopdf = { version = "=0.46.0", default-features = false }

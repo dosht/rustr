@@ -42,6 +42,17 @@
       "license_file": "NotoSansSymbols2-OFL.txt"
     },
     {
+      "file": "NotoSansSymbols.ttf",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosanssymbols/NotoSansSymbols[wght].ttf",
+      "git_blob": "a0061bfbcbbec27bf2b280fc8c49ea42cf7cb7ab",
+      "bytes": 372684,
+      "sha256": "f7e7e04b4a24b6c78893d50cbfd2b2f6cae49617ab047bfef668d252adb128f7",
+      "license": "SIL-OFL-1.1",
+      "version": "NotoSansSymbols v2.003 (notofonts/symbols; google/fonts METADATA.pb source commit b61fa7f86fb7d4163ee11d46d0977393f98d4f7a)",
+      "script": "Arrows (U+2192) in generated sentiment progression; neither Noto Sans nor Symbols 2 covers it",
+      "license_file": "NotoSansSymbols-OFL.txt"
+    },
+    {
       "file": "NotoSans-OFL.txt",
       "upstream": "https://github.com/google/fonts/blob/main/ofl/notosans/OFL.txt",
       "git_blob": "6843f31878c9945e1e71e1baa275546b4eefead8",
@@ -60,6 +71,14 @@
     {
       "file": "NotoSansSymbols2-OFL.txt",
       "upstream": "https://github.com/google/fonts/blob/main/ofl/notosanssymbols2/OFL.txt",
+      "git_blob": "7c95767f5c669c448148e7e6c8fc4ee2c85128b1",
+      "bytes": 4383,
+      "sha256": "b118dd41337806a5d4797052c77caf3bd096aed783e5eb21b4d11154351e1ac0",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "file": "NotoSansSymbols-OFL.txt",
+      "upstream": "https://github.com/google/fonts/blob/main/ofl/notosanssymbols/OFL.txt",
       "git_blob": "7c95767f5c669c448148e7e6c8fc4ee2c85128b1",
       "bytes": 4383,
       "sha256": "b118dd41337806a5d4797052c77caf3bd096aed783e5eb21b4d11154351e1ac0",

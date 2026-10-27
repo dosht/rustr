@@ -14,6 +14,7 @@ pub struct BaseUrls {
     pub latin_italic: String,
     pub arabic: String,
     pub symbols: String,
+    pub arrows: String,
     pub invoice_logo: String,
 }
 
@@ -49,9 +50,9 @@ impl DocumentAssetSource for FetchedAssets {
     fn base(&self) -> BoxFuture<'_, Result<DocumentAssets, String>> {
         Box::pin(async move {
             let b = &self.urls.base;
-            let (latin, latin_italic, arabic, symbols, invoice_logo) =
-                futures_util::try_join!(self.get(&b.latin), self.get(&b.latin_italic), self.get(&b.arabic), self.get(&b.symbols), self.get(&b.invoice_logo))?;
-            Ok(DocumentAssets { fonts: FontBytes { latin, latin_italic, arabic, symbols }, invoice_logo })
+            let (latin, latin_italic, arabic, symbols, arrows, invoice_logo) =
+                futures_util::try_join!(self.get(&b.latin), self.get(&b.latin_italic), self.get(&b.arabic), self.get(&b.symbols), self.get(&b.arrows), self.get(&b.invoice_logo))?;
+            Ok(DocumentAssets { fonts: FontBytes { latin, latin_italic, arabic, symbols, arrows }, invoice_logo })
         })
     }
 

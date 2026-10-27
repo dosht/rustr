@@ -22,6 +22,7 @@ fn assets() -> DocumentAssets {
             latin_italic: include_bytes!("../fonts/NotoSans-Italic.ttf").to_vec(),
             arabic: include_bytes!("../fonts/NotoSansArabic.ttf").to_vec(),
             symbols: include_bytes!("../fonts/NotoSansSymbols2-Regular.ttf").to_vec(),
+            arrows: include_bytes!("../fonts/NotoSansSymbols.ttf").to_vec(),
         },
         invoice_logo: include_bytes!("../assets/invoice-logo.jpg").to_vec(),
     }
@@ -49,6 +50,67 @@ fn pdf_text(bytes: &[u8]) -> (lopdf::Document, String) {
     let pdf = lopdf::Document::load_mem(bytes).unwrap();
     let pages = pdf.get_pages().keys().copied().collect::<Vec<_>>();
     let text = pdf.extract_text(&pages).unwrap(); (pdf, text)
+}
+
+/// Independent, bidi-aware PDF reader: Poppler `pdftotext` (package
+/// poppler-utils). The tests FAIL, never skip, when it is not installed, so a
+/// gate image without it cannot silently drop the logical-Unicode checks.
+/// Bidi embedding/isolate controls Poppler may add around RTL runs are removed.
+fn poppler_text(bytes: &[u8]) -> String {
+    let path = std::env::temp_dir().join(format!("transgate-export-{}.pdf", uuid::Uuid::new_v4()));
+    std::fs::write(&path, bytes).unwrap();
+    let output = std::process::Command::new("pdftotext").arg("-enc").arg("UTF-8").arg(&path).arg("-").output()
+        .expect("poppler-utils `pdftotext` is required on PATH by the document PDF tests (install poppler-utils)");
+    let _ = std::fs::remove_file(&path);
+    assert!(output.status.success(), "pdftotext failed: {}", String::from_utf8_lossy(&output.stderr));
+    String::from_utf8(output.stdout).unwrap().chars().filter(|c| !matches!(u32::from(*c), 0x200e | 0x200f | 0x202a..=0x202e | 0x2066..=0x2069)).collect()
+}
+
+/// Logical words of a page, read structurally instead of via `extract_text`. The
+/// content stream is in visual order (and glyph-reordered for Indic and cursive
+/// scripts), so ToUnicode of single glyphs cannot give exact words there. The
+/// text units are an `/ActualText` span's string (the spec mechanism for the
+/// logical text of a cluster drawn as several positioned glyphs), else each
+/// glyph's ToUnicode character, in stream order; right-to-left text is reversed
+/// from visual to logical order. `ET` separates text objects.
+fn logical_words(bytes: &[u8], rtl: bool) -> Vec<String> {
+    use lopdf::{content::Content, Object};
+    let pdf = lopdf::Document::load_mem(bytes).unwrap();
+    let mut units: Vec<String> = vec![];
+    for page_id in pdf.get_pages().values() {
+        let encodings: std::collections::BTreeMap<Vec<u8>, lopdf::Encoding> = pdf.get_page_fonts(*page_id).unwrap().into_iter()
+            .map(|(name, font)| (name, font.get_font_encoding(&pdf).unwrap())).collect();
+        let content = Content::decode(&pdf.get_page_content(*page_id)).unwrap();
+        let (mut encoding, mut depth) = (None, 0usize);
+        for op in &content.operations {
+            match op.operator.as_str() {
+                "Tf" => encoding = op.operands.first().and_then(|o| o.as_name().ok()).and_then(|n| encodings.get(n)),
+                "BDC" => {
+                    if depth > 0 { depth += 1; }
+                    else if let Some(Object::Dictionary(properties)) = op.operands.get(1) {
+                        if let Ok(actual) = properties.get(b"ActualText") { units.push(lopdf::decode_text_string(actual).unwrap()); depth = 1; }
+                    }
+                }
+                "EMC" => depth = depth.saturating_sub(1),
+                "Tj" | "TJ" if depth == 0 => {
+                    fn shown(units: &mut Vec<String>, encoding: &lopdf::Encoding, operands: &[Object]) {
+                        for operand in operands {
+                            match operand {
+                                Object::String(raw, _) => units.extend(encoding.bytes_to_string(raw).unwrap().chars().map(String::from)),
+                                Object::Array(items) => shown(units, encoding, items),
+                                _ => {}
+                            }
+                        }
+                    }
+                    shown(&mut units, encoding.expect("a font is selected before text"), &op.operands);
+                }
+                "ET" => units.push(" ".into()),
+                _ => {}
+            }
+        }
+    }
+    let ordered: Vec<&str> = if rtl { units.iter().rev().map(String::as_str).collect() } else { units.iter().map(String::as_str).collect() };
+    ordered.concat().split_whitespace().map(str::to_owned).collect()
 }
 fn compact(text: &str) -> String { text.split_whitespace().collect::<Vec<_>>().join(" ") }
 
@@ -124,8 +186,19 @@ fn offered_language_scripts_request_only_their_lazy_fonts_and_roundtrip_real_pdf
             if !writer.has_fallback(family) { writer.add_fallback(family, fallback_bytes(family).to_vec()).unwrap(); }
         }
         let bytes = analysis_bytes(&model, DocumentFormat::Pdf, Some(&writer)).unwrap();
-        let (_, text) = pdf_text(&bytes.bytes);
-        assert!(compact(&text).contains(&script.text), "{} logical Unicode: {text}", script.script);
+        let rtl = script.text.chars().any(|c| matches!(u32::from(c), 0x0590..=0x08ff | 0xfb1d..=0xfdff | 0xfe70..=0xfeff));
+        // Exact logical words from the ActualText spans plus the ToUnicode of the
+        // remaining glyphs; not extract_text, which reads glyphs in visual order.
+        let logical = logical_words(&bytes.bytes, rtl);
+        for word in script.text.split_whitespace() {
+            assert!(logical.iter().any(|w| w == word), "{} word {word:?} is not carried exactly; PDF logical words: {logical:?}", script.script);
+        }
+        // Independent reader: Poppler's page text contains each word once whitespace
+        // (which it inserts between joined glyph chunks) is removed.
+        let page = poppler_text(&bytes.bytes).split_whitespace().collect::<String>();
+        for word in script.text.split_whitespace() {
+            assert!(page.contains(word), "{} Poppler page text lacks {word:?}: {page}", script.script);
+        }
     }
     assert!(FallbackFont::ALL.into_iter().all(|family| writer.has_fallback(family)));
 }
@@ -142,6 +215,19 @@ fn a_concrete_script_outside_the_offered_pack_is_reported_not_dropped_or_substit
 }
 
 #[test]
+fn sentiment_progression_renders_the_arrow_in_pdf() {
+    // Source quirk kept: only the PDF flavor prints "initial → final"; TXT, MD and DOCX
+    // list Initial:/Final: fields instead.
+    let case = cases().into_iter().find(|c| c.name == "support").unwrap();
+    let model = document(&case);
+    assert!(model.text().contains("frustrated") && model.text().contains("relieved") && !model.text().contains("→"));
+    let pdf = analysis_bytes(&model, DocumentFormat::Pdf, Some(writer())).expect("a sentiment progression must not make PDF export fail");
+    let (_, text) = pdf_text(&pdf.bytes);
+    assert!(compact(&text).contains(" → "), "arrow extracted from the PDF: {text}");
+    assert!(compact(&poppler_text(&pdf.bytes)).contains(" → "), "independent Poppler extraction");
+}
+
+#[test]
 fn independent_readers_preserve_nested_metadata_ratings_and_arabic_with_embedded_font_programs() {
     for case in cases().into_iter().filter(|c| ["generic", "meeting", "interview"].contains(&c.name.as_str())) {
         let model = document(&case);
@@ -151,7 +237,7 @@ fn independent_readers_preserve_nested_metadata_ratings_and_arabic_with_embedded
         let (pdf, text) = pdf_text(&bytes);
         assert!(pdf.objects.values().any(|o| o.as_dict().is_ok_and(|d| d.has(b"FontFile2") || d.has(b"FontFile3"))), "fonts must be embedded, not replaced by a viewer default");
         match case.name.as_str() {
-            "generic" => { assert!(word.contains("مرحبا بالعالم")); assert!(text.contains("مرحبا بالعالم"), "logical Unicode extraction: {text}"); }
+            "generic" => { assert!(word.contains("مرحبا بالعالم")); let logical = poppler_text(&bytes); assert!(compact(&logical).contains("مرحبا بالعالم"), "logical Unicode extraction: {logical}"); }
             "meeting" => { assert!(word.contains("Ana & Bob")); assert!(text.contains("Owner: Ana & Bob")); assert!(text.contains("Friday")); assert!(text.contains("1:05")); }
             "interview" => { assert!(word.contains("★★★☆ (3.5/5)")); assert!(text.contains("Overall Rating: 3.5/5")); assert!(text.contains("Priority: high")); assert!(text.contains("Check the generation before publication.")); }
             _ => unreachable!(),

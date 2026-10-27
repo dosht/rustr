@@ -29,7 +29,7 @@ export interface TransgateConfig {
 
 /** From the web package's `?url` imports of `transgate/export/{fonts,assets}`. */
 export interface DocumentAssetUrls {
-  base: { latin: string; latinItalic: string; arabic: string; symbols: string; invoiceLogo: string };
+  base: { latin: string; latinItalic: string; arabic: string; symbols: string; arrows: string; invoiceLogo: string };
   /** Keyed by FallbackFont wire value: hebrew, armenian, georgian, devanagari, kannada, tamil, thai, cjk. */
   fallbacks: Record<"hebrew" | "armenian" | "georgian" | "devanagari" | "kannada" | "tamil" | "thai" | "cjk", string>;
 }

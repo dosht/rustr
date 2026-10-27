@@ -35,6 +35,7 @@ fn assets() -> DocumentAssets {
             latin_italic: include_bytes!("../../export/fonts/NotoSans-Italic.ttf").to_vec(),
             arabic: include_bytes!("../../export/fonts/NotoSansArabic.ttf").to_vec(),
             symbols: include_bytes!("../../export/fonts/NotoSansSymbols2-Regular.ttf").to_vec(),
+            arrows: include_bytes!("../../export/fonts/NotoSansSymbols.ttf").to_vec(),
         },
         invoice_logo: include_bytes!("../../export/assets/invoice-logo.jpg").to_vec(),
     }

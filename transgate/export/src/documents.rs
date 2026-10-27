@@ -14,7 +14,11 @@ use text::LoadedFont;
 
 pub const MAX_FONT_BYTES: usize = 24 * 1024 * 1024;
 pub const MAX_LOGO_BYTES: usize = 2 * 1024 * 1024;
-pub struct FontBytes { pub latin: Vec<u8>, pub latin_italic: Vec<u8>, pub arabic: Vec<u8>, pub symbols: Vec<u8> }
+/// `symbols` is Noto Sans Symbols 2 (ratings, checks); `arrows` is Noto Sans
+/// Symbols, the smallest bundled face that covers the generated U+2192 arrow.
+pub struct FontBytes { pub latin: Vec<u8>, pub latin_italic: Vec<u8>, pub arabic: Vec<u8>, pub symbols: Vec<u8>, pub arrows: Vec<u8> }
+/// Base faces precede the lazily loaded fallback pairs in every font index.
+pub(super) const BASE_FONTS: usize = 8;
 pub struct DocumentAssets { pub fonts: FontBytes, pub invoice_logo: Vec<u8> }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct DocumentBytes { pub filename: String, pub content_type: String, pub bytes: Vec<u8> }
@@ -38,19 +42,20 @@ impl std::error::Error for DocumentBytesError {}
 impl From<DocumentError> for DocumentBytesError { fn from(value: DocumentError) -> Self { Self::Model(value) } }
 
 struct FontPair { regular: LoadedFont, bold: LoadedFont }
-pub struct DocumentWriter { fonts: [LoadedFont; 7], fallbacks: [Option<FontPair>; 8], logo: Image }
+pub struct DocumentWriter { fonts: [LoadedFont; BASE_FONTS], fallbacks: [Option<FontPair>; 8], logo: Image }
 impl DocumentWriter {
     pub fn new(assets: DocumentAssets) -> Result<Self, DocumentBytesError> {
-        let FontBytes { latin, latin_italic, arabic, symbols } = assets.fonts;
+        let FontBytes { latin, latin_italic, arabic, symbols, arrows } = assets.fonts;
         let regular = LoadedFont::data(latin, "Noto Sans")?;
         let italic = LoadedFont::data(latin_italic, "Noto Sans Italic")?;
         let arabic = LoadedFont::data(arabic, "Noto Sans Arabic")?;
         let symbols = LoadedFont::data(symbols, "Noto Sans Symbols 2")?;
+        let arrows = LoadedFont::data(arrows, "Noto Sans Symbols")?;
         let fonts = [
             LoadedFont::new(regular.clone(), 400.0)?, LoadedFont::new(regular, 700.0)?,
             LoadedFont::new(italic.clone(), 400.0)?, LoadedFont::new(italic, 700.0)?,
             LoadedFont::new(arabic.clone(), 400.0)?, LoadedFont::new(arabic, 700.0)?,
-            LoadedFont::new(symbols, 400.0)?,
+            LoadedFont::new(symbols, 400.0)?, LoadedFont::new(arrows, 400.0)?,
         ];
         if assets.invoice_logo.len() > MAX_LOGO_BYTES { return Err(DocumentBytesError::LimitExceeded); }
         let logo = Image::from_jpeg(assets.invoice_logo.into(), true).map_err(DocumentBytesError::InvalidLogo)?;
@@ -69,10 +74,10 @@ impl DocumentWriter {
     }
     pub fn has_fallback(&self, family: FallbackFont) -> bool { self.fallbacks[family as usize].is_some() }
     fn font(&self, index: usize) -> &LoadedFont {
-        if index < 7 { &self.fonts[index] }
+        if index < BASE_FONTS { &self.fonts[index] }
         else {
-            let pair = self.fallbacks[(index - 7) / 2].as_ref().expect("a shaped run refers only to a loaded font");
-            if (index - 7).is_multiple_of(2) { &pair.regular } else { &pair.bold }
+            let pair = self.fallbacks[(index - BASE_FONTS) / 2].as_ref().expect("a shaped run refers only to a loaded font");
+            if (index - BASE_FONTS).is_multiple_of(2) { &pair.regular } else { &pair.bold }
         }
     }
     pub fn invoice(&self, document: &InvoiceDocument) -> Result<DocumentBytes, DocumentBytesError> {

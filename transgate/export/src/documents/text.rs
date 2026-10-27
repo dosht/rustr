@@ -6,7 +6,7 @@ use unicode_bidi::{BidiInfo, ParagraphInfo};
 use unicode_linebreak::linebreaks;
 use unicode_segmentation::UnicodeSegmentation;
 use transgate_core::documents::{BlockRole, DocumentBlock};
-use super::{DocumentBytesError as Error, DocumentWriter, MAX_FONT_BYTES};
+use super::{DocumentBytesError as Error, DocumentWriter, BASE_FONTS, MAX_FONT_BYTES};
 use super::fonts::family_for;
 
 #[derive(Clone)]
@@ -53,13 +53,13 @@ pub(super) struct ShapedRun {
 }
 pub(super) struct ShapedLine { pub runs: Vec<ShapedRun>, pub width: f32 }
 struct FontRun { range: Range<usize>, font: usize }
-pub(super) struct TextLayout<'a> { faces: [Option<Face<'a>>; 23] }
+pub(super) struct TextLayout<'a> { faces: [Option<Face<'a>>; BASE_FONTS + 16] }
 impl<'a> TextLayout<'a> {
     pub fn new(writer: &'a DocumentWriter) -> Result<Self, Error> {
         let mut faces = std::array::from_fn(|_| None);
         for (index, font) in writer.fonts.iter().enumerate() { faces[index] = Some(font.face()?); }
         for (index, pair) in writer.fallbacks.iter().enumerate() {
-            if let Some(pair) = pair { faces[7 + 2 * index] = Some(pair.regular.face()?); faces[8 + 2 * index] = Some(pair.bold.face()?); }
+            if let Some(pair) = pair { faces[BASE_FONTS + 2 * index] = Some(pair.regular.face()?); faces[BASE_FONTS + 1 + 2 * index] = Some(pair.bold.face()?); }
         }
         Ok(Self { faces })
     }
@@ -68,12 +68,12 @@ impl<'a> TextLayout<'a> {
         let latin = usize::from(style.bold) + if style.italic { 2 } else { 0 };
         let arabic = 4 + usize::from(style.bold);
         if let Some(family) = grapheme.chars().find_map(family_for) {
-            let index = 7 + family as usize * 2 + usize::from(style.bold);
+            let index = BASE_FONTS + family as usize * 2 + usize::from(style.bold);
             let face = self.faces[index].as_ref().ok_or(Error::MissingFallback(family))?;
             if grapheme.chars().all(|c| ignorable(c) || face.glyph_index(c).is_some()) { return Ok(index); }
         }
         let contains_arabic = grapheme.chars().any(|c| matches!(u32::from(c), 0x0600..=0x06ff | 0x0750..=0x077f | 0x08a0..=0x08ff | 0xfb50..=0xfdff | 0xfe70..=0xfeff));
-        let candidates = if contains_arabic { [arabic, latin, 6] } else { [latin, arabic, 6] };
+        let candidates = if contains_arabic { [arabic, latin, 6, 7] } else { [latin, arabic, 6, 7] };
         for index in candidates {
             if grapheme.chars().all(|c| ignorable(c) || self.face(index).glyph_index(c).is_some()) { return Ok(index); }
         }
