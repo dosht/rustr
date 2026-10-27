@@ -438,7 +438,7 @@ IDs carry the topic (`BIL`) so they stay unique when the topic files are assembl
 | API-BIL-009 | Browser reads own completed payments and the latest `billing_info` | api | `frontend/src/pages/billing/index.tsx:379-381` | tbd | inventoried |
 | API-BIL-010 | Browser reads a coupon by id (anyone may read the whole coupon table today) | api | `frontend/src/features/billing/services/SupabaseCouponDataSource.ts:28-35`; policy `frontend/supabase/migrations/20251130113249_remote_schema.sql:4515` | tbd | inventoried |
 | API-BIL-011 | `GET /api/ai/chat-limits?jobId=` (limits shown to freemium users only; the AI topic owns the rest) | api | `frontend/src/pages/api/ai/chat-limits.ts:38-120` | tbd | inventoried |
-| API-BIL-012 | Public API: starting jobs answers 402 `insufficient_balance` when the balance is 0 or less, and success answers carry `newBalance` and `isFreemium` (the API topic owns the endpoints) | api | `frontend/src/services/unified-transcription/services/transcription.ts:241-246`, `:630-660`; `frontend/src/pages/api-docs.tsx:361-369` | tbd | inventoried |
+| API-BIL-012 | Public API: starting jobs answers 402 `insufficient_balance` when the balance is 0 or less, and success answers carry `newBalance` and `isFreemium` (the API topic owns the endpoints) | api | `frontend/src/services/unified-transcription/services/transcription.ts:241-246`, `:630-660`; `frontend/src/pages/api-docs.tsx:361-369` | cargo:transgate-billing:api::api_bil_012_a_key_with_zero_balance_gets_402_and_nothing_is_created; cargo:billing-core:charge::tests::bil_039_040_web_refuses_below_zero_and_api_at_zero_or_less | tested |
 
 ## Research
 
