@@ -11,10 +11,10 @@ Verdicts: `keep-knowledge` (a rule, lesson or ADR, no code), `port` (rewrite in 
 | keep-knowledge | 30 |
 | port | 74 |
 | simplify | 39 |
-| throw | 50 |
+| throw | 51 |
 | gap | 12 |
 | other | 1 |
-| Total | 206 |
+| Total | 207 |
 
 ## ai
 
@@ -35,6 +35,7 @@ Verdicts: `keep-knowledge` (a rule, lesson or ADR, no code), `port` (rewrite in 
 | Opaque key, expiry and scope knowledge | frontend/supabase/migrations/20251130113249_remote_schema.sql:387-458,1211-1284 | keep-knowledge | Already own keys, despite JWT-shaped internal client plumbing | Identity/API core |
 | Supabase JWT impersonation plumbing | frontend/src/services/unified-transcription/services/authentication.ts:82-95 | throw | New server resolves Actor directly; no database JWT needed for API auth | API-key adapter to Actor |
 | Three transcription entry shapes | frontend/src/app/api/v1/transcriptions/route.ts:564-721; frontend/src/services/unified-transcription/middleware/backward-compatibility.ts:197-269 | simplify | One generated versioned contract; compatibility only by migration decision | Public API and optional boundary shim |
+| Legacy v1-beta and unified transcription shapes | frontend/src/app/api/v1-beta/transcriptions/url/route.ts:1-14; frontend/src/app/api/v1-beta/transcriptions/[id]/route.ts; frontend/src/app/api/unified/transcriptions/route.ts | throw | mu approved 2026-10-27 (P7 D12 revised: there are no API users). API-F03, API-F04 and API-F05 are not served; neither are the shapes in rules API-011 to API-014. The public API ships only the current contract. The router mounts only the OpenAPI operation table. | none |
 | Callback payload and delivery history | frontend/src/services/unified-transcription/services/callback-delivery.ts:83-175,272-317 | port | Customer callbacks are used in production | Callback port and delivery records |
 | Generic key webhook placeholder handlers | frontend/src/app/api/webhooks/route.ts:53-90 | throw | Only log, do not deliver the promised lifecycle actions | Domain events only if actually consumed |
 | SQL limiter implementation | frontend/supabase/migrations/20251130113249_remote_schema.sql:296-345 | simplify | Preserve configured limits, remove duplicate counters and races | Atomic shared limiter |
