@@ -143,7 +143,7 @@ async fn a_slow_history_never_erases_a_question_sent_after_it() {
     // Typed while the history GET is still in flight.
     let early = chat.update(Event::SendRequested { text: "When is it due?".into(), key });
     assert_eq!(early, vec![], "no question starts before the history is known");
-    assert!(chat.view(Micros(0)).lines.is_empty());
+    assert!(chat.view(Micros(0), false).lines.is_empty());
 
     let loaded = chat.update(Event::HistoryLoaded { job, result: Ok(history.await.unwrap().unwrap()) });
     assert_eq!(loaded, vec![]);
@@ -155,14 +155,14 @@ async fn a_slow_history_never_erases_a_question_sent_after_it() {
         vec![Effect::Watch { generation: RUNNING, kind: WatchKind::Text, after: None }]
     );
     chat.update(Event::WatchFrame { generation: RUNNING, frame: frame("Fri", StreamStatus::Streaming, 1) });
-    let mid = chat.view(Micros(0));
+    let mid = chat.view(Micros(0), false);
     assert_eq!(
         mid.lines.iter().map(|l| (l.role, l.content.as_str(), l.streaming)).collect::<Vec<_>>(),
         vec![(ChatRole::User, "When is it due?", false), (ChatRole::Assistant, "Fri", true)]
     );
     let done = chat.update(Event::WatchFrame { generation: RUNNING, frame: frame("Friday.", StreamStatus::Completed, 2) });
     assert_eq!(done, vec![Effect::LoadLimits { job }]);
-    let end = chat.view(Micros(0));
+    let end = chat.view(Micros(0), false);
     assert_eq!(
         end.lines.iter().map(|l| (l.role, l.content.as_str())).collect::<Vec<_>>(),
         vec![(ChatRole::User, "When is it due?"), (ChatRole::Assistant, "Friday.")]
