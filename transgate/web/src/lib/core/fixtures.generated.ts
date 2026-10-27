@@ -6282,13 +6282,15 @@ export const fixtures: FixtureFile = {
         ],
         "status": "completed",
         "status_badge": {
+          "icon": "check",
           "label": {
             "args": {},
             "key": "completed",
             "ns": "common"
           },
           "spinning": false,
-          "status": "completed"
+          "status": "completed",
+          "tone": "success"
         },
         "tabs": [],
         "time_toggle": true,
@@ -19476,13 +19478,15 @@ export const fixtures: FixtureFile = {
         ],
         "status": "completed",
         "status_badge": {
+          "icon": "check",
           "label": {
             "args": {},
             "key": "completed",
             "ns": "common"
           },
           "spinning": false,
-          "status": "completed"
+          "status": "completed",
+          "tone": "success"
         },
         "tabs": [],
         "time_toggle": true,
@@ -24503,13 +24507,15 @@ export const fixtures: FixtureFile = {
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,
@@ -24626,13 +24632,15 @@ export const fixtures: FixtureFile = {
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25190,13 +25198,15 @@ export const fixtures: FixtureFile = {
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25313,13 +25323,15 @@ export const fixtures: FixtureFile = {
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25440,13 +25452,15 @@ export const fixtures: FixtureFile = {
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25566,13 +25580,15 @@ export const fixtures: FixtureFile = {
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [
         {
@@ -25635,13 +25651,15 @@ export const fixtures: FixtureFile = {
       "speakers": [],
       "status": "running",
       "status_badge": {
+        "icon": null,
         "label": {
           "args": {},
           "key": "running",
           "ns": "common"
         },
         "spinning": true,
-        "status": "running"
+        "status": "running",
+        "tone": "progress"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25737,13 +25755,15 @@ export const fixtures: FixtureFile = {
       "speakers": [],
       "status": "speaker_labeling",
       "status_badge": {
+        "icon": null,
         "label": {
           "args": {},
           "key": "speaker_labeling",
           "ns": "common"
         },
         "spinning": true,
-        "status": "speaker_labeling"
+        "status": "speaker_labeling",
+        "tone": "accent"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25812,13 +25832,15 @@ export const fixtures: FixtureFile = {
       "speakers": [],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [
         {
@@ -25891,13 +25913,15 @@ export const fixtures: FixtureFile = {
       "speakers": [],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,

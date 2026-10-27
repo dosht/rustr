@@ -10,6 +10,7 @@ use crate::jobs::app::{ExportKind, ExportRequest, ExportSurface};
 use crate::jobs::domain::{Job, JobSource, JobStatus};
 use crate::languages::{Language, is_rtl};
 use crate::presentation::failure::ApiFailure;
+use crate::presentation::job_list::Tone;
 use crate::presentation::msg::{Msg, app, common};
 use crate::transcript::{
     LanguageTab, Line, LineEdit, SpeakerLabel, TranslationStatus, display_speakers, distinct_speakers, language_tabs,
@@ -413,7 +414,13 @@ impl TranscriptState {
             duration_minutes: job.duration_minutes,
             minutes_unit: common("min"),
             status: Some(job.status),
-            status_badge: Some(StatusBadge { label: common(job.status.as_str()), status: job.status, spinning: badge_spins(job.status) }),
+            status_badge: Some(StatusBadge {
+                label: common(job.status.as_str()),
+                status: job.status,
+                tone: badge_tone(job.status),
+                icon: badge_icon(job.status),
+                spinning: badge_spins(job.status),
+            }),
             is_translation: translation,
             translation_flag,
             loading_message: loading_message(job.status, translation),
@@ -466,14 +473,50 @@ pub fn freemium_banner(current_minutes: i64) -> FreemiumBanner {
     FreemiumBanner { current_minutes, max_minutes: max, percent }
 }
 
+/// The header badge's icon (`statusConfig.tsx`); spinning statuses show the spinner instead.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "ts", derive(ts_rs::TS))]
+#[serde(rename_all = "snake_case")]
+pub enum BadgeIcon {
+    Dot,
+    Upload,
+    Check,
+    Cross,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "ts", derive(ts_rs::TS))]
 pub struct StatusBadge {
     /// `t(job_status)`.
     pub label: Msg,
-    /// The shell maps each status to its badge hue (`statusConfig.tsx`).
     pub status: JobStatus,
+    /// The badge hue as a semantic tone; shells never map the status themselves.
+    pub tone: Tone,
+    pub icon: Option<BadgeIcon>,
     pub spinning: bool,
+}
+
+/// `statusConfig.tsx` hues on the semantic tones (yellow pending, indigo processing and
+/// purple speaker labeling are the accent; blue uploaded and sky running are progress).
+pub fn badge_tone(status: JobStatus) -> Tone {
+    match status {
+        JobStatus::Completed | JobStatus::Ready => Tone::Success,
+        JobStatus::Failed => Tone::Danger,
+        JobStatus::Running | JobStatus::Uploaded => Tone::Progress,
+        JobStatus::Pending | JobStatus::Processing | JobStatus::SpeakerLabeling => Tone::Accent,
+        JobStatus::Draft | JobStatus::NotStarted | JobStatus::Canceled | JobStatus::Deleted => Tone::Neutral,
+    }
+}
+
+/// The static icon; `None` for the spinning statuses (and the ones the source drew without one).
+pub fn badge_icon(status: JobStatus) -> Option<BadgeIcon> {
+    match status {
+        JobStatus::NotStarted => Some(BadgeIcon::Dot),
+        JobStatus::Uploaded => Some(BadgeIcon::Upload),
+        JobStatus::Completed | JobStatus::Ready => Some(BadgeIcon::Check),
+        JobStatus::Failed => Some(BadgeIcon::Cross),
+        _ => None,
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]

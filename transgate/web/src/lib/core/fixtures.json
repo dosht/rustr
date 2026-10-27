@@ -6231,13 +6231,15 @@
         ],
         "status": "completed",
         "status_badge": {
+          "icon": "check",
           "label": {
             "args": {},
             "key": "completed",
             "ns": "common"
           },
           "spinning": false,
-          "status": "completed"
+          "status": "completed",
+          "tone": "success"
         },
         "tabs": [],
         "time_toggle": true,
@@ -19425,13 +19427,15 @@
         ],
         "status": "completed",
         "status_badge": {
+          "icon": "check",
           "label": {
             "args": {},
             "key": "completed",
             "ns": "common"
           },
           "spinning": false,
-          "status": "completed"
+          "status": "completed",
+          "tone": "success"
         },
         "tabs": [],
         "time_toggle": true,
@@ -24452,13 +24456,15 @@
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,
@@ -24575,13 +24581,15 @@
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25139,13 +25147,15 @@
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25262,13 +25272,15 @@
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25389,13 +25401,15 @@
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25515,13 +25529,15 @@
       ],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [
         {
@@ -25584,13 +25600,15 @@
       "speakers": [],
       "status": "running",
       "status_badge": {
+        "icon": null,
         "label": {
           "args": {},
           "key": "running",
           "ns": "common"
         },
         "spinning": true,
-        "status": "running"
+        "status": "running",
+        "tone": "progress"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25686,13 +25704,15 @@
       "speakers": [],
       "status": "speaker_labeling",
       "status_badge": {
+        "icon": null,
         "label": {
           "args": {},
           "key": "speaker_labeling",
           "ns": "common"
         },
         "spinning": true,
-        "status": "speaker_labeling"
+        "status": "speaker_labeling",
+        "tone": "accent"
       },
       "tabs": [],
       "time_toggle": true,
@@ -25761,13 +25781,15 @@
       "speakers": [],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [
         {
@@ -25840,13 +25862,15 @@
       "speakers": [],
       "status": "completed",
       "status_badge": {
+        "icon": "check",
         "label": {
           "args": {},
           "key": "completed",
           "ns": "common"
         },
         "spinning": false,
-        "status": "completed"
+        "status": "completed",
+        "tone": "success"
       },
       "tabs": [],
       "time_toggle": true,

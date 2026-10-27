@@ -194,6 +194,12 @@ pub fn public_root(locale: &str) -> String {
     }
 }
 
+/// The absolute web URL of an app route under `site_url` (the host's origin),
+/// for shells that hand over to the web app (P8: billing, API keys).
+pub fn web_url(site_url: &str, route: Route, locale: &str) -> String {
+    format!("{}{}", site_url.trim_end_matches('/'), href(route, locale))
+}
+
 /// LNG-003 (Next.js detection on `/`): a valid `NEXT_LOCALE` cookie, then the
 /// best `Accept-Language` match, then the default locale. Preferences are taken
 /// in `q` order (ties keep header order, `q=0` is refused); each matches an

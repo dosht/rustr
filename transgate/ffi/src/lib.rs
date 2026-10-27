@@ -26,3 +26,11 @@ pub fn translate(locale: String, message: transgate_core::presentation::msg::Msg
 pub fn ui_locales() -> Vec<String> {
     transgate_i18n::LOCALES.iter().map(|l| l.to_string()).collect()
 }
+
+/// The absolute web URL of an app route, for handing over to the web app (billing,
+/// API keys: D6). Core owns the path and the locale prefix; the shell supplies only
+/// the web origin and opens the result in a browser.
+#[uniffi::export]
+pub fn web_url(site_url: String, route: transgate_core::presentation::route::Route, locale: String) -> String {
+    transgate_core::presentation::route::web_url(&site_url, route, &locale)
+}

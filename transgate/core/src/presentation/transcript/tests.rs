@@ -168,6 +168,25 @@ fn edt_013_lng_007_direction_switches_when_a_streaming_job_completes() {
     assert_eq!(vm.rows.iter().map(|r| r.text.as_str()).collect::<Vec<_>>(), vec!["Hello"]);
 }
 
+// `transcript-header/views/statusConfig.tsx`: the header badge's hue and icon by status, as
+// semantic tones (no shell maps a status to a colour): grey dot not started, yellow pending,
+// sky running, purple speaker labeling, green check completed, red cross failed.
+#[test]
+fn the_header_badge_carries_its_tone_and_icon() {
+    let cases = [
+        (JobStatus::NotStarted, Tone::Neutral, Some(BadgeIcon::Dot), false),
+        (JobStatus::Pending, Tone::Accent, None, true),
+        (JobStatus::Running, Tone::Progress, None, true),
+        (JobStatus::SpeakerLabeling, Tone::Accent, None, true),
+        (JobStatus::Completed, Tone::Success, Some(BadgeIcon::Check), false),
+        (JobStatus::Failed, Tone::Danger, Some(BadgeIcon::Cross), false),
+    ];
+    for (status, tone, icon, spinning) in cases {
+        let badge = loaded(fixtures::job(1, status, "a.mp3"), vec![]).view().status_badge.unwrap();
+        assert_eq!((badge.tone, badge.icon, badge.spinning), (tone, icon, spinning), "{status:?}");
+    }
+}
+
 // EXP-001: no download before completion.
 #[test]
 fn download_requires_completion() {

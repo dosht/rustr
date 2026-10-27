@@ -1194,7 +1194,8 @@ impl AppState {
                 self.session += 1;
                 self.consent_epoch += 1;
                 self.phase = Phase::Erased;
-                vec![AppEffect::Auth { epoch: self.epoch(), effect: AuthEffect::SignOut }]
+                // Like a deletion, the analytics identity goes with the session (IDN-024).
+                vec![AppEffect::TelemetryReset, AppEffect::Auth { epoch: self.epoch(), effect: AuthEffect::SignOut }]
             }
             AppEvent::Balance { epoch, result } if self.is_current(epoch) && self.signed_in() => {
                 let mut effects = vec![AppEffect::Timer { epoch, timer: Timer::Balance, after_ms: u64::from(BALANCE_REFRESH_SECONDS) * 1000 }];

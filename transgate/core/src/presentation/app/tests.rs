@@ -309,13 +309,15 @@ fn a_rotated_token_for_the_same_user_keeps_the_session_and_another_user_replaces
     assert!(matches!(effects.as_slice(), [AppEffect::LoadSession { .. }]));
 }
 
-// P3 D13: an erased account is terminal for the tab.
+// P3 D13: an erased account is terminal for the tab. Like an account deletion it also
+// resets the product-analytics identity (IDN-024), so the next person in this browser is
+// never recorded under the erased account.
 #[test]
 fn an_erased_account_is_terminal() {
     let (mut s, _) = signed_in("/home", desktop());
     let epoch = s.epoch();
     let effects = s.update(AppEvent::AccountErased { epoch }, NOW);
-    assert!(matches!(effects.as_slice(), [AppEffect::Auth { effect: AuthEffect::SignOut, .. }]));
+    assert!(matches!(effects.as_slice(), [AppEffect::TelemetryReset, AppEffect::Auth { effect: AuthEffect::SignOut, .. }]), "{effects:?}");
     let after = s.epoch();
     assert!(s.update(AppEvent::Auth { epoch: after, event: AuthEvent::SignedOut }, NOW).is_empty());
     assert_eq!(s.view(NOW), AppVm::Erased { locale: "en".into(), message: ACCOUNT_ERASED });

@@ -75,6 +75,7 @@ use transgate_core::account::FeedbackRating;
 use transgate_core::presentation::feedback::FeedbackVm;
 use transgate_core::presentation::upload_queue::FileRow;
 use transgate_core::presentation::layout::Frame;
+use transgate_core::presentation::transcript::BadgeIcon;
 use transgate_core::presentation::transcript::FreemiumBanner;
 use transgate_core::presentation::ai::consent::Gate;
 use transgate_core::ai::analysis::GenericAnalysis;
@@ -1327,7 +1328,17 @@ pub struct SpecialClientAlert {
 pub struct StatusBadge {
     pub label: Msg,
     pub status: JobStatus,
+    pub tone: Tone,
+    pub icon: Option<BadgeIcon>,
     pub spinning: bool,
+}
+
+#[uniffi::remote(Enum)]
+pub enum BadgeIcon {
+    Dot,
+    Upload,
+    Check,
+    Cross,
 }
 
 #[uniffi::remote(Enum)]

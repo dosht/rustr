@@ -43,6 +43,14 @@ fn public_api_asset_and_unknown_paths_are_not_app_routes() {
     assert!(is_app_path("/home/7?x=1") && is_app_path("/kk/new-password"));
 }
 
+// P8 handoff: native shells open the web app's billing and API key pages; the URL comes from
+// core route formatting (locale prefix included), never from a shell constant.
+#[test]
+fn web_urls_for_handoff_routes_are_core_formatted() {
+    assert_eq!(web_url("https://app.example.test/", Route::Billing, "en"), "https://app.example.test/billing");
+    assert_eq!(web_url("https://app.example.test", Route::ApiKeys, "de"), "https://app.example.test/de/dashboard/api-keys");
+}
+
 // LNG-002: en has no prefix, every other UI locale is a path prefix; the switcher's target is
 // `/<code>/home` (a full page load, no cookie; see the app test of `LocaleChosen`).
 #[test]

@@ -584,6 +584,11 @@ RustBuffer uniffi_transgate_ffi_fn_func_ui_locales(RustCallStatus *_Nonnull out_
     
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TRANSGATE_FFI_FN_FUNC_WEB_URL
+#define UNIFFI_FFIDEF_UNIFFI_TRANSGATE_FFI_FN_FUNC_WEB_URL
+RustBuffer uniffi_transgate_ffi_fn_func_web_url(RustBuffer site_url, RustBuffer route, RustBuffer locale, RustCallStatus *_Nonnull out_status
+);
+#endif
 #ifndef UNIFFI_FFIDEF_FFI_TRANSGATE_FFI_RUSTBUFFER_ALLOC
 #define UNIFFI_FFIDEF_FFI_TRANSGATE_FFI_RUSTBUFFER_ALLOC
 RustBuffer ffi_transgate_ffi_rustbuffer_alloc(uint64_t size, RustCallStatus *_Nonnull out_status
@@ -853,6 +858,12 @@ uint16_t uniffi_transgate_ffi_checksum_func_translate(void
 #ifndef UNIFFI_FFIDEF_UNIFFI_TRANSGATE_FFI_CHECKSUM_FUNC_UI_LOCALES
 #define UNIFFI_FFIDEF_UNIFFI_TRANSGATE_FFI_CHECKSUM_FUNC_UI_LOCALES
 uint16_t uniffi_transgate_ffi_checksum_func_ui_locales(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_TRANSGATE_FFI_CHECKSUM_FUNC_WEB_URL
+#define UNIFFI_FFIDEF_UNIFFI_TRANSGATE_FFI_CHECKSUM_FUNC_WEB_URL
+uint16_t uniffi_transgate_ffi_checksum_func_web_url(void
     
 );
 #endif

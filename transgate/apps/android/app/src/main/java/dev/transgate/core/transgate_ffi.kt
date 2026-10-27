@@ -819,6 +819,8 @@ internal object IntegrityCheckingUniffiLib {
     ): Int
     external fun uniffi_transgate_ffi_checksum_func_ui_locales(
     ): Int
+    external fun uniffi_transgate_ffi_checksum_func_web_url(
+    ): Int
     external fun uniffi_transgate_ffi_checksum_method_nativeports_storage_get(
     ): Int
     external fun uniffi_transgate_ffi_checksum_method_nativeports_storage_set(
@@ -961,6 +963,8 @@ internal object UniffiLib {
     ): RustBuffer.ByValue
     external fun uniffi_transgate_ffi_fn_func_ui_locales(uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
+    external fun uniffi_transgate_ffi_fn_func_web_url(`siteUrl`: RustBuffer.ByValue,`route`: RustBuffer.ByValue,`locale`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
     external fun ffi_transgate_ffi_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
     external fun ffi_transgate_ffi_rustbuffer_from_bytes(`bytes`: ForeignBytes.ByValue,uniffi_out_err: UniffiRustCallStatus, 
@@ -1084,6 +1088,9 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if ((lib.uniffi_transgate_ffi_checksum_func_ui_locales() and 0xFFFF) != 34794) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_transgate_ffi_checksum_func_web_url() and 0xFFFF) != 55011) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if ((lib.uniffi_transgate_ffi_checksum_method_nativeports_storage_get() and 0xFFFF) != 13714) {
@@ -7444,6 +7451,10 @@ data class StatusBadge (
     , 
     var `status`: JobStatus
     , 
+    var `tone`: Tone
+    , 
+    var `icon`: BadgeIcon?
+    , 
     var `spinning`: kotlin.Boolean
     
 ){
@@ -7463,6 +7474,8 @@ public object FfiConverterTypeStatusBadge: FfiConverterRustBuffer<StatusBadge> {
         return StatusBadge(
             FfiConverterTypeMsg.read(buf),
             FfiConverterTypeJobStatus.read(buf),
+            FfiConverterTypeTone.read(buf),
+            FfiConverterOptionalTypeBadgeIcon.read(buf),
             FfiConverterBoolean.read(buf),
         )
     }
@@ -7470,12 +7483,16 @@ public object FfiConverterTypeStatusBadge: FfiConverterRustBuffer<StatusBadge> {
     override fun allocationSize(value: StatusBadge) = (
             FfiConverterTypeMsg.allocationSize(value.`label`) +
             FfiConverterTypeJobStatus.allocationSize(value.`status`) +
+            FfiConverterTypeTone.allocationSize(value.`tone`) +
+            FfiConverterOptionalTypeBadgeIcon.allocationSize(value.`icon`) +
             FfiConverterBoolean.allocationSize(value.`spinning`)
     )
 
     override fun write(value: StatusBadge, buf: ByteBuffer) {
             FfiConverterTypeMsg.write(value.`label`, buf)
             FfiConverterTypeJobStatus.write(value.`status`, buf)
+            FfiConverterTypeTone.write(value.`tone`, buf)
+            FfiConverterOptionalTypeBadgeIcon.write(value.`icon`, buf)
             FfiConverterBoolean.write(value.`spinning`, buf)
     }
 }
@@ -10093,6 +10110,42 @@ public object FfiConverterTypeAuthMode: FfiConverterRustBuffer<AuthMode> {
     override fun allocationSize(value: AuthMode) = 4UL
 
     override fun write(value: AuthMode, buf: ByteBuffer) {
+        buf.putInt(value.ordinal + 1)
+    }
+}
+
+
+
+
+
+
+enum class BadgeIcon {
+    
+    DOT,
+    UPLOAD,
+    CHECK,
+    CROSS;
+
+    
+
+
+    companion object
+}
+
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeBadgeIcon: FfiConverterRustBuffer<BadgeIcon> {
+    override fun read(buf: ByteBuffer) = try {
+        BadgeIcon.values()[buf.getInt() - 1]
+    } catch (e: IndexOutOfBoundsException) {
+        throw RuntimeException("invalid enum value, something is very wrong!!", e)
+    }
+
+    override fun allocationSize(value: BadgeIcon) = 4UL
+
+    override fun write(value: BadgeIcon, buf: ByteBuffer) {
         buf.putInt(value.ordinal + 1)
     }
 }
@@ -15775,6 +15828,38 @@ public object FfiConverterOptionalTypeAnalysis: FfiConverterRustBuffer<Analysis?
 /**
  * @suppress
  */
+public object FfiConverterOptionalTypeBadgeIcon: FfiConverterRustBuffer<BadgeIcon?> {
+    override fun read(buf: ByteBuffer): BadgeIcon? {
+        if (buf.get().toInt() == 0) {
+            return null
+        }
+        return FfiConverterTypeBadgeIcon.read(buf)
+    }
+
+    override fun allocationSize(value: BadgeIcon?): ULong {
+        if (value == null) {
+            return 1UL
+        } else {
+            return 1UL + FfiConverterTypeBadgeIcon.allocationSize(value)
+        }
+    }
+
+    override fun write(value: BadgeIcon?, buf: ByteBuffer) {
+        if (value == null) {
+            buf.put(0)
+        } else {
+            buf.put(1)
+            FfiConverterTypeBadgeIcon.write(value, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
 public object FfiConverterOptionalTypeChoice: FfiConverterRustBuffer<Choice?> {
     override fun read(buf: ByteBuffer): Choice? {
         if (buf.get().toInt() == 0) {
@@ -17630,6 +17715,24 @@ public typealias FfiConverterTypeusize = FfiConverterULong
     UniffiLib.uniffi_transgate_ffi_fn_func_ui_locales(
     
         _status)
+}
+    )
+    }
+    
+
+        /**
+         * The absolute web URL of an app route, for handing over to the web app (billing,
+         * API keys: D6). Core owns the path and the locale prefix; the shell supplies only
+         * the web origin and opens the result in a browser.
+         */ fun `webUrl`(`siteUrl`: kotlin.String, `route`: Route, `locale`: kotlin.String): kotlin.String {
+            return FfiConverterString.lift(
+    uniffiRustCall() { _status ->
+    UniffiLib.uniffi_transgate_ffi_fn_func_web_url(
+    
+        
+        FfiConverterString.lower(`siteUrl`),
+        FfiConverterTypeRoute.lower(`route`),
+        FfiConverterString.lower(`locale`),_status)
 }
     )
     }

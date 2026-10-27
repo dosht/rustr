@@ -188,6 +188,31 @@ pub enum Alert {
     YouTube,
 }
 
+impl Alert {
+    /// The alert's heading (`UploadAlerts.svelte`).
+    pub fn title(self) -> Msg {
+        common(match self {
+            Alert::Balance => "Not enough balance.",
+            Alert::Language => "Language Selection Required",
+            Alert::ProcessingTimeout => "Processing Timeout",
+            Alert::YouTube => "YouTube Transcription Failed",
+        })
+    }
+
+    /// The alert's fixed paragraphs. The YouTube alert's reason is `UploadQueueVm::youtube_error`.
+    pub fn paragraphs(self) -> Vec<Msg> {
+        match self {
+            Alert::Balance => vec![common("Your balance is not enough to run this job. Please top up your minutes and try again.")],
+            Alert::Language => vec![common("Please select the audio language before starting transcription.")],
+            Alert::ProcessingTimeout => vec![
+                common("File preparation took longer than expected. This could be due to file processing issues or upload problems."),
+                common("Please try uploading the file again. If the problem persists, contact support."),
+            ],
+            Alert::YouTube => vec![],
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Effect {

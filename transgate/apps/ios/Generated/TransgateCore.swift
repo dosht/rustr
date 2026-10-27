@@ -6994,13 +6994,17 @@ public func FfiConverterTypeSpecialClientAlert_lower(_ value: SpecialClientAlert
 public struct StatusBadge: Equatable, Hashable {
     public var label: Msg
     public var status: JobStatus
+    public var tone: Tone
+    public var icon: BadgeIcon?
     public var spinning: Bool
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
-    public init(label: Msg, status: JobStatus, spinning: Bool) {
+    public init(label: Msg, status: JobStatus, tone: Tone, icon: BadgeIcon?, spinning: Bool) {
         self.label = label
         self.status = status
+        self.tone = tone
+        self.icon = icon
         self.spinning = spinning
     }
 
@@ -7022,6 +7026,8 @@ public struct FfiConverterTypeStatusBadge: FfiConverterRustBuffer {
             try StatusBadge(
                 label: FfiConverterTypeMsg.read(from: &buf), 
                 status: FfiConverterTypeJobStatus.read(from: &buf), 
+                tone: FfiConverterTypeTone.read(from: &buf), 
+                icon: FfiConverterOptionTypeBadgeIcon.read(from: &buf), 
                 spinning: FfiConverterBool.read(from: &buf)
         )
     }
@@ -7029,6 +7035,8 @@ public struct FfiConverterTypeStatusBadge: FfiConverterRustBuffer {
     public static func write(_ value: StatusBadge, into buf: inout [UInt8]) {
         FfiConverterTypeMsg.write(value.label, into: &buf)
         FfiConverterTypeJobStatus.write(value.status, into: &buf)
+        FfiConverterTypeTone.write(value.tone, into: &buf)
+        FfiConverterOptionTypeBadgeIcon.write(value.icon, into: &buf)
         FfiConverterBool.write(value.spinning, into: &buf)
     }
 }
@@ -9279,6 +9287,86 @@ public func FfiConverterTypeAuthMode_lift(_ buf: RustBuffer) throws -> AuthMode 
 #endif
 public func FfiConverterTypeAuthMode_lower(_ value: AuthMode) -> RustBuffer {
     return FfiConverterTypeAuthMode.lower(value)
+}
+
+
+
+
+public enum BadgeIcon: Equatable, Hashable {
+    
+    case dot
+    case upload
+    case check
+    case cross
+
+
+
+
+
+}
+
+#if compiler(>=6)
+extension BadgeIcon: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeBadgeIcon: FfiConverterRustBuffer {
+    typealias SwiftType = BadgeIcon
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> BadgeIcon {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .dot
+        
+        case 2: return .upload
+        
+        case 3: return .check
+        
+        case 4: return .cross
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: BadgeIcon, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case .dot:
+            writeInt(&buf, Int32(1))
+        
+        
+        case .upload:
+            writeInt(&buf, Int32(2))
+        
+        
+        case .check:
+            writeInt(&buf, Int32(3))
+        
+        
+        case .cross:
+            writeInt(&buf, Int32(4))
+        
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeBadgeIcon_lift(_ buf: RustBuffer) throws -> BadgeIcon {
+    return try FfiConverterTypeBadgeIcon.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeBadgeIcon_lower(_ value: BadgeIcon) -> RustBuffer {
+    return FfiConverterTypeBadgeIcon.lower(value)
 }
 
 
@@ -15230,6 +15318,30 @@ fileprivate struct FfiConverterOptionTypeAnalysis: FfiConverterRustBuffer {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterOptionTypeBadgeIcon: FfiConverterRustBuffer {
+    typealias SwiftType = BadgeIcon?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterTypeBadgeIcon.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterTypeBadgeIcon.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterOptionTypeChoice: FfiConverterRustBuffer {
     typealias SwiftType = Choice?
 
@@ -17259,6 +17371,21 @@ public func uiLocales() -> [String]  {
     )
 })
 }
+/**
+ * The absolute web URL of an app route, for handing over to the web app (billing,
+ * API keys: D6). Core owns the path and the locale prefix; the shell supplies only
+ * the web origin and opens the result in a browser.
+ */
+public func webUrl(siteUrl: String, route: Route, locale: String) -> String  {
+    return try!  FfiConverterString.lift(try! rustCall() {
+        uniffiCallStatus in
+    uniffi_transgate_ffi_fn_func_web_url(
+        FfiConverterString.lower(siteUrl),
+        FfiConverterTypeRoute_lower(route),
+        FfiConverterString.lower(locale),uniffiCallStatus
+    )
+})
+}
 
 private enum InitializationResult {
     case ok
@@ -17279,6 +17406,9 @@ private let initializationResult: InitializationResult = {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_transgate_ffi_checksum_func_ui_locales() != 34794) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_transgate_ffi_checksum_func_web_url() != 55011) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_transgate_ffi_checksum_method_nativeports_storage_get() != 13714) {
