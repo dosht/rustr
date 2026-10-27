@@ -87,8 +87,11 @@ fn logical_words(bytes: &[u8], rtl: bool) -> Vec<String> {
                 "Tf" => encoding = op.operands.first().and_then(|o| o.as_name().ok()).and_then(|n| encodings.get(n)),
                 "BDC" => {
                     if depth > 0 { depth += 1; }
-                    else if let Some(Object::Dictionary(properties)) = op.operands.get(1) {
-                        if let Ok(actual) = properties.get(b"ActualText") { units.push(lopdf::decode_text_string(actual).unwrap()); depth = 1; }
+                    else if let Some(Object::Dictionary(properties)) = op.operands.get(1)
+                        && let Ok(actual) = properties.get(b"ActualText")
+                    {
+                        units.push(lopdf::decode_text_string(actual).unwrap());
+                        depth = 1;
                     }
                 }
                 "EMC" => depth = depth.saturating_sub(1),

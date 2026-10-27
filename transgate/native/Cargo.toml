@@ -1,0 +1,23 @@
+[package]
+name = "transgate-native"
+description = "What the terminal shells (CLI and TUI) share: the OS keyring session vault, the loopback sign-in listener, the NativePorts a terminal can provide, and a handle that waits on the presenter's views. No product rules and no copy."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+# transgate-ffi builds as lib, cdylib and staticlib; rustdoc's --extern then names an rlib that
+# cargo never uplifts, so a doctest build of any crate using it fails. There are no doctests here.
+doctest = false
+
+[dependencies]
+keyring = "4.2"
+libc = "0.2"
+reqwest = { version = "0.13", default-features = false, features = ["blocking", "rustls"] }
+serde_json.workspace = true
+transgate-core = { path = "../core" }
+transgate-ffi = { path = "../ffi" }
+transgate-i18n = { path = "../i18n" }
+
+[dev-dependencies]
+tempfile = "3"

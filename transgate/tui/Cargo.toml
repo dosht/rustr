@@ -1,0 +1,23 @@
+[package]
+name = "transgate-tui"
+description = "Terminal UI shell for Transgate: sign in, upload, list jobs, read a transcript or translation, export. It renders the core view models and forwards intents; the shared presenter decides everything else."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "transgate_tui"
+path = "src/lib.rs"
+# transgate-ffi is lib+cdylib+staticlib, so rustdoc is handed an rlib path cargo never
+# produces; there are no doctests in this crate.
+doctest = false
+
+[[bin]]
+name = "transgate-tui"
+path = "src/main.rs"
+
+[dependencies]
+ratatui.workspace = true
+transgate-core = { path = "../core" }
+transgate-i18n = { path = "../i18n" }
+transgate-native = { path = "../native" }

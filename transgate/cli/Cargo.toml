@@ -1,0 +1,31 @@
+[package]
+name = "transgate-cli"
+description = "Scriptable command line shell for Transgate: sign in, upload, list jobs, fetch a transcript or translation, export. It renders the core view models and forwards intents; the shared presenter decides everything else."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "transgate_cli"
+path = "src/lib.rs"
+# See transgate-native: rustdoc cannot resolve transgate-ffi's rlib. There are no doctests here.
+doctest = false
+
+[[bin]]
+name = "transgate"
+path = "src/main.rs"
+
+[dependencies]
+clap = { workspace = true, features = ["env"] }
+rpassword = "7"
+serde_json.workspace = true
+transgate-core = { path = "../core" }
+transgate-ffi = { path = "../ffi" }
+transgate-i18n = { path = "../i18n" }
+transgate-native = { path = "../native" }
+
+[dev-dependencies]
+assert_cmd = "2"
+axum = "0.8"
+tempfile = "3"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "sync", "time"] }
