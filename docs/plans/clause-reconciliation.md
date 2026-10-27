@@ -528,3 +528,11 @@ After this pass the P3 rule rows (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, E
 | EML-012 | missing | — | p1T: mail chrome test: every template carries the Get Started CTA and the homepage UTM links, and receives the name |
 
 Candidate9 update (2026-10-27): LNG-005 is now `changed` and UPL-003/004 are `tested`, citing Y's committed specs. P3 rule rows stand at 182 `tested`, 26 `changed` and 63 `ledger` (44 other-phase, 19 missing: 13 for p1T and 6 for p22).
+
+p22 update (2026-10-27): UPL-013, UPL-014, EXP-015, EXP-016 and PRV-010 are now `tested`, citing `transgate/client/tests/driver_clauses.rs`:
+- UPL-013/014: a failed PUT stays failed and is never retried; only a platform 200 marks the draft uploaded.
+- EXP-015: the phone ZIP download, with no share sheet.
+- EXP-016: the server records `transcript_downloaded`, together with core `download_event_properties` and `export_use_case`.
+- PRV-010: sign-out and deletion reset the analytics identity.
+
+UPL-006 stays `ledger`. Its evidence is the web Vitest `platform/media/measure.test.ts`, and the ledger accepts only `cargo:` and `playwright:` references, so it waits for the lead's decision. P3 rule rows: 187 `tested`, 26 `changed`, 58 `ledger` (44 other-phase, 14 missing: 13 for p1T, plus UPL-006).
