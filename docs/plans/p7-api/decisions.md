@@ -26,12 +26,14 @@ Base: the Opus proposal, with the corrections below. Both advisors agree there i
 
 Outcome (p1T): `bcrypt` 0.19.3 (std) in `transgate-server` and `schemars` 1.2.3 (derive, std) in `transgate-api`, 10 new packages; a real-PG test verifies pgcrypto `$2a$` hashes at costs 4, 6 and 10. Lead also approved listing the already-locked `sha2`, `hmac` and `base64` in `transgate-server` (no new packages) so key digests and callback signatures use real HMAC/SHA-256, never hand-rolled code. Lock sha256 `6ff619f4...` to `4a5170bc...`. Migration `0008_api.sql`, `PgApiTx`, the Postgres rate limiter and callback outbox are in with 11 real-PG tests; routes, worker, transport and OpenAPI wait for p1X's use cases.
 
-## Waiting for mu
+**mu, 2026-10-27:** there are no API users, so D12 changes: **no v1-beta compatibility shim and no unified 301.** The public API ships only the current contract; old shapes are not served. The `production-facts.md` "two live owners" note is superseded by mu's statement.
 
-- **Shim retirement (D12):** contact the two live API owners, or confirm we keep the shim indefinitely.
-- **Usage audit (D11):** keep per-request rows (default), or reduce to `last_used_at`; migrate the 872 rows or not; IP retention period.
-- **Signing secret UI (D5):** when to turn the flag on.
-- **DEF-017:** unchanged, still open.
+## Lead decisions on former open items (mu: decide, prefer simpler; 2026-10-27)
+
+- **D12:** no shim (mu).
+- **D11 reversed:** with no API users, no per-request usage rows. Keys keep `last_used_at` only; the 872 legacy audit rows are not migrated (the read-only source export remains the record); no IP retention question arises.
+- **D5 secret:** no flag. The signing secret is shown on the key-management screen to the account owner; signatures are always sent.
+- **DEF-017:** port as is (a job completes despite a failed deferred charge), recorded as a known source behavior.
 
 ## Next
 
