@@ -2,7 +2,7 @@
 
 Progress board for `docs/prd.md` (Transgate on Rustr). Any agent picking this up reads the PRD first, then this file, then the latest file in `docs/milestones/`.
 
-**PAUSED 2026-10-28 (mu): Claude weekly limit nearly reached. All work pauses after the next worker report. Resume point: Y is running candidate9 (commit `3440230`: workspace + real-PG tests, web C1/C2/C3, P7 regression, P8 D14 incl. Waydroid). On resume: read Y's candidate9 report, then close P2 (BIL-072 PostHog events) and P3 (server tests), then P8 acceptance, then P6 S0. P3 rules: 204 tested, 37 changed, 30 owned by P6/P9.**
+**PAUSED 2026-10-28 (mu): Claude weekly limit nearly reached. All work pauses after the next worker report. Resume point: Y is running candidate9 (commit `3440230`: workspace + real-PG tests, web C1/C2/C3, P7 regression, P8 D14 incl. Waydroid). Candidate9 G1 done: frozen `s1-20261028081635`; workspace tests with every real-PG suite 1598 passed, 0 failed (one reference-capture test needs `TRANSGATE_DOCUMENT_REFERENCE_DIR`); bindings and tokens checks, Playwright 32/32, Vitest 270/270 pass. On resume: Y runs web C1/C2/C3, P7 regression and P8 D14 on candidate9, then close P2 (BIL-072 PostHog events) and P3 (server tests), then P8 acceptance, then P6 S0. P3 rules: 204 tested, 37 changed, 30 owned by P6/P9.**
 
 **P5 gate met (2026-10-27):** candidate8 passes C1, C2 and C3; 119 of 125 P5 rows proven on both Playwright projects, 6 need live services (Google completion, Turnstile) and move to the P9 gate (`docs/milestones/p5-web.md`). Now: P7 implementation (p1X core, p1T host), then P6 S0 with Y. Model policy: Claude only, medium effort. Source is committed locally; the lead makes commits, agents do not run git write commands.
 
