@@ -544,3 +544,28 @@ UPL-006 update (2026-10-27, lead decision c): `scripts/check-prd.py` now accepts
 - **Real run:** on `src/lib/platform/media/measure.test.ts` the seven cited tests passed, and an unknown title was reported as absent.
 
 UPL-006 is now `tested`, citing those seven Vitest tests plus core `file_flow_to_ready`. P3 rule rows: 188 `tested`, 26 `changed`, 57 `ledger` (44 other-phase, 13 missing for p1T).
+
+## Final P3 close (2026-10-28, p21)
+
+p1T's last 13 rows are applied, each citing the test found by name in `cargo test --list`:
+- `tested`: EML-002, EML-012, CRN-002, CRN-003, TRX-029, TRX-031, TRX-040, EDT-002, EDT-003.
+- `changed`, under the decisions the P3 rule map named:
+  - CRN-001: a shared scheduler replaces the process-local guard.
+  - JOB-026: all-provider dispatch (C5).
+  - JOB-029: durable intake before the 2xx.
+  - PRV-052: operator fields are refused (PRV-D10).
+
+`assemble-discovery --check` is green.
+
+| Phase | tested | changed | ledger | other |
+|---|---|---|---|---|
+| P2 (BIL, FRE, CPN; 123) | 108 | 14 | 1 (BIL-072, PostHog client events, Y) | — |
+| P3 (JOB, UPL, TRX, TRL, EDT, EXP, LNG, PRV, CRN, EML; 271) | 197 | 30 | 44 | every one has a later-phase owner |
+| P4 (AI; 27) | 21 | 5 | 0 | AI-027 `excluded` (P4 D6) |
+
+The 44 open P3 rows by owner:
+- **P9:** imports, live providers and deployment, health operations: JOB-001, JOB-008, JOB-032, JOB-046, TRX-041, PRV-024, PRV-030, PRV-033, PRV-035, PRV-037, PRV-045, LNG-017, LNG-022, LNG-031, EML-011, CRN-006, CRN-010.
+- **P6:** public site, legal and marketing copy: EXP-017, PRV-028, PRV-049, PRV-053..060, EML-007, EML-008.
+- **P7:** public API, now complete: JOB-009, JOB-010, JOB-033, JOB-043, UPL-031, TRX-004, TRX-022, TRX-039, LNG-025, LNG-027, LNG-028, PRV-005, PRV-008, PRV-009.
+
+The P7-owned rows can now be closed with P7 evidence, except where a P9 import leg remains (UPL-031, TRX-004/022, LNG-025/027/028, PRV-005/008/009).
