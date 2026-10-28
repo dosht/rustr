@@ -2,6 +2,8 @@
 
 Progress board for `docs/prd.md` (Transgate on Rustr). Any agent picking this up reads the PRD first, then this file, then the latest file in `docs/milestones/`.
 
+**PAUSED 2026-10-28 (mu): Claude weekly limit nearly reached. All work pauses after the next worker report. Resume point: Y is running candidate9 (commit `3440230`: workspace + real-PG tests, web C1/C2/C3, P7 regression, P8 D14 incl. Waydroid). On resume: read Y's candidate9 report, then close P2 (BIL-072 PostHog events) and P3 (server tests), then P8 acceptance, then P6 S0. P3 rules: 204 tested, 37 changed, 30 owned by P6/P9.**
+
 **P5 gate met (2026-10-27):** candidate8 passes C1, C2 and C3; 119 of 125 P5 rows proven on both Playwright projects, 6 need live services (Google completion, Turnstile) and move to the P9 gate (`docs/milestones/p5-web.md`). Now: P7 implementation (p1X core, p1T host), then P6 S0 with Y. Model policy: Claude only, medium effort. Source is committed locally; the lead makes commits, agents do not run git write commands.
 
 PREP-1 evidence: guard12 regressions plus actual disposable OMP lifecycle smoke; notifier15 regressions plus real CLI scenarios; one Telegram delivery at2026-10-26T14:21:06.409Z. Lead now runs in pane w23:p2B on Opus 5.5 medium with the guard and four session settings active, on a **copy** of the original session (new ID `01a178dd-4b69-7054-9304-2744cd5817f8`). The planned in-place restart failed (double Ctrl+C did not exit; use `/exit`); mu relaunched manually. w23:p1E is a backup only.
