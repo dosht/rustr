@@ -569,3 +569,16 @@ The 44 open P3 rows by owner:
 - **P7:** public API, now complete: JOB-009, JOB-010, JOB-033, JOB-043, UPL-031, TRX-004, TRX-022, TRX-039, LNG-025, LNG-027, LNG-028, PRV-005, PRV-008, PRV-009.
 
 The P7-owned rows can now be closed with P7 evidence, except where a P9 import leg remains (UPL-031, TRX-004/022, LNG-025/027/028, PRV-005/008/009).
+
+## P7-owned P3 rows closed (2026-10-28, p21)
+
+The evidence is P7 tests plus P3/P4 tests, with Y's P7-V1 receipts (`s1-20261027094048/logs/next-p7-v1`).
+- **`tested`:** JOB-009, JOB-010, TRX-004, TRX-039, LNG-025, LNG-027, LNG-028.
+- **`changed`:**
+  - JOB-033: P7 D5–D7.
+  - JOB-043: P3 D12 controlled fetch, and the audio URL re-signed at send (P7 D10).
+  - UPL-031: Whisper options are not stored; no RunPod.
+  - TRX-022: no RunPod options.
+  - PRV-005: P3 D9 erasure saga.
+  - PRV-008 and PRV-009: D11 reversed, no audit rows; API rows are erased per account.
+- **P9 legs:** the import legs of UPL-031, TRX-004, TRX-022, LNG-025, LNG-027, LNG-028, PRV-005, PRV-008 and PRV-009 (imported echoed options, legacy key and audit rows) move to P9.
