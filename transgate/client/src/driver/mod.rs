@@ -667,15 +667,15 @@ fn upload(inner: &Rc<AppDriver>, epoch: Epoch, effect: upload_queue::Effect) {
             },
         ),
         // Core issues this once, when a UPL-008 poll begins.
-        Effect::ReloadDrafts => {
+        Effect::ReloadDrafts { batch } => {
             inner.drafts_poll_started.set(inner.platform.now_ms());
-            reload_drafts(inner, epoch);
+            reload_drafts(inner, epoch, batch);
         }
-        Effect::ScheduleReload { after_ms } => {
+        Effect::ScheduleReload { batch, after_ms } => {
             let this = inner.clone();
             inner.keyed(TaskKey::Timer("drafts"), async move {
                 this.platform.sleep(after_ms).await;
-                reload_drafts(&this, epoch);
+                reload_drafts(&this, epoch, batch);
             });
         }
         Effect::Telemetry { event } => inner.platform.analytics(&event),
@@ -690,7 +690,7 @@ fn insufficient_balance(error: &ApiError) -> bool {
 
 /// One UPL-008 tick. A failed reread is a tick that learned nothing, so the
 /// poll and its timeout keep running as the source's interval did.
-fn reload_drafts(inner: &Rc<AppDriver>, epoch: Epoch) {
+fn reload_drafts(inner: &Rc<AppDriver>, epoch: Epoch, batch: u64) {
     let started = inner.drafts_poll_started.get();
     fetch(
         inner,
@@ -698,7 +698,7 @@ fn reload_drafts(inner: &Rc<AppDriver>, epoch: Epoch) {
         |api, user| async move { api.drafts(user).await },
         move |this, result| {
             let elapsed_ms = (this.platform.now_ms() - started).max(0.0) as u64;
-            let event = upload_queue::Event::DraftsReloaded { drafts: result.unwrap_or_default(), elapsed_ms };
+            let event = upload_queue::Event::PollReloaded { batch, drafts: result.unwrap_or_default(), elapsed_ms };
             Some(AppEvent::Upload { epoch, event })
         },
     );

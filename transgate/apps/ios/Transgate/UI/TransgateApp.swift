@@ -89,8 +89,11 @@ struct RootView: View {
                     case .restoring, .checkoutConfirm:
                         ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity).accessibilityLabel(copy.text(Labels.loading))
                     case .signedOut(let vm):
-                        if vm.route == .newPassword { NewPasswordScreen(vm: vm.newPassword, copy: copy, send: model.send) }
-                        else { AuthScreen(vm: vm.auth, copy: copy, send: model.send) }
+                        VStack(spacing: 0) {
+                            LocaleMenu(locales: vm.locales, copy: copy, send: model.send).padding()
+                            if vm.route == .newPassword { NewPasswordScreen(vm: vm.newPassword, copy: copy, send: model.send) }
+                            else { AuthScreen(vm: vm.auth, copy: copy, send: model.send) }
+                        }
                     case .signedIn(let vm):
                         SignedInFrame(vm: vm, model: model, settings: settings, player: player, openURL: openURL)
                     case .erased(_, let message):

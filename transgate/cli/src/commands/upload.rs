@@ -52,6 +52,7 @@ fn refusal(ctx: &Context, q: &UploadQueueVm) -> Option<Failure> {
 pub fn files(ctx: &Context, args: &Upload) -> Outcome {
     let (session, _) = ctx.signed_in()?;
     let before = restored(ctx, &session)?;
+    send(&session, UploadIntent::BeginBatch)?;
 
     // The options go first: a draft is created with the language and speaker toggle current at that moment.
     match (args.language, args.translate_to) {
@@ -97,6 +98,7 @@ pub fn files(ctx: &Context, args: &Upload) -> Outcome {
 pub fn youtube(ctx: &Context, args: &Youtube) -> Outcome {
     let (session, _) = ctx.signed_in()?;
     let before = restored(ctx, &session)?;
+    send(&session, UploadIntent::BeginBatch)?;
     let choice = args.language.map_or(Choice::AutoDetect, Choice::Language);
     send(&session, UploadIntent::LanguageChosen { choice: Some(choice) })?;
     send(&session, UploadIntent::YouTubeDialogOpened)?;

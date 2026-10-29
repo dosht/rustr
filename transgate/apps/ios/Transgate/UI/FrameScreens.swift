@@ -96,6 +96,9 @@ struct SignedInFrame: View {
                     if let url = settings.webPage(.apiKeys, locale: vm.locale) { Button(copy.text(Labels.apiKeys)) { account = false; openURL(url) } }
                 }
                 Section {
+                    LocaleMenu(locales: vm.locales, copy: copy, send: send)
+                }
+                Section {
                     Button(copy.text(Labels.logout), role: .destructive) { account = false; send(.signOutRequested) }.disabled(vm.signingOut)
                 }
             }

@@ -2,29 +2,10 @@
 //! web package's `?url` imports (p1V) through `TransgateConfig.documentAssets`.
 //! Nothing is fetched at page load: the base set on the first PDF, an extra
 //! script family only when a captured document needs it (CJK is 16 MB).
-use serde::Deserialize;
+use crate::asset_urls::AssetUrls;
 use transgate_client::export::DocumentAssetSource;
 use transgate_client::future::BoxFuture;
 use transgate_export::documents::{DocumentAssets, FallbackFont, FontBytes};
-
-#[derive(Clone, Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct BaseUrls {
-    pub latin: String,
-    pub latin_italic: String,
-    pub arabic: String,
-    pub symbols: String,
-    pub arrows: String,
-    pub invoice_logo: String,
-}
-
-/// Keys are `FallbackFont` serde wire values (`hebrew`, …, `cjk`).
-#[derive(Clone, Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct AssetUrls {
-    pub base: BaseUrls,
-    pub fallbacks: std::collections::BTreeMap<String, String>,
-}
 
 pub struct FetchedAssets {
     http: reqwest::Client,

@@ -7,6 +7,7 @@
 //! `JsFuture`s, which are not `Send`, while the client's native `BoxFuture` is.
 #![cfg(target_arch = "wasm32")]
 
+mod asset_urls;
 mod assets;
 mod browser;
 mod platform;

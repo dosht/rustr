@@ -76,7 +76,7 @@ class TransgateViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /** A custom-scheme return from the Custom Tab (D7): core parses the path and `?code=`. */
-    fun authCallback(pathAndQuery: String) = send(AppIntent.RouteChanged(pathAndQuery))
+    fun authCallback(pathAndQuery: String) = reload(pathAndQuery)
 
     fun viewportChanged(widthDp: Int) {
         viewport = Viewport(touch = true, width = widthDp.toUInt())

@@ -126,7 +126,7 @@
     {:else if phone}
       <div class="flex flex-col gap-3">
         {#each vm.rows as row (row.id)}
-          <article class={["flex flex-col gap-3 rounded-lg border border-border p-4", !row.active && "opacity-60"]} aria-label={row.name}>
+          <article class="flex flex-col gap-3 rounded-lg border border-border p-4" aria-label={row.name}>
             <h3 class="break-all font-mono text-sm font-semibold">{row.name}</h3>
             <dl class="grid grid-cols-2 items-center gap-2 text-sm">
               <dt>{t("Scopes")}</dt><dd>{@render scopes(row)}</dd>
@@ -151,7 +151,7 @@
           </tr></thead>
           <tbody>
             {#each vm.rows as row (row.id)}
-              <tr class={["border-b border-border", !row.active && "opacity-60"]}>
+              <tr class="border-b border-border">
                 <th scope="row" class="p-3 text-start font-mono text-sm font-normal">{row.name}</th>
                 <td class="p-3">{@render scopes(row)}</td>
                 <td class="p-3 text-sm text-muted">{new Date(row.created_at_ms).toLocaleString()}</td>

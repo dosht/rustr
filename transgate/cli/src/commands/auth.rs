@@ -41,10 +41,14 @@ fn password(ctx: &Context, args: &Login) -> Outcome {
 fn google(ctx: &Context, no_browser: bool) -> Outcome {
     let loopback = Loopback::bind().map_err(|e| Failure::new(Exit::Refused, e.to_string()))?;
     let origin = loopback.origin().map_err(|e| Failure::new(Exit::Refused, e.to_string()))?;
+    let opened = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let opened_signal = opened.clone();
+    let vault = ctx.vault.clone();
     let open: OpenUrl = Box::new(move |url| {
-        if no_browser || !browser::open(url) {
+        if !vault.has_error() && (no_browser || !browser::open(url)) {
             out(url);
         }
+        opened_signal.store(true, std::sync::atomic::Ordering::Release);
     });
     let first = ctx.start(&ctx.home_url(), &origin, open)?;
     match ctx.settled(&first)? {
@@ -54,6 +58,8 @@ fn google(ctx: &Context, no_browser: bool) -> Outcome {
         AppVm::Restoring { .. } | AppVm::CheckoutConfirm { .. } => return Err(ctx.unavailable()),
     }
     first.shell.dispatch(AppIntent::Auth(AuthIntent::GoogleChosen)).map_err(presenter)?;
+    first.shell.signal().wait_for(ctx.timeout, || (ctx.vault.has_error() || opened.load(std::sync::atomic::Ordering::Acquire)).then_some(())).ok_or_else(|| ctx.unavailable())?;
+    if ctx.vault.has_error() { return Err(ctx.unavailable()); }
     // The browser returns to the loopback origin with a PKCE code. The verifier core
     // stored in the vault makes a second presenter, started at the callback target,
     // exchange it: `Started` is the one place core reads a callback.

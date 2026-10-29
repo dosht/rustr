@@ -7,7 +7,7 @@ use std::time::{Duration, Instant};
 
 use transgate_core::presentation::app::{AppIntent, AppVm};
 use transgate_core::presentation::layout::Viewport;
-use transgate_ffi::{FfiError, NativePorts, PresenterConfig, TransgatePresenter, ViewListener};
+use transgate_ffi::{FfiError, PresenterConfig, TransgatePresenter, ViewListener};
 
 use crate::ports::local_offsets;
 
@@ -80,6 +80,7 @@ impl HostConfig {
 
 pub struct Shell {
     presenter: Arc<TransgatePresenter>,
+    vault: Arc<crate::Vault>,
     signal: Arc<Signal>,
 }
 
@@ -88,10 +89,17 @@ impl Shell {
     /// callback target that carries the PKCE `code`). A terminal has no touch input
     /// and a wide screen, so it asks for the desktop layout, where the queue and the
     /// job list are one route.
-    pub fn start(config: PresenterConfig, ports: Arc<dyn NativePorts>, signal: Arc<Signal>, url: &str) -> Result<Shell, FfiError> {
-        let presenter = TransgatePresenter::new(config, ports, Arc::new(Wake(signal.clone())))?;
+    pub fn start(config: PresenterConfig, ports: Arc<crate::TerminalPorts>, signal: Arc<Signal>, url: &str) -> Result<Shell, FfiError> {
+        let lock = ports
+            .vault
+            .refresh_lock()
+            .map_err(|error| FfiError::Start { reason: error.to_string() })?;
+        let vault = ports.vault.clone();
+        let presenter = TransgatePresenter::with_session_lock(config, ports, Arc::new(Wake(signal.clone())),
+            lock,
+        )?;
         presenter.dispatch(AppIntent::Started { url: url.to_string(), viewport: Viewport { touch: false, width: 1280 }, utc_offset_minutes: (local_offsets().now_minutes) as i16 })?;
-        Ok(Shell { presenter, signal })
+        Ok(Shell { presenter, vault, signal })
     }
 
     pub fn dispatch(&self, intent: AppIntent) -> Result<AppVm, FfiError> {
@@ -108,7 +116,10 @@ impl Shell {
 
     /// Waits until `check` accepts the current view, re-checking after every change.
     pub fn wait<T>(&self, timeout: Duration, mut check: impl FnMut(&AppVm) -> Option<T>) -> Option<T> {
-        self.signal.wait_for(timeout, || check(&self.presenter.current().ok()?))
+        self.signal.wait_for(timeout, || {
+            if self.vault.has_error() { return Some(None); }
+            check(&self.presenter.current().ok()?).map(Some)
+        }).flatten()
     }
 
     /// The first view that is not the session spinner.

@@ -45,6 +45,7 @@ enum Labels {
     static func socialLabel(_ mode: AuthMode) -> Label { auth(mode, "social_provider_text", args: ["provider": .text(value: "Google")]) }
 
     static let newPassword = Label(.common, "New Password")
+    static let changeLanguage = Label(.common, "Change Language")
     static let changePassword = Label(.common, "Change Password")
 
     // MARK: Upload
@@ -213,7 +214,7 @@ enum Labels {
         }
         labels += [auth(.signIn, "password_label"), auth(.signIn, "password_input_placeholder"), auth(.signUp, "password_label"),
                    auth(.signUp, "password_input_placeholder"), socialLabel(.signIn), socialLabel(.signUp)]
-        labels += [newPassword, changePassword, uploadFiles, addFromYouTube, files, noFiles, noFilesHint, totalDuration, calculating,
+        labels += [newPassword, changePassword, changeLanguage, uploadFiles, addFromYouTube, files, noFiles, noFilesHint, totalDuration, calculating,
                    translation, audioLanguage, translationLanguage, speakerRecognition, speakerRecognitionHint, chooseLanguage,
                    searchLanguages, noLanguages, starting, startTranslating, startTranscribing, preparingFiles, loading, ok, cancel,
                    close, yes, no, notEnoughBalance, notEnoughBalanceBody, languageRequired, languageRequiredBody, processingTimeout,

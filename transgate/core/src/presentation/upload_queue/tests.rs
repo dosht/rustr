@@ -124,8 +124,8 @@ fn duration_polling() {
     let mut s = UploadQueueState::default();
     let mut d = draft(5, "a.mp3");
     d.duration_minutes = None;
-    assert_eq!(s.update(Event::Restored { drafts: vec![d.clone()], preferred: vec![], preferred_targets: vec![] }), vec![Effect::ReloadDrafts]);
-    assert_eq!(s.update(Event::DraftsReloaded { drafts: vec![d.clone()], elapsed_ms: 0 }), vec![Effect::ScheduleReload { after_ms: 1000 }]);
+    assert_eq!(s.update(Event::Restored { drafts: vec![d.clone()], preferred: vec![], preferred_targets: vec![] }), vec![Effect::ReloadDrafts { batch: 0 }]);
+    assert_eq!(s.update(Event::DraftsReloaded { drafts: vec![d.clone()], elapsed_ms: 0 }), vec![Effect::ScheduleReload { batch: 0, after_ms: 1000 }]);
     assert!(s.update(Event::DraftsReloaded { drafts: vec![d.clone()], elapsed_ms: POLL_TIMEOUT_MS }).is_empty());
     assert_eq!(s.alerts, vec![Alert::ProcessingTimeout]);
     d.duration_minutes = Some(3);
@@ -314,4 +314,61 @@ fn start_reports_one_analytics_event_per_file() {
     assert_eq!(names(&failed).len(), 2);
     assert!(names(&failed).iter().all(|(n, _)| n == "transcription_failed"));
     assert_eq!(s.alerts, vec![Alert::Balance]);
+}
+
+#[test]
+fn a_new_batch_preserves_server_drafts_and_ignores_old_poll_and_restore_answers() {
+    let mut state = UploadQueueState::default();
+    let mut old = draft(90, "old.mp3");
+    old.duration_minutes = None;
+    assert_eq!(state.update(Event::Restored { drafts: vec![old.clone()], preferred: vec![lang("English")], preferred_targets: vec![lang("Turkish")] }), vec![Effect::ReloadDrafts { batch: 0 }]);
+    let old_file = state.files[0].id;
+    assert!(state.update(Event::BeginBatch).is_empty());
+    assert!(state.files.is_empty());
+    assert_eq!(state.preferred, [lang("English")]);
+    assert_eq!(state.preferred_targets, [lang("Turkish")]);
+    assert!(state.update(Event::Restored { drafts: vec![old.clone()], preferred: vec![], preferred_targets: vec![] }).is_empty());
+    assert!(state.files.is_empty());
+    assert!(state.update(Event::LanguageChosen { choice: Some(Choice::Language(lang("Turkish"))) }).is_empty());
+    assert!(state.update(Event::SpeakersToggled { enabled: true }).is_empty());
+    state.update(desktop(vec![picked("new.mp3")]));
+    let new_file = state.files[0].id;
+    assert!(new_file > old_file);
+    assert!(state.update(Event::Measured { file: old_file, seconds: Some(60.0) }).is_empty());
+    state.update(Event::Measured { file: new_file, seconds: None });
+    let mut new = draft(101, "new.mp3");
+    new.duration_minutes = None;
+    state.update(Event::DraftCreated { file: new_file, job: new.clone() });
+    assert_eq!(state.update(Event::UploadFinished { file: new_file, ok: true }), vec![Effect::ReloadDrafts { batch: 1 }]);
+    assert!(state.update(Event::PollReloaded { batch: 0, drafts: vec![old], elapsed_ms: POLL_TIMEOUT_MS }).is_empty());
+    assert!(state.alerts.is_empty());
+    assert!(state.polling);
+    new.duration_minutes = Some(1);
+    state.update(Event::PollReloaded { batch: 1, drafts: vec![new], elapsed_ms: 0 });
+    assert!(state.view(Frame::Desktop).files_ready);
+    let effects = state.update(Event::StartPressed);
+    assert!(effects.iter().any(|effect| matches!(effect, Effect::Start { jobs, .. } if jobs == &[JobId(101)])));
+    assert!(effects.iter().all(|effect| !matches!(effect, Effect::SetOptions { jobs, .. } if jobs.contains(&JobId(90)))));
+}
+
+#[test]
+fn a_new_batch_cannot_discard_restoration_or_active_upload_work() {
+    let mut state = UploadQueueState::default();
+    state.update(Event::BeginBatch);
+    assert!(state.initializing);
+    state.update(Event::Restored { drafts: vec![], preferred: vec![], preferred_targets: vec![] });
+    state.update(desktop(vec![picked("pending.mp3")]));
+    let before = state.clone();
+    assert!(state.update(Event::BeginBatch).is_empty());
+    assert_eq!(state, before);
+    state.files.clear();
+    state.youtube_dialog.busy = true;
+    let before = state.clone();
+    assert!(state.update(Event::BeginBatch).is_empty());
+    assert_eq!(state, before);
+    state.youtube_dialog.busy = false;
+    state.transcribing = true;
+    let before = state.clone();
+    assert!(state.update(Event::BeginBatch).is_empty());
+    assert_eq!(state, before);
 }

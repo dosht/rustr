@@ -1505,6 +1505,7 @@ pub enum TranslationStatus {
 
 #[uniffi::remote(Enum)]
 pub enum UploadIntent {
+    BeginBatch,
     Picked { files: Vec<PickedFile> },
     Dropped { files: Vec<PickedFile> },
     Removed { file: u64 },

@@ -27,3 +27,18 @@ After independent Opus (p10) and Fable (p27) proposals and cross-critiques. Both
 2. p22 with p1X: `transgate-ffi` (D2) and `translate()` (D3); then the CLI and TUI crates.
 3. Mobile shells: Android and iOS view owners (to assign) over the generated bindings.
 4. Y: D14.
+
+## Review follow-through (2026-10-28, Codex lead)
+
+- D15: terminal credentials, PKCE verifiers and refresh locks are scoped to the configured API/auth deployment. Unbound legacy credentials require sign-in again; they are never silently assigned to a selected host. Concurrent commands must serialize rotating-token refresh and complete file-vault transactions across processes. Lock failures must surface without leaving auth pending indefinitely.
+- D16: Android auth returns recreate the presenter at the callback location so its first `Started` consumes the code. iOS publishes through one ordered lane; listener notifications trigger a fresh `current()` read instead of publishing a possibly stale captured view.
+- D17: a CLI upload or YouTube command starts a new local batch after restoration. Existing server drafts remain untouched. Core owns batch isolation, monotonically increasing local file IDs and stale polling fences; the shell never deletes unrelated drafts to obtain an empty queue.
+- D18: iOS exposes core locale choices on sign-in and account screens, forwards the core locale intent, handles relative navigation locally and retains the core-generated locale home path across launches. Swift adds no separate locale policy.
+
+- D19 (mu, 2026-10-28): the official Android emulator may replace Waydroid for D14 device acceptance. Waydroid ADB is unusable and mu cannot authenticate sudo while away from the laptop. The signed-in flow and persistent line-edit assertions remain required; an APK build alone is insufficient.
+
+- D20: Android renders the Settings dialog only when the core settings view model has `open=true`. The model remains present while closed after profile hydration; presence alone is not a visibility signal. API29 acceptance screenshots reproduced the unconditional dialog, and the regression opens, closes and reopens Settings through the UI.
+
+- D21: task-clearing Android auth returns belong to the replacement activity. A diagnostic run proved the outgoing singleTask activity receives `onNewIntent` before replacement `onCreate`, causing two exchanges of one code and a late successful session write from the old presenter. The old activity defers `NEW_TASK | CLEAR_TASK` intents to the new root; ordinary warm callbacks remain handled immediately. This follows the [Android Intent contract](https://developer.android.com/reference/android/content/Intent#FLAG_ACTIVITY_CLEAR_TASK). The unchanged cold valid/invalid tests and full nine-test suite remain required. Temporary lifecycle diagnostics are removed from the final source.
+
+Independent final verification passed, including all nine Android device checks and source approval (`/tmp/rustr-codex-lead/android-harness5-report.md`). Integrated receipts and evidence are preserved in the closure archive; see `docs/milestones/p8-shells.md`. Linux Swift and SwiftUI syntax parsing do not establish an Apple build.

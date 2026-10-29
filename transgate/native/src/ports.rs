@@ -22,7 +22,7 @@ struct Held {
 }
 
 pub struct TerminalPorts {
-    vault: Arc<Vault>,
+    pub(crate) vault: Arc<Vault>,
     held: Mutex<HashMap<u64, Held>>,
     next_handle: AtomicU64,
     out_dir: PathBuf,

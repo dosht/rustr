@@ -31,6 +31,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        val replacesTask = intent.flags and (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK) ==
+            (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        // A task-clearing launch can also reach the outgoing singleTask activity. The new
+        // task root handles it in onCreate, so only that owner exchanges its one-use code.
+        if (replacesTask) return
         handle(intent)
     }
 

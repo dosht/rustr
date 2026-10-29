@@ -290,8 +290,83 @@ func offlineCore() async {
     await eventually("the Turkish start") { signedOut(tr)?.locale == "tr" }
     check(tr.copy.text(Msg(ns: .auth, key: "sign_in.button_label", args: [:])) != "Sign in", "a localized start is not English")
     tr.stop()
-    model.stop()
     pass("locale-from-start-url")
+
+    check(signedOut(model)!.locales.count == 16, "all language choices reach the signed-out view")
+    for option in signedOut(model)!.locales {
+        if signedOut(model)?.locale == option.code { continue }
+        model.send(.localeChosen(code: option.code))
+        await eventually("signed-out locale choice \(option.code)") {
+            signedOut(model)?.locale == option.code && signedOut(model)?.locales.first(where: \.current)?.code == option.code
+        }
+    }
+    model.send(.localeChosen(code: "tr"))
+    await eventually("persisted Turkish choice") { signedOut(model)?.locale == "tr" }
+    check(rig.launcher.opened.isEmpty, "locale changes must not open relative URLs in a browser")
+    model.stop()
+    let (reopened, _) = rig.model()
+    await reopened.start()
+    await eventually("normal launch retains the selected locale") { signedOut(reopened)?.locale == "tr" }
+    reopened.stop()
+    pass("signed-out-locale-choices-persist-across-launch")
+}
+
+final class DelayedListenerPresenter: TransgatePresenterProtocol, @unchecked Sendable {
+    private let lock = NSLock()
+    private var view: AppVm
+    private var listener: ViewListener?
+    private let dispatched: AppVm
+
+    init(view: AppVm, dispatched: AppVm) {
+        self.view = view
+        self.dispatched = dispatched
+    }
+    func attach(_ listener: ViewListener) { lock.withLock { self.listener = listener } }
+    func current() throws -> AppVm { lock.withLock { view } }
+    func dispatch(intent: AppIntent) throws -> AppVm {
+        lock.withLock {
+            view = dispatched
+            return view
+        }
+    }
+    func notify(_ oldView: AppVm) { lock.withLock { listener }?.viewChanged(view: oldView) }
+    func dispose() {}
+    func sessionChangedElsewhere() throws {}
+}
+
+@MainActor
+func orderedPublication() async {
+    let (model, _) = Rig(vault: MemorySecretStore(), settings: unreachable).model()
+    await model.start()
+    await eventually("signed out for publication regression") { signedOut(model) != nil }
+    let oldView = model.view
+    model.stop()
+    var edited = signedOut(model)!
+    edited.auth.email = "latest@example.test"
+    await delayedPublication(initial: oldView, intent: .auth(.emailChanged(text: edited.auth.email)), expected: .signedOut(edited))
+    pass("ordered-listener-publication")
+}
+
+@MainActor
+func delayedPublication(initial: AppVm, intent: AppIntent, expected: AppVm) async {
+    let presenter = DelayedListenerPresenter(view: initial, dispatched: expected)
+    let (stream, continuation) = AsyncStream.makeStream(of: Delivery.self)
+    let lane = try! Lane(generation: 1, deliveries: continuation) { listener in
+        presenter.attach(listener)
+        return presenter
+    }
+    var observed: [AppVm] = []
+    let consumer = Task { for await delivery in stream { observed.append(delivery.view) } }
+    lane.send(intent)
+    await eventually("new field edit publication") { observed.count == 1 }
+    presenter.notify(initial)
+    await eventually("delayed listener publication") { observed.count == 2 }
+    for view in observed {
+        check(view == expected, "delayed listener overwrote the newer view")
+    }
+    lane.stop()
+    continuation.finish()
+    await consumer.value
 }
 
 // MARK: - Signed in against a running host
@@ -311,7 +386,7 @@ func signedInRun(_ environment: [String: String]) async {
     model.send(.auth(.passwordChanged(text: password)))
     await eventually("a submittable form") { signedOut(model)?.auth.canSubmit == true }
     model.send(.auth(.submitted))
-    await eventually("the signed-in view", seconds: 40) { signedIn(model) != nil }
+    await eventually("the signed-in view", seconds: 40) { signedIn(model)?.profile?.email == email }
     check(signedIn(model)?.profile?.email == email, "profile email")
     check(store.get("transgate.session") != nil, "the session reached the vault")
     model.send(.signOutRequested)
@@ -336,13 +411,22 @@ func storedSessionRun(host: String) async {
     let rig = Rig(vault: store, settings: settings)
     let (model, _) = rig.model()
     await model.start()
-    await eventually("the stored session restores", seconds: 40) { signedIn(model) != nil }
+    await eventually("the stored session restores", seconds: 40) { signedIn(model)?.profile?.email == email }
     check(signedIn(model)?.profile?.email == email, "profile email \(String(describing: signedIn(model)?.profile?.email))")
     check(signedIn(model)?.layouts.frame == .phone, "the native shell starts in the phone layout")
     check(signedIn(model)?.apiKeys == nil && signedIn(model)?.invoices == nil && signedIn(model)?.purchase == nil, "no purchase, invoice or key screen at home")
     check(!model.copy.text(signedIn(model)!.balance).isEmpty, "the balance translates")
     await eventually("jobs loaded") { signedIn(model)?.jobs.initialLoading == false }
     pass("stored-session-restores-and-lists-jobs")
+
+    check(signedIn(model)!.locales.count == 16, "all language choices reach the account view")
+    model.send(.localeChosen(code: "tr"))
+    await eventually("signed-in locale choice reloads the session") {
+        signedIn(model)?.locale == "tr" && signedIn(model)?.profile?.email == email
+    }
+    check(signedIn(model)?.profile?.email == email, "locale reload retains the signed-in account")
+    check(rig.launcher.opened.isEmpty, "signed-in locale choice stays inside the app")
+    pass("signed-in-locale-choice-restores-session")
 
     // The picker returned a file: core holds the handle, the shell measures it, the row appears.
     model.picked([audio])
@@ -368,10 +452,14 @@ func storedSessionRun(host: String) async {
     await eventually("dispose released the held handle") { rig.files.heldCount == 0 }
     let (again, _) = rig.model()
     await again.start()
-    await eventually("session restored from the vault", seconds: 40) { signedIn(again) != nil }
+    await eventually("session restored from the vault", seconds: 40) { signedIn(again)?.profile?.email == email }
+    check(signedIn(again)?.locale == "tr", "normal signed-in relaunch retains the language")
+    let privateView = again.view
     again.send(.signOutRequested)
     await eventually("signed out again", seconds: 40) { signedOut(again) != nil }
     check(store.get("transgate.session") == nil, "sign-out clears the vault")
+    await delayedPublication(initial: privateView, intent: .signOutRequested, expected: again.view)
+    pass("delayed-private-view-cannot-reappear-after-sign-out")
     again.stop()
     pass("vault-restore-and-sign-out")
 }
@@ -386,6 +474,7 @@ struct Smoke {
         filePieces()
         portPieces()
         await offlineCore()
+        await orderedPublication()
         await signedInRun(ProcessInfo.processInfo.environment)
         try? FileManager.default.removeItem(at: work)
         print("P8_IOS_PASS \(passed.joined(separator: " "))")

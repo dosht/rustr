@@ -15,11 +15,11 @@ use transgate_client::export::DocumentFonts;
 use transgate_client::location::app_location;
 use transgate_core::presentation::app::{AppConfig as CoreConfig, AppEvent, AppIntent};
 use transgate_core::presentation::layout::Viewport;
-use url::Url;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::prelude::*;
 
-use crate::assets::{AssetUrls, FetchedAssets};
+use crate::asset_urls::{AssetUrls, absolute};
+use crate::assets::FetchedAssets;
 use crate::browser::{self, BrowserStorage, CryptoRandom, NavigatorLock};
 use crate::platform::{Platform, WebPlatform};
 
@@ -40,11 +40,6 @@ struct Config {
 
 pub(crate) fn to_js<T: Serialize>(value: &T) -> Result<JsValue, JsError> {
     Ok(value.serialize(&serde_wasm_bindgen::Serializer::json_compatible())?)
-}
-
-/// `/api` or `/auth/v1` resolve against the page; absolute values stay as given.
-fn absolute(page: &str, value: &str) -> String {
-    Url::parse(page).and_then(|base| base.join(value)).map(|u| u.to_string()).unwrap_or_else(|_| value.to_string()).trim_end_matches('/').to_string()
 }
 
 /// Whether the page is shown now; a page without a document counts as visible.
@@ -111,12 +106,7 @@ impl TransgatePresenter {
         let auth = Arc::new(GoTrue::new(GoTrueConfig { url: absolute(&page, &config.auth_url), api_key: auth_key }, ports));
         let api = Arc::new(HttpApi::new(absolute(&page, &config.api_url), auth.clone()));
         let mut urls = config.document_assets;
-        for url in [&mut urls.base.latin, &mut urls.base.latin_italic, &mut urls.base.arabic, &mut urls.base.symbols, &mut urls.base.invoice_logo]
-            .into_iter()
-            .chain(urls.fallbacks.values_mut())
-        {
-            *url = absolute(&page, url);
-        }
+        urls.resolve(&page);
         let documents = DocumentFonts::new(Arc::new(FetchedAssets::new(urls)));
         let core = CoreConfig { site_url: config.site_url, captcha: config.captcha };
         let driver = AppDriver::new(core, api, auth, documents, Box::new(WebPlatform(platform)));

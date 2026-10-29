@@ -58,6 +58,7 @@ impl Clock for BrowserClock {
 /// Read through `Reflect` so no unstable web-sys API is needed. Where the Web
 /// Locks API is missing, refresh still never overwrites or clears a rotated
 /// session (the client compares before writing), but two tabs may both refresh.
+// Refresh now fails closed when this API is unavailable or rejects acquisition.
 pub struct NavigatorLock;
 
 fn locks() -> Option<JsValue> {
@@ -66,29 +67,33 @@ fn locks() -> Option<JsValue> {
 }
 
 impl SessionLock for NavigatorLock {
-    fn acquire(&self) -> BoxFuture<'_, LockGuard> {
+    fn acquire(&self) -> BoxFuture<'_, Result<LockGuard, String>> {
         Box::pin(async move {
-            let Some(locks) = locks() else { return LockGuard::new(|| {}) };
+            let Some(locks) = locks() else { return Err("browser session lock unavailable".into()) };
             let Some(request) = Reflect::get(&locks, &JsValue::from_str("request")).ok().and_then(|f| f.dyn_into::<Function>().ok()) else {
-                return LockGuard::new(|| {});
+                return Err("browser session lock unavailable".into());
             };
             // The lock is held until `hold` settles; `granted` settles when the callback runs.
             let mut release = None;
             let hold = Promise::new(&mut |resolve, _| release = Some(resolve));
             let mut grant = None;
             let granted = Promise::new(&mut |resolve, _| grant = Some(resolve));
-            let (Some(release), Some(grant)) = (release, grant) else { return LockGuard::new(|| {}) };
+            let (Some(release), Some(grant)) = (release, grant) else { return Err("browser session lock unavailable".into()) };
             let callback = Closure::once_into_js(move |_lock: JsValue| -> JsValue {
                 let _ = grant.call0(&JsValue::NULL);
                 hold.into()
             });
-            if request.call2(&locks, &JsValue::from_str(LOCK_NAME), &callback).is_err() {
-                return LockGuard::new(|| {});
-            }
-            let _ = JsFuture::from(granted).await;
-            LockGuard::new(move || {
+            let held = LockGuard::new(move || {
                 let _ = release.call0(&JsValue::NULL);
-            })
+            });
+            let requested = request.call2(&locks, &JsValue::from_str(LOCK_NAME), &callback)
+                .and_then(|value| value.dyn_into::<Promise>())
+                .map_err(|error| format!("browser session lock failed: {error:?}"))?;
+            let promises = js_sys::Array::new();
+            promises.push(&granted);
+            promises.push(&requested);
+            JsFuture::from(Promise::race(&promises)).await.map_err(|error| format!("browser session lock failed: {error:?}"))?;
+            Ok(held)
         })
     }
 }

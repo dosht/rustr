@@ -39,14 +39,21 @@ pub fn run() -> ExitCode {
         Command::Export(export) => export.out.clone(),
         _ => PathBuf::from("."),
     };
+    let host = HostConfig::from_origin(&host, cli.auth_key.clone().filter(|k| !k.is_empty()));
+    let vault = Arc::new(Vault::from_env().for_host(&host));
     let ctx = Context {
         locale: cli.locale.clone().unwrap_or_else(environment_locale),
-        host: HostConfig::from_origin(&host, cli.auth_key.clone().filter(|k| !k.is_empty())),
-        vault: Arc::new(Vault::from_env()),
+        host,
+        vault,
         timeout: Duration::from_secs(cli.timeout),
         out_dir,
     };
-    match commands::run(&ctx, &cli.command) {
+    let result = commands::run(&ctx, &cli.command);
+    let result = match ctx.vault.take_error() {
+        Some(error) => Err(crate::exit::Failure::new(crate::exit::Exit::Refused, error)),
+        None => result,
+    };
+    match result {
         Ok(()) => ExitCode::SUCCESS,
         Err(failure) => {
             use std::io::Write;

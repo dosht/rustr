@@ -5671,7 +5671,10 @@ dependencies = [
  "libc",
  "reqwest",
  "serde_json",
+ "sha2 0.10.9",
  "tempfile",
+ "tokio",
+ "transgate-client",
  "transgate-core",
  "transgate-ffi",
  "transgate-i18n",
@@ -5735,7 +5738,11 @@ dependencies = [
 name = "transgate-tui"
 version = "0.1.0"
 dependencies = [
+ "axum",
  "ratatui",
+ "serde_json",
+ "tempfile",
+ "tokio",
  "transgate-core",
  "transgate-i18n",
  "transgate-native",

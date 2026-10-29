@@ -14137,6 +14137,7 @@ public func FfiConverterTypeTranslationStatus_lower(_ value: TranslationStatus) 
 
 public enum UploadIntent: Equatable, Hashable {
     
+    case beginBatch
     case picked(files: [PickedFile]
     )
     case dropped(files: [PickedFile]
@@ -14182,42 +14183,44 @@ public struct FfiConverterTypeUploadIntent: FfiConverterRustBuffer {
         let variant: Int32 = try readInt(&buf)
         switch variant {
         
-        case 1: return .picked(files: try FfiConverterSequenceTypePickedFile.read(from: &buf)
+        case 1: return .beginBatch
+        
+        case 2: return .picked(files: try FfiConverterSequenceTypePickedFile.read(from: &buf)
         )
         
-        case 2: return .dropped(files: try FfiConverterSequenceTypePickedFile.read(from: &buf)
+        case 3: return .dropped(files: try FfiConverterSequenceTypePickedFile.read(from: &buf)
         )
         
-        case 3: return .removed(file: try FfiConverterUInt64.read(from: &buf)
+        case 4: return .removed(file: try FfiConverterUInt64.read(from: &buf)
         )
         
-        case 4: return .languageChosen(choice: try FfiConverterOptionTypeChoice.read(from: &buf)
+        case 5: return .languageChosen(choice: try FfiConverterOptionTypeChoice.read(from: &buf)
         )
         
-        case 5: return .speakersToggled(enabled: try FfiConverterBool.read(from: &buf)
+        case 6: return .speakersToggled(enabled: try FfiConverterBool.read(from: &buf)
         )
         
-        case 6: return .tabChanged(mode: try FfiConverterTypeMode.read(from: &buf)
+        case 7: return .tabChanged(mode: try FfiConverterTypeMode.read(from: &buf)
         )
         
-        case 7: return .sourceLanguageChosen(language: try FfiConverterOptionTypeLanguage.read(from: &buf)
+        case 8: return .sourceLanguageChosen(language: try FfiConverterOptionTypeLanguage.read(from: &buf)
         )
         
-        case 8: return .targetLanguageChosen(language: try FfiConverterOptionTypeLanguage.read(from: &buf)
+        case 9: return .targetLanguageChosen(language: try FfiConverterOptionTypeLanguage.read(from: &buf)
         )
         
-        case 9: return .youTubeDialogOpened
+        case 10: return .youTubeDialogOpened
         
-        case 10: return .youTubeDialogClosed
+        case 11: return .youTubeDialogClosed
         
-        case 11: return .youTubeUrlChanged(url: try FfiConverterString.read(from: &buf)
+        case 12: return .youTubeUrlChanged(url: try FfiConverterString.read(from: &buf)
         )
         
-        case 12: return .youTubeSubmitted
+        case 13: return .youTubeSubmitted
         
-        case 13: return .startPressed
+        case 14: return .startPressed
         
-        case 14: return .dismissAlert(alert: try FfiConverterTypeAlert.read(from: &buf)
+        case 15: return .dismissAlert(alert: try FfiConverterTypeAlert.read(from: &buf)
         )
         
         default: throw UniffiInternalError.unexpectedEnumCase
@@ -14228,69 +14231,73 @@ public struct FfiConverterTypeUploadIntent: FfiConverterRustBuffer {
         switch value {
         
         
-        case let .picked(files):
+        case .beginBatch:
             writeInt(&buf, Int32(1))
-            FfiConverterSequenceTypePickedFile.write(files, into: &buf)
-            
         
-        case let .dropped(files):
+        
+        case let .picked(files):
             writeInt(&buf, Int32(2))
             FfiConverterSequenceTypePickedFile.write(files, into: &buf)
             
         
-        case let .removed(file):
+        case let .dropped(files):
             writeInt(&buf, Int32(3))
+            FfiConverterSequenceTypePickedFile.write(files, into: &buf)
+            
+        
+        case let .removed(file):
+            writeInt(&buf, Int32(4))
             FfiConverterUInt64.write(file, into: &buf)
             
         
         case let .languageChosen(choice):
-            writeInt(&buf, Int32(4))
+            writeInt(&buf, Int32(5))
             FfiConverterOptionTypeChoice.write(choice, into: &buf)
             
         
         case let .speakersToggled(enabled):
-            writeInt(&buf, Int32(5))
+            writeInt(&buf, Int32(6))
             FfiConverterBool.write(enabled, into: &buf)
             
         
         case let .tabChanged(mode):
-            writeInt(&buf, Int32(6))
+            writeInt(&buf, Int32(7))
             FfiConverterTypeMode.write(mode, into: &buf)
             
         
         case let .sourceLanguageChosen(language):
-            writeInt(&buf, Int32(7))
-            FfiConverterOptionTypeLanguage.write(language, into: &buf)
-            
-        
-        case let .targetLanguageChosen(language):
             writeInt(&buf, Int32(8))
             FfiConverterOptionTypeLanguage.write(language, into: &buf)
             
         
-        case .youTubeDialogOpened:
+        case let .targetLanguageChosen(language):
             writeInt(&buf, Int32(9))
+            FfiConverterOptionTypeLanguage.write(language, into: &buf)
+            
         
-        
-        case .youTubeDialogClosed:
+        case .youTubeDialogOpened:
             writeInt(&buf, Int32(10))
         
         
-        case let .youTubeUrlChanged(url):
+        case .youTubeDialogClosed:
             writeInt(&buf, Int32(11))
+        
+        
+        case let .youTubeUrlChanged(url):
+            writeInt(&buf, Int32(12))
             FfiConverterString.write(url, into: &buf)
             
         
         case .youTubeSubmitted:
-            writeInt(&buf, Int32(12))
-        
-        
-        case .startPressed:
             writeInt(&buf, Int32(13))
         
         
-        case let .dismissAlert(alert):
+        case .startPressed:
             writeInt(&buf, Int32(14))
+        
+        
+        case let .dismissAlert(alert):
+            writeInt(&buf, Int32(15))
             FfiConverterTypeAlert.write(alert, into: &buf)
             
         }

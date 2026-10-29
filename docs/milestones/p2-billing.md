@@ -29,3 +29,12 @@ Strict Clippy found small cleanups after the test pass; those were applied, but 
 ## Next owner
 
 The lead owns integrated verification, canonical evidence and completion gates. Visible P3 owners implement core, persistence, transports, processor and both hosts; independent review findings return to the same owners. P3 is implementation work now, not a fresh discovery restart.
+
+
+## Final scoped acceptance, 2026-10-28
+
+This checkpoint supersedes the open status above. All 123 canonical billing rows are settled: 108 tested and 15 explicitly changed. BIL-072 now has executable desktop and phone evidence for accepted and rejected analytics consent, actual checkout navigation, SDK delivery and once-only intent events. The Google Analytics omission follows P5 D12.
+
+Independent OMP verification ran `scripts/gate-p2-billing.sh` against its own disposable PostgreSQL database and completed with zero failed checks, including workspace consumer builds. The new billing analytics and analysis export browser specifications passed all eight desktop/phone cases. Receipts: `/tmp/rustr-codex-lead/final-verification-20261028/billing-gate.log` and `browser.log`. The current-source tracked manifest at verification start is `5570f8497bea420e8394022667ac9c7344fd61ab9a03de0ee87f85a7fc5a29fd`; this is an uncommitted working-tree verification, not a new release commit.
+
+P2 is accepted within the agreed scope. Live provider, production configuration and migration acceptance remain with P9.

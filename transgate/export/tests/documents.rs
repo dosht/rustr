@@ -218,6 +218,20 @@ fn a_concrete_script_outside_the_offered_pack_is_reported_not_dropped_or_substit
 }
 
 #[test]
+fn streamed_meeting_fixture_exports_as_pdf() {
+    let mut parser = transgate_core::ai::analysis::AnalysisParser::new();
+    parser.push(include_str!("../../core/src/ai/analysis/fixtures/meeting.txt")).unwrap();
+    parser.push("\n---\n").unwrap();
+    let progress = parser.progress().clone();
+    parser.finish(true).unwrap();
+    let model = AnalysisDocument::capture(&progress, GenerationStatus::Completed,
+        AnalysisMetadata { title: "c9.wav".into(), job_id: Some(JobId(3)), exported_at: Micros(1_793_188_800_000_000), utc_offset_minutes: 180 }).unwrap();
+    let pdf = analysis_bytes(&model, DocumentFormat::Pdf, Some(writer())).expect("the streamed meeting must export");
+    let (_, text) = pdf_text(&pdf.bytes);
+    assert!(text.contains("Review") && text.contains("Confirm scope"), "meeting sections survive PDF encoding: {text}");
+}
+
+#[test]
 fn sentiment_progression_renders_the_arrow_in_pdf() {
     // Source quirk kept: only the PDF flavor prints "initial → final"; TXT, MD and DOCX
     // list Initial:/Final: fields instead.

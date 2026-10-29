@@ -19,5 +19,7 @@ transgate-core = { path = "../core" }
 transgate-ffi = { path = "../ffi" }
 transgate-i18n = { path = "../i18n" }
 
-[dev-dependencies]
 tempfile = "3"
+sha2 = "0.10"
+tokio = { version = "1", features = ["rt"] }
+transgate-client = { path = "../client" }

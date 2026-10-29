@@ -31,3 +31,14 @@ Candidates 3-7 found and fixed, each with a failing-first test: start-URL parsin
 - Earlier phases (P2-P4) keep their own whole-clause gates; P6 public root and P7 API rows are listed in the disposition.
 
 **Correction after closure (2026-10-27):** the five `transgate-export` document tests had failed since the first commit and were not part of any accepted run. Fixing the test reader exposed a real product bug, fixed in REPAIR-P5-13: analysis PDFs with a sentiment progression failed because no bundled font had the arrow (U+2192). Candidate8 contains that bug; the fix ships in the next candidate, which must include an analysis PDF export with sentiment.
+
+
+## Repaired acceptance, 2026-10-28
+
+Independent candidate9 verification reopened acceptance for browser analysis PDF failures and low-contrast revoked API-key rows. PDF font URLs now resolve consistently, including the sentiment arrow font. Revoked rows retain their status labels without fading informational text below readable contrast.
+
+Independent final verification passed meeting and support PDF downloads on desktop and phone in both the browser build and a rebuilt Docker image (`sha256:492d45c65fb84f3d4581a495b07897ce9ce3d3c56087bf0ad3e32b927da0ebb3`). PDF text was checked with Poppler. Billing consent/navigation checks passed 4/4 and session-lock failure/retry checks passed 10/10. The original 3204-case C1 audit had 72 contrast failures and two interrupted cases; an independent current-source rerun of exactly those 74 cases passed with zero violations or render failures. The other 3130 original cases retain their passing evidence. The two-line contrast correction was verified separately after the packaged-image build.
+
+The original immediate post-signup upload failure has no established root cause. Six new actual-host first-use runs and an independent packaged run on one fresh desktop account and one fresh phone account all succeeded on the first selection, with exactly one draft and one upload. The independent packaged run retained the original URL-only signup wait and captured traces and network timing. The original failed receipt remains historical evidence, not a reclassified harness failure. Current first-use acceptance passes.
+
+Reports: `/tmp/rustr-codex-lead/tester-final-report.md`, `tester-f5-report.md`, `tester-f4-report.md`, and `review-final-web-android-report.md`. Original evidence remains under `/home/mu/.cache/rustr-integration/codex-verification-20261028`. P5 is accepted for the existing 119/125 scoped parity rows. The six live Google/Turnstile rows remain P9; no live-provider or P6 acceptance is claimed.

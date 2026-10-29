@@ -36,7 +36,7 @@ fn text(bytes: &[u8]) -> String {
 fn signed_in() -> (Host, tempfile::TempDir, PathBuf) {
     let host = host();
     let dir = tempfile::tempdir().unwrap();
-    let vault = signed_in_vault(dir.path());
+    let vault = signed_in_vault(dir.path(), &host.origin);
     (host, dir, vault)
 }
 
@@ -57,7 +57,7 @@ fn password_sign_in_stores_the_session_and_sign_out_forgets_it() {
     assert!(out.contains(&say("en", &balance_text(Some(75)))), "{out}");
 
     cli(&host, &vault).arg("logout").assert().success();
-    assert!(!std::fs::read_to_string(&vault).unwrap().contains("\"transgate.session\":"), "sign-out cleared the session");
+    assert!(!std::fs::read_to_string(&vault).unwrap().contains("transgate.session\":"), "sign-out cleared the session");
     cli(&host, &vault).arg("whoami").assert().code(3);
 }
 
@@ -150,7 +150,7 @@ fn google_sign_in_exchanges_the_loopback_callback_code() {
         let finished = child.wait_with_output().unwrap();
         assert_eq!(finished.status.code(), Some(expected), "{}", text(&finished.stderr));
         let vault_text = std::fs::read_to_string(&vault).unwrap_or_default();
-        assert_eq!(vault_text.contains("\"transgate.session\":"), expected == 0, "{vault_text}");
+        assert_eq!(vault_text.contains("transgate.session\":"), expected == 0, "{vault_text}");
         if expected == 0 {
             assert_eq!(text(&finished.stdout), EMAIL.to_string() + "\n");
         } else {
@@ -292,4 +292,108 @@ fn a_youtube_link_is_added_and_transcribed() {
     assert_eq!(host.state.lock().unwrap().jobs.iter().find(|j| j.id.0 == 101).map(|j| j.status), Some(JobStatus::Completed));
     let bad = cli(&host, &vault).args(["youtube", "not a url"]).assert().code(1);
     assert!(!text(&bad.get_output().stderr).trim().is_empty());
+}
+
+#[test]
+fn upload_batch_leaves_restored_drafts_and_their_options_untouched() {
+    let (host, dir, vault) = signed_in();
+    let old = transgate_core::presentation::fixtures::job(90, JobStatus::Draft, "old.mp3");
+    host.state.lock().unwrap().jobs.push(old.clone());
+    let file = dir.path().join("new.mp3");
+    std::fs::write(&file, b"audio-bytes").unwrap();
+    let run = cli(&host, &vault)
+        .timeout(std::time::Duration::from_secs(8))
+        .args(["upload", file.to_str().unwrap(), "--language", "tr", "--speakers"])
+        .assert().success();
+    assert_eq!(text(&run.get_output().stdout).trim(), "101");
+    let state = host.state.lock().unwrap();
+    assert_eq!(state.jobs.iter().find(|job| job.id == old.id), Some(&old));
+    assert_eq!(state.started, [vec![101]]);
+    assert!(state.deleted.is_empty());
+    assert!(state.options.iter().all(|options| !options["jobIds"].as_array().unwrap().contains(&serde_json::json!(90))));
+}
+
+#[test]
+fn youtube_batch_leaves_restored_drafts_and_their_options_untouched() {
+    let (host, _dir, vault) = signed_in();
+    let old = transgate_core::presentation::fixtures::job(90, JobStatus::Draft, "old.mp3");
+    host.state.lock().unwrap().jobs.push(old.clone());
+    let run = cli(&host, &vault)
+        .timeout(std::time::Duration::from_secs(8))
+        .args(["youtube", "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "--language", "tr"])
+        .assert().success();
+    assert_eq!(text(&run.get_output().stdout).trim(), "101");
+    let state = host.state.lock().unwrap();
+    assert_eq!(state.jobs.iter().find(|job| job.id == old.id), Some(&old));
+    assert!(state.deleted.is_empty());
+    assert!(state.options.iter().all(|options| !options["jobIds"].as_array().unwrap().contains(&serde_json::json!(90))));
+}
+
+#[test]
+fn concurrent_commands_rotate_a_shared_session_only_once() {
+    let (host, _dir, path) = signed_in();
+    host.state.lock().unwrap().single_use_refresh = true;
+    let vault = transgate_native::Vault::file(&path).for_host(&transgate_native::HostConfig::from_origin(&host.origin, None));
+    let mut session: serde_json::Value = serde_json::from_str(&vault.get("transgate.session").unwrap()).unwrap();
+    session["expires_at"] = serde_json::json!(1);
+    vault.set("transgate.session", &session.to_string());
+    let launch = || {
+        let mut command = std::process::Command::new(assert_cmd::cargo::cargo_bin("transgate"));
+        command.env("TRANSGATE_HOST", &host.origin).env("TRANSGATE_SESSION_FILE", &path).args(["--timeout", "10", "jobs"]).stdout(Stdio::piped()).stderr(Stdio::piped()).spawn().unwrap()
+    };
+    let first = launch();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while host.state.lock().unwrap().refreshes.is_empty() {
+        assert!(std::time::Instant::now() < deadline);
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    let second = launch();
+    for child in [first, second] {
+        let output = child.wait_with_output().unwrap();
+        assert!(output.status.success(), "{}", text(&output.stderr));
+    }
+    assert_eq!(host.state.lock().unwrap().refreshes, ["ref"]);
+    let stored: serde_json::Value = serde_json::from_str(&vault.get("transgate.session").unwrap()).unwrap();
+    assert_eq!(stored["refresh_token"], "rotated-ref");
+}
+
+#[test]
+fn switching_hosts_never_reuses_access_or_refresh_credentials() {
+    for expired in [false, true] {
+        let (source, _dir, path) = signed_in();
+        let vault = transgate_native::Vault::file(&path).for_host(&transgate_native::HostConfig::from_origin(&source.origin, None));
+        if expired {
+            let mut session: serde_json::Value = serde_json::from_str(&vault.get("transgate.session").unwrap()).unwrap();
+            session["expires_at"] = serde_json::json!(1);
+            vault.set("transgate.session", &session.to_string());
+        }
+        let destination = host();
+        cli(&destination, &path).arg("jobs").assert().code(3);
+        assert!(destination.state.lock().unwrap().refreshes.is_empty());
+        assert!(vault.get("transgate.session").is_some());
+    }
+}
+
+#[test]
+fn contended_session_write_fails_promptly_and_login_can_retry() {
+    let host = host();
+    let dir = tempfile::tempdir().unwrap();
+    let vault = dir.path().join("session.json");
+    let lock_path = dir.path().join("session.json.lock");
+    let mut options = std::fs::OpenOptions::new();
+    options.read(true).write(true).create(true);
+    #[cfg(unix)]
+    std::os::unix::fs::OpenOptionsExt::mode(&mut options, 0o600);
+    let held = options.open(lock_path).unwrap();
+    held.lock().unwrap();
+    for google in [false, true] {
+        let mut command = cli(&host, &vault);
+        command.timeout(std::time::Duration::from_secs(2)).arg("login");
+        if google { command.args(["--google", "--no-browser"]); }
+        else { command.args(["--email", EMAIL, "--password-stdin"]); }
+        let refused = command.write_stdin("correct\n").assert().code(1);
+        assert!(text(&refused.get_output().stderr).contains("writing the session file"));
+    }
+    drop(held);
+    cli(&host, &vault).args(["login", "--email", EMAIL, "--password-stdin"]).write_stdin("correct\n").assert().success();
 }

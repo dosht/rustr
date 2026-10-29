@@ -57,6 +57,20 @@ final class TransgateNativePorts: NativePorts, @unchecked Sendable {
     private let callbackScheme: String
     private let lock = NSLock()
     private var path = "/home"
+    private var reloadHandler: (@Sendable (String) -> Void)?
+    private static let startLocationKey = "transgate.ios.start-location"
+
+    var reload: (@Sendable (String) -> Void)? {
+        get { lock.withLock { reloadHandler } }
+        set { lock.withLock { reloadHandler = newValue } }
+    }
+
+    var startLocation: String { vault.get(Self.startLocationKey) ?? "/home" }
+
+    func rememberLocale(_ locale: String) {
+        let location = webUrl(siteUrl: "", route: .home(.default), locale: locale)
+        if vault.get(Self.startLocationKey) != location { vault.set(Self.startLocationKey, location) }
+    }
 
     init(vault: SecretStore, files: HeldFiles, player: PlayerControl, output: OutputSink, launcher: ExternalLauncher, assets: AssetSource, settings: AppSettings) {
         self.vault = vault
@@ -82,6 +96,10 @@ final class TransgateNativePorts: NativePorts, @unchecked Sendable {
     }
 
     func leave(url: String) {
+        if url.hasPrefix("/"), !url.hasPrefix("//") {
+            reload?(url)
+            return
+        }
         guard let target = URL(string: url) else { return }
         // The GoTrue redirect (Google) returns through the custom scheme; any other
         // address is a page of the web app.

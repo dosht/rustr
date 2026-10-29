@@ -107,7 +107,7 @@ fun SignedInScreen(vm: SignedInVm, send: (AppIntent) -> Unit, host: ShellHost) {
         }
     }
 
-    vm.settings?.let { SettingsDialog(vm, send, host) }
+    if (vm.settings?.open == true) SettingsDialog(vm, send, host)
     if (vm.feedback.open) FeedbackDialog(vm.feedback, send)
     if (vm.support.open) SupportDialog(vm.support, send)
 }

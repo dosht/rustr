@@ -53,7 +53,7 @@ pub trait Clock: MaybeSend + MaybeSync {
 
 /// Exclusive section shared by every tab/process of this origin (`navigator.locks`).
 pub trait SessionLock: MaybeSend + MaybeSync {
-    fn acquire(&self) -> BoxFuture<'_, LockGuard>;
+    fn acquire(&self) -> BoxFuture<'_, Result<LockGuard, String>>;
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -518,7 +518,7 @@ impl GoTrue {
         if !force && !self.expiring(&seen) {
             return Ok(Some(seen));
         }
-        let _held = self.lock.acquire().await;
+        let _held = self.lock.acquire().await.map_err(|error| AuthError::new(AuthErrorKind::Unavailable, None, Some(error)))?;
         // Another tab may have rotated the session while this one waited.
         let Some(current) = self.load().filter(|s| s.user_id == user) else { return Ok(None) };
         let rotated_elsewhere = current.refresh_token != seen.refresh_token;

@@ -21,3 +21,9 @@ ratatui.workspace = true
 transgate-core = { path = "../core" }
 transgate-i18n = { path = "../i18n" }
 transgate-native = { path = "../native" }
+
+[dev-dependencies]
+tempfile = "3"
+tokio = { version = "1", features = ["rt", "rt-multi-thread", "net", "time"] }
+axum = "0.8"
+serde_json.workspace = true

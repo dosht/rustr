@@ -99,15 +99,21 @@ impl AuthStorage for PortStorage {
 }
 
 /// One process, one lock: refreshes of this process never overlap.
-#[derive(Default)]
 pub(crate) struct ProcessLock(Arc<tokio::sync::Mutex<()>>);
 
+impl Default for ProcessLock {
+    fn default() -> Self {
+        static LOCK: std::sync::OnceLock<Arc<tokio::sync::Mutex<()>>> = std::sync::OnceLock::new();
+        Self(LOCK.get_or_init(|| Arc::new(tokio::sync::Mutex::new(()))).clone())
+    }
+}
+
 impl SessionLock for ProcessLock {
-    fn acquire(&self) -> BoxFuture<'_, LockGuard> {
+    fn acquire(&self) -> BoxFuture<'_, Result<LockGuard, String>> {
         let mutex = self.0.clone();
         Box::pin(async move {
             let held = mutex.lock_owned().await;
-            LockGuard::new(move || drop(held))
+            Ok(LockGuard::new(move || drop(held)))
         })
     }
 }

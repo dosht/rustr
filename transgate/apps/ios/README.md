@@ -37,6 +37,8 @@ YouTube app or the browser.
 - Copy: only `translate()` (via `Copy` and `Labels`). `Labels.all` is translated in all sixteen locales by the smoke test.
 - Session: core stores it through `NativePorts.storage_*`; the Keychain item is `ThisDeviceOnly`, readable after first unlock (D8).
 - Auth (D7): core starts GoTrue PKCE and asks the shell to `leave(url)`. A URL under `TransgateAuthUrl` opens an `ASWebAuthenticationSession` whose callback scheme comes from `TransgateSiteUrl`; its return URL (`transgate://app/<locale>/home?code=...`) restarts the presenter from that location, as a page load does on the web. Magic links, signup confirmation and recovery arriving through `onOpenURL` take the same path.
+- Publication: intents and listener refreshes share one lane. A delayed listener snapshot is discarded; the lane reads `current()` before publishing, so an old field edit or private view cannot overwrite a newer state.
+- Language: the sign-in screen and account sheet render core's locale choices and send `localeChosen`. Core's relative locale URL restarts the presenter locally. A core-generated home path is stored alongside the session preferences, retaining the chosen language on normal launch without saving callback codes.
 - Native telemetry is off (D14): there is no analytics code.
 
 ## Linux check (D14; runs in the pinned `swift:6.2-noble` image)
@@ -49,7 +51,9 @@ Compiles `Generated/TransgateCore.swift`, `Transgate/Core/*.swift`, the UI contr
 against the host build of `transgate-ffi` and runs it with the real core: translation in 16
 locales, the label registry, the PUT upload (200 only, monotonic progress, refusal and unreachable
 host), the vault, the ports, a locale-carrying start URL, a stored session restoring against a
-local fake host, a picked file measured through the port, settings, sign-out clearing the vault.
+local fake host, a picked file measured through the port, settings, sign-out clearing the vault,
+all signed-out locale choices, signed-in locale changes and persistence across launches. Deterministic
+listener regressions release an old snapshot after a newer field edit and after sign-out.
 `UiContract.swift` names every intent and view-model field the SwiftUI layer uses, so core drift
 that would break the UI is a Linux compile error. SwiftUI itself is not compiled on Linux.
 

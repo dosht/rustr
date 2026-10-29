@@ -34,11 +34,11 @@ impl AuthStorage for Memory {
 #[derive(Clone, Default)]
 struct TabLock(Arc<tokio::sync::Mutex<()>>);
 impl SessionLock for TabLock {
-    fn acquire(&self) -> BoxFuture<'_, LockGuard> {
+    fn acquire(&self) -> BoxFuture<'_, Result<LockGuard, String>> {
         let mutex = self.0.clone();
         Box::pin(async move {
             let held = mutex.lock_owned().await;
-            LockGuard::new(move || drop(held))
+            Ok(LockGuard::new(move || drop(held)))
         })
     }
 }
@@ -460,4 +460,26 @@ async fn sign_out_with_an_already_invalid_token_still_clears_the_local_session()
     let (_, query, bearer) = last_call(&server, "/logout");
     assert_eq!(query.get("scope").map(String::as_str), Some("global"));
     assert!(bearer.is_some());
+}
+
+#[tokio::test]
+async fn failed_refresh_lock_returns_auth_error_without_spending_token_and_can_retry() {
+    struct FailedLock;
+    impl SessionLock for FailedLock {
+        fn acquire(&self) -> BoxFuture<'_, Result<LockGuard, String>> { Box::pin(async { Err("lock unavailable".into()) }) }
+    }
+    let (server, base) = gotrue().await;
+    let clock = Arc::new(TestClock(AtomicI64::new(1_800_000_000)));
+    let t = tab(&base, Arc::default(), TabLock::default(), clock.clone());
+    let AuthOutcome::SignedIn(session) = t.auth.sign_in_password("ada@example.test", "right", None).await.unwrap() else { panic!("signed in expected") };
+    let stored = t.storage.get(SESSION_KEY);
+    clock.0.fetch_add(3600, Ordering::SeqCst);
+    let failing = GoTrue::new(GoTrueConfig { url: base, api_key: None }, AuthPorts { storage: t.storage.clone(), random: Arc::new(OsRandom), clock, lock: Arc::new(FailedLock) });
+    let error = failing.access_token(session.user_id).await.unwrap_err();
+    assert_eq!(error.kind, AuthErrorKind::Unavailable);
+    assert_eq!(error.message.as_deref(), Some("lock unavailable"));
+    assert_eq!(server.state.lock().unwrap().refresh_calls, 0);
+    assert_eq!(t.storage.get(SESSION_KEY), stored);
+    assert!(t.auth.access_token(session.user_id).await.unwrap().is_some());
+    assert_eq!(server.state.lock().unwrap().refresh_calls, 1);
 }

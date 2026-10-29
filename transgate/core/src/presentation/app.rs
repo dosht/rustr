@@ -210,6 +210,7 @@ pub enum NewPasswordIntent {
 #[cfg_attr(feature = "ts", derive(ts_rs::TS))]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum UploadIntent {
+    BeginBatch,
     Picked { files: Vec<PickedFile> },
     Dropped { files: Vec<PickedFile> },
     Removed {
@@ -1558,6 +1559,7 @@ impl AppState {
             AppIntent::Upload(intent) => {
                 let frame = self.layouts().frame;
                 let event = match intent {
+                    UploadIntent::BeginBatch => upload_queue::Event::BeginBatch,
                     UploadIntent::Picked { files } => upload_queue::Event::Picked { files, frame },
                     UploadIntent::Dropped { files } => upload_queue::Event::Dropped { files },
                     UploadIntent::Removed { file } => upload_queue::Event::Removed { file },

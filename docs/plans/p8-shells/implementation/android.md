@@ -14,7 +14,7 @@
 ## Ports (D7, D8, D10, D11)
 
 - **Storage (D8):** `KeystoreVault`, AES-GCM under a non-exportable Android Keystore key; a value the key cannot open is dropped (no session).
-- **Auth (D7):** core's Google redirect arrives as `leave(url)` and opens in a Custom Tab. GoTrue returns to `dev.transgate.app://auth?code=`; `MainActivity` hands the path and query to core as `RouteChanged`, which recognizes the PKCE callback and exchanges it with the verifier core stored. The scheme is `SITE_URL` (`-Ptransgate.siteUrl`), which the host must allow-list as a redirect.
+- **Auth (D7):** core's Google redirect arrives as `leave(url)` and opens in a Custom Tab. GoTrue returns to `dev.transgate.app://auth?code=`; `MainActivity` hands the path and query to the view model, which recreates the presenter and sends `Started`. Core consumes the PKCE callback on that initial event and exchanges it with the stored verifier. The scheme is `SITE_URL` (`-Ptransgate.siteUrl`), which the host must allow-list as a redirect.
 - **Files:** `PickedFiles` keeps the content URI by handle (`OpenMultipleDocuments`, accept list from `UploadQueueVm.pickerAccept`), measures with `MediaMetadataRetriever`, PUTs once with the content type and reports progress; only HTTP 200 is success (UPL-013/014).
 - **Player:** `PlayerHost`, one `MediaPlayer`; reports `PlayerState` to core, serves the pause/resume/seek ports. D11: a YouTube transcript mounts no player; `seek` opens `watch?v=ID&t=Ns` in the YouTube app or browser.
 - **Output:** clipboard, save (MediaStore Downloads, API 29+), preview (FileProvider + `ACTION_VIEW`), share (chooser). Documents handed to other apps are staged under `cache/outgoing`.

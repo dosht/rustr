@@ -34,7 +34,7 @@ impl AuthStorage for Memory {
 }
 struct NoContention;
 impl SessionLock for NoContention {
-    fn acquire(&self) -> BoxFuture<'_, LockGuard> { Box::pin(async { LockGuard::new(|| {}) }) }
+    fn acquire(&self) -> BoxFuture<'_, Result<LockGuard, String>> { Box::pin(async { Ok(LockGuard::new(|| {})) }) }
 }
 struct Fixed(AtomicI64);
 impl Clock for Fixed {

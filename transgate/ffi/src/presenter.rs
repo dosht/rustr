@@ -20,7 +20,7 @@ use std::thread;
 use tokio::sync::mpsc;
 use tokio::task::LocalSet;
 use transgate_client::api::HttpApi;
-use transgate_client::auth::{AuthPorts, GoTrue, GoTrueConfig, OsRandom, SystemClock};
+use transgate_client::auth::{AuthPorts, GoTrue, GoTrueConfig, OsRandom, SessionLock, SystemClock};
 use transgate_client::driver::AppDriver;
 use transgate_client::export::{DocumentAssetSource, DocumentFonts};
 use transgate_client::future::BoxFuture;
@@ -120,10 +120,9 @@ impl TransgatePresenter {
     }
 }
 
-#[uniffi::export]
 impl TransgatePresenter {
-    #[uniffi::constructor]
-    pub fn new(config: PresenterConfig, ports: Arc<dyn NativePorts>, listener: Arc<dyn ViewListener>) -> Result<Arc<TransgatePresenter>, FfiError> {
+    pub fn with_session_lock(config: PresenterConfig, ports: Arc<dyn NativePorts>, listener: Arc<dyn ViewListener>,
+        lock: Arc<dyn SessionLock>) -> Result<Arc<TransgatePresenter>, FfiError> {
         let (commands, mut inbox) = mpsc::unbounded_channel::<Command>();
         let (views, delivered) = std_mpsc::channel::<AppVm>();
         let (ready, started) = std_mpsc::sync_channel::<Result<(), String>>(1);
@@ -149,7 +148,7 @@ impl TransgatePresenter {
                         storage: Arc::new(PortStorage(ports.clone())),
                         random: Arc::new(OsRandom),
                         clock: Arc::new(SystemClock),
-                        lock: Arc::new(ProcessLock::default()),
+                        lock,
                     };
                     let auth = Arc::new(GoTrue::new(GoTrueConfig { url: config.auth_url.trim_end_matches('/').into(), api_key: config.auth_key.filter(|k| !k.is_empty()) }, auth_ports));
                     let api = Arc::new(HttpApi::new(config.api_url, auth.clone()));
@@ -170,6 +169,18 @@ impl TransgatePresenter {
 
         started.recv().map_err(|_| FfiError::Start { reason: "the driver thread ended before it started".into() })?.map_err(|reason| FfiError::Start { reason })?;
         Ok(Arc::new(TransgatePresenter { commands: Mutex::new(Some(commands)) }))
+    }
+}
+
+#[uniffi::export]
+impl TransgatePresenter {
+    #[uniffi::constructor]
+    pub fn new(
+        config: PresenterConfig,
+        ports: Arc<dyn NativePorts>,
+        listener: Arc<dyn ViewListener>,
+    ) -> Result<Arc<TransgatePresenter>, FfiError> {
+        Self::with_session_lock(config, ports, listener, Arc::new(ProcessLock::default()))
     }
 
     /// Applies a user intent and returns the resulting view; its effects start after this

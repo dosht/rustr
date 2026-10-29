@@ -33,6 +33,9 @@ final class AppModel {
         self.viewport = Viewport(touch: true, width: width)
         let (stream, continuation) = AsyncStream.makeStream(of: Delivery.self)
         deliveries = continuation
+        ports.reload = { [weak self] path in
+            Task { @MainActor in await self?.start(location: path) }
+        }
         Task { [weak self] in
             for await delivery in stream { self?.deliver(delivery) }
         }
@@ -41,7 +44,8 @@ final class AppModel {
     var copy: Copy { Copy(locale: view.locale) }
 
     /// Starts the core from `location` (D4: `/home`, or a returned auth URL).
-    func start(location: String = "/home") async {
+    func start(location: String? = nil) async {
+        let location = location ?? ports.startLocation
         generation += 1
         let mine = generation
         let previous = lane
@@ -103,6 +107,7 @@ final class AppModel {
     private func deliver(_ delivery: Delivery) {
         guard delivery.generation == generation, delivery.view != view else { return }
         view = delivery.view
+        ports.rememberLocale(view.locale)
     }
 }
 
@@ -113,20 +118,31 @@ struct Delivery: Sendable {
 
 /// One presenter and the in-order queue of intents sent to it, worked away from the
 /// main thread (dispatch waits for the core's driver thread, microseconds).
-private final class Lane: @unchecked Sendable {
-    private let presenter: TransgatePresenter
-    private let intents: AsyncStream<AppIntent>.Continuation
+final class Lane: @unchecked Sendable {
+    private let presenter: TransgatePresenterProtocol
+    private let intents: AsyncStream<LaneEvent>.Continuation
 
-    init(generation: Int, config: PresenterConfig, ports: TransgateNativePorts, deliveries: AsyncStream<Delivery>.Continuation) throws {
-        let listener = Forwarder(generation: generation, deliveries: deliveries)
-        presenter = try TransgatePresenter(config: config, ports: ports, listener: listener)
-        let (stream, continuation) = AsyncStream.makeStream(of: AppIntent.self)
+    convenience init(generation: Int, config: PresenterConfig, ports: TransgateNativePorts, deliveries: AsyncStream<Delivery>.Continuation) throws {
+        try self.init(generation: generation, deliveries: deliveries) { listener in
+            try TransgatePresenter(config: config, ports: ports, listener: listener)
+        }
+    }
+
+    init(generation: Int, deliveries: AsyncStream<Delivery>.Continuation, makePresenter: (ViewListener) throws -> TransgatePresenterProtocol) throws {
+        let (stream, continuation) = AsyncStream.makeStream(of: LaneEvent.self)
         intents = continuation
+        let listener = Forwarder(events: continuation)
+        presenter = try makePresenter(listener)
         let presenter = presenter
         Task.detached(priority: .userInitiated) {
             for await intent in stream {
                 do {
-                    deliveries.yield(Delivery(generation: generation, view: try presenter.dispatch(intent: intent)))
+                    let view: AppVm
+                    switch intent {
+                    case .intent(let value): view = try presenter.dispatch(intent: value)
+                    case .refresh: view = try presenter.current()
+                    }
+                    deliveries.yield(Delivery(generation: generation, view: view))
                 } catch {
                     // Disposed: a late intent after stop(); nothing to show.
                     Diagnostics.warn("dispatch refused: \(error)")
@@ -135,7 +151,7 @@ private final class Lane: @unchecked Sendable {
         }
     }
 
-    func send(_ intent: AppIntent) { intents.yield(intent) }
+    func send(_ intent: AppIntent) { intents.yield(.intent(intent)) }
 
     func stop() {
         intents.finish()
@@ -145,15 +161,18 @@ private final class Lane: @unchecked Sendable {
 
 /// Hands the views from the core's listener thread to the model, in order.
 private final class Forwarder: ViewListener, Sendable {
-    private let generation: Int
-    private let deliveries: AsyncStream<Delivery>.Continuation
+    private let events: AsyncStream<LaneEvent>.Continuation
 
-    init(generation: Int, deliveries: AsyncStream<Delivery>.Continuation) {
-        self.generation = generation
-        self.deliveries = deliveries
+    init(events: AsyncStream<LaneEvent>.Continuation) {
+        self.events = events
     }
 
     func viewChanged(view: AppVm) {
-        deliveries.yield(Delivery(generation: generation, view: view))
+        events.yield(.refresh)
     }
+}
+
+private enum LaneEvent: Sendable {
+    case intent(AppIntent)
+    case refresh
 }

@@ -13,7 +13,7 @@ func everyIntentTheUiSends() -> [AppIntent] {
         .started(url: "/home", viewport: Viewport(touch: true, width: 390), utcOffsetMinutes: 0),
         .viewportChanged(viewport: Viewport(touch: true, width: 390)),
         .visibilityChanged(visible: true),
-        .signOutRequested, .sessionRetried,
+        .signOutRequested, .sessionRetried, .localeChosen(code: "tr"),
         .navigate(route: .home(.job(job))), .navigate(route: .home(.allTranscripts)), .navigate(route: .home(.new)),
         .auth(.googleChosen), .auth(.emailChanged(text: "a")), .auth(.passwordChanged(text: "b")), .auth(.submitted),
         .auth(.modeChosen(mode: .magicLink)),
@@ -52,6 +52,9 @@ func everyIntentTheUiSends() -> [AppIntent] {
 func everyFieldTheUiReads(_ app: AppVm, _ vm: SignedInVm, _ out: SignedOutVm) -> Int {
     var count = 0
     let transcript = vm.transcript
+    for option in vm.locales + out.locales {
+        count += option.code.count + option.flag.count + option.name.key.count + option.current.hashValue
+    }
     count += vm.headerTitleText?.count ?? 0
     count += vm.profile?.displayName.count ?? 0
     count += (vm.profile?.email.count ?? 0) + vm.capabilities.youtube.hashValue + vm.capabilities.billingHistory.hashValue

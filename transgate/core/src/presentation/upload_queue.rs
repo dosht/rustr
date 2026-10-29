@@ -136,6 +136,8 @@ pub struct PickedFile {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Event {
+    BeginBatch,
+    PollReloaded { batch: u64, drafts: Vec<Job>, elapsed_ms: u64 },
     /// JOB-003: drafts restored on load, with the language usage (UPL-021).
     Restored { drafts: Vec<Job>, preferred: Vec<Language>, preferred_targets: Vec<Language> },
     /// The picker. Desktop: no validation and no cap (UPL-003/004 as built).
@@ -228,8 +230,8 @@ pub enum Effect {
     Start { jobs: Vec<JobId>, language: Option<Language>, translate_to: Vec<Language> },
     ResolveYouTube { job: JobId },
     AddYouTube { url: String, language: Option<Language> },
-    ReloadDrafts,
-    ScheduleReload { after_ms: u64 },
+    ReloadDrafts { batch: u64 },
+    ScheduleReload { batch: u64, after_ms: u64 },
     Navigate { job: JobId },
     /// ANLZ-1-03 product analytics (`transcription_started` / `_failed`).
     Telemetry { event: TelemetryEvent },
@@ -239,6 +241,8 @@ pub enum Effect {
 pub struct UploadQueueState {
     pub files: Vec<FileEntry>,
     next_id: u64,
+    #[serde(default)]
+    batch: u64,
     pub mode: Mode,
     /// `None` means nothing chosen yet; Start is refused without a choice.
     pub language: Option<Choice>,
@@ -262,6 +266,7 @@ impl Default for UploadQueueState {
         UploadQueueState {
             files: vec![],
             next_id: 1,
+            batch: 0,
             mode: Mode::Transcription,
             language: None,
             user_set_language: false,
@@ -360,7 +365,7 @@ impl UploadQueueState {
         }
         self.polling = true;
         self.poll_count = 0;
-        vec![Effect::ReloadDrafts]
+        vec![Effect::ReloadDrafts { batch: self.batch }]
     }
 
     fn stored_language(&self) -> Option<Language> {
@@ -369,7 +374,30 @@ impl UploadQueueState {
 
     pub fn update(&mut self, event: Event) -> Vec<Effect> {
         match event {
+            Event::BeginBatch => {
+                if self.initializing || self.transcribing || self.youtube_dialog.busy || self.files.iter().any(|file| matches!(file.status, UploadStatus::Uploading { .. })) {
+                    return vec![];
+                }
+                *self = Self {
+                    next_id: self.next_id,
+                    batch: self.batch + 1,
+                    initializing: false,
+                    preferred: std::mem::take(&mut self.preferred),
+                    preferred_targets: std::mem::take(&mut self.preferred_targets),
+                    ..Self::default()
+                };
+                vec![]
+            }
+            Event::PollReloaded { batch, drafts, elapsed_ms } => {
+                if batch != self.batch {
+                    return vec![];
+                }
+                self.update(Event::DraftsReloaded { drafts, elapsed_ms })
+            }
             Event::Restored { drafts, preferred, preferred_targets } => {
+                if !self.initializing {
+                    return vec![];
+                }
                 self.initializing = false;
                 for job in &drafts {
                     let id = self.next_id;
@@ -566,7 +594,7 @@ impl UploadQueueState {
                     return vec![];
                 }
                 self.poll_count += 1;
-                vec![Effect::ScheduleReload { after_ms: poll_interval_ms(self.poll_count) }]
+                vec![Effect::ScheduleReload { batch: self.batch, after_ms: poll_interval_ms(self.poll_count) }]
             }
             Event::StartPressed => {
                 if self.start_disabled() {

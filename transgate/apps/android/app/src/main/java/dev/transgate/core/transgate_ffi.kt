@@ -14213,6 +14213,9 @@ public object FfiConverterTypeTranslationStatus: FfiConverterRustBuffer<Translat
 
 sealed class UploadIntent {
     
+    object BeginBatch : UploadIntent()
+    
+    
     data class Picked(
         val `files`: List<dev.transgate.core.PickedFile>) : UploadIntent()
         
@@ -14331,38 +14334,39 @@ sealed class UploadIntent {
 public object FfiConverterTypeUploadIntent : FfiConverterRustBuffer<UploadIntent>{
     override fun read(buf: ByteBuffer): UploadIntent {
         return when(buf.getInt()) {
-            1 -> UploadIntent.Picked(
+            1 -> UploadIntent.BeginBatch
+            2 -> UploadIntent.Picked(
                 FfiConverterSequenceTypePickedFile.read(buf),
                 )
-            2 -> UploadIntent.Dropped(
+            3 -> UploadIntent.Dropped(
                 FfiConverterSequenceTypePickedFile.read(buf),
                 )
-            3 -> UploadIntent.Removed(
+            4 -> UploadIntent.Removed(
                 FfiConverterULong.read(buf),
                 )
-            4 -> UploadIntent.LanguageChosen(
+            5 -> UploadIntent.LanguageChosen(
                 FfiConverterOptionalTypeChoice.read(buf),
                 )
-            5 -> UploadIntent.SpeakersToggled(
+            6 -> UploadIntent.SpeakersToggled(
                 FfiConverterBoolean.read(buf),
                 )
-            6 -> UploadIntent.TabChanged(
+            7 -> UploadIntent.TabChanged(
                 FfiConverterTypeMode.read(buf),
                 )
-            7 -> UploadIntent.SourceLanguageChosen(
+            8 -> UploadIntent.SourceLanguageChosen(
                 FfiConverterOptionalTypeLanguage.read(buf),
                 )
-            8 -> UploadIntent.TargetLanguageChosen(
+            9 -> UploadIntent.TargetLanguageChosen(
                 FfiConverterOptionalTypeLanguage.read(buf),
                 )
-            9 -> UploadIntent.YouTubeDialogOpened
-            10 -> UploadIntent.YouTubeDialogClosed
-            11 -> UploadIntent.YouTubeUrlChanged(
+            10 -> UploadIntent.YouTubeDialogOpened
+            11 -> UploadIntent.YouTubeDialogClosed
+            12 -> UploadIntent.YouTubeUrlChanged(
                 FfiConverterString.read(buf),
                 )
-            12 -> UploadIntent.YouTubeSubmitted
-            13 -> UploadIntent.StartPressed
-            14 -> UploadIntent.DismissAlert(
+            13 -> UploadIntent.YouTubeSubmitted
+            14 -> UploadIntent.StartPressed
+            15 -> UploadIntent.DismissAlert(
                 FfiConverterTypeAlert.read(buf),
                 )
             else -> throw RuntimeException("invalid enum value, something is very wrong!!")
@@ -14370,6 +14374,12 @@ public object FfiConverterTypeUploadIntent : FfiConverterRustBuffer<UploadIntent
     }
 
     override fun allocationSize(value: UploadIntent): ULong = when(value) {
+        is UploadIntent.BeginBatch -> {
+            // Add the size for the Int that specifies the variant plus the size needed for all fields
+            (
+                4UL
+            )
+        }
         is UploadIntent.Picked -> {
             // Add the size for the Int that specifies the variant plus the size needed for all fields
             (
@@ -14468,69 +14478,73 @@ public object FfiConverterTypeUploadIntent : FfiConverterRustBuffer<UploadIntent
 
     override fun write(value: UploadIntent, buf: ByteBuffer) {
         when(value) {
-            is UploadIntent.Picked -> {
+            is UploadIntent.BeginBatch -> {
                 buf.putInt(1)
-                FfiConverterSequenceTypePickedFile.write(value.`files`, buf)
                 Unit
             }
-            is UploadIntent.Dropped -> {
+            is UploadIntent.Picked -> {
                 buf.putInt(2)
                 FfiConverterSequenceTypePickedFile.write(value.`files`, buf)
                 Unit
             }
-            is UploadIntent.Removed -> {
+            is UploadIntent.Dropped -> {
                 buf.putInt(3)
+                FfiConverterSequenceTypePickedFile.write(value.`files`, buf)
+                Unit
+            }
+            is UploadIntent.Removed -> {
+                buf.putInt(4)
                 FfiConverterULong.write(value.`file`, buf)
                 Unit
             }
             is UploadIntent.LanguageChosen -> {
-                buf.putInt(4)
+                buf.putInt(5)
                 FfiConverterOptionalTypeChoice.write(value.`choice`, buf)
                 Unit
             }
             is UploadIntent.SpeakersToggled -> {
-                buf.putInt(5)
+                buf.putInt(6)
                 FfiConverterBoolean.write(value.`enabled`, buf)
                 Unit
             }
             is UploadIntent.TabChanged -> {
-                buf.putInt(6)
+                buf.putInt(7)
                 FfiConverterTypeMode.write(value.`mode`, buf)
                 Unit
             }
             is UploadIntent.SourceLanguageChosen -> {
-                buf.putInt(7)
-                FfiConverterOptionalTypeLanguage.write(value.`language`, buf)
-                Unit
-            }
-            is UploadIntent.TargetLanguageChosen -> {
                 buf.putInt(8)
                 FfiConverterOptionalTypeLanguage.write(value.`language`, buf)
                 Unit
             }
-            is UploadIntent.YouTubeDialogOpened -> {
+            is UploadIntent.TargetLanguageChosen -> {
                 buf.putInt(9)
+                FfiConverterOptionalTypeLanguage.write(value.`language`, buf)
                 Unit
             }
-            is UploadIntent.YouTubeDialogClosed -> {
+            is UploadIntent.YouTubeDialogOpened -> {
                 buf.putInt(10)
                 Unit
             }
-            is UploadIntent.YouTubeUrlChanged -> {
+            is UploadIntent.YouTubeDialogClosed -> {
                 buf.putInt(11)
+                Unit
+            }
+            is UploadIntent.YouTubeUrlChanged -> {
+                buf.putInt(12)
                 FfiConverterString.write(value.`url`, buf)
                 Unit
             }
             is UploadIntent.YouTubeSubmitted -> {
-                buf.putInt(12)
-                Unit
-            }
-            is UploadIntent.StartPressed -> {
                 buf.putInt(13)
                 Unit
             }
-            is UploadIntent.DismissAlert -> {
+            is UploadIntent.StartPressed -> {
                 buf.putInt(14)
+                Unit
+            }
+            is UploadIntent.DismissAlert -> {
+                buf.putInt(15)
                 FfiConverterTypeAlert.write(value.`alert`, buf)
                 Unit
             }

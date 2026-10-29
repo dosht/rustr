@@ -34,6 +34,8 @@ pub struct State_ {
     pub options: Vec<Value>,
     pub insufficient: bool,
     pub requests: Vec<String>,
+    pub refreshes: Vec<String>,
+    pub single_use_refresh: bool,
 }
 
 pub struct Host {
@@ -79,14 +81,30 @@ fn session_json(expires_in: i64) -> Value {
     json!({"access_token": "tok", "refresh_token": "ref", "expires_in": expires_in, "user": {"id": fixtures::account().0.to_string(), "email": EMAIL}})
 }
 
-async fn token(Query(query): Query<HashMap<String, String>>, Json(body): Json<Value>) -> Response {
+async fn token(State(state): State<Shared>, Query(query): Query<HashMap<String, String>>, Json(body): Json<Value>) -> Response {
+    state.lock().unwrap().requests.push(format!("auth:{}", query.get("grant_type").map(String::as_str).unwrap_or_default()));
     let rejected = |code: &str| (StatusCode::BAD_REQUEST, Json(json!({"error_code": code, "msg": code}))).into_response();
     match query.get("grant_type").map(String::as_str) {
         Some("password") if body["password"] == "correct" && body["email"] == EMAIL => Json(session_json(3600)).into_response(),
         Some("password") => rejected("invalid_credentials"),
         Some("pkce") if body["auth_code"] == GOOD_CODE && body["code_verifier"].as_str().is_some_and(|v| !v.is_empty()) => Json(session_json(3600)).into_response(),
         Some("pkce") => rejected("flow_state_not_found"),
-        Some("refresh_token") => Json(session_json(3600)).into_response(),
+        Some("refresh_token") => {
+            let (single_use, count) = {
+                let mut state = state.lock().unwrap();
+                state.refreshes.push(body["refresh_token"].as_str().unwrap_or_default().into());
+                (state.single_use_refresh, state.refreshes.len())
+            };
+            if single_use {
+                tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+                if count > 1 { return rejected("refresh_token_already_used"); }
+                let mut session = session_json(3600);
+                session["refresh_token"] = json!("rotated-ref");
+                Json(session).into_response()
+            } else {
+                Json(session_json(3600)).into_response()
+            }
+        },
         _ => rejected("validation_failed"),
     }
 }
@@ -199,7 +217,7 @@ async fn youtube_resolve(State(state): State<Shared>, Json(body): Json<Value>) -
 pub fn host() -> Host {
     let runtime = tokio::runtime::Builder::new_multi_thread().worker_threads(2).enable_all().build().unwrap();
     let (jobs, seeded_lines) = seed();
-    let state: Shared = Arc::new(Mutex::new(State_ { jobs, lines: seeded_lines, next_id: 100, puts: vec![], started: vec![], deleted: vec![], exports: vec![], options: vec![], insufficient: false, requests: vec![] }));
+    let state: Shared = Arc::new(Mutex::new(State_ { jobs, lines: seeded_lines, next_id: 100, puts: vec![], started: vec![], deleted: vec![], exports: vec![], options: vec![], insufficient: false, requests: vec![], refreshes: vec![], single_use_refresh: false }));
     let routes = Router::new()
         .route("/auth/v1/token", post(token))
         .route("/auth/v1/logout", post(|| async { StatusCode::NO_CONTENT }))
@@ -230,9 +248,9 @@ pub fn host() -> Host {
 }
 
 /// A vault file that already holds a valid session, as a finished `login` leaves it.
-pub fn signed_in_vault(dir: &Path) -> std::path::PathBuf {
+pub fn signed_in_vault(dir: &Path, origin: &str) -> std::path::PathBuf {
     let path = dir.join("session.json");
     let stored = json!({"access_token": "tok", "refresh_token": "ref", "expires_at": 4_000_000_000i64, "user_id": fixtures::account().0.to_string(), "email": EMAIL});
-    Vault::file(&path).set("transgate.session", &stored.to_string());
+    Vault::file(&path).for_host(&transgate_native::HostConfig::from_origin(origin, None)).set("transgate.session", &stored.to_string());
     path
 }
